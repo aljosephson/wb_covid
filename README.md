@@ -7,7 +7,6 @@
  - [Data cleaning](#data-cleaning)
  - [Pre-requisites](#pre-requisites)
  - [Folder structure](#folder-structure)
- - Estimation
 
 ## Introduction
 

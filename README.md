@@ -1,5 +1,5 @@
 # wb_covid
- This README describes the directory structure & should enable users to replicate all tables and figures from "Estimating the Impact of Weather on Agriculture" project. The main project site is on [OSF][1].
+ This README describes the directory structure & should enable users to replicate all tables and figures for work related to the World Bank LSMS and World Bank COVID surveys. 
 
  ## Index
 
@@ -10,8 +10,6 @@
  - Estimation
 
 ## Introduction
-
-This is the repo for the weather project.<br>
 
 Contributors:
 * Jeffrey D. Michler

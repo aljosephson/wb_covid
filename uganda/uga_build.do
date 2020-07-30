@@ -124,13 +124,93 @@
 * replace value for "other"
 	replace			shocks__id = 96 if shocks__id == -96
 	
-* reshape data	
-	reshape 		wide s9q01- s9q03_Other, i(HHID) j(shocks__id)
+* generate shock variables
+	forval i = 1/13 {
+		gen				shock_0`i' = 0 if s9q01 == 2 & shocks__id == `i'
+		replace			shock_0`i' = 1 if s9q02 == 3 & shocks__id == `i'
+		replace			shock_0`i' = 2 if s9q02 == 2 & shocks__id == `i'
+		replace			shock_0`i' = 3 if s9q02 == 1 & shocks__id == `i'
+		}
+	
+	rename			shock_010 shock_10
+	rename			shock_011 shock_11
+	rename			shock_012 shock_12
+	rename			shock_013 shock_13
 
+	gen				shock_14 = 0 if s9q01 == 2 & shocks__id == 96
+	replace			shock_14 = 1 if s9q02 == 3 & shocks__id == 96
+	replace			shock_14 = 2 if s9q02 == 2 & shocks__id == 96
+	replace			shock_14 = 3 if s9q02 == 1 & shocks__id == 96
+	
+* rename cope variables
+	rename			s9q03__1 cope_01
+	rename			s9q03__2 cope_02
+	rename			s9q03__3 cope_03
+	rename			s9q03__4 cope_04
+	rename			s9q03__5 cope_05
+	rename			s9q03__6 cope_06
+	rename			s9q03__7 cope_07
+	rename			s9q03__8 cope_08
+	rename			s9q03__9 cope_09
+	rename			s9q03__10 cope_10
+	rename			s9q03__11 cope_11
+	rename			s9q03__12 cope_12
+	rename			s9q03__13 cope_13
+	rename			s9q03__14 cope_14
+	rename			s9q03__15 cope_15
+	rename			s9q03__16 cope_16
+	rename			s9q03__n96 cope_17
+	
+* drop unnecessary variables
+	drop	shocks__id s9q01 s9q02 s9q03_Other		
 
+* collapse to household level
+	collapse (max) cope_01- shock_14, by(HHID)
+	
+* label variables
+	lab var			shock_01 "Death of disability of an adult working member of the household"
+	lab var			shock_02 "Death of someone who sends remittances to the household"
+	lab var			shock_03 "Illness of income earning member of the household"
+	lab var			shock_04 "Loss of an important contact"
+	lab var			shock_05 "Job loss"
+	lab var			shock_06 "Non-farm business failure"
+	lab var			shock_07 "Theft of crops, cash, livestock or other property"
+	lab var			shock_08 "Destruction of harvest by insufficient labor"
+	lab var			shock_09 "Disease/Pest invasion that caused harvest failure or storage loss"
+	lab var			shock_10 "Increase in price of inputs"
+	lab var			shock_11 "Fall in the price of output"
+	lab var			shock_12 "Increase in price of major food items c"
+	lab var			shock_13 "Floods"
+	lab var			shock_14 "Other shock"
+	
+	lab def			shock 0 "None" 1 "Severe" 2 "More Severe" 3 "Most Severe"
+	
+	foreach var of varlist shock_01-shock_14 {
+		lab val		`var' shock 
+		}
+	
+	lab var			cope_01 "Sale of assets (Agricultural and Non_agricultural)"
+	lab var			cope_02 "Engaged in additional income generating activities"
+	lab var			cope_03 "Received assistance from friends & family"
+	lab var			cope_04 "Borrowed from friends & family"
+	lab var			cope_05 "Took a loan from a financial institution"
+	lab var			cope_06 "Credited purchases"
+	lab var			cope_07 "Delayed payment obligations"
+	lab var			cope_08 "Sold harvest in advance"
+	lab var			cope_09 "Reduced food consumption"
+	lab var			cope_10 "Reduced non_food consumption"
+	lab var			cope_11 "Relied on savings"
+	lab var			cope_12 "Received assistance from NGO"
+	lab var			cope_13 "Took advanced payment from employer"
+	lab var			cope_14 "Received assistance from government"
+	lab var			cope_15 "Was covered by insurance policy"
+	lab var			cope_16 "Did nothing"
+	lab var			cope_17 "Other"
+
+* save temp file
+	save			"$root/wave_01/SEC9w", replace
 
 	
-
 * ***********************************************************************
 * 1c - reshape section 10 wide data
 * ***********************************************************************
@@ -214,6 +294,7 @@
 	merge 1:1 		HHID using "$root/wave_01/SEC6w.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC7.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC8.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$root/wave_01/SEC9w.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC9A.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC10w.dta", keep(match) nogenerate
 	*** sections 9 did not merges
@@ -425,6 +506,12 @@
 	rename			s9q04 meal
 	rename			s9q05 meal_source
 	
+* create country variables
+	gen				country = 4
+	order			country
+	lab def			country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda"
+	lab val			country country	
+	
 * drop unnecessary variables
 	drop			interview__id interview__key BSEQNO DistrictName ///
 						CountyName SubcountyName ParishName EaName VillageName ///
@@ -434,147 +521,9 @@
 
 * delete temp files 
 	erase			"$root/wave_01/SEC6w.dta"
+	erase			"$root/wave_01/SEC9w.dta"
 	erase			"$root/wave_01/SEC10w.dta"
-	
-* rename access
-	rename			ac1_atb_med ac_med
-	rename			ac2_atb_med_why ac_med_why
-	rename			ac1_atb_teff ac_teff
-	rename			ac2_atb_teff_why ac_teff_why
-	rename			ac1_atb_wheat ac_wheat
-	rename			ac2_atb_wheat_why ac_wheat_why
-	rename			ac1_atb_maize ac_maize
-	rename			ac2_atb_maize_why  ac_maize_why
-	rename			ac1_atb_oil ac_oil
-	rename			ac2_atb_oil_why ac_oil_why
-	rename			ac3_sch_child sch_child
-	rename			ac4_sch_girls sch_girl
-	rename			ac4_sch_boys sch_boy
-	rename			ac4_2_edu edu_act
-	rename			ac5_edu_type edu
-	rename			ac5_edu_type_1 edu_01
-	rename			ac5_edu_type_2 edu_02
-	rename			ac5_edu_type_3 edu_03
-	rename			ac5_edu_type_4 edu_04
-	rename			ac5_edu_type_5 edu_05
-	rename			ac6_med med
-	rename			ac7_med_access med_access
-	rename			ac8_med_access_reas med_access_why
-	rename			ac9_bank bank 
-	rename			em1_work_cur emp
-	rename			em6_work_cur_act emp_act
-	rename			em6_work_cur_act_other emp_act_other
-	rename			em7_work_cur_status emp_stat
-	rename			em7_work_cur_status_other emp_stat_other
-	rename			em8_work_cur_same emp_same
-	rename			em9_work_change_why emp_chg_why
-	rename			em2_work_pre emp_pre
-	rename			em3_work_no_why emp_pre_why
-	rename			em4_work_pre_act emp_pre_act
-	rename			em5_work_pre_status emp_pre_stat
-	rename			em12_work_cur_able emp_able
-	rename			em13_work_cur_notable_paid emp_unable
-	rename			em14_work_cur_notable_why emp_unable_why
-	rename			em15_bus bus_emp
-	rename			em16_bus_sector bus_sect
-	rename			em17_bus_inc bus_emp_inc
-	rename			em18_bus_inc_low_amt bus_amt
-	rename			em19_bus_inc_low_why bus_why
-	rename			em19_bus_inc_low_why_1 bus_why_01
-	rename			em19_bus_inc_low_why_2 bus_why_02
-	rename			em19_bus_inc_low_why_3 bus_why_03
-	rename			em19_bus_inc_low_why_4 bus_why_04
-	rename			em19_bus_inc_low_why_5 bus_why_05
-	rename			em19_bus_inc_low_why_6 bus_why_06
-	rename			em19_bus_inc_low_why_7 bus_why_07
-	rename			em20_farm farm_emp
-	rename			em21_farm_norm farm_norm
-	rename			em22_farm_norm_why farm_why
-	rename			em22_farm_norm_why_1 farm_why_01
-	rename			em22_farm_norm_why_2 farm_why_02
-	rename			em22_farm_norm_why_3 farm_why_03
-	rename			em22_farm_norm_why_4 farm_why_04
-	rename			em22_farm_norm_why_5 farm_why_05
-	rename			em22_farm_norm_why_6 farm_why_06
-	rename			em22_farm_norm_why_7 farm_why_07
-	rename			em23_we wage_emp
-	rename			em24_we_layoff wage_off
-	rename			em25_we_layoff_covid wage_off_covid
-	rename			lc1_farm farm_inc
-	rename			lc2_farm_chg farm_chg
-	rename			lc1_bus bus_inc
-	rename			lc2_bus_chg bus_chg
-	rename			lc1_we wage_inc
-	rename			lc2_we_chg wage_chg
-	rename			lc1_rem_dom rem_dom
-	rename			lc2_rem_dom_chg rem_dom_chg
-	rename			lc1_rem_for rem_for
-	rename			lc2_rem_for_chg rem_for_chg
-	rename			lc1_isp isp_inc
-	rename			lc2_isp_chg isp_chg
-	rename			lc1_pen pen_inc
-	rename			lc2_pen_chg pen_chg
-	rename			lc1_gov gov_inc
-	rename			lc2_gov_chg gov_chg
-	rename			lc1_ngo ngo_inc
-	rename			lc2_ngo_chg ngo_chg
-	rename			lc3_total_chg tot_inc_chg
-	rename			lc4_total_chg_cope cope
-	rename			lc4_total_chg_cope_1 cope_01
-	rename			lc4_total_chg_cope_2 cope_02
-	rename			lc4_total_chg_cope_3 cope_03
-	rename			lc4_total_chg_cope_4 cope_04
-	rename			lc4_total_chg_cope_5 cope_05
-	rename			lc4_total_chg_cope_6 cope_06
-	rename			lc4_total_chg_cope_7 cope_07
-	rename			lc4_total_chg_cope_8 cope_08
-	rename			lc4_total_chg_cope_9 cope_09
-	rename			lc4_total_chg_cope_10 cope_10
-	rename			lc4_total_chg_cope_11 cope_11
-	rename			lc4_total_chg_cope_12 cope_12
-	rename			lc4_total_chg_cope_13 cope_13
-	rename			lc4_total_chg_cope_14 cope_14
-	rename			lc4_total_chg_cope_15 cope_15
-	rename			lc4_total_chg_cope_0 cope_16
-	rename			fi7_outoffood fies_01
-	rename			fi8_hungrynoteat fies_02
-	rename			fi6_noteatfullday fies_03
-	rename			as1_assist_type asst
-	rename			as1_assist_type_1 asst_01
-	rename			as1_assist_type_2 asst_02
-	rename			as1_assist_type_3 asst_03
-	rename			as1_assist_type_0 asst_04
-	rename			as3_food_value food_val
-	rename			as2_food_psnp food_psnp
-	rename			as4_food_source food_source
-	rename			as3_forwork_value_food work_food_val
-	rename			as3_forwork_value_cash work_cash_val
-	rename			as2_forwork_psnp work_psnp
-	rename			as4_forwork_source work_source 
-	rename			as3_cash_value cash_val
-	rename			as2_cash_psnp cash_psnp
-	rename			as4_cash_source cash_source
-	rename			as3_other_value other_val
-	rename			as2_other_psnp other_psnp
-	rename			as4_other_source other_source
-	rename			ii4_resp_same resp_same
-	rename			ii4_resp_gender resp_gender
-	rename			ii4_resp_age resp_age
-	rename			ii4_resp_relhhh resp_hhh
-	rename			em15a_bus_prev bus_prev
-	rename			em15b_bus_prev_closed bus_prev_close
-	rename			em15c_bus_new bus_new
-	rename			fi1_enough fies_04
-	rename			fi2_healthy fies_05
-	rename			fi3_fewkinds fies_06
-	rename			fi4_skipmeal fies_07
-	rename			fi5_ateless fies_08
 
-* reorder variables
-	order			fies_04 fies_05 fies_06 fies_07 fies_08, after(fies_03)
-	order 			resp_same resp_gender resp_age resp_hhh, after(hhh_age)
-	order			bus_prev bus_prev_close bus_new, after(bus_why_07)
-	
 
 * **********************************************************************
 * 2 - end matter, clean up to save

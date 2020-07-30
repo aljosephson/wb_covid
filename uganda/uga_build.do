@@ -31,7 +31,21 @@
 	
 
 * ***********************************************************************
-* 1 - build ethiopia panel
+* 1 - reshape wide data
+* ***********************************************************************
+
+
+
+
+
+
+
+
+
+
+
+* ***********************************************************************
+* 2 - build ethiopia panel
 * ***********************************************************************
 
 * load cover data
@@ -53,7 +67,7 @@
 	
 	
 * ***********************************************************************
-* 2 - rationalize variable names
+* 3 - rationalize variable names
 * ***********************************************************************
 
 * rename basic information
@@ -88,7 +102,9 @@
 	lab val			Region region
 	drop			region
 	rename			Region region
-
+	order			region, after(sector)
+	lab var			region "Region"
+	
 	rename			DistrictCode zone_id
 	rename			CountyCode county_id
 	rename			SubcountyCode city_id
@@ -173,14 +189,86 @@
 	rename			s2q03__12 gov_10
 	lab var			gov_10 "Stopping or limiting social gatherings / social distancing"
 
-* behavioral changes
+* rename behavioral changes
 	rename			s3q01 bh_01
 	rename			s3q02 bh_02
 	rename			s3q03 bh_03
 	rename			s3q05 bh_04
 	rename			s3q06 bh_05
 
-* access
+* rename agriculture
+	rename			s5aq16 ag_prep
+	rename			s5aq17 ag_plan
+	rename			s5qaq17_1 ag_plan_why
+	rename			s5aq18__0 ag_crop_01
+	rename			s5aq18__1 ag_crop_02
+	rename			s5aq18__2 ag_crop_03
+	rename			s5aq19 ag_chg
+	rename			s5aq20__1 ag_chg_01
+	rename			s5aq20__2 ag_chg_02
+	rename			s5aq20__3 ag_chg_03
+	rename			s5aq20__4 ag_chg_04
+	rename			s5aq20__5 ag_chg_05
+	rename			s5aq20__6 ag_chg_06
+	rename			s5aq20__7 ag_chg_07
+	rename			s5aq21__1 ag_covid_01
+	rename			s5aq21__2 ag_covid_02
+	rename			s5aq21__3 ag_covid_03
+	rename			s5aq21__4 ag_covid_04
+	rename			s5aq21__5 ag_covid_05
+	rename			s5aq21__6 ag_covid_06
+	rename			s5aq21__7 ag_covid_07
+	rename			s5aq21__8 ag_covid_08
+	rename			s5aq21__9 ag_covid_09
+	rename			s5aq22__1 ag_seed_01
+	rename			s5aq22__2 ag_seed_02
+	rename			s5aq22__3 ag_seed_03
+	rename			s5aq22__4 ag_seed_04
+	rename			s5aq22__5 ag_seed_05
+	rename			s5aq22__6 ag_seed_06
+	rename			s5aq23 ag_fert
+	rename			s5aq24 ag_input
+	rename			s5aq25 ag_crop_lost
+	rename			s5aq26 ag_live_lost
+	rename			s5aq27 ag_live_chg
+	rename			s5aq28__1 ag_live_chg_01
+	rename			s5aq28__2 ag_live_chg_02
+	rename			s5aq28__3 ag_live_chg_03
+	rename			s5aq28__4 ag_live_chg_04
+	rename			s5aq28__5 ag_live_chg_05
+	rename			s5aq28__6 ag_live_chg_06
+	rename			s5aq28__7 ag_live_chg_07
+	rename			s5aq29 ag_graze
+	rename			s5aq30 ag_sold
+	rename			s5aq31 ag_sell
+	
+* rename food security
+	rename			s7q01 fies_04
+	lab var			fies_04 "Worried about not having enough food to eat"
+	rename			s7q02 fies_05
+	lab var			fies_05 "Unable to eat healthy and nutritious/preferred foods"
+	rename			s7q03 fies_06
+	lab var			fies_06 "Ate only a few kinds of food"
+	rename			s7q04 fies_07
+	lab var			fies_07 "Skipped a meal"
+	rename			s7q05 fies_08
+	lab var			fies_08 "Ate less than you thought you should"
+	rename			s7q06 fies_01
+	lab var			fies_01 "Ran out of food"
+	rename			s7q07 fies_02
+	lab var			fies_02 "Hungry bu did not eat"
+	rename			s7q08 fies_03
+	lab var			fies_03 "Went without eating for a whole dat"
+	
+* rename concerns	
+	rename			s8q01 concern_01
+	rename			a8q02 concern_02
+	
+* rename coping
+	rename			s9q04 meal
+	rename			s9q05 meal_source
+	
+* rename access
 	rename			ac1_atb_med ac_med
 	rename			ac2_atb_med_why ac_med_why
 	rename			ac1_atb_teff ac_teff
@@ -317,7 +405,10 @@
 * drop unnecessary variables
 	drop			interview__id interview__key BSEQNO DistrictName ///
 						CountyName SubcountyName ParishName EaName VillageName ///
-						subreg s2q01b__n96 s2q01b_Other
+						subreg s2q01b__n96 s2q01b_Other s5qaq17_1_Other ///
+						s5aq20__n96 s5aq20_Other s5aq21__n96 s5aq21_Other ///
+						s5aq22__n96 s5aq22_Other s5aq23_Other s5aq24_Other ///
+						
 
 * reorder variables
 	order			fies_04 fies_05 fies_06 fies_07 fies_08, after(fies_03)

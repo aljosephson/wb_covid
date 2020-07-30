@@ -4,12 +4,12 @@
 * Stata v.16.1
 
 * does
-	* merges together each section of uganda data
+	* merges together each section of Uganda data
 	* renames variables
 	* outputs single cross section data
 
 * assumes
-	* raw Ethiopia data
+	* raw Uganda data
 
 * TO DO:
 	* complete
@@ -35,17 +35,172 @@
 * ***********************************************************************
 
 
+* ***********************************************************************
+* 1a - reshape section 6 wide data
+* ***********************************************************************
 
+* load income data
+	use				"$root/wave_01/SEC6", clear
+	
+* reformat HHID
+	format 			%12.0f HHID
+	
+* drop other source
+	drop			s6q01_Other
+	
+* replace value for "other"
+	replace			income_loss__id = 96 if income_loss__id == -96
+	
+* reshape data	
+	reshape 		wide s6q01 s6q02, i(HHID) j(income_loss__id)
 
+* rename variables	
+	rename 			s6q011 farm_inc
+	lab	var			farm_inc "Income from farming, fishing, livestock in last 12 months"
+	rename			s6q021 farm_chg
+	lab var			farm_chg "Change in income from farming since covid"
+	rename 			s6q012 bus_inc
+	lab var			bus_inc "Income from non-farm family business in last 12 months"
+	rename			s6q022 bus_chg
+	lab var			bus_chg "Change in income from non-farm family business since covid"	
+	rename 			s6q013 wage_inc
+	lab var			wage_inc "Income from wage employment in last 12 months"
+	rename			s6q023 wage_chg
+	lab var			wage_chg "Change in income from wage employment since covid"	
+	rename			s6q014 unemp_inc
+	lab var			unemp_inc "Income from unemployment benefits in the last 12 months"
+	rename			s6q024 unemp_chg
+	lab var			unemp_chg "Change in income from unemployment benefits since covid"
+	rename 			s6q015 rem_for
+	label 			var rem_for "Income from remittances abroad in last 12 months"
+	rename			s6q025 rem_for_chg
+	label 			var rem_for_chg "Change in income from remittances abroad since covid"	
+	rename 			s6q016 rem_dom
+	label 			var rem_dom "Income from remittances domestic in last 12 months"
+	rename			s6q026 rem_dom_chg
+	label 			var rem_dom_chg "Change in income from remittances domestic since covid"	
+	rename 			s6q017 asst_inc
+	label 			var asst_inc "Income from assistance from non-family in last 12 months"
+	rename			s6q027 asst_chg
+	label 			var asst_chg "Change in income from assistance from non-family since covid"
+	rename 			s6q018 isp_inc
+	label 			var isp_inc "Income from properties, investment in last 12 months"
+	rename			s6q028 isp_chg
+	label 			var isp_chg "Change in income from properties, investment since covid"
+	rename 			s6q019 pen_inc
+	label 			var pen_inc "Income from pension in last 12 months"
+	rename			s6q029 pen_chg
+	label 			var pen_chg "Change in income from pension since covid"
+	rename 			s6q0110 gov_inc
+	label 			var gov_inc "Income from government assistance in last 12 months"
+	rename			s6q0210 gov_chg
+	label 			var gov_chg "Change in income from government assistance since covid"	
+	rename 			s6q0111 ngo_inc
+	label 			var ngo_inc "Income from NGO assistance in last 12 months"
+	rename			s6q0211 ngo_chg
+	label 			var ngo_chg "Change in income from NGO assistance since covid"
+	rename 			s6q0196 oth_inc
+	label 			var oth_inc "Income from other source in last 12 months"
+	rename			s6q0296 oth_chg
+	label 			var oth_chg "Change in income from other source since covid"	
 
-
-
-
-
+* save temp file
+	save			"$root/wave_01/SEC6w", replace
 
 
 * ***********************************************************************
-* 2 - build ethiopia panel
+* 1b - reshape section 9 wide data
+* ***********************************************************************
+
+* load income data
+	use				"$root/wave_01/SEC9", clear
+	
+* reformat HHID
+	format 			%12.0f HHID
+	
+* drop other shock
+	drop			s9q01_Other
+	
+* replace value for "other"
+	replace			shocks__id = 96 if shocks__id == -96
+	
+* reshape data	
+	reshape 		wide s9q01- s9q03_Other, i(HHID) j(shocks__id)
+
+
+
+	
+
+* ***********************************************************************
+* 1c - reshape section 10 wide data
+* ***********************************************************************
+
+* load income data
+	use				"$root/wave_01/SEC10", clear
+	
+* reformat HHID
+	format 			%12.0f HHID
+	
+* drop other safety nets and missing values
+	drop			other_nets
+	drop if			safety_net__id == .
+	
+* reshape data	
+	reshape 		wide s10q01 s10q02 s10q03 s10q04, i(HHID) j(safety_net__id)
+
+* rename variables
+	rename			s10q01101 cash_gov
+	lab var			cash_gov "Has any member of your household received cash transfers from government"
+	rename			s10q02101 cash_gov_val
+	lab var			cash_gov_val "What was the total value of cash transfers from government"
+	rename			s10q03101 cash_inst
+	lab var			cash_inst "Has any member of your household received cash transfers from other institutions"
+	rename			s10q04101 cash_inst_val
+	lab var			cash_inst_val "What was the total value of cash transfers from other institutions"
+	rename			s10q01102 food_gov
+	lab var			food_gov "Has any member of your household received free food from government"
+	rename			s10q02102 food_gov_val
+	lab var			food_gov_val "What was the total value of free food from government"
+	rename			s10q03102 food_inst
+	lab var			food_inst "Has any member of your household received free food from other institutions"
+	rename			s10q04102 food_inst_val
+	lab var			food_inst_val "What was the total value of free food from other institutions"
+	rename			s10q01103 kind_gov
+	lab var			kind_gov "Has any member of your household received in-kind transfers from government"
+	rename			s10q02103 kind_gov_val
+	lab var			kind_gov_val "What was the total value of in-kind transfers from government"
+	rename			s10q03103 kind_inst
+	lab var			kind_inst "Has any member of your household received in-kind transfers from other institutions"
+	rename			s10q04103 kind_inst_val
+	lab var			kind_inst_val "What was the total value of in-kind transfers from other institutions"
+
+* generate assistance variables like in Ethiopia
+	gen				asst_01 = 1 if food_gov == 1 | food_inst == 1
+	replace			asst_01 = 2 if asst_01 == .
+	lab var			asst_01 "Recieved free food"
+	lab val			asst_01 s10q01
+	
+	gen				asst_03 = 1 if cash_gov == 1 | cash_inst == 1
+	replace			asst_03 = 2 if asst_03 == .
+	lab var			asst_03 "Recieved direct cash transfer"
+	lab val			asst_03 s10q01
+	
+	gen				asst_05 = 1 if kind_gov == 1 | kind_inst == 1
+	replace			asst_05 = 2 if asst_05 == .
+	lab var			asst_05 "Recieved in-kind transfer"
+	lab val			asst_05 s10q01
+	
+	gen				asst_04 = 1 if asst_01 == 2 & asst_03 == 2 & asst_05 == 2
+	replace			asst_04 = 2 if asst_04 == .
+	lab var			asst_04 "Recieved none"
+	lab val			asst_04 s10q01
+
+* save temp file
+	save			"$root/wave_01/SEC10w", replace
+
+	
+* ***********************************************************************
+* 2 - build uganda cross section
 * ***********************************************************************
 
 * load cover data
@@ -56,10 +211,12 @@
 	merge 1:1 		HHID using "$root/wave_01/SEC3.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC4.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC5.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$root/wave_01/SEC6w.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC7.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC8.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC9A.dta", keep(match) nogenerate
-	*** sections 6, 9, and 10 did not merges
+	merge 1:1 		HHID using "$root/wave_01/SEC10w.dta", keep(match) nogenerate
+	*** sections 9 did not merges
 	*** will have to reformat them and then merge
 	
 * reformat HHID
@@ -268,6 +425,17 @@
 	rename			s9q04 meal
 	rename			s9q05 meal_source
 	
+* drop unnecessary variables
+	drop			interview__id interview__key BSEQNO DistrictName ///
+						CountyName SubcountyName ParishName EaName VillageName ///
+						subreg s2q01b__n96 s2q01b_Other s5qaq17_1_Other ///
+						s5aq20__n96 s5aq20_Other s5aq21__n96 s5aq21_Other ///
+						s5aq22__n96 s5aq22_Other s5aq23_Other s5aq24_Other
+
+* delete temp files 
+	erase			"$root/wave_01/SEC6w.dta"
+	erase			"$root/wave_01/SEC10w.dta"
+	
 * rename access
 	rename			ac1_atb_med ac_med
 	rename			ac2_atb_med_why ac_med_why
@@ -401,14 +569,6 @@
 	rename			fi3_fewkinds fies_06
 	rename			fi4_skipmeal fies_07
 	rename			fi5_ateless fies_08
-	
-* drop unnecessary variables
-	drop			interview__id interview__key BSEQNO DistrictName ///
-						CountyName SubcountyName ParishName EaName VillageName ///
-						subreg s2q01b__n96 s2q01b_Other s5qaq17_1_Other ///
-						s5aq20__n96 s5aq20_Other s5aq21__n96 s5aq21_Other ///
-						s5aq22__n96 s5aq22_Other s5aq23_Other s5aq24_Other ///
-						
 
 * reorder variables
 	order			fies_04 fies_05 fies_06 fies_07 fies_08, after(fies_03)
@@ -425,8 +585,8 @@ describe
 summarize 
 
 * save file
-		customsave , idvar(household_id) filename("eth_panel.dta") ///
-			path("$export") dofile(eth_build) user($user)
+		customsave , idvar(household_id) filename("uga_panel.dta") ///
+			path("$export") dofile(uga_build) user($user)
 
 * close the log
 	log	close

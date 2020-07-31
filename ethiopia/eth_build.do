@@ -139,13 +139,6 @@
 	rename			em16_bus_sector bus_sect
 	rename			em17_bus_inc bus_emp_inc
 	rename			em18_bus_inc_low_amt bus_amt
-	rename			em19_bus_inc_low_why_1 bus_why_01
-	rename			em19_bus_inc_low_why_2 bus_why_02
-	rename			em19_bus_inc_low_why_3 bus_why_03
-	rename			em19_bus_inc_low_why_4 bus_why_04
-	rename			em19_bus_inc_low_why_5 bus_why_05
-	rename			em19_bus_inc_low_why_6 bus_why_06
-	rename			em19_bus_inc_low_why_7 bus_why_07
 	rename			em20_farm farm_emp
 	rename			em21_farm_norm farm_norm
 	rename			em22_farm_norm_why farm_why
@@ -229,6 +222,10 @@
 	rename			fi3_fewkinds fies_06
 	rename			fi4_skipmeal fies_07
 	rename			fi5_ateless fies_08
+
+* reformat bus_why variables
+	gen				bus_why = 
+	
 	
 * drop unnecessary variables
 	drop			kn3_gov kn3_gov_0 kn3_gov__98 kn3_gov__99 kn3_gov__96 ///

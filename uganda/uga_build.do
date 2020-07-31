@@ -542,8 +542,7 @@
 						sec5a_endtime s5q03_Other s504_Other s5q04b_Other ///
 						s504c_Other s5q05_Other s5q08a_Other s5q10__0 ///
 						s5q10__1 s5q10__2 s5q10__3 s5q10__4 s5q10__5 ///
-						s5q10__6 s5q10__7 s5q10__8 s5q10__9 s5q12_Other ///
-						
+						s5q10__6 s5q10__7 s5q10__8 s5q10__9 s5q12_Other			
 
 * delete temp files 
 	erase			"$root/wave_01/SEC6w.dta"

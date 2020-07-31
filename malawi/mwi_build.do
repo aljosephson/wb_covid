@@ -28,8 +28,6 @@
 	cap log 		close
 	log using		"$logout/mal_build", append
 
-	
-
 
 * ***********************************************************************
 * 1 - reshape wide data
@@ -257,10 +255,7 @@
 	lab var			know_02 "Avoiding Handshakes/Physical Greetings Reduces Risk of Coronavirus Contract"
 	rename 			s3q2__11 know_11 
 	label var 		know_11 "Cough Etiquette Reduces Risk of Coronavirus Contract"
-	generate 		know_03 = 1 if s3q2__4 == 1
-	replace			know_03 = 1 if s3q2__5 == 1
-	replace			know_03 = 0 if know_03 == . 
-	*** combine s3q2__4 (mask) s3q2__5 (gloves)
+	rename 			s3q2__4 know_03 
 	lab var			know_03 "Using Masks and/or Gloves Reduces Risk of Coronavirus Contraction"
 	rename			s3q2__5 know_10
 	lab var			know_10 "Using Gloves Reduces Risk of Coronavirus Contraction"
@@ -469,11 +464,40 @@
 	
 *** EMPLOYMENT 
 
-*	rename 			s6q1a highedu
-*	rename 
+	rename			s6q1a edu
+	rename			s6q1 emp
+	rename			s6q2 emp_pre
+	rename			s6q3a emp_pre_why
+	rename			s6q3b emp_pre_act
+	rename			s6q4a emp_same
+	rename			s6q4b emp_chg_why
+	rename			s6q4c emp_pre_actc
+	rename			s6q5 emp_act
+	rename			s6q6 emp_stat
+	rename			s6q7 emp_able
+	rename			s6q8 emp_unable	
+	rename			s6q8a emp_unable_why	
+	rename			s6q8b__1 emp_cont_01
+	rename			s6q8b__2 emp_cont_02
+	rename			s6q8b__3 emp_cont_03
+	rename			s6q8b__4 emp_cont_04
+	rename			s6q8c__1 contrct
+	rename			s6q9 emp_hh
+	rename			s6q11 bus_emp
+	rename			s6q12 bus_sect
+	rename			s6q13 bus_emp_inc
+	rename			s6q14 bus_why
+	rename			s6q15 farm_emp 
+	rename			s6q16 farm_norm
+	rename			s6q17__1 farm_why_01
+	rename			s6q17__2 farm_why_02
+	rename			s6q17__3 farm_why_03
+	rename			s6q17__4 farm_why_04
+	rename			s6q17__5 farm_why_05
+	rename			s6q17__6 farm_why_06
+	rename			s6q17__7 farm_why_07
 	
-*	 s6q1 s6q2 s6q3a s6q3_os s6q3b s6q4a s6q4b s6q4b_os s6q4c s6q4c_os s6q5 s6q5_os s6q6 s6q7 s6q8 s6q8a s6q8a_os
-
+	
 *** FIES
 
 	rename			s8q1 fies_04
@@ -554,7 +578,10 @@
 	   
 * drop unneeded variables	
 	drop 			hh_a16 hh_a17 result s5q1c1__* s5q1c4__* s5q2c__* s5q1c3__* /// 
-					s5q5__* s5q6__* s5q8__* s5q10_os s13q5_* s13q6_*
+					s5q5__*  *_os s13q5_* s13q6_* *details  s6q8c__2 s6q8c__99 /// 
+					s6q10__*  interview__key nbrbst s12q2 s12q3__0 s12q3__* ///
+					 s12q4__* s12q5 s12q6 s12q7 s12q8 s12q9 s12q10 s12q11 ///
+					 s12q12 s12q13 s12q14 s11q* 
 
 * **********************************************************************
 * 4 - end matter, clean up to save

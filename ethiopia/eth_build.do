@@ -300,8 +300,10 @@ compress
 describe
 summarize 
 
+rename household_id hhid_eth 
+
 * save file
-		customsave , idvar(household_id) filename("eth_panel.dta") ///
+		customsave , idvar(hhid_eth) filename("eth_panel.dta") ///
 			path("$export") dofile(eth_build) user($user)
 
 * close the log

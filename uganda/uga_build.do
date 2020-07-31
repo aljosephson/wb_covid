@@ -1,6 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: jdm
+* Edited by : alj
+* LAST EDITED: 31 July 2020 
 * Stata v.16.1
 
 * does
@@ -558,8 +560,10 @@ compress
 describe
 summarize 
 
+rename HHID hhid_uga 
+
 * save file
-		customsave , idvar(HHID) filename("uga_panel.dta") ///
+		customsave , idvar(hhid_uga) filename("uga_panel.dta") ///
 			path("$export") dofile(uga_build) user($user)
 
 * close the log

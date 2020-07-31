@@ -897,7 +897,7 @@
 						s12q10a s5* 
 	
 * create country variables
-	gen				country = 1
+	gen				country = 3
 	order			country
 	lab def			country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda"
 	lab val			country country	
@@ -905,17 +905,28 @@
 
 * reorder variables
 	order			fies_02 fies_03 fies_04 fies_05 fies_06 fies_07 fies_08, after(fies_01)
+	
+* delete temp files 
+	/*erase			"$root/wave_01/r1_sect_7w.dta"
+	erase 			"$root/wave_02/r2_sect_7w.dta"
+	erase 			"$root/wave_01/r1_sect_10w.dta"
+	erase			"$root/wave_01/r1_sect_11w"
+	erase			"$root/wave_02/r2_sect_11w"
+	erase			"$root/wave_01/r1_sect_all"
+	erase			"$root/wave_02/r2_sect_all"	*/
 			
 * **********************************************************************
-* 2 - end matter, clean up to save
+* 3 - end matter, clean up to save
 * **********************************************************************
 
 compress
 describe
 summarize 
 
+rename hhid hhid_nga 
+
 * save file
-		customsave , idvar(hhid) filename("nga_panel.dta") ///
+		customsave , idvar(hhid_nga) filename("nga_panel.dta") ///
 			path("$export") dofile(nga_build) user($user)
 
 * close the log

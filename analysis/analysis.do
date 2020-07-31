@@ -40,3 +40,21 @@
 	use				"$eth/eth_panel", clear
 	
 	append using	"$uga/uga_panel", force
+	
+	append using 	"$mwi/mwi_panel", force
+	
+	append using 	"$nga/nga_panel", force
+
+* **********************************************************************
+* 2 - end matter, clean up to save
+* **********************************************************************
+
+compress
+describe
+summarize 
+	
+* save file 	
+	save			"$export/lsms_panel", replace
+
+* close the log
+	log	close	

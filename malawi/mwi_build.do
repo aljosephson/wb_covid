@@ -1,6 +1,7 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: alj
+* LAST EDITED: 31 July 2020 
 * Stata v.16.1
 
 * does
@@ -576,7 +577,7 @@
 	rename 			s13q15 ag_price 
 	
 * create country variables
-	gen				country = 4
+	gen				country = 2
 	order			country
 	lab def			country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda"
 	lab val			country country	
@@ -596,8 +597,10 @@ compress
 describe
 summarize 
 
+rename household_id hhid_mwi 
+
 * save file
-		customsave , idvar(household_id) filename("mwi_panel.dta") ///
+		customsave , idvar(hhid_mwi) filename("mwi_panel.dta") ///
 			path("$export") dofile(mwi_build) user($user)
 
 * close the log

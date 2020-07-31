@@ -1,6 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: jdm
+* Edited by: alj 
+* LAST EDIT: 31 July 2020 
 * Stata v.16.1
 
 * does
@@ -55,6 +57,7 @@
 	order			phw, after(phw1)
 	drop			phw1 phw2
 	
+* administrative variables 	
 	rename			ii4_resp_id resp_id
 	rename			cs4_sector sector
 	rename			cs5_eaid ea
@@ -74,6 +77,8 @@
 	rename			ii1_attempt attempt
 	rename			bi_locchange loc_chg
 	rename			bi_same_hhh same_hhh
+
+* covid variables
 	rename			kn1_heard know
 	rename			kn2_meas_handwash know_01
 	rename			kn2_meas_handshake know_02
@@ -98,6 +103,8 @@
 	rename			bh1_handwash bh_01
 	rename			bh2_handshake bh_02
 	rename			bh3_gatherings bh_03
+	
+* access variables 
 	rename			ac1_atb_med ac_med
 	rename			ac2_atb_med_why ac_med_why
 	rename			ac1_atb_teff ac_teff
@@ -121,6 +128,8 @@
 	rename			ac7_med_access med_access
 	rename			ac8_med_access_reas med_access_why
 	rename			ac9_bank bank 
+
+* employment variables 	
 	rename			em1_work_cur emp
 	rename			em6_work_cur_act emp_act
 	rename			em6_work_cur_act_other emp_act_other
@@ -152,6 +161,8 @@
 	rename			em23_we wage_emp
 	rename			em24_we_layoff wage_off
 	rename			em25_we_layoff_covid wage_off_covid
+	
+* income variables 	
 	rename			lc1_farm farm_inc
 	rename			lc2_farm_chg farm_chg
 	rename			lc1_bus bus_inc
@@ -173,6 +184,8 @@
 	rename			lc1_other oth_inc
 	rename			lc2_other_chg oth_chg
 	rename			lc3_total_chg tot_inc_chg
+	
+* coping variables 	
 	rename			lc4_total_chg_cope_1 cope_01
 	rename			lc4_total_chg_cope_2 cope_02
 	rename			lc4_total_chg_cope_3 cope_03
@@ -190,9 +203,18 @@
 	rename			lc4_total_chg_cope_15 cope_15
 	rename			lc4_total_chg_cope_0 cope_16
 	rename			lc4_total_chg_cope__96 cope_17
+	
+* fies variables 	
 	rename			fi7_outoffood fies_01
 	rename			fi8_hungrynoteat fies_02
 	rename			fi6_noteatfullday fies_03
+	rename			fi1_enough fies_04
+	rename			fi2_healthy fies_05
+	rename			fi3_fewkinds fies_06
+	rename			fi4_skipmeal fies_07
+	rename			fi5_ateless fies_08
+	
+* assistance variables 	
 	rename			as1_assist_type_1 asst_01
 	rename			as1_assist_type_2 asst_02
 	rename			as1_assist_type_3 asst_03
@@ -217,15 +239,22 @@
 	rename			em15a_bus_prev bus_prev
 	rename			em15b_bus_prev_closed bus_prev_close
 	rename			em15c_bus_new bus_new
-	rename			fi1_enough fies_04
-	rename			fi2_healthy fies_05
-	rename			fi3_fewkinds fies_06
-	rename			fi4_skipmeal fies_07
-	rename			fi5_ateless fies_08
 
 * reformat bus_why variables
-	gen				bus_why = 
-	
+	gen				bus_why = .
+	replace 		bus_why = 1 if em19_bus_inc_low_why_1 == 1
+	replace			bus_why = 2 if em19_bus_inc_low_why_2 == 1
+	replace 		bus_why = 3 if em19_bus_inc_low_why_3 == 1
+	replace			bus_why = 4 if em19_bus_inc_low_why_4 == 1
+	replace 		bus_why = 5 if em19_bus_inc_low_why_5 == 1
+	replace			bus_why = 6 if em19_bus_inc_low_why_6 == 1
+	replace 		bus_why = 7 if em19_bus_inc_low_why_7 == 1
+	replace			bus_why = 8 if em19_bus_inc_low_why__98 == 1
+	replace 		bus_why = 9 if em19_bus_inc_low_why__96 == 1
+	lab def			bus_why 1 "markets closed - covid" 2 "markets closed - other" 3 "seasonal closure" /// 
+								4 "no customers" 5 "unable to get inputs" 6 "unable to sell output" ///
+								7 "illness in household" 8 "do not know" 9 "other"
+	label var 		bus_why "reason for family business less than usual"
 	
 * drop unnecessary variables
 	drop			kn3_gov kn3_gov_0 kn3_gov__98 kn3_gov__99 kn3_gov__96 ///
@@ -249,12 +278,12 @@
 						as4_cash_source_other as4_other_source_other ///
 						ir1_endearly ir1_whyendearly ir1_whyendearly_other ///
 						ir_lang ir_understand ir_confident em15b_bus_prev_closed_other ///
-						key
+						key em19_bus_inc_low_why__* em19_bus_inc_low_why
 
 * reorder variables
 	order			fies_04 fies_05 fies_06 fies_07 fies_08, after(fies_03)
 	order 			resp_same resp_gender resp_age resp_hhh, after(hhh_age)
-	order			bus_prev bus_prev_close bus_new, after(bus_why_07)
+	order			bus_prev bus_prev_close bus_new, after(bus_why)
 	
 * create country variables
 	gen				country = 1

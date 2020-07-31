@@ -4,12 +4,12 @@
 * Stata v.16.1
 
 * does
-	* reads in first two rounds of Ethiopia data
-	* builds panel
-	* outputs panel data
+	* merges together each section of Nigeria data
+	* renames variables
+	* outputs single cross section data
 
 * assumes
-	* raw Ethiopia data
+	* raw Nigeria data
 
 * TO DO:
 	* complete
@@ -20,21 +20,97 @@
 * **********************************************************************
 
 * define 
-	global	root	=	"$data/ethiopia/raw"
-	global	export	=	"$data/ethiopia/refined"
-	global	logout	=	"$data/ethiopia/logs"
+	global	root	=	"$data/nigeria/raw"
+	global	export	=	"$data/nigeria/refined"
+	global	logout	=	"$data/nigeria/logs"
 
 * open log
 	cap log 		close
-	log using		"$logout/eth_build", append
+	log using		"$logout/nga_build", append
 
 
 * ***********************************************************************
-* 1 - build ethiopia panel
+* 1 - reshape wide data
+* ***********************************************************************
+
+
+* ***********************************************************************
+* 1a - reshape section 7 wide data - wave 1
+* ***********************************************************************
+
+* read in section 7, wave 1
+	use				"$root/wave_01/r1_sect_7", clear
+
+* reformat HHID
+	format 			%5.0f hhid
+	
+* drop other source
+	drop			source_cd_os zone state lga sector ea
+	
+* reshape data	
+	reshape 		wide s7q1 s7q2, i(hhid) j(source_cd)
+
+* rename variables	
+	rename 			s7q11 farm_inc
+	lab	var			farm_inc "Income from farming, fishing, livestock in last 12 months"
+	rename			s7q21 farm_chg
+	lab var			farm_chg "Change in income from farming since covid"
+	rename 			s7q12 bus_inc
+	lab var			bus_inc "Income from non-farm family business in last 12 months"
+	rename			s7q22 bus_chg
+	lab var			bus_chg "Change in income from non-farm family business since covid"	
+	rename 			s7q13 wage_inc
+	lab var			wage_inc "Income from wage employment in last 12 months"
+	rename			s7q23 wage_chg
+	lab var			wage_chg "Change in income from wage employment since covid"	
+	rename 			s7q14 rem_for
+	label 			var rem_for "Income from remittances abroad in last 12 months"
+	rename			s7q24 rem_for_chg
+	label 			var rem_for_chg "Change in income from remittances abroad since covid"	
+	rename 			s7q15 rem_dom
+	label 			var rem_dom "Income from remittances domestic in last 12 months"
+	rename			s7q25 rem_dom_chg
+	label 			var rem_dom_chg "Change in income from remittances domestic since covid"	
+	rename 			s7q16 asst_inc
+	label 			var asst_inc "Income from assistance from non-family in last 12 months"
+	rename			s7q26 asst_chg
+	label 			var asst_chg "Change in income from assistance from non-family since covid"
+	rename 			s7q17 isp_inc
+	label 			var isp_inc "Income from properties, investment in last 12 months"
+	rename			s7q27 isp_chg
+	label 			var isp_chg "Change in income from properties, investment since covid"
+	rename 			s7q18 pen_inc
+	label 			var pen_inc "Income from pension in last 12 months"
+	rename			s7q28 pen_chg
+	label 			var pen_chg "Change in income from pension since covid"
+	rename 			s7q19 gov_inc
+	label 			var gov_inc "Income from government assistance in last 12 months"
+	rename			s7q29 gov_chg
+	label 			var gov_chg "Change in income from government assistance since covid"	
+	rename 			s7q110 ngo_inc
+	label 			var ngo_inc "Income from NGO assistance in last 12 months"
+	rename			s7q210 ngo_chg
+	label 			var ngo_chg "Change in income from NGO assistance since covid"
+	rename 			s7q196 oth_inc
+	label 			var oth_inc "Income from other source in last 12 months"
+	rename			s7q296 oth_chg
+	label 			var oth_chg "Change in income from other source since covid"	
+	rename			s7q299 tot_inc_chg
+	label 			var tot_inc_chg "Change in income from other source since covid"	
+
+	drop			s7q199
+	
+* save temp file
+	save			"$root/wave_01/r1_sect_7w", replace
+	
+	
+	
+* ***********************************************************************
+* 2 - build nigeria panel
 * ***********************************************************************
 
 * load round 1 of the data
-	use				"$root/wave_01/200614_WB_LSMS_HFPM_HH_Survey-Round1_Clean-Public_Microdata", ///
+	use				"$root/wave_01/r1_sect_a_3_4_5_6_8_9_12", ///
 						clear
 	
 * generate round variable
@@ -42,7 +118,7 @@
 	lab var			wave "Wave number"
 	
 * append round 2 of the data
-	append 			using "$root/wave_02/200620_wb_lsms_hfpm_hh_survey_round2_clean_public_microdata", ///
+	append 			using "$root/wave_02/r2_sect_a_2_5_6_8_12", ///
 						force
 	
 	replace			wave = 2 if wave == .
@@ -275,8 +351,8 @@ describe
 summarize 
 
 * save file
-		customsave , idvar(household_id) filename("eth_panel.dta") ///
-			path("$export") dofile(eth_build) user($user)
+		customsave , idvar(HHID) filename("nga_panel.dta") ///
+			path("$export") dofile(nga_build) user($user)
 
 * close the log
 	log	close

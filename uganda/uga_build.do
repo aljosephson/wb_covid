@@ -29,7 +29,6 @@
 	log using		"$logout/uga_build", append
 
 	
-
 * ***********************************************************************
 * 1 - reshape wide data
 * ***********************************************************************
@@ -291,15 +290,14 @@
 	merge 1:1 		HHID using "$root/wave_01/SEC3.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC4.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC5.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$root/wave_01/SEC5A.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC6w.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC7.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC8.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC9w.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC9A.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC10w.dta", keep(match) nogenerate
-	*** sections 9 did not merges
-	*** will have to reformat them and then merge
-	
+
 * reformat HHID
 	format 			%12.0f HHID
 	
@@ -312,12 +310,9 @@
 	rename			wfinal phw
 	lab var			phw "sampling weights"
 	
-	rename			HHID household_id
-	lab var			household_id "Household ID (Full)"
-	
 	gen				wave = 1
 	lab var			wave "Wave number"
-	order			baseline_hhid wave phw, after(household_id)
+	order			baseline_hhid wave phw, after(HHID)
 	
 	gen				sector = 2 if urban == 1
 	replace			sector = 1 if sector == .
@@ -433,6 +428,31 @@
 	rename			s3q03 bh_03
 	rename			s3q05 bh_04
 	rename			s3q06 bh_05
+ 
+* rename employment
+	rename			s5q01a edu
+	rename			s5q01 emp
+	rename			s5q02 emp_pre
+	rename			s5q03 emp_pre_why
+	rename			s504 emp_pre_act
+	rename			s5q04a emp_same
+	rename			s5q04b emp_chg_why
+	rename			s504c emp_pre_actc
+	rename			s5q05 emp_act
+	rename			s5q06 emp_stat
+	rename			s5q07 emp_able
+	rename			s5q08 emp_unable
+	rename			s5q08a emp_unable_why
+	rename			s5q08b__1 emp_cont_01
+	rename			s5q08b__2 emp_cont_02
+	rename			s5q08b__3 emp_cont_03
+	rename			s5q08b__4 emp_cont_04
+	rename			s5q08c contrct
+	rename			s5q09 emp_hh
+	rename			s5q11 bus_emp
+	rename			s5q12 bus_sect
+	rename			s5q13 bus_emp_inc
+	rename			s5q14 bus_why
 
 * rename agriculture
 	rename			s5aq16 ag_prep
@@ -517,7 +537,13 @@
 						CountyName SubcountyName ParishName EaName VillageName ///
 						subreg s2q01b__n96 s2q01b_Other s5qaq17_1_Other ///
 						s5aq20__n96 s5aq20_Other s5aq21__n96 s5aq21_Other ///
-						s5aq22__n96 s5aq22_Other s5aq23_Other s5aq24_Other
+						s5aq22__n96 s5aq22_Other s5aq23_Other s5aq24_Other ///
+						sec5_startime sec5_endtime totalmembers sec5a_startime ///
+						sec5a_endtime s5q03_Other s504_Other s5q04b_Other ///
+						s504c_Other s5q05_Other s5q08a_Other s5q10__0 ///
+						s5q10__1 s5q10__2 s5q10__3 s5q10__4 s5q10__5 ///
+						s5q10__6 s5q10__7 s5q10__8 s5q10__9 s5q12_Other ///
+						
 
 * delete temp files 
 	erase			"$root/wave_01/SEC6w.dta"
@@ -534,7 +560,7 @@ describe
 summarize 
 
 * save file
-		customsave , idvar(household_id) filename("uga_panel.dta") ///
+		customsave , idvar(HHID) filename("uga_panel.dta") ///
 			path("$export") dofile(uga_build) user($user)
 
 * close the log

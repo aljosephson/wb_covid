@@ -129,7 +129,7 @@
 	
 	generate		food_gov = 1 if s11q11 == 1 & s11q31 == 1
 	lab var			food_gov "Has any member of your household received free food from government"
-	generate		food_gov_val = s11q12 if s11q11 == 1 & s11q31 == 1
+	generate		food_gov_val = s11q21 if s11q11 == 1 & s11q31 == 1
 	lab var			food_gov_val "What was the total value of free food from government"
 	
 	generate		food_inst= 1 if s11q11 == 1 & s11q31 <= 1 & s11q31 >= . 
@@ -574,8 +574,13 @@
 	rename			s13q13 ag_sold
 	rename			s13q14 ag_sell
 	rename 			s13q15 ag_price 
-	 	       
-	   
+	
+* create country variables
+	gen				country = 4
+	order			country
+	lab def			country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda"
+	lab val			country country	
+	 	    
 * drop unneeded variables	
 	drop 			hh_a16 hh_a17 result s5q1c1__* s5q1c4__* s5q2c__* s5q1c3__* /// 
 					s5q5__*  *_os s13q5_* s13q6_* *details  s6q8c__2 s6q8c__99 /// 

@@ -84,14 +84,14 @@ if $pack == 1 {
 
 
 * **********************************************************************
+* 1 - run weather data cleaning .do file
+* **********************************************************************
+
+
+* **********************************************************************
 * 2 - run household data cleaning .do file
 * **********************************************************************
 
-*	do 			"$code/ethiopia/eth_build.do"			//	cleans Ethiopia
-*	do 			"$code/malawi/mwi_build.do"			//	cleans Malawi
-*	do 			"$code/nigeria/nga_build.do"			//	cleans Nigeria
-*	do 			"$code/uganda/uga_build.do"				//	cleans Uganda
-	
 
 * **********************************************************************
 * 3 - run .do files that merge weather and household data

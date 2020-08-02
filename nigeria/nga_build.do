@@ -718,7 +718,6 @@
 
 	rename 			s5q2 ac_medserv_need
 	rename 			s5q3 acserv_med
-	rename 			s5q4 ac_medserv_why 
 	replace 		ac_medserv_why = 6 if ac_medserv_why == 4
 	replace 		ac_medserv_why = 4 if ac_medserv_why == 96 
 	lab def			ac_medserv_why 1 "no money" 2 "no med personnel" 3 "facility full" /// 
@@ -786,7 +785,7 @@
 	rename			s6q17__6 farm_why_06
 	rename			s6q17__96 farm_why_07
 	
-* round 2 access differs from round 1 access 
+* round 2 access differs from round 1 employment 
 
 	rename 			s6q1a emp_7
 	rename 			s6q1b emp_7ret 
@@ -894,7 +893,7 @@
 * drop unnecessary variables
 	drop			interviewer_id *_os  s6q10_* s12q3__* s12q4__* /// 
 						s12q5 s12q9 s12q10 s12q10_os s12q11 s12q14 s11* baseline_date ///
-						s12q10a s5* 
+						s12q10a s5*  
 	
 * create country variables
 	gen				country = 3

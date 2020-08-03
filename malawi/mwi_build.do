@@ -883,7 +883,6 @@
 	rename			s13q3 ag_prog
 	rename 			s13q4 ag_chg
 	
-
 	rename			s13q5__1 ag_chg_08  
 	label var 		ag_chg_08 "activities affected - covid measures"
 	rename			s13q5__2 ag_chg_09  
@@ -1254,10 +1253,114 @@
 						s6q8e__1 s6q8e__2 s6q8e__99 s6q9 s6q10__0 s6q10__1 ///
 						s6q10__2 s6q10__3 s6q3a s6q3b
 
-	PICK UP HERE
 	gen				rtrn_emp_why = 1 if s6q1c__1 == 1
-	replace			s6q1c__2 s6q1c__3 s6q1c__4 s6q1c__5 s6q1c__6 s6q1c__7 s6q1c__8 s6q1c__9 s6q1c__10 s6q1c__11 s6q1c__12 s6q1c__13 s6q1c__96
-		
+	replace			rtrn_emp_why = 2 if s6q1c__2 == 1
+	replace			rtrn_emp_why = 3 if s6q1c__3 == 1
+	replace			rtrn_emp_why = 4 if s6q1c__4 == 1
+	replace			rtrn_emp_why = 5 if s6q1c__5 == 1
+	replace			rtrn_emp_why = 6 if s6q1c__6 == 1
+	replace			rtrn_emp_why = 7 if s6q1c__7 == 1
+	replace			rtrn_emp_why = 8 if s6q1c__8 == 1
+	replace			rtrn_emp_why = 9 if s6q1c__9 == 1
+	replace			rtrn_emp_why = 10 if s6q1c__10 == 1
+	replace			rtrn_emp_why = 11 if s6q1c__11 == 1
+	replace			rtrn_emp_why = 12 if s6q1c__12 == 1
+	replace			rtrn_emp_why = 13 if s6q1c__13 == 1
+	replace			rtrn_emp_why = 14 if s6q1c__96 == 1
+	lab def			rtrn_emp_why 1 "Business closed due to legal restrictions" ///
+								 2 "Business closed for other reasons" 3 "Laid off" /// 
+								 4 "Furloughed" 5 "Vacation" 6 "Ill/Quarantined" ///
+								 7 "Caregiving" 8 "Seasonal worker" 9 "Retired" ///
+								 10 "Unable to farm due to legal restrictions" ///
+								 11 "Unable to farm due to lack of inputs" ///
+								 12 "Not farming season" 13 "COVID rotation" ///
+								 14 "Other"
+	lab val			rtrn_emp_why rtrn_emp_why
+	lab var 		rtrn_emp_why "Why did you not work last week"
+	order			rtrn_emp_why, after(rtrn_when)
+	
+	drop			s6q1c__1 s6q1c__2 s6q1c__3 s6q1c__4 s6q1c__5 s6q1c__6 ///
+						s6q1c__7 s6q1c__8 s6q1c__9 s6q1c__10 s6q1c__11 ///
+						s6q1c__12 s6q1c__13 s6q1c__96 s6q1c_os
+
+	replace			rtrn_emp_why = 1 if s6q3__1 == 1 & rtrn_emp_why == .
+	replace			rtrn_emp_why = 2 if s6q3__2 == 1 & rtrn_emp_why == .
+	replace			rtrn_emp_why = 3 if s6q3__3 == 1 & rtrn_emp_why == .
+	replace			rtrn_emp_why = 4 if s6q3__4 == 1 & rtrn_emp_why == .
+	replace			rtrn_emp_why = 5 if s6q3__5 == 1 & rtrn_emp_why == .
+	replace			rtrn_emp_why = 6 if s6q3__6 == 1 & rtrn_emp_why == .
+	replace			rtrn_emp_why = 7 if s6q3__7 == 1 & rtrn_emp_why == .
+	replace			rtrn_emp_why = 8 if s6q3__8 == 1 & rtrn_emp_why == .
+	replace			rtrn_emp_why = 9 if s6q3__9 == 1 & rtrn_emp_why == .
+	replace			rtrn_emp_why = 10 if s6q3__10 == 1 & rtrn_emp_why == .
+	replace			rtrn_emp_why = 11 if s6q3__11 == 1 & rtrn_emp_why == .
+	replace			rtrn_emp_why = 12 if s6q3__12 == 1 & rtrn_emp_why == .
+	replace			rtrn_emp_why = 13 if s6q3__13 == 1 & rtrn_emp_why == .
+	replace			rtrn_emp_why = 14 if s6q3__96 == 1 & rtrn_emp_why == .
+	
+	drop			s6q3__1 s6q3__2 s6q3__3 s6q3__4 s6q3__5 s6q3__6 s6q3__7 ///
+						s6q3__8 s6q3__9 s6q3__10 s6q3__11 s6q3__12 s6q3__13 ///
+						s6q3__96 s6q3_os
+
+	rename			s6bq11 bus_emp
+	rename			s6bq11a_1 bus_stat
+	replace			bus_stat = s6bq11a_2 if bus_stat == .
+	replace			bus_stat = s6bq11a_3 if bus_stat == .
+	rename			s6bq11b bus_stat_why
+	rename			s6qb12 bus_sect
+	rename			s6qb13 bus_emp_inc
+	rename			s6qb14 bus_why
+	
+	rename			s6qb15 bus_chlng
+	gen				bus_chlng_fce = 1 if s6qb15__1 == 1
+	replace			bus_chlng_fce = 2 if s6qb15__1 == 1
+	replace			bus_chlng_fce = 3 if s6qb15__1 == 1
+	replace			bus_chlng_fce = 4 if s6qb15__1 == 1
+	replace			bus_chlng_fce = 5 if s6qb15__1 == 1
+	replace			bus_chlng_fce = 6 if s6qb15__1 == 1
+	replace			bus_chlng_fce = 7 if s6qb15__1 == 1
+	lab def			bus_chlng_fce 1 "Difficulty buying and receiving supplies and inputs" ///
+								  2 "Difficulty raising money for the business" ///
+								  3 "Difficulty repaying loans or other debt obligations" /// 
+								  4 "Difficulty paying rent for business location" ///
+								  5 "Difficulty paying workers" ///
+								  6 "Difficulty selling goods or services to customers" ///
+								  7 "Other"
+	lab val			bus_chlng_fce bus_chlng_fce
+	order			bus_chlng_fce, after(bus_chlng)
+
+	drop			s6bq11a_2 s6bq11a_3 s6q14b_os s6qb15__1 s6qb15__2 ///
+						s6qb15__3 s6qb15__4 s6qb15__5 s6qb15__6 s6qb15__7 ///
+						s6bq15_ot
+	
+	rename			s6bq15a bus_cndct
+	gen				bus_cndct_how = 1 if s6bq15b__1 == 1 
+	replace			bus_cndct_how = 1 if s6bq15b__2 == 1 
+	replace			bus_cndct_how = 1 if s6bq15b__3 == 1 
+	replace			bus_cndct_how = 1 if s6bq15b__4 == 1 
+	replace			bus_cndct_how = 1 if s6bq15b__5 == 1 
+	replace			bus_cndct_how = 1 if s6bq15b__6 == 1 
+	replace			bus_cndct_how = 1 if s6bq15b__96 == 1
+	lab def			bus_cndct_how 1 "Requiring customers to wear masks" ///
+								  2 "Keeping distance between customers" ///
+								  3 "Allowing a reduced number of customers" ///
+								  4 "Use of phone and or social media to market" ///
+								  5 "Switched to delivery services only" ///
+								  6 "Switched product/service offering" ///
+								  7 "Other"
+	lab val			bus_cndct_how bus_cndct_how
+	lab var			bus_cndct_how "Changed the way you conduct business due to the corona virus?"
+	order			bus_cndct_how, after(bus_cndct)
+	
+	drop			s6bq15b__1 s6bq15b__2 s6bq15b__3 s6bq15b__4 s6bq15b__5 ///
+						s6bq15b__6 s6bq15b__96
+	
+	rename			s6cq1 oth_inc_01
+	rename			s6cq2 oth_inc_02
+	rename			s6cq3 oth_inc_03
+	rename			s6cq4 oth_inc_04
+	rename			s6cq5 oth_inc_05
+	
 * SEC 8: fies
 	rename			s8q1 fies_04
 	lab var			fies_04 "Worried about not having enough food to eat"
@@ -1304,9 +1407,6 @@
 	lab val			country country	
 	lab var			country "Country"
 	 	    
-* drop unneeded variables	
-	drop 			hh_a16 hh_a17 s6q1_1- s6cq5
-	
 * save temp file
 	save			"$root/wave_02/r2_sect_all", replace		
 	

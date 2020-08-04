@@ -787,6 +787,7 @@
 
 	rename 			s5q2 ac_medserv_need
 	rename 			s5q3 ac_medserv
+	rename 			s5q4 ac_medserv_why 
 	replace 		ac_medserv_why = 6 if ac_medserv_why == 4
 	replace 		ac_medserv_why = 4 if ac_medserv_why == 96 
 	lab def			ac_medserv_why 1 "no money" 2 "no med personnel" 3 "facility full" /// 

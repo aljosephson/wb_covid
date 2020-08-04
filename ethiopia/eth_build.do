@@ -78,6 +78,7 @@
 	rename			bi_locchange loc_chg
 	rename			bi_same_hhh same_hhh
 
+
 * covid variables
 	rename			kn1_heard know
 	rename			kn2_meas_handwash know_01
@@ -239,6 +240,15 @@
 	rename			em15a_bus_prev bus_prev
 	rename			em15b_bus_prev_closed bus_prev_close
 	rename			em15c_bus_new bus_new
+	rename 			resp_age age
+	rename 			resp_hhh relate_hoh
+	rename			resp_gender	sex 
+	rename 			resp_same same 
+	
+* replace resp for r1 based on r2
+* only 27 not the same 
+	encode 			household_id, generate (household_id_d)
+	xfill 			age relate_hoh sex if same == 1, i (household_id_d)
 
 * reformat bus_why variables
 	gen				bus_why = .
@@ -282,7 +292,7 @@
 
 * reorder variables
 	order			fies_04 fies_05 fies_06 fies_07 fies_08, after(fies_03)
-	order 			resp_same resp_gender resp_age resp_hhh, after(hhh_age)
+	order 			same sex age relate_hoh, after(hhh_age)
 	order			bus_prev bus_prev_close bus_new, after(bus_why)
 	
 * create country variables
@@ -296,11 +306,14 @@
 * 2 - end matter, clean up to save
 * **********************************************************************
 
-compress
-describe
-summarize 
+	compress	
+	describe
+	summarize 
 
-rename household_id hhid_eth 
+	rename 			household_id hhid_eth 
+	label 			var hhid_eth "household id unique - ethiopia (string)"
+	rename 			household_id_d hhid_eth_d
+	label 			var hhid_eth_d "household id unique - ethiopia (encoded)"
 
 * save file
 		customsave , idvar(hhid_eth) filename("eth_panel.dta") ///

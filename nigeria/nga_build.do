@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: jdm
-* Edited by: alj
-* LAST EDIT: 31 July 2020 
+* Edited by: jdm
+* Last edited: 4 August 2020 
 * Stata v.16.1
 
 * does
@@ -103,7 +103,7 @@
 	drop			s7q199
 	
 * save temp file
-	save			"$root/wave_01/r1_sect_7w", replace
+	save			"$export/wave_01/r1_sect_7w", replace
 	
 
 * ***********************************************************************
@@ -136,7 +136,7 @@
 	label 			var pen_inc "Income from pension in last 12 months"
 
 * save temp file
-	save			"$root/wave_02/r2_sect_7w", replace
+	save			"$export/wave_02/r2_sect_7w", replace
 	
 * ***********************************************************************
 * 1c - reshape section 10 wide data - wave 1
@@ -231,7 +231,7 @@
 	lab var			cope_17 "Other"
 
 * save temp file
-	save			"$root/wave_01/r1_sect_10w", replace
+	save			"$export/wave_01/r1_sect_10w", replace
 
 * ***********************************************************************
 * 1d - reshape section 11 wide data - wave 1
@@ -302,7 +302,7 @@
 	lab val			asst_04 s10q01
 
 * save temp file
-	save			"$root/wave_01/r1_sect_11w", replace
+	save			"$export/wave_01/r1_sect_11w", replace
 	
 * ***********************************************************************
 * 1e - reshape section 11 wide data - wave 2
@@ -448,7 +448,74 @@
 	drop 			s11* 
 
 * save temp file
-	save			"$root/wave_02/r2_sect_11w", replace				
+	save			"$export/wave_02/r2_sect_11w", replace				
+
+
+* ***********************************************************************
+* 1f - get respondant gender - R1
+* ***********************************************************************
+
+* load data
+	use				"$root/wave_01/r1_sect_a_3_4_5_6_8_9_12", clear
+	
+* drop all but household respondant
+	keep			hhid s12q9
+	
+	rename			s12q9 indiv
+	
+	isid			hhid
+	
+* merge in household roster
+	merge 1:1		hhid indiv using "$root/wave_01/r1_sect_2.dta"
+	
+	keep if			_merge == 3
+	
+* rename variables and fill in missing values
+	rename			s2q5 sex
+	rename			s2q6 age
+	rename			s2q7 relate_hoh
+	replace			relate_hoh = s2q9 if relate_hoh == .
+	rename			indiv PID
+	
+* drop all but gender and relation to HoH
+	keep			hhid PID sex age relate_hoh
+
+* save temp file
+	save			"$export/wave_01/respond_r1", replace
+
+	
+* ***********************************************************************
+* 1g - get respondant gender - R2
+* ***********************************************************************
+
+* load data
+	use				"$root/wave_02/r2_sect_a_2_5_6_8_12", clear
+	
+* drop all but household respondant
+	keep			hhid s12q9
+	
+	rename			s12q9 indiv
+	
+	isid			hhid
+	
+* merge in household roster
+	merge 1:1		hhid indiv using "$root/wave_02/r2_sect_2.dta"
+	
+	keep if			_merge == 3
+	
+* rename variables and fill in missing values
+	rename			s2q5 sex
+	rename			s2q6 age
+	rename			s2q7 relate_hoh
+	replace			relate_hoh = s2q9 if relate_hoh == .
+	rename			indiv PID
+	
+* drop all but gender and relation to HoH
+	keep			hhid PID sex age relate_hoh
+
+* save temp file
+	save			"$export/wave_02/respond_r2", replace	
+	
 	
 * ***********************************************************************
 * 2a - build nigeria wave 1 panel 
@@ -459,16 +526,17 @@
 						clear
 						
 * merge in other sections
-	merge 1:1 		hhid using "$root/wave_01/r1_sect_7w.dta", keep(match) nogenerate
-	merge 1:1 		hhid using "$root/wave_01/r1_sect_10w.dta", keep(match) nogenerate
-	merge 1:1 		hhid using "$root/wave_01/r1_sect_11w.dta", keep(match) nogenerate
+	merge 1:1 		hhid using "$export/wave_01/respond_r1.dta", keep(match) nogenerate
+	merge 1:1 		hhid using "$export/wave_01/r1_sect_7w.dta", keep(match) nogenerate
+	merge 1:1 		hhid using "$export/wave_01/r1_sect_10w.dta", keep(match) nogenerate
+	merge 1:1 		hhid using "$export/wave_01/r1_sect_11w.dta", keep(match) nogenerate
 
 * generate round variable
 	gen				wave = 1
 	lab var			wave "Wave number"
 	
 * save temp file
-	save			"$root/wave_01/r1_sect_all", replace	
+	save			"$export/wave_01/r1_sect_all", replace	
 	
 * ***********************************************************************
 * 2b - build nigeria wave 2 panel 
@@ -479,26 +547,27 @@
 						clear
 						
 * merge in other sections
-	merge 1:1 		hhid using "$root/wave_02/r2_sect_7w.dta", keep(match) nogenerate
-	merge 1:1 		hhid using "$root/wave_02/r2_sect_11w.dta", keep(match) nogenerate
+	merge 1:1 		hhid using "$export/wave_02/respond_r2.dta", keep(match) nogenerate
+	merge 1:1 		hhid using "$export/wave_02/r2_sect_7w.dta", keep(match) nogenerate
+	merge 1:1 		hhid using "$export/wave_02/r2_sect_11w.dta", keep(match) nogenerate
 
 * generate round variable
 	gen				wave = 2
 	lab var			wave "Wave number"
 	
 * save temp file
-	save			"$root/wave_02/r2_sect_all", replace	
+	save			"$export/wave_02/r2_sect_all", replace	
 
 * ***********************************************************************
 * 2c - build nigeria panel 
 * ***********************************************************************
 
 * load round 1 of the data
-	use				"$root/wave_01/r1_sect_all.dta", ///
+	use				"$export/wave_01/r1_sect_all.dta", ///
 						clear
 
 * append round 2 of the data
-	append 			using "$root/wave_02/r2_sect_all", ///
+	append 			using "$export/wave_02/r2_sect_all", ///
 						force	
 	order			wave, after(hhid)
 
@@ -717,7 +786,7 @@
 
 
 	rename 			s5q2 ac_medserv_need
-	rename 			s5q3 acserv_med
+	rename 			s5q3 ac_medserv
 	replace 		ac_medserv_why = 6 if ac_medserv_why == 4
 	replace 		ac_medserv_why = 4 if ac_medserv_why == 96 
 	lab def			ac_medserv_why 1 "no money" 2 "no med personnel" 3 "facility full" /// 

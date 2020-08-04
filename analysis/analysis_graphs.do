@@ -69,6 +69,7 @@
 	histogram 		bh_04, by (know_06 country) bin(2)
 	histogram 		bh_05, by (know_04 country) bin(2)
 	histogram 		bh_05, by (know_05 country) bin(2) 
+	
 * ttests between knowledge and behavior 
 	ttest 			bh_01, by (know_01)
 	ttest 			bh_02, by (know_02)

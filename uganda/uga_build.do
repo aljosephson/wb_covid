@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: jdm
-* Edited by : alj
-* LAST EDITED: 31 July 2020 
+* Edited by : jdm
+* Last edited: 4 August 2020 
 * Stata v.16.1
 
 * does
@@ -279,6 +279,38 @@
 * save temp file
 	save			"$root/wave_01/SEC10w", replace
 
+
+* ***********************************************************************
+* 1d - get respondant gender - R1
+* ***********************************************************************
+
+* load data
+	use				"$root/wave_01/interview_result", clear
+	
+* drop all but household respondant
+	keep			HHID Rq09
+	
+	rename			Rq09 hh_roster__id
+	
+	isid			HHID
+	
+* merge in household roster
+	merge 1:1		HHID hh_roster__id using "$root/wave_01/SEC1.dta"
+	
+	keep if			_merge == 3
+	
+* rename variables and fill in missing values
+	rename			hh_roster__id PID
+	rename			s1q05 sex
+	rename			s1q06 age
+	rename			s1q07 relate_hoh
+	drop if			PID == .
+	
+* drop all but gender and relation to HoH
+	keep			HHID PID sex age relate_hoh
+
+* save temp file
+	save			"$export/wave_01/respond_r1", replace
 	
 * ***********************************************************************
 * 2 - build uganda cross section
@@ -288,6 +320,7 @@
 	use				"$root/wave_01/Cover", clear
 
 * merge in other sections
+	merge 1:1 		HHID using "$export/wave_01/respond_r1.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC2.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC3.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC4.dta", keep(match) nogenerate

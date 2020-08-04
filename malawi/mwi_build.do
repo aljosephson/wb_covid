@@ -1,7 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: alj
-* last edited: 2 AUGUST 2020 
+* Edited by: jdm
+* Last edited: 4 AUGUST 2020 
 * Stata v.16.1
 
 * does
@@ -527,6 +528,71 @@
 * save temp file
 	save			"$export/wave_02/sect10_Coping_r2", replace	
 
+	
+* ***********************************************************************
+* 1f - get respondant gender - R1
+* ***********************************************************************
+
+* load data
+	use				"$root/wave_01/sect12_Interview_Result", clear
+	
+* drop all but household respondant
+	keep			HHID s12q9
+	
+	rename			s12q9 PID
+	
+	isid			HHID
+	
+* merge in household roster
+	merge 1:1		HHID PID using "$root/wave_01/sect2_Household_Roster.dta"
+	
+	keep if			_merge == 3
+	
+* rename variables and fill in missing values
+	rename			s2q5 sex
+	rename			s2q6 age
+	rename			s2q7 relate_hoh
+	replace			relate_hoh = s2q9 if relate_hoh == .
+	
+* drop all but gender and relation to HoH
+	keep			HHID PID sex age relate_hoh
+
+* save temp file
+	save			"$export/wave_01/respond_r1", replace
+
+	
+* ***********************************************************************
+* 1g - get respondant gender - R2
+* ***********************************************************************
+
+* load data
+	use				"$root/wave_02/sect12_Interview_Result_r2", clear
+	
+* drop all but household respondant
+	keep			HHID s12q9
+	
+	rename			s12q9 PID
+	
+	isid			HHID
+	
+* merge in household roster
+	merge 1:1		HHID PID using "$root/wave_02/sect2_Household_Roster_r2.dta"
+	
+	keep if			_merge == 3
+	
+* rename variables and fill in missing values
+	rename			s2q5 sex
+	rename			s2q6 age
+	rename			s2q7 relate_hoh
+	replace			relate_hoh = s2q9 if relate_hoh == .
+	
+* drop all but gender and relation to HoH
+	keep			HHID PID sex age relate_hoh
+
+* save temp file
+	save			"$export/wave_02/respond_r2", replace	
+	
+	
 * ***********************************************************************
 * 2 - build malawi panel R1 cross section  
 * ***********************************************************************
@@ -535,6 +601,7 @@
 	use				"$root/wave_01/secta_Cover_Page", clear
 
 * merge in other sections
+	merge 1:1 		HHID using "$export/wave_01/respond_r1.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/sect3_Knowledge.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/sect4_Behavior.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/sect5_Access.dta", keep(match) nogenerate
@@ -948,6 +1015,7 @@
 	use				"$root/wave_02/secta_Cover_Page_r2", clear
 
 * merge in other sections
+	merge 1:1 		HHID using "$export/wave_02/respond_r2.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_02/sect3_Knowledge_r2.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_02/sect4_Behavior_r2.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_02/sect5_Access_r2.dta", keep(match) nogenerate

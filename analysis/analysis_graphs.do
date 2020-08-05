@@ -41,12 +41,19 @@
 * 2 - graphs and stuff 
 * **********************************************************************
 
-* look at knowledge variables 
+* look at knowledge variables by country
 	graph 			bar know_01 know_02 know_03 know_04 know_05 know_06 know_07 know_08, over(country) ///
 						  legend(label (1 "handwash with soap") label (2 "avoid physical contact") label (3 "use masks/gloves") ///
 						  label (4 "avoid travel") label (5 "stay at home") label (6 "avoid crowds") label (7 "socially distance") ///
 						  label (8 "avoid face touching") pos (6) col(2))
 
+* look at knowledge variables by gender
+	graph 			bar know_01 know_02 know_03 know_04 know_05 know_06 know_07 know_08, over(sex) ///
+						  legend(label (1 "handwash with soap") label (2 "avoid physical contact") label (3 "use masks/gloves") ///
+						  label (4 "avoid travel") label (5 "stay at home") label (6 "avoid crowds") label (7 "socially distance") ///
+						  label (8 "avoid face touching") pos (6) col(2))
+						  
+						  
 * look at government variables 
 	graph 			bar gov_01 gov_02 know_03 gov_04 gov_05 gov_06 gov_07 gov_08 gov_09 gov_10, over(country) ///
 						  legend(label (1 "advise citizens to stay home") label (2 "restricted travel in country") label (3 "restricted international travel") ///

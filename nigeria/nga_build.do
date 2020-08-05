@@ -988,11 +988,11 @@
 * 3 - end matter, clean up to save
 * **********************************************************************
 
-compress
-describe
-summarize 
+	compress
+	describe
+	summarize 
 
-rename hhid hhid_nga 
+	rename hhid hhid_nga 
 
 * save file
 		customsave , idvar(hhid_nga) filename("nga_panel.dta") ///

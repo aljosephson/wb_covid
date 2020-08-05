@@ -566,6 +566,7 @@
 	order			country
 	lab def			country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda"
 	lab val			country country	
+	lab var			country "Country"
 	
 * drop unnecessary variables
 	drop			interview__id interview__key BSEQNO DistrictName ///
@@ -589,11 +590,11 @@
 * 2 - end matter, clean up to save
 * **********************************************************************
 
-compress
-describe
-summarize 
+	compress
+	describe
+	summarize 
 
-rename HHID hhid_uga 
+	rename HHID hhid_uga 
 
 * save file
 		customsave , idvar(hhid_uga) filename("uga_panel.dta") ///

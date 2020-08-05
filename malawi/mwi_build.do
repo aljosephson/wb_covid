@@ -1495,11 +1495,13 @@
 * 5 - end matter, clean up to save
 * **********************************************************************
 
-compress
-describe
-summarize 
+	drop 			household_id household_id_an start_date PID above18
 
-rename household_id hhid_mwi 
+	compress
+	describe
+	summarize 
+
+	rename 			y4_hhid hhid_mwi 
 
 * save file
 		customsave , idvar(hhid_mwi) filename("mwi_panel.dta") ///

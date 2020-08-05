@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj 
-* LAST EDIT: 31 July 2020 
+* Last edit: 4 August 2020 
 * Stata v.16.1
 
 * does
@@ -12,6 +12,7 @@
 
 * assumes
 	* raw Ethiopia data
+	* xfill.ado
 
 * TO DO:
 	* complete
@@ -248,7 +249,12 @@
 * replace resp for r1 based on r2
 * only 27 not the same 
 	encode 			household_id, generate (household_id_d)
+	xfill			same,  i (household_id_d)
 	xfill 			age relate_hoh sex if same == 1, i (household_id_d)
+	
+	replace			age = hhh_age if age == .
+	replace			sex = hhh_gender if sex == .
+	replace			relate_hoh = 1 if relate_hoh == .
 
 * reformat bus_why variables
 	gen				bus_why = .
@@ -288,7 +294,8 @@
 						as4_cash_source_other as4_other_source_other ///
 						ir1_endearly ir1_whyendearly ir1_whyendearly_other ///
 						ir_lang ir_understand ir_confident em15b_bus_prev_closed_other ///
-						key em19_bus_inc_low_why__* em19_bus_inc_low_why
+						key em19_bus_inc_low_why__* em19_bus_inc_low_why hh_id hhh_id
+						
 
 * reorder variables
 	order			fies_04 fies_05 fies_06 fies_07 fies_08, after(fies_03)
@@ -300,7 +307,9 @@
 	order			country
 	lab def			country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda"
 	lab val			country country	
-	
+	lab var			country "Country"
+			
+	drop			resp_id start_date hhh_gender hhh_age same loc_chg same_hhh
 	
 * **********************************************************************
 * 2 - end matter, clean up to save

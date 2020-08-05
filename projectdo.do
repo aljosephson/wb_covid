@@ -78,31 +78,35 @@ if $pack == 1 {
 		ado update, update
 
 	* set graph and Stata preferences
-		set scheme plotplain, perm
+		set scheme plotplainblind, perm
 		set more off
+		
+* The package -xfill- is not on ssc so installing here
+	cap which xfill
+	if _rc != 0 {
+        capture window stopbox rusure "You are missing some packages." "Do you want to install xfill?"
+        if _rc == 0 {
+            qui: net install xfill, replace from(https://www.sealedenvelope.com/)
+        }
+        else {
+        	exit 199
+        }
+	}
+		
 }
 
 
 * **********************************************************************
-* 1 - run weather data cleaning .do file
+* 1 - run household data cleaning .do file
+* **********************************************************************
+
+
+
+* **********************************************************************
+* 2 - run regression .do files
 * **********************************************************************
 
 
 * **********************************************************************
-* 2 - run household data cleaning .do file
-* **********************************************************************
-
-
-* **********************************************************************
-* 3 - run .do files that merge weather and household data
-* **********************************************************************
-
-
-* **********************************************************************
-* 4 - run regression .do files
-* **********************************************************************
-
-
-* **********************************************************************
-* 5 - run analysis .do files
+* 3 - run analysis .do files
 * **********************************************************************

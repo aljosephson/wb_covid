@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by : jdm
-* Last edited: 4 August 2020 
+* Last edited: 5 August 2020 
 * Stata v.16.1
 
 * does
@@ -464,6 +464,78 @@
 	rename			s3q05 bh_04
 	rename			s3q06 bh_05
  
+ 
+* rename access
+	rename 			s4q01 ac_soap 
+	rename			s4q02 ac_soap_why 
+	replace			ac_soap_why = 9 if ac_soap_why == -96 
+	replace			ac_soap_why = . if ac_soap_why == 99 
+	lab def			ac_soap_why 1 "shops out" 2 "markets closed" 3 "no transportation" /// 
+								4 "restrictions to go out" 5 "increase in price" 6 "no money" /// 
+								7 "cannot afford it" 8 "afraid to go out" 9 "other"
+	lab var 		ac_soap_why "reason for unable to purchase soap"
+								
+	rename 			s4q03 ac_water
+	rename 			s4q04 ac_water_why
+	
+	rename 			s4q05 ac_staple_def
+	rename 			s4q06 ac_staple
+	rename			s4q07 ac_staple_why 
+	replace			ac_staple_why = 7 if ac_staple_why == -96 
+	lab def			ac_staple_why 1 "shops out" 2 "markets closed" 3 "no transportation" /// 
+								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
+								7 "other"
+	lab var 		ac_staple_why "reason for unable to purchase staple food"
+	
+	rename 			s4q07a ac_sauce_def
+	rename 			s4q07b ac_sauce
+	rename			s4q07c ac_sauce_why 
+	replace			ac_sauce_why = 7 if ac_sauce_why == -96 
+	lab def			ac_sauce_why 1 "shops out" 2 "markets closed" 3 "no transportation" /// 
+								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
+								7 "other"
+	lab var 		ac_sauce_why "reason for unable to purchase staple food"
+	
+	rename 			s4q08 ac_med
+
+	rename 			s4q09 ac_medserv_need
+	rename 			s4q10 ac_medserv
+	rename 			s4q11 ac_medserv_why
+	replace			ac_medserv_why = 3 if ac_medserv_why == 5
+	replace			ac_medserv_why = 5 if ac_medserv_why == 7
+	replace 		ac_medserv_why = 7 if ac_medserv_why == 4
+	replace			ac_medserv_why = 4 if ac_medserv_why == -96	
+	lab def			ac_medserv_why 1 "no money" 2 "no med personnel" 3 "facility full / closed" /// 
+								4 "other" 5 "no transportation" 6 "restrictions to go out" /// 
+								7 "afraid of virus" 8 "facility closed "
+	lab var 		ac_medserv_why "reason for unable to access medical services"
+
+	rename 			s4q012 children318
+	rename 			s4q013 sch_child
+	rename 			s4q014 edu_act 
+	rename 			s4q15__1 edu_01 
+	rename 			s4q15__2 edu_02  
+	rename 			s4q15__3 edu_03 
+	rename 			s4q15__4 edu_04 
+	rename 			s4q15__5 edu_05 
+	rename 			s4q15__6 edu_06 
+	rename 			s4q15__n96 edu_other 
+	
+	rename 			s4q16 edu_cont
+	rename			s4q17__1 edu_cont_01
+	rename 			s4q17__2 edu_cont_02 
+	rename 			s4q17__3 edu_cont_03 
+	rename 			s4q17__4 edu_cont_04 
+	rename 			s4q17__5 edu_cont_05 
+	rename 			s4q17__6 edu_cont_06 
+	rename 			s4q17__7 edu_cont_07 
+	rename 			s4q17__8 edu_cont_08 
+	 
+	rename 			s4q18 bank
+	rename 			s4q19 ac_bank 
+	rename 			s4q20 ac_bank_why 
+ 
+  
 * rename employment
 	rename			s5q01a edu
 	rename			s5q01 emp
@@ -569,16 +641,15 @@
 	lab var			country "Country"
 	
 * drop unnecessary variables
-	drop			interview__id interview__key BSEQNO DistrictName ///
+	drop			 BSEQNO DistrictName ///
 						CountyName SubcountyName ParishName EaName VillageName ///
 						subreg s2q01b__n96 s2q01b_Other s5qaq17_1_Other ///
 						s5aq20__n96 s5aq20_Other s5aq21__n96 s5aq21_Other ///
 						s5aq22__n96 s5aq22_Other s5aq23_Other s5aq24_Other ///
-						sec5_startime sec5_endtime totalmembers sec5a_startime ///
-						sec5a_endtime s5q03_Other s504_Other s5q04b_Other ///
-						s504c_Other s5q05_Other s5q08a_Other s5q10__0 ///
+						s5q10__0 ///
 						s5q10__1 s5q10__2 s5q10__3 s5q10__4 s5q10__5 ///
-						s5q10__6 s5q10__7 s5q10__8 s5q10__9 s5q12_Other			
+						s5q10__6 s5q10__7 s5q10__8 s5q10__9 *_Other	 ///
+						s4* 
 
 * delete temp files 
 	erase			"$root/wave_01/SEC6w.dta"

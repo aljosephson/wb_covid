@@ -2,19 +2,19 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj
-* Last edit: 3 August 2020 
+* Last edit: 5 August 2020 
 * Stata v.16.1
 
 * does
 	* merges together all countries
 	* renames variables
-	* runs regression analysis
+	* output cleaned panel data
 
 * assumes
 	* cleaned country data
 
 * TO DO:
-	* analysis
+	* complete
 
 
 * **********************************************************************
@@ -46,12 +46,10 @@
 	append using 	"$nga/nga_panel", force
 
 	append using	"$uga/uga_panel", force
-	
-* save file	
-	save			"$export/lsms_panel_int", replace
 
+	
 * **********************************************************************
-* 2 - revise variables as needed 
+* 2 - revise ID variables as needed 
 * **********************************************************************
 
 * order variables
@@ -83,7 +81,8 @@
 	order			hhid, after(country)
 	lab var			hhid "Unique household ID"
 
-	drop 				start_date
+	drop 			start_date hh_a16 hh_a17 result shock_16 hhleft hhjoin PID ///
+						baseline_hhid
 	
 * know 
 	replace			know = 0 if know == 2 
@@ -119,8 +118,15 @@
 	replace			bh_08 = 0 if bh_08 >= 2 & bh_08 < . 
 	order 			bh_02 bh_03 bh_04 bh_05 bh_06 bh_07 bh_08, after(bh_01)
 	
+	drop			bh_06a
+	
 	order			gov_13 gov_14 gov_15 gov_16 gov_none gov_dnk, after(gov_12)
-	order			hhsize, after(relate_hoh)
+	order			edu hhsize, after(relate_hoh)
+
+	
+* **********************************************************************
+* 3- revise access variables as needed 
+* **********************************************************************
 	
 * access
 	replace			ac_medserv = med_access if ac_medserv == .
@@ -150,6 +156,8 @@
 
 	replace				ac_med_need = 0 if ac_med == -97 & country == 1		
 	replace				ac_med_need = 1 if ac_med_need == . & country == 1
+	replace				ac_med = 1 if ac_med == -98 & country == 1
+	replace				ac_med = 1 if ac_med == -99 & country == 1
 	
 	replace				ac_med_need = 0 if ac_med_need == 2
 	replace				ac_med = -97 if ac_med_need == 0 & ac_med == .
@@ -161,6 +169,13 @@
 	
 	replace				ac_med = . if ac_med == -97
 
+	replace				ac_med_need = 0 if ac_med == 3 & country == 4
+	replace				ac_med_need = 1 if ac_med_need == . & country == 4
+	replace				ac_med = . if ac_med == 3 & country == 4
+	replace				ac_med = 2 if ac_med == 0 & country == 4
+	replace				ac_med = 0 if ac_med == 1 & country == 4
+	replace				ac_med = 1 if ac_med == 2 & country == 4
+	
 * access to medical services
 	replace				ac_medserv_need = . if country == 1
 	replace				ac_medserv = . if country == 1
@@ -168,12 +183,17 @@
 	
 	replace				ac_medserv_need = 0 if ac_medserv == . & country == 2
 	replace				ac_medserv_need = 1 if ac_medserv_need == . & country == 2
-	lab val				ac_medserv_need yesno
 	
 	replace				ac_medserv_need = 0 if ac_medserv == . & country == 3
 	replace				ac_medserv_need = 1 if ac_medserv_need == . & country == 3
 	replace				ac_medserv = 0 if ac_medserv == 2
+
+	replace				ac_medserv_need = 0 if ac_medserv == . & country == 4
+	replace				ac_medserv_need = 1 if ac_medserv_need == . & country == 4
+	replace				ac_medserv = . if ac_medserv == 3 & country == 4
+	
 	lab val				ac_medserv yesno
+	lab val				ac_medserv_need yesno	
 
 * access to soap
 	replace				ac_soap_need = . if country == 1
@@ -182,13 +202,18 @@
 	
 	replace				ac_soap_need = 0 if ac_soap == . & country == 2
 	replace				ac_soap_need = 1 if ac_soap_need == . & country == 2
-	lab val				ac_soap_need yesno
 	
 	replace				ac_soap_need = 0 if ac_soap == . & country == 3
 	replace				ac_soap_need = 1 if ac_soap_need == . & country == 3
 	replace				ac_soap = 0 if ac_soap == 2
-	lab val				ac_soap yesno
 
+	replace				ac_soap_need = 0 if ac_soap == . & country == 4
+	replace				ac_soap_need = 1 if ac_soap_need == . & country == 4
+	replace				ac_soap =0 if ac_soap == 2 & country == 4
+	
+	lab val				ac_soap_need yesno
+	lab val				ac_soap yesno
+	
 * access oil/teff/wheat in Ethiopia
 	gen					ac_oil_need = 0 if ac_oil == -97 & country == 1
 	replace				ac_oil_need = 1 if ac_oil_need == . & country == 1
@@ -226,11 +251,7 @@
 	replace				ac_clean = 0 if ac_clean == 2 & country == 2
 	lab val				ac_clean yesno
 	
-	replace				ac_water_need = 0 if ac_water_need == 2 & country == 2
-	lab val				ac_water_need yesno
-	replace				ac_water = 0 if ac_water == 2 & country == 2
-	lab val				ac_water yesno
-	
+	drop				ac_water ac_water_why ac_staple_def
 
 * access to staples in Nigeria
 	replace				ac_rice_need = 0 if ac_rice_need != 1 & country == 3 & wave == 1
@@ -261,18 +282,172 @@
 	replace				ac_clean_need = 0 if ac_clean_need != 1 & country == 3 & wave == 1
 	replace				ac_clean = 0 if ac_clean == 2 & country == 3 & wave == 1
 	
+	drop				ac_bank ac_bank_why
 	
+* access to staple	
+	replace				ac_staple_need = 0 if ac_staple_need == 2
+	lab val				ac_staple_need yesno
+	replace				ac_staple = 0 if ac_staple == 2
+	lab val				ac_staple yesno
 	
+	replace				ac_staple_need = 1 if ac_oil_need == 1 | ac_teff_need == 1 | ///
+							ac_wheat_need == 1 | ac_maize_need == 1 | ///
+							ac_rice_need == 1 | ac_beans_need == 1 | ///
+							ac_cass_need == 1 | ac_yam_need == 1 | ///
+							ac_sorg_need == 1
+	replace				ac_staple_need = 0 if ac_staple_need == .
+	replace				ac_staple_need = . if country == 3 & wave == 2
 	
+	replace				ac_staple = 1 if ac_oil == 1 | ac_teff == 1 | ///
+							ac_wheat == 1 | ac_maize == 1 | ///
+							ac_rice== 1 | ac_beans == 1 | ///
+							ac_cass == 1 | ac_yam == 1 | ///
+							ac_sorg == 1	
+	replace				ac_staple = 0 if ac_staple == . & ac_staple_need == 1
+	replace				ac_staple = . if country == 3 & wave == 2
+	drop				ac_staple_why ac_sauce_def ac_sauce ac_sauce_why ///
+							ac_drink ac_drink_why
+
+	replace				ac_staple_need = 1 if ac_staple != 3 & country == 4
+	replace				ac_staple = . if ac_staple == 3 & country == 4
+	replace				ac_staple = 2 if ac_staple == 0 & country == 4
+	replace				ac_staple = 0 if ac_staple == 1 & country == 4
+	replace				ac_staple = 1 if ac_staple == 2 & country == 4
 	
-	
-	
-	
-	
-	
+	lab var				ac_oil_need "Did you or anyone in your household need to buy oil"
+	lab var				ac_teff_need "Did you or anyone in your household need to buy teff"
+	lab var				ac_wheat_need "Did you or anyone in your household need to buy wheat"
+
 	
 * **********************************************************************
-* 3 - end matter, clean up to save
+* 4 - clean concerns and income changes
+* **********************************************************************
+	
+* turn concern into binary
+	replace				concern_01 = 0 if concern_01 == 3 | concern_01 == 4
+	replace				concern_01 = 1 if concern_01 == 2
+	lab val				concern_01 yesno
+	
+	replace				concern_02 = 0 if concern_02 == 3 | concern_02 == 4
+	replace				concern_02 = 1 if concern_02 == 2
+	lab val				concern_02 yesno
+
+
+	replace				oth_inc = other_inc if other_inc != . & oth_inc == .
+	replace				oth_chg = other_chg if other_chg != . & oth_chg == .
+	drop				other_inc other_chg
+	
+	loc inc				farm_inc bus_inc wage_inc isp_inc pen_inc gov_inc ngo_inc oth_inc asst_inc
+	foreach var of varlist `inc' {
+		replace				`var' = 0 if `var' == 2
+		replace				`var' = 0 if `var' == -99
+		replace				`var' = 0 if `var' == .
+		lab val				`var' yesno
+		}	
+
+	replace				farm_chg = . if farm_inc == 0
+	replace				bus_chg = . if bus_inc == 0 
+	replace				wage_chg = . if wage_inc == 0 
+	replace				isp_chg = . if isp_inc == 0 
+	replace				pen_chg = . if pen_inc == 0 
+	replace				gov_chg  = . if gov_inc == 0 
+	replace				ngo_chg  = . if ngo_inc == 0 
+	replace				oth_chg  = . if oth_inc == 0 
+	replace				asst_chg  = . if asst_inc == 0 
+
+	lab def				change -1 "Reduce" 0 "Stayed the same" 1 "Increased"
+	
+	loc chg				farm_chg bus_chg wage_chg isp_chg pen_chg gov_chg ngo_chg oth_chg asst_chg rem_dom_chg rem_for_chg
+
+	foreach var of varlist `chg' {
+		replace				`var' = 0 if `var' == 2
+		replace				`var' = 0 if `var' == -98
+		replace				`var' = -1 if `var' == 3
+		replace				`var' = -1 if `var' == 4
+		lab val				`var' change
+		}				
+
+	gen					farm_dwn = 1 if farm_chg == -1
+	replace				farm_dwn = 0 if farm_chg == 0 | farm_chg == 1
+	gen					bus_dwn = 1 if bus_chg == -1
+	replace				bus_dwn = 0 if bus_chg == 0 | bus_chg == 1
+	gen					wage_dwn = 1 if wage_chg == -1
+	replace				wage_dwn = 0 if wage_chg == 0 | wage_chg == 1
+	gen					isp_dwn = 1 if isp_chg == -1
+	replace				isp_dwn = 0 if isp_chg == 0 | isp_chg == 1
+	gen					pen_dwn = 1 if pen_chg == -1
+	replace				pen_dwn = 0 if pen_chg == 0 | pen_chg == 1
+	gen					gov_dwn = 1 if gov_chg == -1
+	replace				gov_dwn = 0 if gov_chg == 0 | gov_chg == 1
+	gen					ngo_dwn = 1 if ngo_chg == -1
+	replace				ngo_dwn = 0 if ngo_chg == 0 | ngo_chg == 1
+	gen					rem_dom_dwn = 1 if rem_dom_chg == -1
+	replace				rem_dom_dwn = 0 if rem_dom_chg == 0 | rem_dom_chg == 1
+	gen					rem_for_dwn = 1 if rem_for_chg == -1
+	replace				rem_for_dwn = 0 if rem_for_chg == 0 | rem_for_chg == 1
+
+	lab var				farm_dwn "Farm income reduced"
+	lab var				bus_dwn "Business income reduced"
+	lab var				wage_dwn "Wage income reduced"
+	lab var				isp_dwn "Investment income reduced"
+	lab var				pen_dwn "Pension income reduced"
+	lab var				gov_dwn "Gov. assistance reduced"
+	lab var				ngo_dwn "NGO assistance reduced"
+	lab var				rem_dom_dwn "Remittances (dom) reduced"
+	lab var				rem_for_dwn "Remittances (for) reduced"
+	
+	order 				farm_dwn bus_dwn wage_dwn isp_dwn pen_dwn gov_dwn ///
+							ngo_dwn rem_dom_dwn rem_for_dwn, after(rem_for_chg)
+							
+	loc dwn				farm_dwn bus_dwn wage_dwn isp_dwn pen_dwn gov_dwn ngo_dwn rem_dom_dwn rem_for_dwn		
+
+	foreach var of varlist `dwn' {
+		lab val				`var' yesno
+		}				
+		
+	replace				edu_cont = 0 if edu_cont == 2
+	lab val				edu_cont yesno
+		
+* **********************************************************************
+* 5 - revise access variables as needed 
+* **********************************************************************
+
+	order			myth_01 myth_02 myth_03 myth_04 myth_05 myth_06 myth_07, ///
+						after(ac_clean_why)
+	order			shock_01 shock_02 shock_03 shock_04 shock_05 shock_06 ///
+						shock_07 shock_08 shock_09 shock_10 shock_11 ///
+						shock_12 shock_13 shock_14, after(ac_clean_why)
+	order			cope_01 cope_02 cope_03 cope_04 cope_05 cope_06 cope_07 ///
+						cope_08 cope_09 cope_10 cope_11 cope_12 cope_13 ///
+						cope_14 cope_15 cope_16 cope_17 fies_01 fies_02 ///
+						fies_03 fies_04 fies_05 fies_06 fies_07 fies_08, ///
+						after(myth_07)
+		
+	rename			satisf_06 satis_06
+	
+	order			children318 children618, before(sch_child)
+	order			sch_child_meal sch_child_mealskip, after(sch_child)
+	order			edu_06 edu_07, after(edu_05)
+	order			edu_other edu_cont edu_cont_01 edu_cont_02 edu_cont_03 ///
+						edu_cont_04 edu_cont_05 edu_cont_06 edu_cont_07 edu_cont_08, ///
+						after(edu_05)
+	
+	replace			edu_cont_08 = educ_cont_08 if edu_cont_08 == .
+	drop			educ_cont_08
+	
+	order			asst_01 asst_02 asst_03 asst_04 asst_05 asst_06 asst_inc ///
+						asst_chg asst_diff_01 asst_diff_03 asst_diff_06, after(tot_inc_chg)
+	
+	order			ag_prep- ag_price ag_chg_01- ag_seed_07 ag_plan- ag_graze, ///
+						after(kind_inst_val)
+						
+	order			concern_01 concern_02 concern_03 concern_04 concern_05 ///
+						concern_06, after(myth_07)
+	
+	lab var			cash_gov_date "Date received cash transfers from government"
+	
+* **********************************************************************
+* 6 - end matter, clean up to save
 * **********************************************************************
 
 compress

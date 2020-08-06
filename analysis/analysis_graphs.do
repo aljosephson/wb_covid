@@ -42,20 +42,20 @@
 * **********************************************************************
 
 * look at knowledge variables by country
-	graph 			bar know_01 know_02 know_03 know_04 know_05 know_06 know_07 know_08, over(country) ///
+	graph bar		know_01 know_02 know_03 know_04 know_05 know_06 know_07 know_08, over(country) ///
 						  legend(label (1 "handwash with soap") label (2 "avoid physical contact") label (3 "use masks/gloves") ///
 						  label (4 "avoid travel") label (5 "stay at home") label (6 "avoid crowds") label (7 "socially distance") ///
 						  label (8 "avoid face touching") pos (6) col(2))
 
 * look at knowledge variables by gender
-	graph 			bar know_01 know_02 know_03 know_04 know_05 know_06 know_07 know_08, over(sex) ///
+	graph bar		know_01 know_02 know_03 know_04 know_05 know_06 know_07 know_08, over(sex) ///
 						  legend(label (1 "handwash with soap") label (2 "avoid physical contact") label (3 "use masks/gloves") ///
 						  label (4 "avoid travel") label (5 "stay at home") label (6 "avoid crowds") label (7 "socially distance") ///
 						  label (8 "avoid face touching") pos (6) col(2))
 						  
 						  
 * look at government variables 
-	graph 			bar gov_01 gov_02 know_03 gov_04 gov_05 gov_06 gov_07 gov_08 gov_09 gov_10, over(country) ///
+	graph bar		gov_01 gov_02 gov_03 gov_04 gov_05 gov_06 gov_07 gov_08 gov_09 gov_10, over(country) ///
 						  legend(label (1 "advise citizens to stay home") label (2 "restricted travel in country") label (3 "restricted international travel") ///
 						  label (4 "close schools") label (5 "curfew/lockdown") label (6 "close businesses") label (7 "create space for patients") ///
 						  label (8 "provide food") label (9 "open clinics") label (10 "stop social gatherings") label (11 "disseminate information") ///
@@ -69,25 +69,81 @@
 	
 * deeper dive on relationship between behavior and knowledge 
 
-* histogram between knowledge and behavior  
-	histogram 		bh_01, by (know_01 country) bin(2)
-	histogram 		bh_02, by (know_02 country) bin(2)
-	histogram 		bh_03, by (know_06 country) bin(2)
-	histogram 		bh_04, by (know_06 country) bin(2)
-	histogram 		bh_05, by (know_04 country) bin(2)
-	histogram 		bh_05, by (know_05 country) bin(2) 
+* bar graph of behavior  
+	graph bar 		(mean) bh_01 bh_02 bh_03, over(country) ///
+						legend(	label (1 "Increased hand washing") ///
+						label (2 "Avoided physical contact") ///
+						label (3 "Avoided crowds") pos(6) col(3))
+
+	graph bar 		(mean) bh_01 bh_02 bh_03, over(sex) ///
+						legend(	label (1 "Increased hand washing") ///
+						label (2 "Avoided physical contact") ///
+						label (3 "Avoided crowds") pos(6) col(3))	
+						
+* concerns
+	graph bar		concern_01 concern_02, over(country) ///
+						legend(	label (1 "Health concerns") ///
+						label (2 "Financial concerns") pos(6) col(3))
+						
+	graph bar		concern_01 concern_02, over(sex) ///
+						legend(	label (1 "Health concerns") ///
+						label (2 "Financial concerns") pos(6) col(3))
+
+* access
+	graph bar		ac_med ac_staple, over(wave) over(country) ///
+						legend(	label (1 "Access to medicine") ///
+						label (2 "Access to staple food") pos(6) col(3))
+
+* access
+	graph bar		ac_med ac_staple, over(sex) ///
+						legend(	label (1 "Access to medicine") ///
+						label (2 "Access to staple food") pos(6) col(3))	
+						
+* access and concern 						
+	graph bar		ac_med ac_staple, over(concern_01) over(concern_02) ///
+						legend(	label (1 "Access to medicine") ///
+						label (2 "Access to staple food") pos(6) col(3))							
 	
-* ttests between knowledge and behavior 
-	ttest 			bh_01, by (know_01)
-	ttest 			bh_02, by (know_02)
-	ttest 			bh_03, by (know_06)
-	ttest 			bh_04, by (know_06)
-	ttest 			bh_05, by (know_04)
-	ttest 			bh_05, by (know_05)
-	*** so many people are doing these activities -- need to creatively think about ways to dig into this more
-						  
+* change in income						
+	graph bar		farm_chg bus_chg wage_chg rem_dom_chg rem_for_chg isp_chg ///
+						pen_chg gov_chg ngo_chg, over(country) ///
+						legend( label (1 "Farm income") label (2 "Business income") ///
+						label (3 "Wage income") label (4 "Remittances (dom)") ///
+						label (5 "Remittances (for)") label (6 "Investments") ///
+						label (7 "Pension") label (8 "Gov. assistance") ///
+						label (9 "NGO assistance") pos(6) col(3))			
+					
+	graph bar		farm_dwn bus_dwn wage_dwn isp_dwn pen_dwn gov_dwn ngo_dwn ///
+						rem_dom_dwn rem_for_dwn, over(country) ///
+						legend( label (1 "Farm income") label (2 "Business income") ///
+						label (3 "Wage income") label (4 "Remittances (dom)") ///
+						label (5 "Remittances (for)") label (6 "Investments") ///
+						label (7 "Pension") label (8 "Gov. assistance") ///
+						label (9 "NGO assistance") pos(6) col(3))			
+					
+	graph bar		farm_dwn bus_dwn wage_dwn isp_dwn pen_dwn gov_dwn ngo_dwn ///
+						rem_dom_dwn rem_for_dwn, over(sector) ///
+						legend( label (1 "Farm income") label (2 "Business income") ///
+						label (3 "Wage income") label (4 "Remittances (dom)") ///
+						label (5 "Remittances (for)") label (6 "Investments") ///
+						label (7 "Pension") label (8 "Gov. assistance") ///
+						label (9 "NGO assistance") pos(6) col(3))			
+						
+						
 * **********************************************************************
-* 3 - end matter, clean up to save
+* 3 - basic regressions
+* **********************************************************************
+						
+reg bh_01 i.farm_dwn i.sex i.sector i.country
+reg bh_01 i.bus_dwn i.sex i.sector i.country
+reg bh_01 i.bus_dwn age i.sex i.sector i.country
+reg bh_02 i.bus_dwn age i.sex i.sector i.country
+reg bh_03 i.bus_dwn age i.sex i.sector i.country
+
+reg edu_cont i.sector i.sex i.country					
+						
+* **********************************************************************
+* 4 - end matter, clean up to save
 * **********************************************************************
 
 compress

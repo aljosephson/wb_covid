@@ -48,7 +48,7 @@
 						  label (8 "avoid face touching") pos (6) col(2))
 
 * look at knowledge variables by gender
-	graph bar		know_01 know_02 know_03 know_04 know_05 know_06 know_07 know_08, over(sex) ///
+	graph bar		know_01 know_02 know_03 know_04 know_05 know_06 know_07 know_08, over(sector) ///
 						  legend(label (1 "handwash with soap") label (2 "avoid physical contact") label (3 "use masks/gloves") ///
 						  label (4 "avoid travel") label (5 "stay at home") label (6 "avoid crowds") label (7 "socially distance") ///
 						  label (8 "avoid face touching") pos (6) col(2))
@@ -75,7 +75,7 @@
 						label (2 "Avoided physical contact") ///
 						label (3 "Avoided crowds") pos(6) col(3))
 
-	graph bar 		(mean) bh_01 bh_02 bh_03, over(sex) ///
+	graph bar 		(mean) bh_01 bh_02 bh_03, over(sector) ///
 						legend(	label (1 "Increased hand washing") ///
 						label (2 "Avoided physical contact") ///
 						label (3 "Avoided crowds") pos(6) col(3))	
@@ -85,12 +85,12 @@
 						legend(	label (1 "Health concerns") ///
 						label (2 "Financial concerns") pos(6) col(3))
 						
-	graph bar		concern_01 concern_02, over(sex) ///
+	graph bar		concern_01 concern_02, over(sector) ///
 						legend(	label (1 "Health concerns") ///
 						label (2 "Financial concerns") pos(6) col(3))
 
 * access
-	graph bar		ac_med ac_staple, over(wave) over(country) ///
+	graph bar		ac_med ac_staple, over(country) ///
 						legend(	label (1 "Access to medicine") ///
 						label (2 "Access to staple food") pos(6) col(3))
 
@@ -100,7 +100,7 @@
 						label (2 "Access to staple food") pos(6) col(3))	
 						
 * access and concern 						
-	graph bar		ac_med ac_staple, over(concern_01) over(concern_02) ///
+	graph bar		ac_med ac_staple, over(concern_02) over(country) ///
 						legend(	label (1 "Access to medicine") ///
 						label (2 "Access to staple food") pos(6) col(3))							
 	
@@ -133,6 +133,15 @@
 * **********************************************************************
 * 3 - basic regressions
 * **********************************************************************
+
+*access by household weight
+gen count = 1
+
+bysort country wave: sum count [aweight = phw] if ac_med_need == 1 & ac_med == 0
+
+*can multiple phw by hhsize and use it to get individual population
+* connect household roster to this household data in household panel
+* then we can do by gender or age to see % of those people in household facing that issue
 						
 reg bh_01 i.farm_dwn i.sex i.sector i.country
 reg bh_01 i.bus_dwn i.sex i.sector i.country

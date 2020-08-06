@@ -23,6 +23,7 @@
 
 * define
 	global	ans		=	"$data/analysis"
+	global	output	=	"$data/analysis/figures"
 	global	logout	=	"$data/analysis/logs"
 
 * open log
@@ -43,43 +44,34 @@
 
 * look at knowledge variables by country
 	graph bar		know_01 know_02 know_03 know_04 know_05 know_06 know_07 know_08, over(country) ///
-						  legend(label (1 "handwash with soap") label (2 "avoid physical contact") label (3 "use masks/gloves") ///
-						  label (4 "avoid travel") label (5 "stay at home") label (6 "avoid crowds") label (7 "socially distance") ///
+						  legend(label (1 "handwash with soap") ///
+						  label (2 "avoid physical contact") label (3 "use masks/gloves") ///
+						  label (4 "avoid travel") label (5 "stay at home") ///
+						  label (6 "avoid crowds") label (7 "socially distance") ///
 						  label (8 "avoid face touching") pos (6) col(2))
 
-* look at knowledge variables by gender
-	graph bar		know_01 know_02 know_03 know_04 know_05 know_06 know_07 know_08, over(sector) ///
-						  legend(label (1 "handwash with soap") label (2 "avoid physical contact") label (3 "use masks/gloves") ///
-						  label (4 "avoid travel") label (5 "stay at home") label (6 "avoid crowds") label (7 "socially distance") ///
-						  label (8 "avoid face touching") pos (6) col(2))
-						  
+	graph export "$output/knowledge.pdf", as(pdf) replace		  
 						  
 * look at government variables 
-	graph bar		gov_01 gov_02 gov_03 gov_04 gov_05 gov_06 gov_07 gov_08 gov_09 gov_10, over(country) ///
-						  legend(label (1 "advise citizens to stay home") label (2 "restricted travel in country") label (3 "restricted international travel") ///
-						  label (4 "close schools") label (5 "curfew/lockdown") label (6 "close businesses") label (7 "create space for patients") ///
-						  label (8 "provide food") label (9 "open clinics") label (10 "stop social gatherings") label (11 "disseminate information") ///
-						  label (12 "create washing kiosks") pos (6) col(2))	
-						  
-* look at behavior variables 
-	graph 			bar bh_01 bh_02 bh_03 bh_04 bh_05, over(country) ///
-						  legend(label (1 "handwash more often") label (2 "avoid physical contact") label (3 "avoid crowds") ///
-						  label (4 "stock up on groceries, etc.") label (5 "reduce trips out to grocery, etc.") pos (6) col(2))	
-	*** omit _06 - _08 for now - only in malawi 
-	
-* deeper dive on relationship between behavior and knowledge 
+	graph bar		gov_01 gov_02 gov_03 gov_04 gov_05 gov_06 gov_10, over(country) ///
+						  legend(label (1 "advise citizens to stay home") ///
+						  label (2 "restricted travel in country") ///
+						  label (3 "restricted international travel") ///
+						  label (4 "close schools") label (5 "curfew/lockdown") ///
+						  label (6 "close businesses") label (7 "stop social gatherings") ///
+						  pos (6) col(2))	
 
-* bar graph of behavior  
+	graph export "$output/restriction.pdf", as(pdf) replace		  
+						  
+* look at behavior variables
 	graph bar 		(mean) bh_01 bh_02 bh_03, over(country) ///
 						legend(	label (1 "Increased hand washing") ///
 						label (2 "Avoided physical contact") ///
 						label (3 "Avoided crowds") pos(6) col(3))
 
-	graph bar 		(mean) bh_01 bh_02 bh_03, over(sector) ///
-						legend(	label (1 "Increased hand washing") ///
-						label (2 "Avoided physical contact") ///
-						label (3 "Avoided crowds") pos(6) col(3))	
-						
+	graph export "$output/behavior.pdf", as(pdf) replace	
+	
+	
 * concerns
 	graph bar		concern_01 concern_02, over(country) ///
 						legend(	label (1 "Health concerns") ///
@@ -90,9 +82,17 @@
 						label (2 "Financial concerns") pos(6) col(3))
 
 * access
-	graph bar		ac_med ac_staple, over(country) ///
-						legend(	label (1 "Access to medicine") ///
-						label (2 "Access to staple food") pos(6) col(3))
+	gen				ac_med_r = ac_med if sector == 1
+	gen				ac_med_u = ac_med if sector == 2
+	gen				ac_staple_r = ac_staple if sector == 1
+	gen				ac_staple_u = ac_staple if sector == 2
+
+	graph bar		(count) [aweight = phw] if ac_med_need == 1, over(country, sort(ac_med)) stack asyvar
+	
+	graph bar 		(count) ac_med_r ac_med_u [aweight = phw] if ac_med_need == 1,  ///
+						over(country, sort(ac_med) gap(*.1)) stack ///
+						legend(	label (1 "Rural") label (2 "Urban") ///
+						pos(6) col(3))
 
 * access
 	graph bar		ac_med ac_staple, over(sex) ///
@@ -137,7 +137,7 @@
 *access by household weight
 gen count = 1
 
-bysort country wave: sum count [aweight = phw] if ac_med_need == 1 & ac_med == 0
+bysort country: sum acc_1 [aweight = phw] if ac_med_need == 1 & ac_med == 0
 
 *can multiple phw by hhsize and use it to get individual population
 * connect household roster to this household data in household panel

@@ -572,8 +572,8 @@
 	order			wave, after(hhid)
 
 * rationalize variables across waves
-	gen				phw = wt_baseline if wt_baseline != .
-	replace			phw = wt_round2 if wt_round2 != .
+	gen				phw = wt_baseline if wt_baseline != . & wave == 1
+	replace			phw = wt_round2 if wt_round2 != . & wave == 2
 	lab var			phw "sampling weights"
 	order			phw, after(wt_baseline)
 	drop			wt_baseline wt_round2

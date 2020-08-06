@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: alj
 * Edited by: jdm
-* Last edited: 4 AUGUST 2020 
+* Last edited: 6 AUGUST 2020 
 * Stata v.16.1
 
 * does
@@ -594,6 +594,39 @@
 	
 	
 * ***********************************************************************
+* 1h - get household size - R1 
+* ***********************************************************************
+
+* load data
+	use			"$root/wave_01/sect2_Household_Roster.dta", clear
+	
+* generate counting variables
+	gen			hhsize = 1
+* collapse data
+	collapse	(sum) hhsize, by(HHID)
+	lab var		hhsize "Household size"
+	
+* save temp file
+	save			"$export/wave_01/hhsize_r1", replace
+	
+* ***********************************************************************
+* 1i - get household size - R2
+* ***********************************************************************
+
+* load data
+	use			"$root/wave_02/sect2_Household_Roster_r2.dta", clear
+	
+* generate counting variables
+	gen			hhsize = 1
+* collapse data
+	collapse	(sum) hhsize, by(HHID)
+	lab var		hhsize "Household size"
+	
+* save temp file
+	save			"$export/wave_02/hhsize_r2", replace	
+	
+	
+* ***********************************************************************
 * 2 - build malawi panel R1 cross section  
 * ***********************************************************************
 	
@@ -602,6 +635,7 @@
 
 * merge in other sections
 	merge 1:1 		HHID using "$export/wave_01/respond_r1.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$export/wave_01/hhsize_r1.dta", keep(match) nogenerate	
 	merge 1:1 		HHID using "$root/wave_01/sect3_Knowledge.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/sect4_Behavior.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/sect5_Access.dta", keep(match) nogenerate
@@ -1016,6 +1050,7 @@
 
 * merge in other sections
 	merge 1:1 		HHID using "$export/wave_02/respond_r2.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$export/wave_02/hhsize_r2.dta", keep(match) nogenerate	
 	merge 1:1 		HHID using "$root/wave_02/sect3_Knowledge_r2.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_02/sect4_Behavior_r2.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_02/sect5_Access_r2.dta", keep(match) nogenerate

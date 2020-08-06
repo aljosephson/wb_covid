@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: jdm
-* Edited by : jdm
-* Last edited: 5 August 2020 
+* Edited by : alj
+* Last edited: 6 August 2020 
 * Stata v.16.1
 
 * does
@@ -313,6 +313,22 @@
 	save			"$export/wave_01/respond_r1", replace
 	
 * ***********************************************************************
+* 1e - get household size - R1
+* ***********************************************************************
+
+* load data
+	use			"$root/wave_01/SEC1.dta", clear
+	
+* generate counting variables
+	gen			hhsize = 1
+* collapse data
+	collapse	(sum) hhsize, by(HHID)
+	lab var		hhsize "Household size"
+	
+* save temp file
+	save			"$export/wave_01/hhsize_r1", replace	
+	
+* ***********************************************************************
 * 2 - build uganda cross section
 * ***********************************************************************
 
@@ -321,6 +337,7 @@
 
 * merge in other sections
 	merge 1:1 		HHID using "$export/wave_01/respond_r1.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$export/wave_01/hhsize_r1.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC2.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC3.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC4.dta", keep(match) nogenerate

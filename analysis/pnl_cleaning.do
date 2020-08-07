@@ -87,7 +87,9 @@
 	rename			phw hhw
 	lab var			hhw "Household sampling weight"
 	
-	gen				phw = hhw * hhsize
+	gen				phw = hhw * hhsize if country != 2
+	replace			phw = hhw if country == 2
+	replace			hhw = phw / hhsize if country == 2
 	lab var			phw "Population weight"
 	
 	order			phw, after(hhw)

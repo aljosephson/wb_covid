@@ -82,64 +82,62 @@
 						label (2 "Financial concerns") pos(6) col(3))
 
 * access
-	gen				ac_med_r = ac_med if sector == 1
-	gen				ac_med_u = ac_med if sector == 2
-	gen				ac_staple_r = ac_staple if sector == 1
-	gen				ac_staple_u = ac_staple if sector == 2
+	gen				ac_med_r = phw if sector == 1 & ac_med == 0
+	gen				ac_med_u = phw if sector == 2 & ac_med == 0
+	gen				ac_staple_r = phw if sector == 1 & ac_staple == 0
+	gen				ac_staple_u = phw if sector == 2 & ac_staple == 0
 
-	graph bar		(count) [aweight = phw] if ac_med_need == 1, over(country, sort(ac_med)) stack asyvar
-	
-	graph bar 		(count) ac_med_r ac_med_u [aweight = phw] if ac_med_need == 1,  ///
-						over(country, sort(ac_med) gap(*.1)) stack ///
+	graph bar 		(sum) ac_med_r ac_med_u if ac_med_need == 1,  ///
+						over(country, gap(*.1)) stack  ///
+						ytitle("Population reporting inability to buy medicine") ///
+						ylabel(0 "0" 5000000 "5,000,000" ///
+						10000000 "10,000,000" 15000000 "15,000,000") ///
+						bar(1, color(sky)) bar(2, color(turquoise))  ///
 						legend(	label (1 "Rural") label (2 "Urban") ///
-						pos(6) col(3))
-
-* access
-	graph bar		ac_med ac_staple, over(sex) ///
-						legend(	label (1 "Access to medicine") ///
-						label (2 "Access to staple food") pos(6) col(3))	
-						
-* access and concern 						
-	graph bar		ac_med ac_staple, over(concern_02) over(country) ///
-						legend(	label (1 "Access to medicine") ///
-						label (2 "Access to staple food") pos(6) col(3))							
+						pos(6) col(3)) saving("$export/ac_med", replace)
 	
-* change in income						
-	graph bar		farm_chg bus_chg wage_chg rem_dom_chg rem_for_chg isp_chg ///
-						pen_chg gov_chg ngo_chg, over(country) ///
-						legend( label (1 "Farm income") label (2 "Business income") ///
-						label (3 "Wage income") label (4 "Remittances (dom)") ///
-						label (5 "Remittances (for)") label (6 "Investments") ///
-						label (7 "Pension") label (8 "Gov. assistance") ///
-						label (9 "NGO assistance") pos(6) col(3))			
+
+	graph bar 		(sum) ac_staple_r ac_staple_u if ac_med_need == 1,  ///
+						over(country, gap(*.1)) stack  ///
+						ytitle("Population reporting inability to buy staple food") ///
+						ylabel(0 "0" 5000000 "5,000,000" ///
+						10000000 "10,000,000" 15000000 "15,000,000") ///
+						bar(1, color(sky)) bar(2, color(turquoise))  ///
+						legend(	label (1 "Rural") label (2 "Urban") ///
+						pos(6) col(3)) saving("$export/ac_staple", replace)
+	
+	gr combine "$export/ac_med.gph" "$export/ac_staple.gph", col(2) iscale(.5) commonscheme
+		
+	graph export "$output/access.pdf", as(pdf) replace
 					
-	graph bar		farm_dwn bus_dwn wage_dwn isp_dwn pen_dwn gov_dwn ngo_dwn ///
-						rem_dom_dwn rem_for_dwn, over(country) ///
+	
+* change in income
+	gen				farm_phw = hhw if farm_dwn == 1
+	gen				bus_phw = hhw if bus_dwn == 1
+	gen				wage_phw = hhw if wage_dwn == 1
+	gen				remit_phw = hhw if remit_dwn == 1
+	gen				other_phw = hhw if other_dwn == 1
+			
+	graph bar		(sum) farm_phw bus_phw wage_phw remit_phw other_phw, ///
+						over(sector) over(country) ///
+						ytitle("Households reporting decrease in income") ///
+						ylabel(0 "0" 5000000 "5,000,000" 10000000 "10,000,000" ///
+						15000000 "15,000,000") ///
 						legend( label (1 "Farm income") label (2 "Business income") ///
-						label (3 "Wage income") label (4 "Remittances (dom)") ///
-						label (5 "Remittances (for)") label (6 "Investments") ///
-						label (7 "Pension") label (8 "Gov. assistance") ///
-						label (9 "NGO assistance") pos(6) col(3))			
+						label (3 "Wage income") label (4 "Remittances") ///
+						label (5 "All else")  pos(6) col(3))			
+
+	graph export "$output/income.pdf", as(pdf) replace
 					
-	graph bar		farm_dwn bus_dwn wage_dwn isp_dwn pen_dwn gov_dwn ngo_dwn ///
-						rem_dom_dwn rem_for_dwn, over(sector) ///
-						legend( label (1 "Farm income") label (2 "Business income") ///
-						label (3 "Wage income") label (4 "Remittances (dom)") ///
-						label (5 "Remittances (for)") label (6 "Investments") ///
-						label (7 "Pension") label (8 "Gov. assistance") ///
-						label (9 "NGO assistance") pos(6) col(3))			
-						
 						
 * **********************************************************************
 * 3 - basic regressions
 * **********************************************************************
 
-*access by household weight
-gen count = 1
 
-bysort country: sum count [aweight = phw] if ac_med_need == 1
+keep if ac_med_need == 1
 
-collapse (sum) count [aweight = phw] if ac_med_need == 1, by(country)
+collapse (sum) phw, by(country)
 
 
 * connect household roster to this household data in household panel

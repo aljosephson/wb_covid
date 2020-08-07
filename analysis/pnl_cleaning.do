@@ -83,7 +83,16 @@
 
 	drop 			start_date hh_a16 hh_a17 result shock_16 hhleft hhjoin PID ///
 						baseline_hhid
+
+	rename			phw hhw
+	lab var			hhw "Household sampling weight"
 	
+	gen				phw = hhw * hhsize
+	lab var			phw "Population weight"
+	
+	order			phw, after(hhw)
+	order			hhsize, before(sex)
+						
 * know 
 	replace			know = 0 if know == 2 
 	replace			know_01 = 0 if know_01 == 2

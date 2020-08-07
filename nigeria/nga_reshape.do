@@ -840,9 +840,67 @@
 * save temp file
 	save			"$export/wave_03/respond_r3", replace
 	
+
+* ***********************************************************************
+* 5 - get household size
+* ***********************************************************************
+
 	
+* ***********************************************************************
+* 4a - household size - wave 1
+* ***********************************************************************
+	
+* load data
+	use			"$root/wave_01/r1_sect_2.dta", clear
+		
+* generate counting variables
+	gen			hhsize = 1
+	
+* collapse data
+	collapse	(sum) hhsize, by(hhid)
+	lab var		hhsize "Household size"
+
+* save temp file
+	save			"$export/wave_01/hhsize_r1", replace
+
+	
+* ***********************************************************************
+* 4b - household size - wave 2
+* ***********************************************************************
+	
+* load data
+	use			"$root/wave_02/r2_sect_2.dta", clear
+		
+* generate counting variables
+	gen			hhsize = 1
+	
+* collapse data
+	collapse	(sum) hhsize, by(hhid)
+	lab var		hhsize "Household size"
+
+* save temp file
+	save			"$export/wave_02/hhsize_r2", replace
+	
+	
+* ***********************************************************************
+* 4c - household size - wave 3
+* ***********************************************************************
+	
+* load data
+	use			"$root/wave_03/r3_sect_2.dta", clear
+		
+* generate counting variables
+	gen			hhsize = 1
+	
+* collapse data
+	collapse	(sum) hhsize, by(hhid)
+	lab var		hhsize "Household size"
+
+* save temp file
+	save			"$export/wave_03/hhsize_r3", replace
+		
 * **********************************************************************
-* 3 - end matter - nothing to save
+* 6 - end matter - nothing to save
 * **********************************************************************
 
 * close the log

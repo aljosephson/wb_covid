@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj
-* Last edit: 3 August 2020 
+* Last edit: 6 August 2020 
 * Stata v.16.1
 
 * does
@@ -137,9 +137,11 @@
 *access by household weight
 gen count = 1
 
-bysort country: sum acc_1 [aweight = phw] if ac_med_need == 1 & ac_med == 0
+bysort country: sum count [aweight = phw] if ac_med_need == 1
 
-*can multiple phw by hhsize and use it to get individual population
+collapse (sum) count [aweight = phw] if ac_med_need == 1, by(country)
+
+
 * connect household roster to this household data in household panel
 * then we can do by gender or age to see % of those people in household facing that issue
 						

@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj 
-* Last edit: 4 August 2020 
+* Last edit: 6 August 2020 
 * Stata v.16.1
 
 * does
@@ -33,23 +33,80 @@
 
 
 * ***********************************************************************
-* 1 - build ethiopia panel
+* 1 - get household size
+* ***********************************************************************
+
+* load round 1 of the data
+	use				"$root/wave_01/200610_wb_lsms_hfpm_hh_survey_roster_round1_clean_public", ///
+						clear
+
+* generate counting variables
+	gen			hhsize = 1
+	
+* collapse data
+	collapse	(sum) hhsize, by(household_id)
+	lab var		hhsize "Household size"
+
+* save temp file
+	save			"$export/wave_01/hhsize_r1", replace						
+
+* load round 2 of the data
+	use				"$root/wave_02/200620_wb_lsms_hfpm_hh_survey_roster_round2_clean_public", ///
+						clear
+
+* generate counting variables
+	gen			hhsize = 1
+	
+* collapse data
+	collapse	(sum) hhsize, by(household_id)
+	lab var		hhsize "Household size"
+
+* save temp file
+	save			"$export/wave_02/hhsize_r2", replace											
+						
+* ***********************************************************************
+* 2 - build ethiopia panel
 * ***********************************************************************
 
 * load round 1 of the data
 	use				"$root/wave_01/200614_WB_LSMS_HFPM_HH_Survey-Round1_Clean-Public_Microdata", ///
 						clear
-	
+						
+* merge in other sections
+	merge 1:1 		household_id using "$export/wave_01/hhsize_r1.dta", keep(match) nogenerate
+
 * generate round variable
 	gen				wave = 1
 	lab var			wave "Wave number"
 	
-* append round 2 of the data
-	append 			using "$root/wave_02/200620_wb_lsms_hfpm_hh_survey_round2_clean_public_microdata", ///
-						force
+* save temp file
+	save			"$export/wave_01/r1_sect_all", replace	
+
+
+* load round 2 of the data
+	use				"$root/wave_02/200620_wb_lsms_hfpm_hh_survey_round2_clean_public_microdata", ///
+						clear
+						
+* merge in other sections
+	merge 1:1 		household_id using "$export/wave_02/hhsize_r2.dta", keep(match) nogenerate
+
+* generate round variable
+	gen				wave = 2
+	lab var			wave "Wave number"
 	
-	replace			wave = 2 if wave == .
-	order			wave, after(household_id)
+* save temp file
+	save			"$export/wave_02/r2_sect_all", replace	
+
+* load complete round 1 data
+	use				"$export/wave_01/r1_sect_all", clear
+	
+* append round 2 of the data
+	append 			using "$export/wave_02/r2_sect_all", force
+	
+						
+* ***********************************************************************
+* 3 - clean ethiopia panel
+* ***********************************************************************
 
 * rationalize variables across waves
 	gen				phw = phw1 if phw1 != .

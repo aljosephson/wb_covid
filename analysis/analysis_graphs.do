@@ -112,21 +112,14 @@
 						"$export/behavior.gph" "$export/myth.gph", ///
 						col(2) iscale(.45) commonscheme
 
-	graph export "$output/fig1.png", width(16000) as(png) replace
+	graph export "$output/fig1.png", width(1920) as(png) replace
+
 	
+
 * **********************************************************************
 * 2 - create graphs on concerns and access
 * **********************************************************************
 		
-* concerns
-	graph bar		concern_01 concern_02, over(country) ///
-						legend(	label (1 "Health concerns") ///
-						label (2 "Financial concerns") pos(6) col(3))
-						
-	graph bar		concern_01 concern_02, over(sector) ///
-						legend(	label (1 "Health concerns") ///
-						label (2 "Financial concerns") pos(6) col(3))
-
 * access
 	gen				ac_med_r = phw if sector == 1 & ac_med == 0
 	gen				ac_med_u = phw if sector == 2 & ac_med == 0
@@ -154,9 +147,13 @@
 	
 	gr combine "$export/ac_med.gph" "$export/ac_staple.gph", col(2) iscale(.5) commonscheme
 		
-	graph export "$output/access.pdf", as(pdf) replace
-					
+	graph export "$output/access.pdf", as(pdf) replace		
 	
+
+* **********************************************************************
+* 3 - income and fies graphs
+* **********************************************************************
+
 * change in income
 	gen				farm_phw = hhw if farm_dwn == 1
 	gen				bus_phw = hhw if bus_dwn == 1
@@ -174,16 +171,57 @@
 						label (5 "All else")  pos(6) col(3))			
 
 	graph export "$output/income.pdf", as(pdf) replace
-					
+
+	
+* look at income loss variables
+	preserve
+
+* need to drop values and reshape
+	keep 			bus_emp_inc country wave
+	replace			bus_emp_inc = 3 if bus_emp_inc == 4
+	gen 			id=_n
+	ren 			(bus_emp_inc) (size=)
+	reshape long 	size, i(id) j(bus_emp_inc) string
+	drop if 		size == .	
+	drop if			size == -98 | size == -99
+	
+	catplot 		size wave country if country == 1, percent(country wave) stack ///
+						var2opts( relabel (1 "May" 2 "June")) ///
+						ytitle("") legend(off) ///
+						saving("$export/eth_bus_inc", replace)
 						
+	catplot 		size wave country if country == 2, percent(country wave) stack	 ///
+						var2opts( relabel (1 "June" 2 "July")) ///
+						ytitle("") legend(off) ///
+						saving("$export/mwi_bus_inc", replace)
+						
+	catplot 		size wave country if country == 3, percent(country wave) stack	 ///
+						var2opts( relabel (1 "May" 2 "June" 3 "July")) ///
+						ytitle("") legend(off) ///
+						saving("$export/nga_bus_inc", replace)
+						
+	catplot 		size wave country if country == 4, percent(country wave) stack	 ///
+						var2opts( relabel (1 "June" 2 "July")) ///
+						ytitle("Percent") legend( ///
+						label (1 "Higher than last month") ///
+						label (2 "Same as last month") ///
+						label (3 "Less than last month") ///
+						pos(6) col(3)) saving("$export/uga_bus_inc", replace)
+
+	restore 
+
+* combine graphs	
+	gr 				combine "$export/eth_bus_inc.gph" "$export/mwi_bus_inc.gph" ///
+						"$export/nga_bus_inc.gph" "$export/uga_bus_inc.gph", ///
+						col(1) iscale(.5) commonscheme imargin(0 0 0 0) ///
+						saving("$export/bus_emp_inc", replace)
+
+	graph export "$output/bus_emp_inc.pdf", as(pdg) replace	
+	
+
 * **********************************************************************
-* 3 - basic regressions
+* 4 - basic regressions
 * **********************************************************************
-
-
-keep if ac_med_need == 1
-
-collapse (sum) phw, by(country)
 
 
 * connect household roster to this household data in household panel

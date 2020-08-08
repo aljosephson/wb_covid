@@ -132,6 +132,8 @@
 						legend( label (1 "Farm income") label (2 "Business income") ///
 						label (3 "Wage income") label (4 "Remittances") ///
 						label (5 "All else")  pos(6) col(3))			
+	
+	graph export "$output/income.pdf", as(pdf) replace
 
 		
 	graph bar		(sum) farm_hhw bus_hhw wage_hhw remit_hhw other_hhw, ///
@@ -144,7 +146,7 @@
 						label (5 "All else")  pos(6) col(3))
 	*** there are xx people living in households who are reporting loss of income 
 
-	graph export "$output/income.pdf", as(pdf) replace
+	graph export "$output/income_sector.pdf", as(pdf) replace
 					
 						
 * **********************************************************************
@@ -165,6 +167,8 @@ reg bh_01 i.bus_dwn i.sex i.sector i.country
 reg bh_01 i.bus_dwn age i.sex i.sector i.country
 reg bh_02 i.bus_dwn age i.sex i.sector i.country
 reg bh_03 i.bus_dwn age i.sex i.sector i.country
+
+reg dwn_count9 i.sex i.sector i.country 
 
 reg edu_cont i.sector i.sex i.country					
 						

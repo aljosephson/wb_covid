@@ -452,6 +452,7 @@
 	replace				edu_cont = 0 if edu_cont == 2
 	lab val				edu_cont yesno
 		
+		
 * **********************************************************************
 * 5 - revise access variables as needed 
 * **********************************************************************
@@ -507,8 +508,19 @@
 	egen 					fies_count = rsum (fies_01 fies_02 fies_03 fies_04 fies_05 fies_06 fies_07 fies_08)				
 	gen 					fies_percent = fies_count / 8 
 	
+* **********************************************************************
+* 7 - clean myth questions
+* **********************************************************************
+
+	loc myth				myth_01 myth_02 myth_03 myth_04 myth_05
+
+	foreach var of varlist `myth' {
+		replace				`var' = 3 if `var' == -98
+		}				
+
+	
 * *********************************************************************
-* 7 - end matter, clean up to save
+* 8 - end matter, clean up to save
 * **********************************************************************
 
 compress

@@ -65,7 +65,7 @@
 	replace 		hhid_nga = "n" + hhid_nga if hhid_nga != "."
 	replace			hhid_nga = "" if hhid_nga == "."
 	
-	tostring		hhid_uga, replace u
+	tostring		hhid_uga, replace u force
 	replace 		hhid_uga = "u" + hhid_uga if hhid_uga != "."
 	replace			hhid_uga = "" if hhid_uga == "."
 

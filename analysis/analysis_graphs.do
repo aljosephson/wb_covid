@@ -112,20 +112,37 @@
 					
 	
 * change in income
-	gen				farm_phw = hhw if farm_dwn == 1
-	gen				bus_phw = hhw if bus_dwn == 1
-	gen				wage_phw = hhw if wage_dwn == 1
-	gen				remit_phw = hhw if remit_dwn == 1
-	gen				other_phw = hhw if other_dwn == 1
-			
-	graph bar		(sum) farm_phw bus_phw wage_phw remit_phw other_phw, ///
-						over(sector) over(country) ///
+	gen				farm_hhw = hhw if farm_dwn == 1
+	gen				bus_hhw = hhw if bus_dwn == 1
+	gen				wage_hhw = hhw if wage_dwn == 1
+	gen				remit_hhw = hhw if remit_dwn == 1
+	gen				other_hhw = hhw if other_dwn == 1
+
+	gen				farm_phw = phw if farm_dwn == 1
+	gen				bus_phw = phw if bus_dwn == 1
+	gen				wage_phw = phw if wage_dwn == 1
+	gen				remit_phw = phw if remit_dwn == 1
+	gen				other_phw = phw if other_dwn == 1
+	
+	graph bar		(sum) farm_hhw bus_hhw wage_hhw remit_hhw other_hhw, ///
+						 over(country) ///
 						ytitle("Households reporting decrease in income") ///
 						ylabel(0 "0" 5000000 "5,000,000" 10000000 "10,000,000" ///
 						15000000 "15,000,000") ///
 						legend( label (1 "Farm income") label (2 "Business income") ///
 						label (3 "Wage income") label (4 "Remittances") ///
 						label (5 "All else")  pos(6) col(3))			
+
+		
+	graph bar		(sum) farm_hhw bus_hhw wage_hhw remit_hhw other_hhw, ///
+						over(sector) over(country) ///
+						ytitle("Households reporting decrease in income") ///
+						ylabel(0 "0" 5000000 "5,000,000" 10000000 "10,000,000" ///
+						15000000 "15,000,000") ///
+						legend( label (1 "Farm income") label (2 "Business income") ///
+						label (3 "Wage income") label (4 "Remittances") ///
+						label (5 "All else")  pos(6) col(3))
+	*** there are xx people living in households who are reporting loss of income 
 
 	graph export "$output/income.pdf", as(pdf) replace
 					

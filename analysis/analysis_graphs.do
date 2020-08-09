@@ -12,6 +12,7 @@
 
 * assumes
 	* cleaned country data
+	* catplot
 
 * TO DO:
 	* analysis
@@ -32,55 +33,93 @@
 
 
 * **********************************************************************
-* 1 - build data set
+* 1 - create graphs on knowledge and behavior
 * **********************************************************************
 
 * read in data
 	use				"$ans/lsms_panel", clear
 
-* **********************************************************************
-* 2 - graphs and stuff 
-* **********************************************************************
-
 * look at knowledge variables by country
 	graph bar		know_01 know_02 know_03 know_04 know_05 know_06 know_07 know_08, over(country) ///
-						  legend(label (1 "handwash with soap") ///
-						  label (2 "avoid physical contact") label (3 "use masks/gloves") ///
-						  label (4 "avoid travel") label (5 "stay at home") ///
-						  label (6 "avoid crowds") label (7 "socially distance") ///
-						  label (8 "avoid face touching") pos (6) col(2))
+						title("A") ///
+						ytitle("Knowledge of actions to reduce exposure (%)") ///
+						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100") ///
+						legend(label (1 "Handwash with soap") ///
+						label (2 "Avoid physical contact") label (3 "Use masks/gloves") ///
+						label (4 "Avoid travel") label (5 "Stay at home") ///
+						label (6 "Avoid crowds") label (7 "Socially distance") ///
+						label (8 "Avoid face touching") pos (6) col(4)) ///
+						saving("$export/knowledge", replace)
 
 	graph export "$output/knowledge.pdf", as(pdf) replace		  
 						  
 * look at government variables 
 	graph bar		gov_01 gov_02 gov_03 gov_04 gov_05 gov_06 gov_10, over(country) ///
-						  legend(label (1 "advise citizens to stay home") ///
-						  label (2 "restricted travel in country") ///
-						  label (3 "restricted international travel") ///
-						  label (4 "close schools") label (5 "curfew/lockdown") ///
-						  label (6 "close businesses") label (7 "stop social gatherings") ///
-						  pos (6) col(2))	
+						title("B") ///
+						ytitle("Knowledge of government actions to curb spread (%)") ///
+						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100") ///
+						legend(label (1 "Advised to stay home") ///
+						label (2 "Restricted dom. travel") ///
+						label (3 "Restricted int. travel") ///
+						label (4 "Closed schools") label (5 "Curfew/lockdown") ///
+						label (6 "Closed businesses") label (7 "Stopped social gatherings") ///
+						pos (6) col(4)) saving("$export/restriction", replace)
 
 	graph export "$output/restriction.pdf", as(pdf) replace		  
 						  
 * look at behavior variables
 	graph bar 		(mean) bh_01 bh_02 bh_03, over(country) ///
+						title("C") ///
+						ytitle("Changes in Behavior to Reduce Exposure (%)") ///
+						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100") ///
 						legend(	label (1 "Increased hand washing") ///
 						label (2 "Avoided physical contact") ///
-						label (3 "Avoided crowds") pos(6) col(3))
-
-	graph export "$output/behavior.pdf", as(pdf) replace	
-	
-	
-* concerns
-	graph bar		concern_01 concern_02, over(country) ///
-						legend(	label (1 "Health concerns") ///
-						label (2 "Financial concerns") pos(6) col(3))
+						label (3 "Avoided crowds") pos(6) col(3)) ///
+						saving("$export/behavior", replace)
 						
-	graph bar		concern_01 concern_02, over(sector) ///
-						legend(	label (1 "Health concerns") ///
-						label (2 "Financial concerns") pos(6) col(3))
+	graph export "$output/behavior.pdf", as(pdf) replace	
 
+* look at myth variables
+	preserve
+
+* need to drop values and reshape	
+	drop if			country == 1 | country == 3
+	keep 			myth_01 myth_02 myth_03 myth_04 myth_05 country
+	gen 			id=_n
+	ren 			(myth_01 myth_02 myth_03 myth_04 myth_05) (size=)
+	reshape long 	size, i(id) j(myth) string
+	drop if 		size == .
+
+* generate graph
+	catplot 		size country myth, percent(country myth) ///
+						title("D") ytitle("Percent") var3opts( ///
+						relabel (1 `""Lemon and alcohol are" "effective sanitizers""' ///
+						2 "Africans are immune" 3 "Children are not affected" ///
+						4 `""Virus cannot surive" "warm weather""' ///
+						5 `""COVID-19 is just" "common flu""')) ///
+						bar(1, color(orangebrown)) bar(2, color(reddish)) ///
+						bar(3, color(ananas)) ///
+						legend( label (1 "True") label (2 "False") ///
+						label (3 "Don't Know") pos(6) col(3)) ///
+						saving("$export/myth", replace)
+
+	graph export "$output/myth.pdf", as(pdf) replace	
+	
+	restore
+
+* combine graphs	
+	gr 				combine "$export/knowledge.gph" "$export/restriction.gph" ///
+						"$export/behavior.gph" "$export/myth.gph", ///
+						col(2) iscale(.45) commonscheme
+
+	graph export "$output/fig1.png", width(1920) as(png) replace
+
+	
+
+* **********************************************************************
+* 2 - create graphs on concerns and access
+* **********************************************************************
+		
 * access
 	gen				ac_med_r = phw if sector == 1 & ac_med == 0
 	gen				ac_med_u = phw if sector == 2 & ac_med == 0
@@ -108,9 +147,13 @@
 	
 	gr combine "$export/ac_med.gph" "$export/ac_staple.gph", col(2) iscale(.5) commonscheme
 		
-	graph export "$output/access.pdf", as(pdf) replace
-					
+	graph export "$output/access.pdf", as(pdf) replace		
 	
+
+* **********************************************************************
+* 3 - income and fies graphs
+* **********************************************************************
+
 * change in income
 	gen				farm_hhw = hhw if farm_dwn == 1
 	gen				bus_hhw = hhw if bus_dwn == 1
@@ -153,6 +196,7 @@
 						label (5 "All else")  pos(6) col(3)) saving("$export/income_sector", replace)
 	*** there are xx people living in households who are reporting loss of income 
 
+
 	graph 				bar fies_01 fies_02 fies_03 fies_04 fies_05 ///
 							fies_06 fies_07 fies_08, over(country) /// 
 							ytitle("Percent of households reporting food insecurities") ///
@@ -169,15 +213,58 @@
 	graph export "$output/incomeimpacts.pdf", as(pdf) replace
 	
 				
+	graph export "$output/income.pdf", as(pdf) replace
+
+	
+* look at income loss variables
+	preserve
+
+* need to drop values and reshape
+	keep 			bus_emp_inc country wave
+	replace			bus_emp_inc = 3 if bus_emp_inc == 4
+	gen 			id=_n
+	ren 			(bus_emp_inc) (size=)
+	reshape long 	size, i(id) j(bus_emp_inc) string
+	drop if 		size == .	
+	drop if			size == -98 | size == -99
+	
+	catplot 		size wave country if country == 1, percent(country wave) stack ///
+						var2opts( relabel (1 "May" 2 "June")) ///
+						ytitle("") legend(off) ///
+						saving("$export/eth_bus_inc", replace)
 						
+	catplot 		size wave country if country == 2, percent(country wave) stack	 ///
+						var2opts( relabel (1 "June" 2 "July")) ///
+						ytitle("") legend(off) ///
+						saving("$export/mwi_bus_inc", replace)
+						
+	catplot 		size wave country if country == 3, percent(country wave) stack	 ///
+						var2opts( relabel (1 "May" 2 "June" 3 "July")) ///
+						ytitle("") legend(off) ///
+						saving("$export/nga_bus_inc", replace)
+						
+	catplot 		size wave country if country == 4, percent(country wave) stack	 ///
+						var2opts( relabel (1 "June" 2 "July")) ///
+						ytitle("Percent") legend( ///
+						label (1 "Higher than last month") ///
+						label (2 "Same as last month") ///
+						label (3 "Less than last month") ///
+						pos(6) col(3)) saving("$export/uga_bus_inc", replace)
+
+	restore 
+
+* combine graphs	
+	gr 				combine "$export/eth_bus_inc.gph" "$export/mwi_bus_inc.gph" ///
+						"$export/nga_bus_inc.gph" "$export/uga_bus_inc.gph", ///
+						col(1) iscale(.5) commonscheme imargin(0 0 0 0) ///
+						saving("$export/bus_emp_inc", replace)
+
+	graph export "$output/bus_emp_inc.pdf", as(pdg) replace	
+	
+
 * **********************************************************************
-* 3 - basic regressions
+* 4 - basic regressions
 * **********************************************************************
-
-
-keep if ac_med_need == 1
-
-collapse (sum) phw, by(country)
 
 
 * connect household roster to this household data in household panel

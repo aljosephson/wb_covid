@@ -124,6 +124,16 @@
 	gen				remit_phw = phw if remit_dwn == 1
 	gen				other_phw = phw if other_dwn == 1
 	
+
+	gen				fies_01_hhw = hhw if fies_01 == 1
+	gen				fies_02_hhw = hhw if fies_02 == 1
+	gen				fies_03_hhw = hhw if fies_03 == 1
+	gen				fies_04_hhw = hhw if fies_04 == 1
+	gen				fies_05_hhw = hhw if fies_05 == 1
+	gen				fies_06_hhw = hhw if fies_06 == 1
+	gen				fies_07_hhw = hhw if fies_07 == 1
+	gen				fies_08_hhw = hhw if fies_08 == 1
+	
 	graph bar		(sum) farm_hhw bus_hhw wage_hhw remit_hhw other_hhw, ///
 						 over(country) ///
 						ytitle("Households reporting decrease in income") ///
@@ -131,11 +141,8 @@
 						15000000 "15,000,000") ///
 						legend( label (1 "Farm income") label (2 "Business income") ///
 						label (3 "Wage income") label (4 "Remittances") ///
-						label (5 "All else")  pos(6) col(3))			
-	
-	graph export "$output/income.pdf", as(pdf) replace
-
-		
+						label (5 "All else")  pos(6) col(3)) saving("$export/income", replace)		
+ 
 	graph bar		(sum) farm_hhw bus_hhw wage_hhw remit_hhw other_hhw, ///
 						over(sector) over(country) ///
 						ytitle("Households reporting decrease in income") ///
@@ -143,11 +150,25 @@
 						15000000 "15,000,000") ///
 						legend( label (1 "Farm income") label (2 "Business income") ///
 						label (3 "Wage income") label (4 "Remittances") ///
-						label (5 "All else")  pos(6) col(3))
+						label (5 "All else")  pos(6) col(3)) saving("$export/income_sector", replace)
 	*** there are xx people living in households who are reporting loss of income 
 
-	graph export "$output/income_sector.pdf", as(pdf) replace
-					
+	graph 				bar fies_01 fies_02 fies_03 fies_04 fies_05 ///
+							fies_06 fies_07 fies_08, over(country) /// 
+							ytitle("Percent of households reporting food insecurities") ///
+							legend( label (1 "Household ran out of food") label (2 "Adult hungry but did not eat") ///
+							label (3 "Adult hungry but did not eat for full day") label (4 "Adult worried about food") ///
+							label (5 "Adult unable to eat healthy food") label (6 "Adult ate only few kinds of foods") ///
+							label (7 "Adult skpped meal") label (8 "Adult ate less") /// 
+							pos(6) row(4)) saving("$export/fies", replace)	
+								
+	graph 				bar fies_count, over(sector) over(country) /// 
+							ytitle("FIES score") saving("$export/fies_count", replace)	
+							
+	gr combine "$export/income.gph" "$export/income_sector.gph" "export/fies.gph" "export/fies_count.gph", col(2) iscale(.5) commonscheme
+	graph export "$output/incomeimpacts.pdf", as(pdf) replace
+	
+				
 						
 * **********************************************************************
 * 3 - basic regressions
@@ -168,7 +189,13 @@ reg bh_01 i.bus_dwn age i.sex i.sector i.country
 reg bh_02 i.bus_dwn age i.sex i.sector i.country
 reg bh_03 i.bus_dwn age i.sex i.sector i.country
 
-reg dwn_count9 i.sex i.sector i.country 
+	*reg 			dwn_count9 i.sex i.sector i.country 
+	reg 			dwn_count4 i.sex i.sector i.country 
+	*** no difference by gender
+	*** urban areas associated with fewer losses of income, relative to urban areas 
+	*** malawi, nigeria, and uganda all have more losses of income, relative to ethiopia 
+	*** * possible measurement issues in ethiopia 
+
 
 reg edu_cont i.sector i.sex i.country					
 						

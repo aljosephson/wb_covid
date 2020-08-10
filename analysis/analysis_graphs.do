@@ -178,8 +178,8 @@
 	gen				fies_08_hhw = hhw if fies_08 == 1
 	
 	graph bar		(sum) farm_hhw bus_hhw wage_hhw remit_hhw other_hhw, ///
-						 over(country) ///
-						ytitle("Households reporting decrease in income") ///
+						 over(country) title("A")  ///
+						ytitle("Individuals reporting decrease in income") ///
 						ylabel(0 "0" 5000000 "5,000,000" 10000000 "10,000,000" ///
 						15000000 "15,000,000") ///
 						legend( label (1 "Farm income") label (2 "Business income") ///
@@ -187,8 +187,8 @@
 						label (5 "All else")  pos(6) col(3)) saving("$output/income", replace)		
  
 	graph bar		(sum) farm_hhw bus_hhw wage_hhw remit_hhw other_hhw, ///
-						over(sector) over(country) ///
-						ytitle("Households reporting decrease in income") ///
+						over(sector) over(country) title("B")  ///
+						ytitle("Individuals reporting decrease in income") ///
 						ylabel(0 "0" 5000000 "5,000,000" 10000000 "10,000,000" ///
 						15000000 "15,000,000") ///
 						legend( label (1 "Farm income") label (2 "Business income") ///
@@ -196,19 +196,27 @@
 						label (5 "All else")  pos(6) col(3)) saving("$output/income_sector", replace)
 	*** there are xx people living in households who are reporting loss of income 
 
-	graph 				bar fies_01 fies_02 fies_03 fies_04 fies_05 ///
-							fies_06 fies_07 fies_08, over(country) /// 
-							ytitle("Percent of households reporting food insecurities") ///
+	graph bar			(sum) fies_01_hhw fies_02_hhw fies_03_hhw fies_04_hhw fies_05_hhw ///
+							fies_06_hhw fies_07_hhw fies_08_hhw, over(country) /// 
+							ytitle("Individuals reporting food insecurities") title("C") ///
+							ylabel(0 "0" 10000000 "10,000,000" 20000000 "20,000,000" ///
+							30000000 "30,000,000" 40000000 "40,000,000") ///
 							legend( label (1 "Household ran out of food") label (2 "Adult hungry but did not eat") ///
 							label (3 "Adult hungry but did not eat for full day") label (4 "Adult worried about food") ///
 							label (5 "Adult unable to eat healthy food") label (6 "Adult ate only few kinds of foods") ///
-							label (7 "Adult skpped meal") label (8 "Adult ate less") /// 
+							label (7 "Adult skipped meal") label (8 "Adult ate less") /// 
 							pos(6) row(4)) saving("$output/fies", replace)	
-								
-	graph 				bar fies_count, over(dwn_count4) over(country) /// 
-							ytitle("FIES score") saving("$output/fies_count", replace)	
+	
+	lab def 			dwn 0 "No loss" 1 "Loss" 	
+	label val 			dwn dwn 
+	
+				
+	graph 				bar fies_count, over(dwn) over(country) /// 
+							ytitle("FIES score") title("D")   bar(1, color(sky)) bar(2, color(turquoise)) ///
+							saving("$output/fies_count", replace)	
 							
-	gr combine "$output/income.gph" "$output/income_sector.gph" "$output/fies.gph" "$output/fies_count.gph", col(2) iscale(.5) commonscheme
+	gr combine "$output/income.gph" "$output/income_sector.gph" "$output/fies.gph" "$output/fies_count.gph", ///
+	col(2) iscale(.5) commonscheme 
 	graph export "$output/incomeimpacts.pdf", as(pdf) replace
 	
 				

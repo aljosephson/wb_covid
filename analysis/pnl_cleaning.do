@@ -352,11 +352,12 @@
 	foreach var of varlist `inc' {
 		replace				`var' = 0 if `var' == 2
 		replace				`var' = 0 if `var' == -99
-		replace				`var' = 0 if `var' == . 
+		*replace				`var' = 0 if `var' == . 
 		lab val				`var' yesno
+		replace				`var' = . if country == 3 & wave == 2 | wave == 3
 		}	
-		*** recording missing values for income as no receipt of that income type 
-		
+		*** omit nigeria wave 2 and 3 due to incomplete questions 
+
 	gen 				other_inc = 1 if isp_inc == 1 | pen_inc == 1 | gov_inc == 1 | ngo_inc == 1 | oth_inc == 1 | asst_inc == 1 
 	replace 			other_inc = 0 if other_inc == . 
 	lab var 			other_inc "other income sources (isp, pen, gov, ngo, oth, asst)"

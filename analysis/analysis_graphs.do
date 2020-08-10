@@ -12,6 +12,8 @@
 
 * assumes
 	* cleaned country data
+	* catplot
+	* grc1leg2
 
 * TO DO:
 	* analysis
@@ -32,55 +34,93 @@
 
 
 * **********************************************************************
-* 1 - build data set
+* 1 - create graphs on knowledge and behavior
 * **********************************************************************
 
 * read in data
 	use				"$ans/lsms_panel", clear
 
-* **********************************************************************
-* 2 - graphs and stuff 
-* **********************************************************************
-
 * look at knowledge variables by country
 	graph bar		know_01 know_02 know_03 know_04 know_05 know_06 know_07 know_08, over(country) ///
-						  legend(label (1 "handwash with soap") ///
-						  label (2 "avoid physical contact") label (3 "use masks/gloves") ///
-						  label (4 "avoid travel") label (5 "stay at home") ///
-						  label (6 "avoid crowds") label (7 "socially distance") ///
-						  label (8 "avoid face touching") pos (6) col(2))
+						title("A") ///
+						ytitle("Knowledge of actions to reduce exposure (%)") ///
+						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100") ///
+						legend(label (1 "Handwash with soap") ///
+						label (2 "Avoid physical contact") label (3 "Use masks/gloves") ///
+						label (4 "Avoid travel") label (5 "Stay at home") ///
+						label (6 "Avoid crowds") label (7 "Socially distance") ///
+						label (8 "Avoid face touching") pos (6) col(4)) ///
+						saving("$export/knowledge", replace)
 
 	graph export "$output/knowledge.pdf", as(pdf) replace		  
 						  
 * look at government variables 
 	graph bar		gov_01 gov_02 gov_03 gov_04 gov_05 gov_06 gov_10, over(country) ///
-						  legend(label (1 "advise citizens to stay home") ///
-						  label (2 "restricted travel in country") ///
-						  label (3 "restricted international travel") ///
-						  label (4 "close schools") label (5 "curfew/lockdown") ///
-						  label (6 "close businesses") label (7 "stop social gatherings") ///
-						  pos (6) col(2))	
+						title("B") ///
+						ytitle("Knowledge of government actions to curb spread (%)") ///
+						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100") ///
+						legend(label (1 "Advised to stay home") ///
+						label (2 "Restricted dom. travel") ///
+						label (3 "Restricted int. travel") ///
+						label (4 "Closed schools") label (5 "Curfew/lockdown") ///
+						label (6 "Closed businesses") label (7 "Stopped social gatherings") ///
+						pos (6) col(4)) saving("$export/restriction", replace)
 
 	graph export "$output/restriction.pdf", as(pdf) replace		  
 						  
 * look at behavior variables
 	graph bar 		(mean) bh_01 bh_02 bh_03, over(country) ///
+						title("C") ///
+						ytitle("Changes in Behavior to Reduce Exposure (%)") ///
+						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100") ///
 						legend(	label (1 "Increased hand washing") ///
 						label (2 "Avoided physical contact") ///
-						label (3 "Avoided crowds") pos(6) col(3))
-
-	graph export "$output/behavior.pdf", as(pdf) replace	
-	
-	
-* concerns
-	graph bar		concern_01 concern_02, over(country) ///
-						legend(	label (1 "Health concerns") ///
-						label (2 "Financial concerns") pos(6) col(3))
+						label (3 "Avoided crowds") pos(6) col(3)) ///
+						saving("$export/behavior", replace)
 						
-	graph bar		concern_01 concern_02, over(sector) ///
-						legend(	label (1 "Health concerns") ///
-						label (2 "Financial concerns") pos(6) col(3))
+	graph export "$output/behavior.pdf", as(pdf) replace	
 
+* look at myth variables
+	preserve
+
+* need to drop values and reshape	
+	drop if			country == 1 | country == 3
+	keep 			myth_01 myth_02 myth_03 myth_04 myth_05 country
+	gen 			id=_n
+	ren 			(myth_01 myth_02 myth_03 myth_04 myth_05) (size=)
+	reshape long 	size, i(id) j(myth) string
+	drop if 		size == .
+
+* generate graph
+	catplot 		size country myth, percent(country myth) ///
+						title("D") ytitle("Percent") var3opts( ///
+						relabel (1 `""Lemon and alcohol are" "effective sanitizers""' ///
+						2 "Africans are immune" 3 "Children are not affected" ///
+						4 `""Virus cannot surive" "warm weather""' ///
+						5 `""COVID-19 is just" "common flu""')) ///
+						bar(1, color(orangebrown)) bar(2, color(reddish)) ///
+						bar(3, color(ananas)) ///
+						legend( label (1 "True") label (2 "False") ///
+						label (3 "Don't Know") pos(6) col(3)) ///
+						saving("$export/myth", replace)
+
+	graph export "$output/myth.pdf", as(pdf) replace	
+	
+	restore
+
+* combine graphs	
+	gr 				combine "$export/knowledge.gph" "$export/restriction.gph" ///
+						"$export/behavior.gph" "$export/myth.gph", ///
+						col(2) iscale(.45) commonscheme
+
+	graph export "$output/fig1.png", width(1920) as(png) replace
+
+	
+
+* **********************************************************************
+* 2 - create graphs on concerns and access
+* **********************************************************************
+		
 * access
 	gen				ac_med_r = phw if sector == 1 & ac_med == 0
 	gen				ac_med_u = phw if sector == 2 & ac_med == 0
@@ -108,15 +148,21 @@
 	
 	gr combine "$export/ac_med.gph" "$export/ac_staple.gph", col(2) iscale(.5) commonscheme
 		
-	graph export "$output/access.pdf", as(pdf) replace
-					
+	graph export "$output/access.pdf", as(pdf) replace		
 	
+
+* **********************************************************************
+* 3 - income and fies graphs
+* **********************************************************************
+
 * change in income
 	gen				farm_hhw = hhw if farm_dwn == 1
 	gen				bus_hhw = hhw if bus_dwn == 1
 	gen				wage_hhw = hhw if wage_dwn == 1
 	gen				remit_hhw = hhw if remit_dwn == 1
 	gen				other_hhw = hhw if other_dwn == 1
+	
+	gen 			dwn_hhw = hhw if dwn == 1
 
 	gen				farm_phw = phw if farm_dwn == 1
 	gen				bus_phw = phw if bus_dwn == 1
@@ -134,50 +180,158 @@
 	gen				fies_07_hhw = hhw if fies_07 == 1
 	gen				fies_08_hhw = hhw if fies_08 == 1
 	
+	lab def 			dwn 0 "No loss" 1 "Loss" 	
+	label val 			dwn dwn 
+	
+	
 	graph bar		(sum) farm_hhw bus_hhw wage_hhw remit_hhw other_hhw, ///
-						 over(country) ///
-						ytitle("Households reporting decrease in income") ///
+						 over(country) title("A")  ///
+						ytitle("Population reporting decrease in income") ///
 						ylabel(0 "0" 5000000 "5,000,000" 10000000 "10,000,000" ///
 						15000000 "15,000,000") ///
 						legend( label (1 "Farm income") label (2 "Business income") ///
 						label (3 "Wage income") label (4 "Remittances") ///
-						label (5 "All else")  pos(6) col(3)) saving("$export/income", replace)		
+						label (5 "All else")  pos(6) col(3)) saving("$output/income", replace)		
  
 	graph bar		(sum) farm_hhw bus_hhw wage_hhw remit_hhw other_hhw, ///
-						over(sector) over(country) ///
-						ytitle("Households reporting decrease in income") ///
+						over(sector) over(country) title("A")  ///
+						ytitle("Population reporting decrease in income") ///
 						ylabel(0 "0" 5000000 "5,000,000" 10000000 "10,000,000" ///
 						15000000 "15,000,000") ///
 						legend( label (1 "Farm income") label (2 "Business income") ///
 						label (3 "Wage income") label (4 "Remittances") ///
-						label (5 "All else")  pos(6) col(3)) saving("$export/income_sector", replace)
+						label (5 "All else")  pos(6) col(3)) saving("$output/income_sector", replace)
 	*** there are xx people living in households who are reporting loss of income 
 
-	graph 				bar fies_01 fies_02 fies_03 fies_04 fies_05 ///
-							fies_06 fies_07 fies_08, over(country) /// 
-							ytitle("Percent of households reporting food insecurities") ///
+	graph bar			(sum) fies_01_hhw fies_02_hhw fies_03_hhw fies_04_hhw fies_05_hhw ///
+							fies_06_hhw fies_07_hhw fies_08_hhw, over(country) /// 
+							ytitle("Population reporting food insecurities") title("C") ///
+							ylabel(0 "0" 10000000 "10,000,000" 20000000 "20,000,000" ///
+							30000000 "30,000,000" 40000000 "40,000,000") ///
 							legend( label (1 "Household ran out of food") label (2 "Adult hungry but did not eat") ///
 							label (3 "Adult hungry but did not eat for full day") label (4 "Adult worried about food") ///
 							label (5 "Adult unable to eat healthy food") label (6 "Adult ate only few kinds of foods") ///
-							label (7 "Adult skpped meal") label (8 "Adult ate less") /// 
-							pos(6) row(4)) saving("$export/fies", replace)	
-								
-	graph 				bar fies_count, over(sector) over(country) /// 
-							ytitle("FIES score") saving("$export/fies_count", replace)	
-							
-	gr combine "$export/income.gph" "$export/income_sector.gph" "export/fies.gph" "export/fies_count.gph", col(2) iscale(.5) commonscheme
-	graph export "$output/incomeimpacts.pdf", as(pdf) replace
-	
+							label (7 "Adult skipped meal") label (8 "Adult ate less") /// 
+							pos(6) row(4)) saving("$output/fies", replace)	
 				
+	graph 				bar fies_count, over(dwn)  over(country) /// 
+							ytitle("FIES score") title("D")   bar(1, color(turquoise)) ///
+							saving("$output/fies_count", replace)	
+	
+	
+	
+* look at income loss variables
+	preserve
+
+* need to drop values and reshape
+	keep 			bus_emp_inc country wave
+	replace			bus_emp_inc = 3 if bus_emp_inc == 4
+	gen 			id=_n
+	ren 			(bus_emp_inc) (size=)
+	reshape long 	size, i(id) j(bus_emp_inc) string
+	drop if 		size == .	
+	drop if			size == -98 | size == -99
+	
+	catplot 		size wave country if country == 1, percent(country wave) stack ///
+						var2opts( relabel (1 "May" 2 "June")) ///
+						ytitle("") legend(off) ///
+						saving("$output/eth_bus_inc", replace)
 						
+	catplot 		size wave country if country == 2, percent(country wave) stack	 ///
+						var2opts( relabel (1 "June" 2 "July")) ///
+						ytitle("") legend(off) ///
+						saving("$output/mwi_bus_inc", replace)
+						
+	catplot 		size wave country if country == 3, percent(country wave) stack	 ///
+						var2opts( relabel (1 "May" 2 "June" 3 "July")) ///
+						ytitle("") legend(off) ///
+						saving("$output/nga_bus_inc", replace)
+						
+	catplot 		size wave country if country == 4, percent(country wave) stack	 ///
+						var2opts( relabel (1 "June" 2 "July")) ///
+						ytitle("Percent") legend( ///
+						label (1 "Higher than last month") ///
+						label (2 "Same as last month") ///
+						label (3 "Less than last month") ///
+						pos(6) col(3)) saving("$output/uga_bus_inc", replace)
+
+	restore 
+
+* combine graphs	
+	gr 				combine "$output/eth_bus_inc.gph" "$output/mwi_bus_inc.gph" ///
+						"$output/nga_bus_inc.gph" "$output/uga_bus_inc.gph", ///
+						col(1) iscale(.5) commonscheme imargin(0 0 0 0) title("B") ///
+						 saving("$output/bus_emp_inc", replace)
+
+	graph export "$output/bus_emp_inc.pdf", as(pdf) replace	
+	
+	
+	gr combine "$output/income_sector.gph" "$output/bus_emp_inc.gph" "$output/fies.gph" "$output/fies_count.gph", ///
+	col(2) iscale(.5) commonscheme 
+	graph export "$output/incomeimpacts.pdf", as(pdf) replace
+	graph export "$output/incomeimpact.png", as(png) replace
+	
+
+	
+* look at education 
+
+	gen				edu_cont_hhw = hhw if edu_cont == 1
+	gen 			edu_act_phw = phw if edu_act == 1
+	gen 			edu_act_hhw = hhw if edu_act == 1
+	gen 			edu_01_hhw = hhw if edu_01 == 1 
+	gen 			edu_02_hhw = hhw if edu_02 == 1 
+	gen 			edu_03_hhw = hhw if edu_03 == 1 
+	gen 			edu_04_hhw = hhw if edu_04 == 1 
+	gen 			edu_05_hhw = hhw if edu_05 == 1 
+
+	graph bar		(sum) edu_01_hhw edu_02_hhw edu_03_hhw edu_04_hhw edu_05_hhw if country == 1, ///
+						over(sector) legend(off) ///
+						ylabel(0 "0" 500000 "500,000" 1500000 "1,500,000" ///
+						 2500000 "2,500,000") /// 
+						 legend( ///
+						label (1 "Completed assignments provided by teacher") ///
+						label (2 "Using mobile learning apps") ///
+						label (3 "Watched education television") ///
+						label (4 "Listened to educational radio programs") ///
+						label (5 "Session with teacher") pos(6) col(2)) ///	
+						ytitle("Population experiencing various types of educational contact") title("Ethiopia") ///
+						 saving("$output/educont_eth", replace)		
+						 
+	graph bar		(sum) edu_01_hhw edu_02_hhw edu_03_hhw edu_04_hhw edu_05_hhw if country == 2, ///
+						over(sector) legend(off) /// 
+						ylabel(0 "0" 20000 "20,000" 60000 "60,000" ///
+						 100000 "100,000") /// 
+						title("Malawi") ///
+						 saving("$output/educont_mwi", replace)			
+						 
+	graph bar		(sum) edu_01_hhw edu_02_hhw edu_03_hhw edu_04_hhw edu_05_hhw if country == 3, ///
+						over(sector) legend(off) /// 
+						ylabel(0 "0" 2000000 "2,000,000" 4000000 "4,000,000" ///
+						 6000000 "6,000,000") ///
+						title("Nigeria") ///
+						 saving("$output/educont_nga", replace)		
+
+	graph bar		(sum) edu_01_hhw edu_02_hhw edu_03_hhw edu_04_hhw edu_05_hhw if country == 4, ///
+						over(sector) legend(off) ///
+						ylabel(0 "0" 350000 "350,000" 700000 "700,000" ///
+						 1100000 "1,100,000") ///
+						title("Uganda") ///
+						 saving("$output/educont_uga", replace)				
+						 
+
+
+	grc1leg2  		 "$output/educont_eth.gph" "$output/educont_mwi.gph" ///
+						"$output/educont_nga.gph" "$output/educont_uga.gph", ///
+						col(4) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
+						saving("$output/educont_test", replace)
+	*** need to add a title when putting together with rest of the graphs 	
+	
+	graph bar 		fies_count, over(edu_act) over (country)
+
+						 
 * **********************************************************************
-* 3 - basic regressions
+* 4 - basic regressions
 * **********************************************************************
-
-
-keep if ac_med_need == 1
-
-collapse (sum) phw, by(country)
 
 
 * connect household roster to this household data in household panel
@@ -189,9 +343,10 @@ reg bh_01 i.bus_dwn age i.sex i.sector i.country
 reg bh_02 i.bus_dwn age i.sex i.sector i.country
 reg bh_03 i.bus_dwn age i.sex i.sector i.country
 
-	*reg 			dwn_count9 i.sex i.sector i.country 
-	reg 			dwn_count4 i.sex i.sector i.country 
-	*** no difference by gender
+
+	reg 			dwn_count age i.sex i.sector i.country 
+	** robust to different measures of dwn (e.g. dwn)
+	*** no difference by gender, age, education 
 	*** urban areas associated with fewer losses of income, relative to urban areas 
 	*** malawi, nigeria, and uganda all have more losses of income, relative to ethiopia 
 	*** * possible measurement issues in ethiopia 

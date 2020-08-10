@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj
-* Last edit: 6 August 2020 
+* Last edit: 10 August 2020 
 * Stata v.16.1
 
 * does
@@ -285,7 +285,7 @@
 	gen 			edu_05_hhw = hhw if edu_05 == 1 
 
 	graph bar		(sum) edu_01_hhw edu_02_hhw edu_03_hhw edu_04_hhw edu_05_hhw if country == 1, ///
-						over(sector) legend(off) ///
+						over(sector) over(country) legend(off) ///
 						ylabel(0 "0" 500000 "500,000" 1500000 "1,500,000" ///
 						 2500000 "2,500,000") /// 
 						 legend( ///
@@ -294,40 +294,44 @@
 						label (3 "Watched education television") ///
 						label (4 "Listened to educational radio programs") ///
 						label (5 "Session with teacher") pos(6) col(2)) ///	
-						ytitle("Population experiencing various types of educational contact") title("Ethiopia") ///
+						ytitle("Population experiencing various types of educational contact")  ///
 						 saving("$output/educont_eth", replace)		
 						 
 	graph bar		(sum) edu_01_hhw edu_02_hhw edu_03_hhw edu_04_hhw edu_05_hhw if country == 2, ///
-						over(sector) legend(off) /// 
+						over(sector) over(country) legend(off) /// 
 						ylabel(0 "0" 20000 "20,000" 60000 "60,000" ///
 						 100000 "100,000") /// 
-						title("Malawi") ///
 						 saving("$output/educont_mwi", replace)			
 						 
 	graph bar		(sum) edu_01_hhw edu_02_hhw edu_03_hhw edu_04_hhw edu_05_hhw if country == 3, ///
-						over(sector) legend(off) /// 
+						over(sector) over(country) legend(off) /// 
 						ylabel(0 "0" 2000000 "2,000,000" 4000000 "4,000,000" ///
 						 6000000 "6,000,000") ///
-						title("Nigeria") ///
 						 saving("$output/educont_nga", replace)		
 
 	graph bar		(sum) edu_01_hhw edu_02_hhw edu_03_hhw edu_04_hhw edu_05_hhw if country == 4, ///
-						over(sector) legend(off) ///
+						over(sector) over(country) legend(off) ///
 						ylabel(0 "0" 350000 "350,000" 700000 "700,000" ///
-						 1100000 "1,100,000") ///
-						title("Uganda") ///
+						 1100000 "1,100,000") ///		
 						 saving("$output/educont_uga", replace)				
 						 
 
 
 	grc1leg2  		 "$output/educont_eth.gph" "$output/educont_mwi.gph" ///
 						"$output/educont_nga.gph" "$output/educont_uga.gph", ///
-						col(4) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
+						col(4) iscale(.5) commonscheme imargin(0 0 0 0) legend() title("C") ///
 						saving("$output/educont_test", replace)
 	*** need to add a title when putting together with rest of the graphs 	
 	
-	graph bar 		fies_count, over(edu_act) over (country)
+	graph bar 		dwn, over(edu_act) over(sector) over (country) 
+	
+	lab def 			edu_act 0 "Engaged in learning" 1 "Not engaged in learning" 	
+	label val 			edu_act edu_act  
 
+	graph bar 		fies_count, over(edu_act) over(sector) over (country) /// 
+							ytitle("FIES Count") title("D") ///
+							legend(pos(6)) saving("$output/fies_edu", replace)	
+	
 						 
 * **********************************************************************
 * 4 - basic regressions
@@ -352,7 +356,7 @@ reg bh_03 i.bus_dwn age i.sex i.sector i.country
 	*** * possible measurement issues in ethiopia 
 
 
-reg edu_cont i.sector i.sex i.country					
+reg edu_act i.sector i.sex i.country					
 						
 * **********************************************************************
 * 4 - end matter, clean up to save

@@ -160,6 +160,8 @@
 	gen				wage_hhw = hhw if wage_dwn == 1
 	gen				remit_hhw = hhw if remit_dwn == 1
 	gen				other_hhw = hhw if other_dwn == 1
+	
+	gen 			dwn_hhw = hhw if dwn == 1
 
 	gen				farm_phw = phw if farm_dwn == 1
 	gen				bus_phw = phw if bus_dwn == 1
@@ -177,9 +179,13 @@
 	gen				fies_07_hhw = hhw if fies_07 == 1
 	gen				fies_08_hhw = hhw if fies_08 == 1
 	
+	lab def 			dwn 0 "No loss" 1 "Loss" 	
+	label val 			dwn dwn 
+	
+	
 	graph bar		(sum) farm_hhw bus_hhw wage_hhw remit_hhw other_hhw, ///
 						 over(country) title("A")  ///
-						ytitle("Individuals reporting decrease in income") ///
+						ytitle("Population reporting decrease in income") ///
 						ylabel(0 "0" 5000000 "5,000,000" 10000000 "10,000,000" ///
 						15000000 "15,000,000") ///
 						legend( label (1 "Farm income") label (2 "Business income") ///
@@ -188,7 +194,7 @@
  
 	graph bar		(sum) farm_hhw bus_hhw wage_hhw remit_hhw other_hhw, ///
 						over(sector) over(country) title("B")  ///
-						ytitle("Individuals reporting decrease in income") ///
+						ytitle("Population reporting decrease in income") ///
 						ylabel(0 "0" 5000000 "5,000,000" 10000000 "10,000,000" ///
 						15000000 "15,000,000") ///
 						legend( label (1 "Farm income") label (2 "Business income") ///
@@ -198,7 +204,7 @@
 
 	graph bar			(sum) fies_01_hhw fies_02_hhw fies_03_hhw fies_04_hhw fies_05_hhw ///
 							fies_06_hhw fies_07_hhw fies_08_hhw, over(country) /// 
-							ytitle("Individuals reporting food insecurities") title("C") ///
+							ytitle("Population reporting food insecurities") title("C") ///
 							ylabel(0 "0" 10000000 "10,000,000" 20000000 "20,000,000" ///
 							30000000 "30,000,000" 40000000 "40,000,000") ///
 							legend( label (1 "Household ran out of food") label (2 "Adult hungry but did not eat") ///
@@ -206,21 +212,16 @@
 							label (5 "Adult unable to eat healthy food") label (6 "Adult ate only few kinds of foods") ///
 							label (7 "Adult skipped meal") label (8 "Adult ate less") /// 
 							pos(6) row(4)) saving("$output/fies", replace)	
-	
-	lab def 			dwn 0 "No loss" 1 "Loss" 	
-	label val 			dwn dwn 
-	
 				
 	graph 				bar fies_count, over(dwn) over(country) /// 
-							ytitle("FIES score") title("D")   bar(1, color(sky)) bar(2, color(turquoise)) ///
+							ytitle("FIES score") title("D")   bar(1, color(eltblue)) ///
 							saving("$output/fies_count", replace)	
 							
 	gr combine "$output/income.gph" "$output/income_sector.gph" "$output/fies.gph" "$output/fies_count.gph", ///
 	col(2) iscale(.5) commonscheme 
 	graph export "$output/incomeimpacts.pdf", as(pdf) replace
+	graph export "$output/incomeimpact.png", as(png) replace
 	
-				
-	graph export "$output/income.pdf", as(pdf) replace
 
 	
 * look at income loss variables

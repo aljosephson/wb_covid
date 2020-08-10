@@ -214,11 +214,16 @@
 							label (7 "Adult skipped meal") label (8 "Adult ate less") /// 
 							pos(6) row(4)) saving("$output/fies", replace)	
 				
+
 	graph 				bar fies_count, over(dwn)  over(country) /// 
 							ytitle("FIES score") title("D")   bar(1, color(turquoise)) ///
 							saving("$output/fies_count", replace)	
-	
-	
+			
+	gr combine "$output/income.gph" "$output/income_sector.gph" "$output/fies.gph" "$output/fies_count.gph", ///
+	col(2) iscale(.5) commonscheme 
+	graph export "$output/incomeimpacts.pdf", as(pdf) replace
+	graph export "$output/incomeimpact.png", as(png) replace
+
 	
 * look at income loss variables
 	preserve
@@ -247,6 +252,16 @@
 						ytitle("") legend(off) ///
 						saving("$output/nga_bus_inc", replace)
 						
+	catplot 		size wave country if country == 2, percent(country wave) stack	 ///
+						var2opts( relabel (1 "June" 2 "July")) ///
+						ytitle("") legend(off) ///
+						saving("$export/mwi_bus_inc", replace)
+						
+	catplot 		size wave country if country == 3, percent(country wave) stack	 ///
+						var2opts( relabel (1 "May" 2 "June" 3 "July")) ///
+						ytitle("") legend(off) ///
+						saving("$export/nga_bus_inc", replace)
+						
 	catplot 		size wave country if country == 4, percent(country wave) stack	 ///
 						var2opts( relabel (1 "June" 2 "July")) ///
 						ytitle("Percent") legend( ///
@@ -255,9 +270,11 @@
 						label (3 "Less than last month") ///
 						pos(6) col(3)) saving("$output/uga_bus_inc", replace)
 
+
 	restore 
 
 * combine graphs	
+
 	gr 				combine "$output/eth_bus_inc.gph" "$output/mwi_bus_inc.gph" ///
 						"$output/nga_bus_inc.gph" "$output/uga_bus_inc.gph", ///
 						col(1) iscale(.5) commonscheme imargin(0 0 0 0) title("B") ///
@@ -337,6 +354,19 @@
 * 4 - basic regressions
 * **********************************************************************
 
+
+=======
+	gr 				combine "$export/eth_bus_inc.gph" "$export/mwi_bus_inc.gph" ///
+						"$export/nga_bus_inc.gph" "$export/uga_bus_inc.gph", ///
+						col(1) iscale(.5) commonscheme imargin(0 0 0 0) ///
+						saving("$export/bus_emp_inc", replace)
+
+	graph export "$output/bus_emp_inc.pdf", as(pdg) replace	
+	
+
+* **********************************************************************
+* 4 - basic regressions
+* **********************************************************************
 
 * connect household roster to this household data in household panel
 * then we can do by gender or age to see % of those people in household facing that issue

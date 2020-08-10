@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj
-* Last edit: 6 August 2020 
+* Last edit: 10 August 2020 
 * Stata v.16.1
 
 * does
@@ -13,6 +13,7 @@
 * assumes
 	* cleaned country data
 	* catplot
+	* grc1leg2
 
 * TO DO:
 	* analysis
@@ -193,7 +194,7 @@
 						label (5 "All else")  pos(6) col(3)) saving("$output/income", replace)		
  
 	graph bar		(sum) farm_hhw bus_hhw wage_hhw remit_hhw other_hhw, ///
-						over(sector) over(country) title("B")  ///
+						over(sector) over(country) title("A")  ///
 						ytitle("Population reporting decrease in income") ///
 						ylabel(0 "0" 5000000 "5,000,000" 10000000 "10,000,000" ///
 						15000000 "15,000,000") ///
@@ -213,15 +214,15 @@
 							label (7 "Adult skipped meal") label (8 "Adult ate less") /// 
 							pos(6) row(4)) saving("$output/fies", replace)	
 				
-	graph 				bar fies_count, over(dwn) over(country) /// 
-							ytitle("FIES score") title("D")   bar(1, color(eltblue)) ///
+
+	graph 				bar fies_count, over(dwn)  over(country) /// 
+							ytitle("FIES score") title("D")   bar(1, color(turquoise)) ///
 							saving("$output/fies_count", replace)	
-							
+			
 	gr combine "$output/income.gph" "$output/income_sector.gph" "$output/fies.gph" "$output/fies_count.gph", ///
 	col(2) iscale(.5) commonscheme 
 	graph export "$output/incomeimpacts.pdf", as(pdf) replace
 	graph export "$output/incomeimpact.png", as(png) replace
-	
 
 	
 * look at income loss variables
@@ -239,7 +240,17 @@
 	catplot 		size wave country if country == 1, percent(country wave) stack ///
 						var2opts( relabel (1 "May" 2 "June")) ///
 						ytitle("") legend(off) ///
-						saving("$export/eth_bus_inc", replace)
+						saving("$output/eth_bus_inc", replace)
+						
+	catplot 		size wave country if country == 2, percent(country wave) stack	 ///
+						var2opts( relabel (1 "June" 2 "July")) ///
+						ytitle("") legend(off) ///
+						saving("$output/mwi_bus_inc", replace)
+						
+	catplot 		size wave country if country == 3, percent(country wave) stack	 ///
+						var2opts( relabel (1 "May" 2 "June" 3 "July")) ///
+						ytitle("") legend(off) ///
+						saving("$output/nga_bus_inc", replace)
 						
 	catplot 		size wave country if country == 2, percent(country wave) stack	 ///
 						var2opts( relabel (1 "June" 2 "July")) ///
@@ -257,11 +268,94 @@
 						label (1 "Higher than last month") ///
 						label (2 "Same as last month") ///
 						label (3 "Less than last month") ///
-						pos(6) col(3)) saving("$export/uga_bus_inc", replace)
+						pos(6) col(3)) saving("$output/uga_bus_inc", replace)
+
 
 	restore 
 
 * combine graphs	
+
+	gr 				combine "$output/eth_bus_inc.gph" "$output/mwi_bus_inc.gph" ///
+						"$output/nga_bus_inc.gph" "$output/uga_bus_inc.gph", ///
+						col(1) iscale(.5) commonscheme imargin(0 0 0 0) title("B") ///
+						 saving("$output/bus_emp_inc", replace)
+
+	graph export "$output/bus_emp_inc.pdf", as(pdf) replace	
+	
+	
+	gr combine "$output/income_sector.gph" "$output/bus_emp_inc.gph" "$output/fies.gph" "$output/fies_count.gph", ///
+	col(2) iscale(.5) commonscheme 
+	graph export "$output/incomeimpacts.pdf", as(pdf) replace
+	graph export "$output/incomeimpact.png", as(png) replace
+	
+
+	
+* look at education 
+
+	gen				edu_cont_hhw = hhw if edu_cont == 1
+	gen 			edu_act_phw = phw if edu_act == 1
+	gen 			edu_act_hhw = hhw if edu_act == 1
+	gen 			edu_01_hhw = hhw if edu_01 == 1 
+	gen 			edu_02_hhw = hhw if edu_02 == 1 
+	gen 			edu_03_hhw = hhw if edu_03 == 1 
+	gen 			edu_04_hhw = hhw if edu_04 == 1 
+	gen 			edu_05_hhw = hhw if edu_05 == 1 
+
+	graph bar		(sum) edu_01_hhw edu_02_hhw edu_03_hhw edu_04_hhw edu_05_hhw if country == 1, ///
+						over(sector) over(country) legend(off) ///
+						ylabel(0 "0" 500000 "500,000" 1500000 "1,500,000" ///
+						 2500000 "2,500,000") /// 
+						 legend( ///
+						label (1 "Completed assignments provided by teacher") ///
+						label (2 "Using mobile learning apps") ///
+						label (3 "Watched education television") ///
+						label (4 "Listened to educational radio programs") ///
+						label (5 "Session with teacher") pos(6) col(2)) ///	
+						ytitle("Population experiencing various types of educational contact")  ///
+						 saving("$output/educont_eth", replace)		
+						 
+	graph bar		(sum) edu_01_hhw edu_02_hhw edu_03_hhw edu_04_hhw edu_05_hhw if country == 2, ///
+						over(sector) over(country) legend(off) /// 
+						ylabel(0 "0" 20000 "20,000" 60000 "60,000" ///
+						 100000 "100,000") /// 
+						 saving("$output/educont_mwi", replace)			
+						 
+	graph bar		(sum) edu_01_hhw edu_02_hhw edu_03_hhw edu_04_hhw edu_05_hhw if country == 3, ///
+						over(sector) over(country) legend(off) /// 
+						ylabel(0 "0" 2000000 "2,000,000" 4000000 "4,000,000" ///
+						 6000000 "6,000,000") ///
+						 saving("$output/educont_nga", replace)		
+
+	graph bar		(sum) edu_01_hhw edu_02_hhw edu_03_hhw edu_04_hhw edu_05_hhw if country == 4, ///
+						over(sector) over(country) legend(off) ///
+						ylabel(0 "0" 350000 "350,000" 700000 "700,000" ///
+						 1100000 "1,100,000") ///		
+						 saving("$output/educont_uga", replace)				
+						 
+
+
+	grc1leg2  		 "$output/educont_eth.gph" "$output/educont_mwi.gph" ///
+						"$output/educont_nga.gph" "$output/educont_uga.gph", ///
+						col(4) iscale(.5) commonscheme imargin(0 0 0 0) legend() title("C") ///
+						saving("$output/educont_test", replace)
+	*** need to add a title when putting together with rest of the graphs 	
+	
+	graph bar 		dwn, over(edu_act) over(sector) over (country) 
+	
+	lab def 			edu_act 0 "Engaged in learning" 1 "Not engaged in learning" 	
+	label val 			edu_act edu_act  
+
+	graph bar 		fies_count, over(edu_act) over(sector) over (country) /// 
+							ytitle("FIES Count") title("D") ///
+							legend(pos(6)) saving("$output/fies_edu", replace)	
+	
+						 
+* **********************************************************************
+* 4 - basic regressions
+* **********************************************************************
+
+
+=======
 	gr 				combine "$export/eth_bus_inc.gph" "$export/mwi_bus_inc.gph" ///
 						"$export/nga_bus_inc.gph" "$export/uga_bus_inc.gph", ///
 						col(1) iscale(.5) commonscheme imargin(0 0 0 0) ///
@@ -274,7 +368,6 @@
 * 4 - basic regressions
 * **********************************************************************
 
-
 * connect household roster to this household data in household panel
 * then we can do by gender or age to see % of those people in household facing that issue
 						
@@ -284,15 +377,16 @@ reg bh_01 i.bus_dwn age i.sex i.sector i.country
 reg bh_02 i.bus_dwn age i.sex i.sector i.country
 reg bh_03 i.bus_dwn age i.sex i.sector i.country
 
-	*reg 			dwn_count9 i.sex i.sector i.country 
-	reg 			dwn_count4 i.sex i.sector i.country 
-	*** no difference by gender
+
+	reg 			dwn_count age i.sex i.sector i.country 
+	** robust to different measures of dwn (e.g. dwn)
+	*** no difference by gender, age, education 
 	*** urban areas associated with fewer losses of income, relative to urban areas 
 	*** malawi, nigeria, and uganda all have more losses of income, relative to ethiopia 
 	*** * possible measurement issues in ethiopia 
 
 
-reg edu_cont i.sector i.sex i.country					
+reg edu_act i.sector i.sex i.country					
 						
 * **********************************************************************
 * 4 - end matter, clean up to save

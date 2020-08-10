@@ -32,7 +32,7 @@ The code in `masterDoFile.do` (to be done) replicates
     1. `blindschemes`
     2. `estout`
     3. `customsave`
-    4. `winsor2`
+    4. `grc1leg2`
 
 
 #### Folder structure

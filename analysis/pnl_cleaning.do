@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj
-* Last edit: 6 August 2020 
+* Last edit: 10 August 2020 
 * Stata v.16.1
 
 * does
@@ -65,7 +65,7 @@
 	replace 		hhid_nga = "n" + hhid_nga if hhid_nga != "."
 	replace			hhid_nga = "" if hhid_nga == "."
 	
-	tostring		hhid_uga, replace u
+	tostring		hhid_uga, replace u force
 	replace 		hhid_uga = "u" + hhid_uga if hhid_uga != "."
 	replace			hhid_uga = "" if hhid_uga == "."
 
@@ -352,10 +352,12 @@
 	foreach var of varlist `inc' {
 		replace				`var' = 0 if `var' == 2
 		replace				`var' = 0 if `var' == -99
-		replace				`var' = 0 if `var' == .
+		*replace				`var' = 0 if `var' == . 
 		lab val				`var' yesno
+		replace				`var' = . if country == 3 & wave == 2 | wave == 3
 		}	
-		
+		*** omit nigeria wave 2 and 3 due to incomplete questions 
+
 	gen 				other_inc = 1 if isp_inc == 1 | pen_inc == 1 | gov_inc == 1 | ngo_inc == 1 | oth_inc == 1 | asst_inc == 1 
 	replace 			other_inc = 0 if other_inc == . 
 	lab var 			other_inc "other income sources (isp, pen, gov, ngo, oth, asst)"
@@ -418,14 +420,10 @@
 	lab var				rem_dom_dwn "Remittances (dom) reduced"
 	lab var				rem_for_dwn "Remittances (for) reduced"		
 	
-	egen 				dwn_count9 = rsum (farm_dwn bus_dwn wage_dwn isp_dwn pen_dwn gov_dwn ngo_dwn rem_dom_dwn rem_for_dwn)	
-	lab var 			dwn_count9 "count of income sources which are down - total of nine"
-	gen 				dwn_percent9 = dwn_count9 / 9
-	label var 			dwn_percent9 "percent of income sources which had losses - total of nine"
-	gen					dwn = 1 if dwn_count != 0 | dwn_count != . 
-	replace				dwn = 0 if dwn == . 
-	lab var 			dwn "=1 if household experience any type of income loss"
-	
+	*egen 				dwn_count9 = rsum (farm_dwn bus_dwn wage_dwn isp_dwn pen_dwn gov_dwn ngo_dwn rem_dom_dwn rem_for_dwn)	
+	*lab var 			dwn_count9 "count of income sources which are down - total of nine"
+	*gen 				dwn_percent9 = dwn_count9 / 9
+	*label var 			dwn_percent9 "percent of income sources which had losses - total of nine"
 							
 	loc dwn				farm_dwn bus_dwn wage_dwn isp_dwn pen_dwn gov_dwn ngo_dwn rem_dom_dwn rem_for_dwn		
 
@@ -434,20 +432,30 @@
 		}				
 		
 	gen 				remit_dwn = 1 if rem_for_dwn == 1 | rem_dom_dwn == 1
-	replace 			remit_dwn = 0 if remit_dwn == . 
+	replace 			remit_dwn = 0 if rem_for_dwn == 0 | rem_dom_dwn == 0
 	lab var 			remit_dwn "Remittances (foreign, domestic) reduced"
+	lab val				remit_dwn yesno
 	gen 				other_dwn = 1 if isp_dwn == 1 | pen_dwn == 1 | gov_dwn == 1 | ngo_dwn == 1 
-	replace				other_dwn = 0 if other_dwn == . 
+	replace				other_dwn = 0 if isp_dwn == 0 | pen_dwn == 0 | gov_dwn == 0 | ngo_dwn == 0 
 	lab var 			other_dwn "Other income sources (isp, pen, gov, ngo) reduced"
+	lab val				other_dwn yesno
 	
-	egen 				dwn_count4 = rsum (farm_dwn bus_dwn wage_dwn remit_dwn other_dwn)	
-	lab var 			dwn_count4 "count of income sources which are down - total of four"
-	gen 				dwn_percent4 = dwn_count4 / 4
-	label var 			dwn_percent4 "percent of income sources which had losses - total of four"
+	egen 				dwn_count = rsum(farm_dwn bus_dwn wage_dwn remit_dwn other_dwn)
+	lab var 			dwn_count "count of income sources which are down"
+	replace				dwn_count = . if farm_dwn == . & bus_dwn == . & ///
+							wage_dwn == . & remit_dwn == . & other_dwn == .
+	
+	gen 				dwn_percent = dwn_count / 5
+	label var 			dwn_percent "percent of income sources which had losses"
+	
+	
+	gen					dwn = 1 if dwn_count != 0 | dwn_count != . 
+	replace 			dwn = 0 if dwn_count == 0 
+	lab var 			dwn "=1 if household experience any type of income loss"
 	
 	order 				farm_dwn bus_dwn wage_dwn isp_dwn pen_dwn gov_dwn ///
-							ngo_dwn rem_dom_dwn rem_for_dwn remit_dwn other_dwn dwn dwn_count9 dwn_count4 ///
-							dwn_percent9 dwn_percent4, after(rem_for_chg)
+							ngo_dwn rem_dom_dwn rem_for_dwn remit_dwn other_dwn dwn dwn_count  ///
+							 dwn_percent, after(rem_for_chg)
 		
 	replace				edu_cont = 0 if edu_cont == 2
 	lab val				edu_cont yesno
@@ -518,9 +526,16 @@
 		replace				`var' = 3 if `var' == -98
 		}				
 
-	
+* **********************************************************************
+* 8 - education questions
+* **********************************************************************
+
+	replace 				edu_act = 0 if edu_act == 2
+	replace					edu_act = . if edu_act == -99 
+	replace 				edu_act = . if edu_act == -98 
+
 * *********************************************************************
-* 8 - end matter, clean up to save
+* 9 - end matter, clean up to save
 * **********************************************************************
 
 compress

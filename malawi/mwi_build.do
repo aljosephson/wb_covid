@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: alj
-* Edited by: jdm
-* Last edited: 6 AUGUST 2020 
+* Edited by: jdm 
+* Last edited: 11 AUGUST 2020 
 * Stata v.16.1
 
 * does
@@ -25,6 +25,7 @@
 	global	root	=	"$data/malawi/raw"
 	global	export	=	"$data/malawi/refined"
 	global	logout	=	"$data/malawi/logs"
+	global  fies 	= 	"$data/analysis/raw"
 
 * open log
 	cap log 		close
@@ -625,6 +626,18 @@
 * save temp file
 	save			"$export/wave_02/hhsize_r2", replace	
 	
+* ***********************************************************************
+* 1j - FIES score - R1 
+* ***********************************************************************
+
+* load data
+	use				"$fies/fies_malawi_r1.dta", clear
+	
+	drop 			country wave
+	
+* save temp file
+	save			"$export/wave_01/fies_r1", replace	
+	
 	
 * ***********************************************************************
 * 2 - build malawi panel R1 cross section  
@@ -646,6 +659,7 @@
 	merge 1:1 		HHID using "$export/wave_01/sect11_Safety_Nets.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/sect12_Interview_Result.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/sect13_Agriculture.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$export/wave_01/fies_r1.dta", keep(match) nogenerate
 
 * reformat HHID
 	rename			HHID household_id_an

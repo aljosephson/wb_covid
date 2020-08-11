@@ -46,7 +46,6 @@
 	append using 	"$nga/nga_panel", force
 
 	append using	"$uga/uga_panel", force
-
 	
 * **********************************************************************
 * 2 - revise ID variables as needed 

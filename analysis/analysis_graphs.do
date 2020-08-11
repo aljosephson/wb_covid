@@ -50,7 +50,7 @@
 						label (4 "Avoid travel") label (5 "Stay at home") ///
 						label (6 "Avoid crowds") label (7 "Socially distance") ///
 						label (8 "Avoid face touching") pos (6) col(4)) ///
-						saving("$export/knowledge", replace)
+						saving("$output/knowledge", replace)
 
 	graph export "$output/knowledge.pdf", as(pdf) replace		  
 						  
@@ -64,7 +64,7 @@
 						label (3 "Restricted int. travel") ///
 						label (4 "Closed schools") label (5 "Curfew/lockdown") ///
 						label (6 "Closed businesses") label (7 "Stopped social gatherings") ///
-						pos (6) col(4)) saving("$export/restriction", replace)
+						pos (6) col(4)) saving("$output/restriction", replace)
 
 	graph export "$output/restriction.pdf", as(pdf) replace		  
 						  
@@ -76,7 +76,7 @@
 						legend(	label (1 "Increased hand washing") ///
 						label (2 "Avoided physical contact") ///
 						label (3 "Avoided crowds") pos(6) col(3)) ///
-						saving("$export/behavior", replace)
+						saving("$output/behavior", replace)
 						
 	graph export "$output/behavior.pdf", as(pdf) replace	
 
@@ -102,15 +102,15 @@
 						bar(3, color(ananas)) ///
 						legend( label (1 "True") label (2 "False") ///
 						label (3 "Don't Know") pos(6) col(3)) ///
-						saving("$export/myth", replace)
+						saving("$output/myth", replace)
 
 	graph export "$output/myth.pdf", as(pdf) replace	
 	
 	restore
 
 * combine graphs	
-	gr 				combine "$export/knowledge.gph" "$export/restriction.gph" ///
-						"$export/behavior.gph" "$export/myth.gph", ///
+	gr 				combine "$output/knowledge.gph" "$output/restriction.gph" ///
+						"$output/behavior.gph" "$output/myth.gph", ///
 						col(2) iscale(.45) commonscheme
 
 	graph export "$output/fig1.png", width(1920) as(png) replace
@@ -118,37 +118,31 @@
 	
 
 * **********************************************************************
-* 2 - create graphs on concerns and access
+* 2 - income and fies graphs
 * **********************************************************************
-		
-* access
-	gen				ac_med_r = phw if sector == 1 & ac_med == 0
-	gen				ac_med_u = phw if sector == 2 & ac_med == 0
-	gen				ac_staple_r = phw if sector == 1 & ac_staple == 0
-	gen				ac_staple_u = phw if sector == 2 & ac_staple == 0
 
-	graph bar 		(sum) ac_med_r ac_med_u if ac_med_need == 1,  ///
-						over(country, gap(*.1)) stack  ///
-						ytitle("Population reporting inability to buy medicine") ///
-						ylabel(0 "0" 5000000 "5,000,000" ///
-						10000000 "10,000,000" 15000000 "15,000,000") ///
-						bar(1, color(sky)) bar(2, color(turquoise))  ///
-						legend(	label (1 "Rural") label (2 "Urban") ///
-						pos(6) col(3)) saving("$export/ac_med", replace)
+* change in income
+	gen				farm_hhw = hhw if farm_dwn == 1
+	gen				bus_hhw = hhw if bus_dwn == 1
+	gen				wage_hhw = hhw if wage_dwn == 1
+	gen				remit_hhw = hhw if remit_dwn == 1
+	gen				other_hhw = hhw if other_dwn == 1
+
+	gen				farm_phw = phw if farm_dwn == 1
+	gen				bus_phw = phw if bus_dwn == 1
+	gen				wage_phw = phw if wage_dwn == 1
+	gen				remit_phw = phw if remit_dwn == 1
+	gen				other_phw = phw if other_dwn == 1
 	
 
-	graph bar 		(sum) ac_staple_r ac_staple_u if ac_med_need == 1,  ///
-						over(country, gap(*.1)) stack  ///
-						ytitle("Population reporting inability to buy staple food") ///
-						ylabel(0 "0" 5000000 "5,000,000" ///
-						10000000 "10,000,000" 15000000 "15,000,000") ///
-						bar(1, color(sky)) bar(2, color(turquoise))  ///
-						legend(	label (1 "Rural") label (2 "Urban") ///
-						pos(6) col(3)) saving("$export/ac_staple", replace)
-	
-	gr combine "$export/ac_med.gph" "$export/ac_staple.gph", col(2) iscale(.5) commonscheme
-		
-	graph export "$output/access.pdf", as(pdf) replace		
+	gen				fies_01_hhw = hhw if fies_01 == 1
+	gen				fies_02_hhw = hhw if fies_02 == 1
+	gen				fies_03_hhw = hhw if fies_03 == 1
+	gen				fies_04_hhw = hhw if fies_04 == 1
+	gen				fies_05_hhw = hhw if fies_05 == 1
+	gen				fies_06_hhw = hhw if fies_06 == 1
+	gen				fies_07_hhw = hhw if fies_07 == 1
+	gen				fies_08_hhw = hhw if fies_08 == 1
 	
 
 * **********************************************************************
@@ -212,8 +206,7 @@
 							label (3 "Adult hungry but did not eat for full day") label (4 "Adult worried about food") ///
 							label (5 "Adult unable to eat healthy food") label (6 "Adult ate only few kinds of foods") ///
 							label (7 "Adult skipped meal") label (8 "Adult ate less") /// 
-							pos(6) row(4)) saving("$output/fies", replace)	
-				
+							pos(6) row(4)) saving("$output/fies", replace)				
 
 	graph 				bar fies_count, over(dwn)  over(country) /// 
 							ytitle("FIES score") title("D")   bar(1, color(turquoise)) ///
@@ -223,7 +216,6 @@
 	col(2) iscale(.5) commonscheme 
 	graph export "$output/incomeimpacts.pdf", as(pdf) replace
 	graph export "$output/incomeimpact.png", as(png) replace
-
 	
 * look at income loss variables
 	preserve
@@ -349,13 +341,6 @@
 							ytitle("FIES Count") title("D") ///
 							legend(pos(6)) saving("$output/fies_edu", replace)	
 	
-						 
-* **********************************************************************
-* 4 - basic regressions
-* **********************************************************************
-
-
-=======
 	gr 				combine "$export/eth_bus_inc.gph" "$export/mwi_bus_inc.gph" ///
 						"$export/nga_bus_inc.gph" "$export/uga_bus_inc.gph", ///
 						col(1) iscale(.5) commonscheme imargin(0 0 0 0) ///
@@ -364,6 +349,92 @@
 	graph export "$output/bus_emp_inc.pdf", as(pdg) replace	
 	
 
+* **********************************************************************
+* 4 - create graphs on concerns and access and education
+* **********************************************************************
+		
+* access
+	gen				ac_med_r = phw if sector == 1 & ac_med == 0
+	gen				ac_med_u = phw if sector == 2 & ac_med == 0
+	gen				ac_staple_r = phw if sector == 1 & ac_staple == 0
+	gen				ac_staple_u = phw if sector == 2 & ac_staple == 0
+	gen				ac_soap_r = phw if sector == 1 & ac_soap == 0
+	gen				ac_soap_u = phw if sector == 2 & ac_soap == 0
+
+	graph bar 		(sum) ac_med_r ac_med_u if ac_med_need == 1,  ///
+						over(country, gap(*.1)) stack  ///
+						ytitle("Population reporting inability to buy medicine") ///
+						ylabel(0 "0" 5000000 "5,000,000" ///
+						10000000 "10,000,000" 15000000 "15,000,000") ///
+						bar(1, color(sky)) bar(2, color(turquoise))  ///
+						legend(	label (1 "Rural") label (2 "Urban") ///
+						pos(6) col(3)) saving("$output/ac_med", replace)
+	
+	graph bar 		(sum) ac_staple_r ac_staple_u if ac_med_need == 1,  ///
+						over(country, gap(*.1)) stack  ///
+						ytitle("Population reporting inability to buy staple food") ///
+						ylabel(0 "0" 5000000 "5,000,000" ///
+						10000000 "10,000,000" 15000000 "15,000,000") ///
+						bar(1, color(sky)) bar(2, color(turquoise))  ///
+						legend(	label (1 "Rural") label (2 "Urban") ///
+						pos(6) col(3)) saving("$output/ac_staple", replace)
+	
+	graph bar 		(sum) ac_soap_r ac_soap_u if ac_soap_need == 1,  ///
+						over(country, gap(*.1)) stack    ///
+						ytitle("Population reporting inability to buy soap") ///
+						ylabel(0 "0" 5000000 "5,000,000" ///
+						10000000 "10,000,000" 15000000 "15,000,000") ///
+						bar(1, color(sky)) bar(2, color(turquoise))  ///
+						legend(	label (1 "Rural") label (2 "Urban") ///
+						pos(6) col(3)) saving("$output/ac_soap", replace)
+	
+	grc1leg2 "$output/ac_med.gph" "$output/ac_staple.gph" "$output/ac_soap.gph", ///
+		col(3) iscale(.5) commonscheme title("A") saving("$output/access.gph", replace)
+		
+
+* access
+	gen				cope_01_phw = phw if cope_01 == 1
+	gen				cope_02_phw = phw if cope_02 == 1
+	gen				cope_03_phw = phw if cope_03 == 1
+	gen				cope_04_phw = phw if cope_04 == 1
+	gen				cope_05_phw = phw if cope_05 == 1 | cope_06 == 1 | cope_07 == 1
+	gen				cope_08_phw = phw if cope_08 == 1
+	gen				cope_09_phw = phw if cope_09 == 1
+	gen				cope_10_phw = phw if cope_10 == 1
+	gen				cope_11_phw = phw if cope_11 == 1	
+	
+	graph bar		(sum) cope_01_phw cope_02_phw cope_03_phw cope_04_phw ///
+						cope_05_phw cope_08_phw cope_09_phw cope_10_phw ///
+						cope_11_phw if country == 1, over(country) ///
+						ytitle("Population reporting use of coping strategy") ///
+						ylabel(0 "0" 5000000 "5,000,000" 10000000 "10,000,000" ///
+						15000000 "15,000,000" 20000000 "20,000,000") ///
+						legend( label (1 "Sale of asset") label (2 "Worked more") ///
+						label (3 "Help from family") label (4 "Loan from family") ///
+						label (5 "Accessed credit") label (6 "Sold crop early") ///
+						label (7 "Reduced food cons.") label (8 "Reduced non-food cons.") ///
+						label (9 "Relied on savings") pos(6) col(3)) ///
+						saving("$output/cope_eth.gph", replace)
+	
+	graph bar		(sum) cope_01_phw cope_02_phw cope_03_phw cope_04_phw ///
+						cope_05_phw cope_08_phw cope_09_phw cope_10_phw ///
+						cope_11_phw if country == 3, legend(off)  over(country) ///
+						ylabel(0 "0" 20000000 "20,000,000" 40000000 "40,000,000" ///
+						60000000 "60,000,000" 80000000 "80,000,000") ///
+						saving("$output/cope_nga.gph", replace)
+	
+	graph bar		(sum) cope_01_phw cope_02_phw cope_03_phw cope_04_phw ///
+						cope_05_phw cope_08_phw cope_09_phw cope_10_phw ///
+						cope_11_phw if country == 4, legend(off) over(country) ///
+						ylabel(0 "0" 5000000 "5,000,000" 10000000 "10,000,000" ///
+						15000000 "15,000,000") //////
+						saving("$output/cope_uga.gph", replace)
+						
+	
+	grc1leg2 "$output/cope_eth.gph" "$output/cope_nga.gph" "$output/cope_uga.gph", ///
+		col(3) iscale(.5) commonscheme title("B") saving("$output/cope.gph", replace)						
+	
+	
 * **********************************************************************
 * 4 - basic regressions
 * **********************************************************************
@@ -380,11 +451,10 @@ reg bh_03 i.bus_dwn age i.sex i.sector i.country
 
 	reg 			dwn_count age i.sex i.sector i.country 
 	** robust to different measures of dwn (e.g. dwn)
-	*** no difference by gender, age, education 
+
 	*** urban areas associated with fewer losses of income, relative to urban areas 
 	*** malawi, nigeria, and uganda all have more losses of income, relative to ethiopia 
 	*** * possible measurement issues in ethiopia 
-
 
 reg edu_act i.sector i.sex i.country					
 						

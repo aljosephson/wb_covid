@@ -398,12 +398,14 @@ reg bh_03 i.bus_dwn age i.sex i.sector i.country
 
 	reg 			dwn_count age i.sex i.sector i.country 
 	** robust to different measures of dwn (e.g. dwn)
-
 	*** urban areas associated with fewer losses of income, relative to urban areas 
 	*** malawi, nigeria, and uganda all have more losses of income, relative to ethiopia 
 	*** * possible measurement issues in ethiopia 
 
-reg edu_act i.sector i.sex i.country					
+	reg 			edu_act i.sector i.sex i.country		
+	reg 			edu_cont i.sector i.sex i.country
+	reg 			edu_act fies_count i.sector i.sex i.country
+	*** lower fies count - associated with educational activities 
 						
 * **********************************************************************
 * 4 - end matter, clean up to save

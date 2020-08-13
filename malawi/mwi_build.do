@@ -42,7 +42,7 @@
 * reshape files which are currently long 
 
 * load income_loss data
-	use				"$root/wave_01/sect7_Income_Loss", clear
+	use				"$root/wave_01/sect7_Income_Loss_r1", clear
 	
 * drop other source 	
 	drop 			income_source_os
@@ -102,14 +102,14 @@
 	label 			var tot_inc_chg "change in total income since covid"
 	
 * save new file 
-	save			"$export/wave_01/sect7_Income_Loss", replace	
+	save			"$export/wave_01/sect7_Income_Loss_r1", replace	
 
 * ***********************************************************************
 * 1b - reshape section on safety nets wide data - R1
 * ***********************************************************************
 	
 * load safety_net data 
-	use				"$root/wave_01/sect11_Safety_Nets", clear	
+	use				"$root/wave_01/sect11_Safety_Nets_r1", clear	
 
 * drop other 
 	drop 			s11q3_os
@@ -172,7 +172,7 @@
 	lab val			asst_04 s10q01
 
 * save new file 
-	save			"$export/wave_01/sect11_Safety_Nets", replace
+	save			"$export/wave_01/sect11_Safety_Nets_r1", replace
 	
 
 * ***********************************************************************
@@ -534,7 +534,7 @@
 * ***********************************************************************
 
 * load data
-	use				"$root/wave_01/sect12_Interview_Result", clear
+	use				"$root/wave_01/sect12_Interview_Result_r1", clear
 	
 * drop all but household respondant
 	keep			HHID s12q9
@@ -544,7 +544,7 @@
 	isid			HHID
 	
 * merge in household roster
-	merge 1:1		HHID PID using "$root/wave_01/sect2_Household_Roster.dta"
+	merge 1:1		HHID PID using "$root/wave_01/sect2_Household_Roster_r1.dta"
 	
 	keep if			_merge == 3
 	
@@ -598,7 +598,7 @@
 * ***********************************************************************
 
 * load data
-	use			"$root/wave_01/sect2_Household_Roster.dta", clear
+	use			"$root/wave_01/sect2_Household_Roster_r1.dta", clear
 	
 * generate counting variables
 	gen			hhsize = 1
@@ -631,21 +631,21 @@
 * ***********************************************************************
 	
 * load cover data
-	use				"$root/wave_01/secta_Cover_Page", clear
+	use				"$root/wave_01/secta_Cover_Page_r1", clear
 
 * merge in other sections
 	merge 1:1 		HHID using "$export/wave_01/respond_r1.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$export/wave_01/hhsize_r1.dta", keep(match) nogenerate	
-	merge 1:1 		HHID using "$root/wave_01/sect3_Knowledge.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect4_Behavior.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect5_Access.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect6_Employment.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$export/wave_01/sect7_Income_Loss.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect8_food_security.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect9_Concerns.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$export/wave_01/sect11_Safety_Nets.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect12_Interview_Result.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect13_Agriculture.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$root/wave_01/sect3_Knowledge_r1.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$root/wave_01/sect4_Behavior_r1.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$root/wave_01/sect5_Access_r1.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$root/wave_01/sect6_Employment_r1.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$export/wave_01/sect7_Income_Loss_r1.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$root/wave_01/sect8_food_security_r1.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$root/wave_01/sect9_Concerns_r1.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$export/wave_01/sect11_Safety_Nets_r1.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$root/wave_01/sect12_Interview_Result_r1.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$root/wave_01/sect13_Agriculture_r1.dta", keep(match) nogenerate
 
 * reformat HHID
 	rename			HHID household_id_an

@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: August 2020
 * Created by: jdm
-* Edited by: jdm
-* Last edited: 6 August 2020 
+* Edited by: alj
+* Last edited: 13 August 2020 
 * Stata v.16.1
 
 * does
@@ -909,6 +909,7 @@
 
 	drop 			country wave
 	rename 			HHID hhid 
+	destring 		hhid, replace
 
 * save temp file
 	save			"$export/wave_02/fies_r2", replace

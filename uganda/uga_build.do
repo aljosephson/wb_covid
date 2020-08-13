@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by : alj
-* Last edited: 11 August 2020 
+* Last edited: 11 August 2020
 * Stata v.16.1
 
 * does
@@ -21,9 +21,8 @@
 * 0 - setup
 * **********************************************************************
 
-* define 
+* define
 	global	root	=	"$data/uganda/raw"
-	global  fies	=	"$data/analysis/raw"
 	global	export	=	"$data/uganda/refined"
 	global	logout	=	"$data/uganda/logs"
 
@@ -31,7 +30,7 @@
 	cap log 		close
 	log using		"$logout/uga_build", append
 
-	
+
 * ***********************************************************************
 * 1 - reshape wide data
 * ***********************************************************************
@@ -43,20 +42,20 @@
 
 * load income data
 	use				"$root/wave_01/SEC6", clear
-	
+
 * reformat HHID
 	format 			%12.0f HHID
-	
+
 * drop other source
 	drop			s6q01_Other
-	
+
 * replace value for "other"
 	replace			income_loss__id = 96 if income_loss__id == -96
-	
-* reshape data	
+
+* reshape data
 	reshape 		wide s6q01 s6q02, i(HHID) j(income_loss__id)
 
-* rename variables	
+* rename variables
 	rename 			s6q011 farm_inc
 	lab	var			farm_inc "Income from farming, fishing, livestock in last 12 months"
 	rename			s6q021 farm_chg
@@ -64,11 +63,11 @@
 	rename 			s6q012 bus_inc
 	lab var			bus_inc "Income from non-farm family business in last 12 months"
 	rename			s6q022 bus_chg
-	lab var			bus_chg "Change in income from non-farm family business since covid"	
+	lab var			bus_chg "Change in income from non-farm family business since covid"
 	rename 			s6q013 wage_inc
 	lab var			wage_inc "Income from wage employment in last 12 months"
 	rename			s6q023 wage_chg
-	lab var			wage_chg "Change in income from wage employment since covid"	
+	lab var			wage_chg "Change in income from wage employment since covid"
 	rename			s6q014 unemp_inc
 	lab var			unemp_inc "Income from unemployment benefits in the last 12 months"
 	rename			s6q024 unemp_chg
@@ -76,11 +75,11 @@
 	rename 			s6q015 rem_for
 	label 			var rem_for "Income from remittances abroad in last 12 months"
 	rename			s6q025 rem_for_chg
-	label 			var rem_for_chg "Change in income from remittances abroad since covid"	
+	label 			var rem_for_chg "Change in income from remittances abroad since covid"
 	rename 			s6q016 rem_dom
 	label 			var rem_dom "Income from remittances domestic in last 12 months"
 	rename			s6q026 rem_dom_chg
-	label 			var rem_dom_chg "Change in income from remittances domestic since covid"	
+	label 			var rem_dom_chg "Change in income from remittances domestic since covid"
 	rename 			s6q017 asst_inc
 	label 			var asst_inc "Income from assistance from non-family in last 12 months"
 	rename			s6q027 asst_chg
@@ -96,7 +95,7 @@
 	rename 			s6q0110 gov_inc
 	label 			var gov_inc "Income from government assistance in last 12 months"
 	rename			s6q0210 gov_chg
-	label 			var gov_chg "Change in income from government assistance since covid"	
+	label 			var gov_chg "Change in income from government assistance since covid"
 	rename 			s6q0111 ngo_inc
 	label 			var ngo_inc "Income from NGO assistance in last 12 months"
 	rename			s6q0211 ngo_chg
@@ -104,7 +103,7 @@
 	rename 			s6q0196 oth_inc
 	label 			var oth_inc "Income from other source in last 12 months"
 	rename			s6q0296 oth_chg
-	label 			var oth_chg "Change in income from other source since covid"	
+	label 			var oth_chg "Change in income from other source since covid"
 
 * save temp file
 	save			"$root/wave_01/SEC6w", replace
@@ -116,16 +115,16 @@
 
 * load income data
 	use				"$root/wave_01/SEC9", clear
-	
+
 * reformat HHID
 	format 			%12.0f HHID
-	
+
 * drop other shock
 	drop			s9q01_Other
-	
+
 * replace value for "other"
 	replace			shocks__id = 96 if shocks__id == -96
-	
+
 * generate shock variables
 	forval i = 1/13 {
 		gen				shock_0`i' = 0 if s9q01 == 2 & shocks__id == `i'
@@ -133,7 +132,7 @@
 		replace			shock_0`i' = 2 if s9q02 == 2 & shocks__id == `i'
 		replace			shock_0`i' = 3 if s9q02 == 1 & shocks__id == `i'
 		}
-	
+
 	rename			shock_010 shock_10
 	rename			shock_011 shock_11
 	rename			shock_012 shock_12
@@ -143,7 +142,7 @@
 	replace			shock_14 = 1 if s9q02 == 3 & shocks__id == 96
 	replace			shock_14 = 2 if s9q02 == 2 & shocks__id == 96
 	replace			shock_14 = 3 if s9q02 == 1 & shocks__id == 96
-	
+
 * rename cope variables
 	rename			s9q03__1 cope_01
 	rename			s9q03__2 cope_02
@@ -162,13 +161,13 @@
 	rename			s9q03__15 cope_15
 	rename			s9q03__16 cope_16
 	rename			s9q03__n96 cope_17
-	
+
 * drop unnecessary variables
-	drop	shocks__id s9q01 s9q02 s9q03_Other		
+	drop	shocks__id s9q01 s9q02 s9q03_Other
 
 * collapse to household level
 	collapse (max) cope_01- shock_14, by(HHID)
-	
+
 * label variables
 	lab var			shock_01 "Death of disability of an adult working member of the household"
 	lab var			shock_02 "Death of someone who sends remittances to the household"
@@ -184,13 +183,13 @@
 	lab var			shock_12 "Increase in price of major food items c"
 	lab var			shock_13 "Floods"
 	lab var			shock_14 "Other shock"
-	
+
 	lab def			shock 0 "None" 1 "Severe" 2 "More Severe" 3 "Most Severe"
-	
+
 	foreach var of varlist shock_01-shock_14 {
-		lab val		`var' shock 
+		lab val		`var' shock
 		}
-	
+
 	lab var			cope_01 "Sale of assets (Agricultural and Non_agricultural)"
 	lab var			cope_02 "Engaged in additional income generating activities"
 	lab var			cope_03 "Received assistance from friends & family"
@@ -212,22 +211,22 @@
 * save temp file
 	save			"$root/wave_01/SEC9w", replace
 
-	
+
 * ***********************************************************************
 * 1c - reshape section 10 wide data
 * ***********************************************************************
 
 * load income data
 	use				"$root/wave_01/SEC10", clear
-	
+
 * reformat HHID
 	format 			%12.0f HHID
-	
+
 * drop other safety nets and missing values
 	drop			other_nets
 	drop if			safety_net__id == .
-	
-* reshape data	
+
+* reshape data
 	reshape 		wide s10q01 s10q02 s10q03 s10q04, i(HHID) j(safety_net__id)
 
 * rename variables
@@ -261,17 +260,17 @@
 	replace			asst_01 = 2 if asst_01 == .
 	lab var			asst_01 "Recieved free food"
 	lab val			asst_01 s10q01
-	
+
 	gen				asst_03 = 1 if cash_gov == 1 | cash_inst == 1
 	replace			asst_03 = 2 if asst_03 == .
 	lab var			asst_03 "Recieved direct cash transfer"
 	lab val			asst_03 s10q01
-	
+
 	gen				asst_05 = 1 if kind_gov == 1 | kind_inst == 1
 	replace			asst_05 = 2 if asst_05 == .
 	lab var			asst_05 "Recieved in-kind transfer"
 	lab val			asst_05 s10q01
-	
+
 	gen				asst_04 = 1 if asst_01 == 2 & asst_03 == 2 & asst_05 == 2
 	replace			asst_04 = 2 if asst_04 == .
 	lab var			asst_04 "Recieved none"
@@ -287,61 +286,60 @@
 
 * load data
 	use				"$root/wave_01/interview_result", clear
-	
+
 * drop all but household respondant
 	keep			HHID Rq09
-	
+
 	rename			Rq09 hh_roster__id
-	
+
 	isid			HHID
-	
+
 * merge in household roster
 	merge 1:1		HHID hh_roster__id using "$root/wave_01/SEC1.dta"
-	
+
 	keep if			_merge == 3
-	
+
 * rename variables and fill in missing values
 	rename			hh_roster__id PID
 	rename			s1q05 sex
 	rename			s1q06 age
 	rename			s1q07 relate_hoh
 	drop if			PID == .
-	
+
 * drop all but gender and relation to HoH
 	keep			HHID PID sex age relate_hoh
 
 * save temp file
 	save			"$export/wave_01/respond_r1", replace
-	
+
 * ***********************************************************************
 * 1e - get household size - R1
 * ***********************************************************************
 
 * load data
 	use			"$root/wave_01/SEC1.dta", clear
-	
+
 * generate counting variables
 	gen			hhsize = 1
-	
 * collapse data
 	collapse	(sum) hhsize, by(HHID)
 	lab var		hhsize "Household size"
-	
+
 * save temp file
-	save			"$export/wave_01/hhsize_r1", replace	
-	
+	save			"$export/wave_01/hhsize_r1", replace
+
 * ***********************************************************************
 * 1f - FIES - R1
 * ***********************************************************************
 
 * load data
 	use				"$fies/fies_uganda_r1.dta", clear
-	
-	keep 			HHID Above_18 wt_hh wt_18 p_mod p_sev
-	rename 			HHID interview__id 
-	
+
+	drop 			country wave
+	destring 		HHID, replace
+
 * save temp file
-	save			"$export/wave_01/fies_r1", replace	
+	save			"$export/wave_01/fies_r1", replace
 
 * ***********************************************************************
 * 1g - baseline data
@@ -349,13 +347,13 @@
 
 * load data
 	use				"$root/wave_00/pov20.dta", clear
-	
+
 	keep			hhid quints
-	rename 			hhid baseline_hhid 
-	
+	rename 			hhid baseline_hhid
+
 * save temp file
-	save			"$export/wave_01/pov_r0", replace			
-	
+	save			"$export/wave_01/pov_r0", replace
+
 * ***********************************************************************
 * 2 - build uganda 1 cross section
 * ***********************************************************************
@@ -377,13 +375,12 @@
 	merge 1:1 		HHID using "$root/wave_01/SEC9w.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC9A.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC10w.dta", keep(match) nogenerate
-	merge 1:1 		interview__id using "$export/wave_01/fies_r1.dta", keep(match) nogenerate
-	merge 1:1 		baseline_hhid using "$export/wave_01/pov_r0.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$export/wave_01/fies_r1.dta", keep(match) nogenerate
 
 * reformat HHID
 	format 			%12.0f HHID
-	
-	
+
+
 * ***********************************************************************
 * 3 - rationalize variable names
 * ***********************************************************************
@@ -391,11 +388,11 @@
 * rename basic information
 	rename			wfinal phw
 	lab var			phw "sampling weights"
-	
+
 	gen				wave = 1
 	lab var			wave "Wave number"
 	order			baseline_hhid wave phw, after(HHID)
-	
+
 	gen				sector = 2 if urban == 1
 	replace			sector = 1 if sector == .
 	lab var			sector "Sector"
@@ -403,7 +400,7 @@
 	lab val			sector sector
 	drop			urban
 	order			sector, after(phw)
-	
+
 	gen				Region = 12 if region == "Central"
 	replace			Region = 13 if region == "Eastern"
 	replace			Region = 14 if region == "Kampala"
@@ -412,19 +409,19 @@
 	lab def			region 1 "Tigray" 2 "Afar" 3 "Amhara" 4 "Oromia" 5 "Somali" ///
 						6 "Benishangul-Gumuz" 7 "SNNPR" 8 "Bambela" 9 "Harar" ///
 						10 "Addis Ababa" 11 "Dire Dawa" 12 "Central" ///
-						13 "Eastern" 14 "Kampala" 15 "Northern" 16 "Western" /// 
+						13 "Eastern" 14 "Kampala" 15 "Northern" 16 "Western" ///
 						17 "North" 18 "Central" 19 "South"
 	lab val			Region region
 	drop			region
 	rename			Region region
 	order			region, after(sector)
 	lab var			region "Region"
-	
+
 	rename			DistrictCode zone_id
 	rename			CountyCode county_id
 	rename			SubcountyCode city_id
 	rename			ParishCode subcity_id
-	
+
 	rename			Sq02 start_date
 	rename			s2q01 know
 
@@ -449,7 +446,7 @@
 	rename			s2q02__1 know_01
 	lab var			know_01 "Handwashing with Soap Reduces Risk of Coronavirus Contraction"
 	rename			s2q02__2 know_09
-	lab var			know_09 "Use of Sanitizer Reduces Risk of Coronavirus Contraction" 
+	lab var			know_09 "Use of Sanitizer Reduces Risk of Coronavirus Contraction"
 	rename			s2q02__3 know_02
 	lab var			know_02 "Avoiding Handshakes/Physical Greetings Reduces Risk of Coronavirus Contract"
 	rename			s2q02__4 know_03
@@ -466,8 +463,8 @@
 	lab var			know_07 "Mainting Social Distance of at least 1 Meter Reduces Risk of Coronavirus Contraction"
 	rename			s2q02__10 know_08
 	lab var			know_08 "Avoiding Face Touching Reduces Risk of Coronavirus Contraction"
-	
-* rename myths	
+
+* rename myths
 	rename			s2q02a_1 myth_01
 	rename			s2q02a_2 myth_02
 	rename			s2q02a_3 myth_03
@@ -475,7 +472,7 @@
 	rename			s2q02a_5 myth_05
 	rename			s2q02a_6 myth_06
 	rename			s2q02a_7 myth_07
-	
+
 * rename government actions
 	rename			s2q03__1 gov_01
 	lab var			gov_01 "Advised citizens to stay at home"
@@ -508,39 +505,39 @@
 	rename			s3q03 bh_03
 	rename			s3q05 bh_04
 	rename			s3q06 bh_05
- 
- 
+
+
 * rename access
-	rename 			s4q01 ac_soap 
-	rename			s4q02 ac_soap_why 
-	replace			ac_soap_why = 9 if ac_soap_why == -96 
-	replace			ac_soap_why = . if ac_soap_why == 99 
-	lab def			ac_soap_why 1 "shops out" 2 "markets closed" 3 "no transportation" /// 
-								4 "restrictions to go out" 5 "increase in price" 6 "no money" /// 
+	rename 			s4q01 ac_soap
+	rename			s4q02 ac_soap_why
+	replace			ac_soap_why = 9 if ac_soap_why == -96
+	replace			ac_soap_why = . if ac_soap_why == 99
+	lab def			ac_soap_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
+								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
 								7 "cannot afford it" 8 "afraid to go out" 9 "other"
 	lab var 		ac_soap_why "reason for unable to purchase soap"
-								
+
 	rename 			s4q03 ac_water
 	rename 			s4q04 ac_water_why
-	
+
 	rename 			s4q05 ac_staple_def
 	rename 			s4q06 ac_staple
-	rename			s4q07 ac_staple_why 
-	replace			ac_staple_why = 7 if ac_staple_why == -96 
-	lab def			ac_staple_why 1 "shops out" 2 "markets closed" 3 "no transportation" /// 
+	rename			s4q07 ac_staple_why
+	replace			ac_staple_why = 7 if ac_staple_why == -96
+	lab def			ac_staple_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
 								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
 								7 "other"
 	lab var 		ac_staple_why "reason for unable to purchase staple food"
-	
+
 	rename 			s4q07a ac_sauce_def
 	rename 			s4q07b ac_sauce
-	rename			s4q07c ac_sauce_why 
-	replace			ac_sauce_why = 7 if ac_sauce_why == -96 
-	lab def			ac_sauce_why 1 "shops out" 2 "markets closed" 3 "no transportation" /// 
+	rename			s4q07c ac_sauce_why
+	replace			ac_sauce_why = 7 if ac_sauce_why == -96
+	lab def			ac_sauce_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
 								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
 								7 "other"
 	lab var 		ac_sauce_why "reason for unable to purchase staple food"
-	
+
 	rename 			s4q08 ac_med
 
 	rename 			s4q09 ac_medserv_need
@@ -549,38 +546,38 @@
 	replace			ac_medserv_why = 3 if ac_medserv_why == 5
 	replace			ac_medserv_why = 5 if ac_medserv_why == 7
 	replace 		ac_medserv_why = 7 if ac_medserv_why == 4
-	replace			ac_medserv_why = 4 if ac_medserv_why == -96	
-	lab def			ac_medserv_why 1 "no money" 2 "no med personnel" 3 "facility full / closed" /// 
-								4 "other" 5 "no transportation" 6 "restrictions to go out" /// 
+	replace			ac_medserv_why = 4 if ac_medserv_why == -96
+	lab def			ac_medserv_why 1 "no money" 2 "no med personnel" 3 "facility full / closed" ///
+								4 "other" 5 "no transportation" 6 "restrictions to go out" ///
 								7 "afraid of virus" 8 "facility closed "
 	lab var 		ac_medserv_why "reason for unable to access medical services"
 
 	rename 			s4q012 children318
 	rename 			s4q013 sch_child
-	rename 			s4q014 edu_act 
-	rename 			s4q15__1 edu_01 
-	rename 			s4q15__2 edu_02  
-	rename 			s4q15__3 edu_03 
-	rename 			s4q15__4 edu_04 
-	rename 			s4q15__5 edu_05 
-	rename 			s4q15__6 edu_06 
-	rename 			s4q15__n96 edu_other 
-	
+	rename 			s4q014 edu_act
+	rename 			s4q15__1 edu_01
+	rename 			s4q15__2 edu_02
+	rename 			s4q15__3 edu_03
+	rename 			s4q15__4 edu_04
+	rename 			s4q15__5 edu_05
+	rename 			s4q15__6 edu_06
+	rename 			s4q15__n96 edu_other
+
 	rename 			s4q16 edu_cont
 	rename			s4q17__1 edu_cont_01
-	rename 			s4q17__2 edu_cont_02 
-	rename 			s4q17__3 edu_cont_03 
-	rename 			s4q17__4 edu_cont_04 
-	rename 			s4q17__5 edu_cont_05 
-	rename 			s4q17__6 edu_cont_06 
-	rename 			s4q17__7 edu_cont_07 
-	rename 			s4q17__8 edu_cont_08 
-	 
+	rename 			s4q17__2 edu_cont_02
+	rename 			s4q17__3 edu_cont_03
+	rename 			s4q17__4 edu_cont_04
+	rename 			s4q17__5 edu_cont_05
+	rename 			s4q17__6 edu_cont_06
+	rename 			s4q17__7 edu_cont_07
+	rename 			s4q17__8 edu_cont_08
+
 	rename 			s4q18 bank
-	rename 			s4q19 ac_bank 
-	rename 			s4q20 ac_bank_why 
- 
-  
+	rename 			s4q19 ac_bank
+	rename 			s4q20 ac_bank_why
+
+
 * rename employment
 	rename			s5q01a edu
 	rename			s5q01 emp
@@ -651,7 +648,7 @@
 	rename			s5aq29 ag_graze
 	rename			s5aq30 ag_sold
 	rename			s5aq31 ag_sell
-	
+
 * rename food security
 	rename			s7q01 fies_04
 	lab var			fies_04 "Worried about not having enough food to eat"
@@ -669,22 +666,22 @@
 	lab var			fies_02 "Hungry bu did not eat"
 	rename			s7q08 fies_03
 	lab var			fies_03 "Went without eating for a whole dat"
-	
-* rename concerns	
+
+* rename concerns
 	rename			s8q01 concern_01
 	rename			a8q02 concern_02
-	
+
 * rename coping
 	rename			s9q04 meal
 	rename			s9q05 meal_source
-	
+
 * create country variables
 	gen				country = 4
 	order			country
 	lab def			country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda"
-	lab val			country country	
+	lab val			country country
 	lab var			country "Country"
-	
+
 * drop unnecessary variables
 	drop			 BSEQNO DistrictName ///
 						CountyName SubcountyName ParishName ///
@@ -694,9 +691,9 @@
 						s5q10__0 ///
 						s5q10__1 s5q10__2 s5q10__3 s5q10__4 s5q10__5 ///
 						s5q10__6 s5q10__7 s5q10__8 s5q10__9 *_Other	 ///
-						s4* 
+						s4*
 
-* delete temp files 
+* delete temp files
 	erase			"$root/wave_01/SEC6w.dta"
 	erase			"$root/wave_01/SEC9w.dta"
 	erase			"$root/wave_01/SEC10w.dta"
@@ -708,9 +705,9 @@
 
 	compress
 	describe
-	summarize 
+	summarize
 
-	rename HHID hhid_uga 
+	rename HHID hhid_uga
 
 * save file
 		customsave , idvar(hhid_uga) filename("uga_panel.dta") ///

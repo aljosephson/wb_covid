@@ -350,7 +350,7 @@
 * load data
 	use				"$root/wave_00/pov20.dta", clear
 	
-	keep			hhid poor_2020 quints
+	keep			hhid quints
 	rename 			hhid baseline_hhid 
 	
 * save temp file

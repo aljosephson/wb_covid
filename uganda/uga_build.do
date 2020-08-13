@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by : alj
-* Last edited: 6 August 2020 
+* Last edited: 11 August 2020 
 * Stata v.16.1
 
 * does
@@ -329,7 +329,21 @@
 	save			"$export/wave_01/hhsize_r1", replace	
 	
 * ***********************************************************************
-* 2 - build uganda cross section
+* 1f - FIES - R1
+* ***********************************************************************
+
+* load data
+	use				"$fies/fies_uganda_r1.dta", clear
+	
+	drop 			country wave
+	rename 			HHID interview__id 
+	
+* save temp file
+	save			"$export/wave_01/fies_r1", replace	
+		
+	
+* ***********************************************************************
+* 2 - build uganda 1 cross section
 * ***********************************************************************
 
 * load cover data
@@ -349,6 +363,7 @@
 	merge 1:1 		HHID using "$root/wave_01/SEC9w.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC9A.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC10w.dta", keep(match) nogenerate
+	merge 1:1 		interview__id using "$export/wave_01/fies_r1.dta", keep(match) nogenerate
 
 * reformat HHID
 	format 			%12.0f HHID
@@ -394,8 +409,6 @@
 	rename			CountyCode county_id
 	rename			SubcountyCode city_id
 	rename			ParishCode subcity_id
-	rename			EaCode ea
-	rename			VillageCode neighborhood_id
 	
 	rename			Sq02 start_date
 	rename			s2q01 know
@@ -659,7 +672,7 @@
 	
 * drop unnecessary variables
 	drop			 BSEQNO DistrictName ///
-						CountyName SubcountyName ParishName EaName VillageName ///
+						CountyName SubcountyName ParishName ///
 						subreg s2q01b__n96 s2q01b_Other s5qaq17_1_Other ///
 						s5aq20__n96 s5aq20_Other s5aq21__n96 s5aq21_Other ///
 						s5aq22__n96 s5aq22_Other s5aq23_Other s5aq24_Other ///

@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj 
-* Last edit: 6 August 2020 
+* Last edit: 11 August 2020 
 * Stata v.16.1
 
 * does
@@ -37,7 +37,7 @@
 * ***********************************************************************
 
 * load round 1 of the data
-	use				"$root/wave_01/200610_wb_lsms_hfpm_hh_survey_roster_round1_clean_public", ///
+	use				"$root/wave_01/200610_WB_LSMS_HFPM_HH_Survey_Roster_Round1_Clean_Public", ///
 						clear
 
 * generate counting variables
@@ -51,7 +51,7 @@
 	save			"$export/wave_01/hhsize_r1", replace						
 
 * load round 2 of the data
-	use				"$root/wave_02/200620_wb_lsms_hfpm_hh_survey_roster_round2_clean_public", ///
+	use				"$root/wave_02/200620_WB_LSMS_HFPM_HH_Survey_Roster_Round2_Clean_Public", ///
 						clear
 
 * generate counting variables
@@ -62,7 +62,21 @@
 	lab var		hhsize "Household size"
 
 * save temp file
-	save			"$export/wave_02/hhsize_r2", replace											
+	save			"$export/wave_02/hhsize_r2", replace	
+	
+* load round 3 of the data
+	use				"$root/wave_03/200729_WB_LSMS_HFPM_HH_Survey_Roster-Round3_Clean-Public", ///
+						clear
+
+* generate counting variables
+	gen			hhsize = 1
+	
+* collapse data
+	collapse	(sum) hhsize, by(household_id)
+	lab var		hhsize "Household size"
+
+* save temp file
+	save			"$export/wave_03/hhsize_r3", replace
 						
 * ***********************************************************************
 * 2 - build ethiopia panel
@@ -84,7 +98,7 @@
 
 
 * load round 2 of the data
-	use				"$root/wave_02/200620_wb_lsms_hfpm_hh_survey_round2_clean_public_microdata", ///
+	use				"$root/wave_02/200620_WB_LSMS_HFPM_HH_Survey-Round2_Clean-Public_Microdata", ///
 						clear
 						
 * merge in other sections
@@ -96,13 +110,30 @@
 	
 * save temp file
 	save			"$export/wave_02/r2_sect_all", replace	
+	
+* load round 3 of the data
+	use				"$root/wave_03/200729_WB_LSMS_HFPM_HH_Survey-Round3_Clean-Public_Microdata", ///
+						clear
+						
+* merge in other sections
+	merge 1:1 		household_id using "$export/wave_03/hhsize_r3.dta", keep(match) nogenerate
+
+* generate round variable
+	gen				wave = 3
+	lab var			wave "Wave number"
+	
+* save temp file
+	save			"$export/wave_03/r3_sect_all", replace	
 
 * load complete round 1 data
 	use				"$export/wave_01/r1_sect_all", clear
 	
 * append round 2 of the data
 	append 			using "$export/wave_02/r2_sect_all", force
-	
+
+* append round 3 of the data
+	append 			using "$export/wave_03/r3_sect_all", force
+		
 						
 * ***********************************************************************
 * 3 - clean ethiopia panel
@@ -162,6 +193,10 @@
 	rename			bh1_handwash bh_01
 	rename			bh2_handshake bh_02
 	rename			bh3_gatherings bh_03
+	rename 			bh1_handwash_freq bh_07
+	rename 			bh2_mask_freq bh_08 
+	rename 			bh3_cov_fear concern_01 
+	rename 			bh4_cov_fin concern_02 
 	
 * access variables 
 	rename			ac1_atb_med ac_med
@@ -329,6 +364,79 @@
 								7 "illness in household" 8 "do not know" 9 "other"
 	label var 		bus_why "reason for family business less than usual"
 	
+* education variables 
+
+	rename 			ac3a_pri_sch_child sch_child_prim
+	rename 			ac4a_pri_child edu_act_prim 
+	drop 			ac5a_pri_edu_type ac5a_pri_edu_type__98 ac5a_pri_edu_type__99 ac5a_pri_edu_type_other 
+	rename 			ac5a_pri_edu_type_1 edu_01_prim 
+	rename 			ac5a_pri_edu_type_2 edu_02_prim  
+	rename 			ac5a_pri_edu_type_3 edu_03_prim 
+	rename 			ac5a_pri_edu_type_4 edu_04_prim 
+	rename 			ac5a_pri_edu_type_5 edu_05_prim 
+	rename 			ac5a_pri_edu_type__96 edu_other_prim 
+		
+	rename 			ac3b_sec_sch_child sch_child_sec
+	rename 			ac4b_sec_child edu_act_sec 
+	drop 			ac5b_sec_edu_type ac5b_sec_edu_type__98 ac5b_sec_edu_type__99 ac5b_sec_edu_type_other
+	rename 			ac5b_sec_edu_type_1 edu_01_sec 
+	rename 			ac5b_sec_edu_type_2 edu_02_sec  
+	rename 			ac5b_sec_edu_type_3 edu_03_sec 
+	rename 			ac5b_sec_edu_type_4 edu_04_sec 
+	rename 			ac5b_sec_edu_type_5 edu_05_sec 
+	rename 			ac5b_sec_edu_type__96 edu_other_sec 
+	
+	replace 		sch_child = sch_child_prim if sch_child == 0 & wave == 3
+	replace 		sch_child = sch_child_sec if sch_child == 0 & wave == 3 
+	replace 		edu_act = edu_act_prim if edu_act == 0 & wave == 3
+	replace 		edu_act = edu_act_sec if edu_act == 0 & wave == 3
+	replace 		edu_01 = edu_01_prim if edu_01 == 0 & wave == 3
+	replace			edu_01 = edu_01_sec if edu_01 == 0 & wave == 3
+	replace 		edu_02 = edu_02_prim if edu_02 == 0 & wave == 3
+	replace			edu_02 = edu_02_sec if edu_02 == 0 & wave == 3
+	replace 		edu_03 = edu_03_prim if edu_03 == 0 & wave == 3
+	replace			edu_03 = edu_03_sec if edu_03 == 0 & wave == 3
+	replace 		edu_04 = edu_04_prim if edu_04 == 0 & wave == 3
+	replace			edu_04 = edu_04_sec if edu_04 == 0 & wave == 3
+	replace 		edu_05 = edu_05_prim if edu_05 == 0 & wave == 3
+	replace			edu_05 = edu_05_sec if edu_05 == 0 & wave == 3
+	generate 		edu_other = edu_other_prim if wave == 3
+	replace			edu_other = edu_other_sec if edu_other == 0 & wave == 3
+	
+* perceptions of distribution of aid etc. 
+
+	rename 			as5_assist_fair perc_aidfair
+	rename 			as6_assist_tension perc_aidten 
+	
+* agriculture 
+* first addition in R3 
+
+	rename			ag1_crops farm_act
+	rename			ag1a_crops_plan ag_prep
+	rename 			ag2_crops_able ag_chg	
+	rename			ag3_crops_reas_1 ag_nocrop_01 
+	rename 			ag3_crops_reas_2 ag_nocrop_02
+	rename 			ag3_crops_reas_3 ag_nocrop_03
+	rename			ag3_crops_reas_4 ag_nocrop_10
+	rename			ag3_crops_reas_5 ag_nocrop_04	 
+	rename 			ag3_crops_reas_6 ag_nocrop_05
+	rename 			ag3_crops_reas_7 ag_nocrop_06
+	rename 			ag3_crops_reas_8 ag_nocrop_07	
+	rename 			ag3_crops_reas_9 ag_nocrop_08
+	rename 			ag3_crops_reas__96 ag_nocrop_09 
+
+	generate		ag_seed_01 = 1 if ag5_crops_reas_seeds == 1
+	generate		ag_seed_02 = 1 if ag5_crops_reas_seeds == 2 
+	generate		ag_seed_03 = 1 if ag5_crops_reas_seeds == 3
+	generate		ag_seed_05 = 1 if ag5_crops_reas_seeds == 4
+	generate		ag_seed_06 = 1 if ag5_crops_reas_seeds == 5
+
+	rename			ag4_crops_reas_fert ag_fert
+	rename 			ag6_ext_need ag_ext_need 
+	rename 			ag7_ext_receive ag_ext
+	rename 			ag8_travel_norm aglabor_normal
+	rename 			ag9_travel_curr aglabor 
+                   
 * drop unnecessary variables
 	drop			kn3_gov kn3_gov_0 kn3_gov__98 kn3_gov__99 kn3_gov__96 ///
 						kn3_gov_other ac2_atb_med_why_other ac2_atb_teff_why_other ///
@@ -351,12 +459,13 @@
 						as4_cash_source_other as4_other_source_other ///
 						ir1_endearly ir1_whyendearly ir1_whyendearly_other ///
 						ir_lang ir_understand ir_confident em15b_bus_prev_closed_other ///
-						key em19_bus_inc_low_why__* em19_bus_inc_low_why hh_id hhh_id
+						key em19_bus_inc_low_why__* em19_bus_inc_low_why hh_id hhh_id ///
+						ag*  
 						
 
 * reorder variables
 	order			fies_04 fies_05 fies_06 fies_07 fies_08, after(fies_03)
-	order 			same sex age relate_hoh, after(hhh_age)
+	order 			same sex relate_hoh, after(hhh_age)
 	order			bus_prev bus_prev_close bus_new, after(bus_why)
 	
 * create country variables

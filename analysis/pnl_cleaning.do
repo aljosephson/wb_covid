@@ -46,7 +46,6 @@
 	append using 	"$nga/nga_panel", force
 
 	append using	"$uga/uga_panel", force
-
 	
 * **********************************************************************
 * 2 - revise ID variables as needed 
@@ -533,6 +532,10 @@
 	replace 				edu_act = 0 if edu_act == 2
 	replace					edu_act = . if edu_act == -99 
 	replace 				edu_act = . if edu_act == -98 
+	
+	replace 				sch_child = 0 if sch_child == 2
+	replace					sch_child = . if sch_child == -99 
+	
 
 * *********************************************************************
 * 9 - end matter, clean up to save

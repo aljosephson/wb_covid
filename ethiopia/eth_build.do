@@ -26,6 +26,7 @@
 	global	root	=	"$data/ethiopia/raw"
 	global	export	=	"$data/ethiopia/refined"
 	global	logout	=	"$data/ethiopia/logs"
+	global  fies 	= 	"$data/analysis/raw"
 
 * open log
 	cap log 		close
@@ -33,7 +34,7 @@
 
 
 * ***********************************************************************
-* 1 - get household size
+* 1a - get household size
 * ***********************************************************************
 
 * load round 1 of the data
@@ -77,6 +78,30 @@
 
 * save temp file
 	save			"$export/wave_03/hhsize_r3", replace
+	
+* ***********************************************************************
+* 1b - FIES score - R2
+* ***********************************************************************
+
+* load data
+	use				"$fies/fies_ethiopia_r2.dta", clear
+
+	drop 			country wave
+
+* save temp file
+	save			"$export/wave_02/fies_r2", replace
+	
+* ***********************************************************************
+* 1c - FIES score - R3
+* ***********************************************************************
+
+* load data
+	use				"$fies/fies_ethiopia_r3.dta", clear
+
+	drop 			country wave
+
+* save temp file
+	save			"$export/wave_02/fies_r3", replace
 						
 * ***********************************************************************
 * 2 - build ethiopia panel
@@ -94,9 +119,8 @@
 	lab var			wave "Wave number"
 	
 * save temp file
-	save			"$export/wave_01/r1_sect_all", replace	
-
-
+	save			"$export/wave_01/r1_sect_all", replace		
+	
 * load round 2 of the data
 	use				"$root/wave_02/200620_WB_LSMS_HFPM_HH_Survey-Round2_Clean-Public_Microdata", ///
 						clear

@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: jdm
-* Edited by: jdm
-* Last edited: 6 August 2020 
+* Edited by: alj
+* Last edited: 13 August 2020 
 * Stata v.16.1
 
 * does
@@ -72,6 +72,7 @@
 	merge 1:1 		hhid using "$export/wave_02/hhsize_r2.dta", keep(match) nogenerate
 	merge 1:1 		hhid using "$export/wave_02/r2_sect_7w.dta", keep(match) nogenerate
 	merge 1:1 		hhid using "$export/wave_02/r2_sect_11w.dta", keep(match) nogenerate
+	merge 1:1 		hhid using "$export/wave_02/fies_r2.dta", keep(match) nogenerate
 
 * generate round variable
 	gen				wave = 2
@@ -82,7 +83,7 @@
 
 	
 * ***********************************************************************
-* 1b - build nigeria wave 2 panel 
+* 1b - build nigeria wave 3 panel 
 * ***********************************************************************
 
 * load round 2 of the data

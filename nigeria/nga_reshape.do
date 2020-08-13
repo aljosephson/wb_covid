@@ -24,6 +24,7 @@
 	global	root	=	"$data/nigeria/raw"
 	global	export	=	"$data/nigeria/refined"
 	global	logout	=	"$data/nigeria/logs"
+	global  fies 	= 	"$data/analysis/raw"
 
 * open log
 	cap log 		close
@@ -898,6 +899,19 @@
 
 * save temp file
 	save			"$export/wave_03/hhsize_r3", replace
+
+* ***********************************************************************
+* 4d - FIES score - R2
+* ***********************************************************************
+
+* load data
+	use				"$fies/fies_nigeria_r2.dta", clear
+
+	drop 			country wave
+	rename 			HHID hhid 
+
+* save temp file
+	save			"$export/wave_02/fies_r2", replace
 		
 * **********************************************************************
 * 6 - end matter - nothing to save

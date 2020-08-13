@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: alj
 * Edited by: jdm
-* Last edited: 11 AUGUST 2020
+* Last edited: 13 AUGUST 2020
 * Stata v.16.1
 
 * does
@@ -659,6 +659,7 @@
 	merge 1:1 		HHID using "$export/wave_01/sect11_Safety_Nets_r1.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/sect12_Interview_Result_r1.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/sect13_Agriculture_r1.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$export/wave_01/fies_r1.dta", keep(match) nogenerate
 
 * reformat HHID
 	rename			HHID household_id_an

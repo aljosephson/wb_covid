@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj 
-* Last edit: 11 August 2020 
+* Last edit: 13 August 2020 
 * Stata v.16.1
 
 * does
@@ -87,6 +87,7 @@
 	use				"$fies/fies_ethiopia_r2.dta", clear
 
 	drop 			country wave
+	rename 			HHID household_id
 
 * save temp file
 	save			"$export/wave_02/fies_r2", replace
@@ -99,9 +100,10 @@
 	use				"$fies/fies_ethiopia_r3.dta", clear
 
 	drop 			country wave
+	rename 			HHID household_id
 
 * save temp file
-	save			"$export/wave_02/fies_r3", replace
+	save			"$export/wave_03/fies_r3", replace
 						
 * ***********************************************************************
 * 2 - build ethiopia panel
@@ -127,6 +129,7 @@
 						
 * merge in other sections
 	merge 1:1 		household_id using "$export/wave_02/hhsize_r2.dta", keep(match) nogenerate
+	merge 1:1 		household_id using "$export/wave_02/fies_r2.dta", keep(match) nogenerate
 
 * generate round variable
 	gen				wave = 2
@@ -141,6 +144,8 @@
 						
 * merge in other sections
 	merge 1:1 		household_id using "$export/wave_03/hhsize_r3.dta", keep(match) nogenerate
+	merge 1:1 		household_id using "$export/wave_03/fies_r3.dta", keep(match) nogenerate
+
 
 * generate round variable
 	gen				wave = 3
@@ -365,6 +370,7 @@
 * replace resp for r1 based on r2
 * only 27 not the same 
 	encode 			household_id, generate (household_id_d)
+	xtset 			wave 
 	xfill			same,  i (household_id_d)
 	xfill 			age relate_hoh sex if same == 1, i (household_id_d)
 	

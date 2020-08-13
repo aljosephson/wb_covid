@@ -82,7 +82,7 @@
 
 	
 * ***********************************************************************
-* 1b - build nigeria wave 2 panel 
+* 1c - build nigeria wave 2 panel 
 * ***********************************************************************
 
 * load round 2 of the data
@@ -105,7 +105,16 @@
 
 	
 * ***********************************************************************
-* 1d - build nigeria panel 
+* 1d - baseline data
+* ***********************************************************************
+
+* load baseline data
+	use				"$root/wave_00/totcons_final", replace
+	
+	xtile quints = totcons_adj_norm [aweight = wt_wave4*hhsize], nquantiles(5)
+	
+* ***********************************************************************
+* 1e - build nigeria panel 
 * ***********************************************************************
 
 * load round 1 of the data
@@ -121,6 +130,13 @@
 						force						
 											
 	order			wave, after(hhid)
+
+* adjust household id
+	recast 			long hhid
+	format 			%12.0g hhid
+
+* merge in baseline data 
+	merge m:1		hhid using "$export/wave_01/pov20.dta", keep(match) nogenerate
 
 * rationalize variables across waves
 	gen				phw = wt_baseline if wt_baseline != . & wave == 1

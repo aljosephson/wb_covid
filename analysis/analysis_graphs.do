@@ -65,7 +65,7 @@
 						pos (6) col(4)) saving("$output/restriction", replace)  
 						  
 * graph C - look at behavior variables
-	graph bar 		(mean) bh_01 bh_02 bh_03, over(country) ///
+	graph bar 		(mean) bh_01 bh_02 bh_03 if wave == 1, over(country) ///
 						title("C") ///
 						ytitle("Changes in Behavior to Reduce Exposure (%)") ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100") ///

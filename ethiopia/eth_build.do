@@ -40,13 +40,27 @@
 * load round 1 of the data
 	use				"$root/wave_01/200610_WB_LSMS_HFPM_HH_Survey_Roster_Round1_Clean_Public", ///
 						clear
-
+* rename other variables 
+	rename 			individual_id ind_id 
+	rename 			bi2_hhm_new new_mem
+	rename 			bi3_hhm_stillm curr_mem
+	rename 			bi4_hhm_gender sex_mem
+	rename 			bi5_hhm_age age_mem
+	rename 			bi5_hhm_age_months age_month_mem
+	rename 			bi6_hhm_relhhh relat_mem
+						
 * generate counting variables
 	gen			hhsize = 1
+	gen 		hhsize_adult = 1 if age_mem > 18 & age_mem < .
+	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
+	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
 * collapse data
-	collapse	(sum) hhsize, by(household_id)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(household_id)
 	lab var		hhsize "Household size"
+	lab var 	hhsize_adult "Household size - only adults"
+	lab var 	hhsize_child "Household size - children 0 - 18"
+	lab var 	hhsize_schchild "Household size - school-age children 5 - 18"
 
 * save temp file
 	save			"$export/wave_01/hhsize_r1", replace						
@@ -54,27 +68,55 @@
 * load round 2 of the data
 	use				"$root/wave_02/200620_WB_LSMS_HFPM_HH_Survey_Roster_Round2_Clean_Public", ///
 						clear
-
+* rename other variables 
+	rename 			individual_id ind_id 
+	rename 			bi2_hhm_new new_mem
+	rename 			bi3_hhm_stillm curr_mem
+	rename 			bi4_hhm_gender sex_mem
+	rename 			bi5_hhm_age age_mem
+	rename 			bi5_hhm_age_months age_month_mem
+	rename 			bi6_hhm_relhhh relat_mem
+						
 * generate counting variables
 	gen			hhsize = 1
+	gen 		hhsize_adult = 1 if age_mem > 18 & age_mem < .
+	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
+	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
 * collapse data
-	collapse	(sum) hhsize, by(household_id)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(household_id)
 	lab var		hhsize "Household size"
+	lab var 	hhsize_adult "Household size - only adults"
+	lab var 	hhsize_child "Household size - children 0 - 18"
+	lab var 	hhsize_schchild "Household size - school-age children 5 - 18"
 
 * save temp file
 	save			"$export/wave_02/hhsize_r2", replace	
 	
 * load round 3 of the data
 	use				"$root/wave_03/200729_WB_LSMS_HFPM_HH_Survey_Roster-Round3_Clean-Public", ///
-						clear
+						clear					
+* rename other variables 
+	rename 			individual_id ind_id 
+	rename 			bi2_hhm_new new_mem
+	rename 			bi3_hhm_stillm curr_mem
+	rename 			bi4_hhm_gender sex_mem
+	rename 			bi5_hhm_age age_mem
+	rename 			bi5_hhm_age_months age_month_mem
+	rename 			bi6_hhm_relhhh relat_mem
 
 * generate counting variables
 	gen			hhsize = 1
+	gen 		hhsize_adult = 1 if age_mem > 18 & age_mem < .
+	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
+	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
 * collapse data
-	collapse	(sum) hhsize, by(household_id)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(household_id)
 	lab var		hhsize "Household size"
+	lab var 	hhsize_adult "Household size - only adults"
+	lab var 	hhsize_child "Household size - children 0 - 18"
+	lab var 	hhsize_schchild "Household size - school-age children 5 - 18"
 
 * save temp file
 	save			"$export/wave_03/hhsize_r3", replace

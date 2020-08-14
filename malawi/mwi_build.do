@@ -601,11 +601,26 @@
 * load data
 	use			"$root/wave_01/sect2_Household_Roster_r1.dta", clear
 
+* rename other variables 
+	rename 			PID ind_id 
+	rename 			new_member new_mem
+	rename 			s2q3 curr_mem
+	rename 			s2q5 sex_mem
+	rename 			s2q6 age_mem
+	rename 			s2q7 relat_mem	
+	
 * generate counting variables
 	gen			hhsize = 1
+	gen 		hhsize_adult = 1 if age_mem > 18 & age_mem < .
+	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
+	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
+	
 * collapse data
-	collapse	(sum) hhsize, by(HHID)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(HHID)
 	lab var		hhsize "Household size"
+	lab var 	hhsize_adult "Household size - only adults"
+	lab var 	hhsize_child "Household size - children 0 - 18"
+	lab var 	hhsize_schchild "Household size - school-age children 5 - 18"
 
 * save temp file
 	save			"$export/wave_01/hhsize_r1", replace
@@ -617,11 +632,26 @@
 * load data
 	use			"$root/wave_02/sect2_Household_Roster_r2.dta", clear
 
+* rename other variables 
+	rename 			PID ind_id 
+	rename 			new_member new_mem
+	rename 			s2q3 curr_mem
+	rename 			s2q5 sex_mem
+	rename 			s2q6 age_mem
+	rename 			s2q7 relat_mem	
+	
 * generate counting variables
 	gen			hhsize = 1
+	gen 		hhsize_adult = 1 if age_mem > 18 & age_mem < .
+	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
+	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
+	
 * collapse data
-	collapse	(sum) hhsize, by(HHID)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(HHID)
 	lab var		hhsize "Household size"
+	lab var 	hhsize_adult "Household size - only adults"
+	lab var 	hhsize_child "Household size - children 0 - 18"
+	lab var 	hhsize_schchild "Household size - school-age children 5 - 18"
 
 * save temp file
 	save			"$export/wave_02/hhsize_r2", replace

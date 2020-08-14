@@ -23,6 +23,7 @@
 
 * define
 	global	root	=	"$data/uganda/raw"
+	global	fies	=	"$data/analysis/raw"
 	global	export	=	"$data/uganda/refined"
 	global	logout	=	"$data/uganda/logs"
 
@@ -317,7 +318,7 @@
 * ***********************************************************************
 
 * load data
-	use			"$root/wave_01/SEC1.dta", clear
+	use				"$root/wave_01/SEC1.dta", clear
 
 * generate counting variables
 	gen			hhsize = 1
@@ -376,6 +377,7 @@
 	merge 1:1 		HHID using "$root/wave_01/SEC9A.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_01/SEC10w.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$export/wave_01/fies_r1.dta", keep(match) nogenerate
+	merge 1:1 		baseline_hhid using "$export/wave_01/pov_r0.dta", keep(match) nogenerate
 
 * reformat HHID
 	format 			%12.0f HHID

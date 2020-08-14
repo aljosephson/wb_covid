@@ -633,7 +633,7 @@
 * load data
 	use				"$fies/fies_malawi_r1.dta", clear
 
-	drop 			country wave
+	keep			HHID wt_hh wt_18 p_mod p_sev
 
 * save temp file
 	save			"$export/wave_01/fies_r1", replace
@@ -1082,6 +1082,9 @@
 	gen				wave = 2
 	lab var			wave "Wave number"
 
+	rename			wt_round2 phw
+	label var		phw "sampling weights"
+	
 * reformat HHID
 	rename			HHID household_id_an
 	label 			var household_id_an "32 character alphanumeric - str32"

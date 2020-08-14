@@ -275,44 +275,6 @@
 * **********************************************************************
 		
 * graph A - access to med, food, soap
-	gen				ac_med_r = phw if sector == 1 & ac_med == 0
-	gen				ac_med_u = phw if sector == 2 & ac_med == 0
-	gen				ac_staple_r = phw if sector == 1 & ac_staple == 0
-	gen				ac_staple_u = phw if sector == 2 & ac_staple == 0
-	gen				ac_soap_r = phw if sector == 1 & ac_soap == 0
-	gen				ac_soap_u = phw if sector == 2 & ac_soap == 0
-
-	graph bar 		(sum) ac_med_r ac_med_u if ac_med_need == 1,  ///
-						over(country, gap(*.1)) stack  ///
-						ytitle("Population reporting inability to buy medicine") ///
-						ylabel(0 "0" 5000000 "5,000,000" ///
-						10000000 "10,000,000" 15000000 "15,000,000") ///
-						bar(1, color(sky)) bar(2, color(turquoise))  ///
-						legend(	label (1 "Rural") label (2 "Urban") ///
-						pos(6) col(3)) saving("$output/ac_med", replace)
-	
-	graph bar 		(sum) ac_staple_r ac_staple_u if ac_staple_need == 1,  ///
-						over(country, gap(*.1)) stack  ///
-						ytitle("Population reporting inability to buy staple food") ///
-						ylabel(0 "0" 5000000 "5,000,000" ///
-						10000000 "10,000,000" 15000000 "15,000,000") ///
-						bar(1, color(sky)) bar(2, color(turquoise))  ///
-						legend(	label (1 "Rural") label (2 "Urban") ///
-						pos(6) col(3)) saving("$output/ac_staple", replace)
-	
-	graph bar 		(sum) ac_soap_r ac_soap_u if ac_soap_need == 1,  ///
-						over(country, gap(*.1)) stack    ///
-						ytitle("Population reporting inability to buy soap") ///
-						ylabel(0 "0" 5000000 "5,000,000" ///
-						10000000 "10,000,000" 15000000 "15,000,000") ///
-						bar(1, color(sky)) bar(2, color(turquoise))  ///
-						legend(	label (1 "Rural") label (2 "Urban") ///
-						pos(6) col(3)) saving("$output/ac_soap", replace)
-	
-	grc1leg2 "$output/ac_med.gph" "$output/ac_staple.gph" "$output/ac_soap.gph", ///
-		col(3) iscale(.5) commonscheme title("A") saving("$output/access.gph", replace)
-
-
 	gen				ac_med_01 = phw if quint == 1 & ac_med == 0
 	gen				ac_med_02 = phw if quint == 2 & ac_med == 0
 	gen				ac_med_03 = phw if quint == 3 & ac_med == 0

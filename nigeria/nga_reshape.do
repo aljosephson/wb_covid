@@ -2,7 +2,7 @@
 * Created on: August 2020
 * Created by: jdm
 * Edited by: alj
-* Last edited: 13 August 2020 
+* Last edited: 14 August 2020 
 * Stata v.16.1
 
 * does
@@ -853,13 +853,27 @@
 	
 * load data
 	use			"$root/wave_01/r1_sect_2.dta", clear
-		
+
+* rename other variables 
+	rename 			indiv ind_id 
+	rename 			s2q2 new_mem
+	rename 			s2q3 curr_mem
+	rename 			s2q5 sex_mem
+	rename 			s2q6 age_mem
+	rename 			s2q7 relat_mem
+	
 * generate counting variables
 	gen			hhsize = 1
+	gen 		hhsize_adult = 1 if age_mem > 18 & age_mem < .
+	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
+	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
 * collapse data
-	collapse	(sum) hhsize, by(hhid)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(hhid)
 	lab var		hhsize "Household size"
+	lab var 	hhsize_adult "Household size - only adults"
+	lab var 	hhsize_child "Household size - children 0 - 18"
+	lab var 	hhsize_schchild "Household size - school-age children 5 - 18"
 
 * save temp file
 	save			"$export/wave_01/hhsize_r1", replace
@@ -871,13 +885,27 @@
 	
 * load data
 	use			"$root/wave_02/r2_sect_2.dta", clear
-		
+
+* rename other variables 
+	rename 			indiv ind_id 
+	rename 			s2q2 new_mem
+	rename 			s2q3 curr_mem
+	rename 			s2q5 sex_mem
+	rename 			s2q6 age_mem
+	rename 			s2q7 relat_mem	
+	
 * generate counting variables
 	gen			hhsize = 1
+	gen 		hhsize_adult = 1 if age_mem > 18 & age_mem < .
+	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
+	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
 * collapse data
-	collapse	(sum) hhsize, by(hhid)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(hhid)
 	lab var		hhsize "Household size"
+	lab var 	hhsize_adult "Household size - only adults"
+	lab var 	hhsize_child "Household size - children 0 - 18"
+	lab var 	hhsize_schchild "Household size - school-age children 5 - 18"
 
 * save temp file
 	save			"$export/wave_02/hhsize_r2", replace
@@ -889,13 +917,28 @@
 	
 * load data
 	use			"$root/wave_03/r3_sect_2.dta", clear
-		
+
+* rename other variables 
+	rename 			indiv ind_id 
+	rename 			s2q2 new_mem
+	rename 			s2q3 curr_mem
+	rename 			s2q5 sex_mem
+	rename 			s2q6 age_mem
+	rename 			s2q7 relat_mem	
+	
 * generate counting variables
 	gen			hhsize = 1
+	gen 		hhsize_adult = 1 if age_mem > 18 & age_mem < .
+	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
+	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
 * collapse data
-	collapse	(sum) hhsize, by(hhid)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(hhid)
 	lab var		hhsize "Household size"
+	lab var 	hhsize_adult "Household size - only adults"
+	lab var 	hhsize_child "Household size - children 0 - 18"
+	lab var 	hhsize_schchild "Household size - school-age children 5 - 18"
+
 
 * save temp file
 	save			"$export/wave_03/hhsize_r3", replace

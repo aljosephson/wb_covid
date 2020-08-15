@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj
-* Last edit: 10 August 2020 
+* Last edit: 15 August 2020 
 * Stata v.16.1
 
 * does
@@ -244,6 +244,13 @@
 	graph export "$output/bus_emp_inc.png", as(png) replace	
 	
 * graph C - FIES population
+
+* adjust weights 
+	
+	gen 				ahw18 = hhsize_adult * wt_18
+	gen					ap_mod = p_mod * ahw18 
+	gen 				ap_sev = p_sev * ahw18 
+
 	graph bar			(sum) fies_01_hhw fies_02_hhw fies_03_hhw fies_04_hhw fies_05_hhw ///
 							fies_06_hhw fies_07_hhw fies_08_hhw, over(country) /// 
 							ytitle("Population reporting food insecurities") title("C") ///
@@ -256,8 +263,13 @@
 							pos(6) row(4)) saving("$output/fies", replace)				
 
 * graph D - FIES score and income loss
-	graph 				bar fies_count, over(dwn)  over(country) /// 
+	graph 				bar ap_mod ap_sev, over(dwn)  over(country) /// 
 							ytitle("FIES score") title("D")   bar(1, color(turquoise)) ///
+							saving("$output/fies_count", replace)	
+	*** this isn't coming out as expected
+							
+	graph 				bar p_mod p_sev, over(dwn_count)  over(country) /// 
+							ytitle("Food insecurity") title("D")   bar(1, color(turquoise)) ///
 							saving("$output/fies_count", replace)	
 
 * Figure 2 - combine graphs	

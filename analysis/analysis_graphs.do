@@ -331,7 +331,7 @@
 	graph combine "$output/ac_med.gph" "$output/ac_staple.gph" "$output/ac_soap.gph", ///
 		col(3) iscale(.5) commonscheme title("A") saving("$output/access.gph", replace)						
 
-		graph export "$output/access.pdf", as(pdf) replace
+		graph export "$output/access.png", as(png) replace
 						
 * graph B - coping mechanisms
 	gen				cope_01_phw = phw if cope_01 == 1

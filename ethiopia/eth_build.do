@@ -98,13 +98,39 @@
 
 * load data
 	use				"$fies/fies_ethiopia_r3.dta", clear
-
+				
 	drop 			country wave
 	rename 			HHID household_id
 
 * save temp file
 	save			"$export/wave_03/fies_r3", replace
-						
+
+	
+* ***********************************************************************
+* 1g - baseline data
+* ***********************************************************************
+
+* load data
+	use				"$root/wave_00/HH/cons_agg_w4.dta", clear
+
+* generate per capita consumption	
+	gen				totcons_adj_norm = (spat_totcons_aeq * adulteq) / hh_size
+
+* convert to monthly
+	replace			totcons_adj_norm = totcons_adj_norm / 12
+	
+* generate consumption quintiles
+	xtile 			quints = totcons_adj_norm [aweight = pw_w4*hh_size], nquantiles(5)
+	lab var			quints "Quintiles based on the national population"
+	lab def			lbqui 1 "Quintile 1" 2 "Quintile 2" 3 "Quintile 3" ///
+						4 "Quintile 4" 5 "Quintile 5"
+
+	keep			household_id quints
+	
+* save temp file
+	save			"$export/wave_01/pov_r0", replace
+	
+	
 * ***********************************************************************
 * 2 - build ethiopia panel
 * ***********************************************************************
@@ -167,6 +193,9 @@
 * ***********************************************************************
 * 3 - clean ethiopia panel
 * ***********************************************************************
+
+* merge in consumption aggregate
+	merge m:1		household_id using "$export/wave_01/pov_r0.dta", keep(match) nogenerate
 
 * rationalize variables across waves
 	gen				phw = phw1 if phw1 != .

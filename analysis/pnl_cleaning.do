@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj
-* Last edit: 10 August 2020 
+* Last edit: 15 August 2020 
 * Stata v.16.1
 
 * does
@@ -89,7 +89,16 @@
 	gen				phw = hhw * hhsize
 	lab var			phw "Population weight"
 	
-	order			phw, after(hhw)
+	gen 			ahw = hhw * hhsize_adult
+	lab var 		ahw "Household adult sampling weight"
+	
+	gen 			chw = hhw * hhsize_child 
+	lab var 		chw "Household child sampling weight"
+	
+	gen 			shw = hhw * hhsize_schchild
+	lab var 		shw "Household school child sampling weight"
+	
+	order			phw ahw chw shw, after(hhw)
 	order			hhsize, before(sex)
 						
 * know 

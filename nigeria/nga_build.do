@@ -72,7 +72,9 @@
 	merge 1:1 		hhid using "$export/wave_02/hhsize_r2.dta", keep(match) nogenerate
 	merge 1:1 		hhid using "$export/wave_02/r2_sect_7w.dta", keep(match) nogenerate
 	merge 1:1 		hhid using "$export/wave_02/r2_sect_11w.dta", keep(match) nogenerate
+	merge 1:1		hhid using "$export/wave_02/fies_r2", keep(match) nogenerate
 
+	
 * generate round variable
 	gen				wave = 2
 	lab var			wave "Wave number"

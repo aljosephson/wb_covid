@@ -266,6 +266,11 @@
 	graph 				bar ap_mod ap_sev, over(dwn)  over(country) /// 
 							ytitle("FIES score") title("D")   bar(1, color(turquoise)) ///
 							saving("$output/fies_count", replace)	
+	*** this isn't coming out as expected
+							
+	graph 				bar p_mod p_sev, over(dwn_count)  over(country) /// 
+							ytitle("Food insecurity") title("D")   bar(1, color(turquoise)) ///
+							saving("$output/fies_count", replace)	
 
 * Figure 2 - combine graphs	
 	gr combine 			"$output/income_sector.gph" "$output/bus_emp_inc.gph" ///

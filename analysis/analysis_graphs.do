@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj
-* Last edit: 15 August 2020 
+* Last edit: 16 August 2020 
 * Stata v.16.1
 
 * does
@@ -250,27 +250,41 @@
 	gen 				ahw18 = hhsize_adult * wt_18
 	gen					ap_mod = p_mod * ahw18 
 	gen 				ap_sev = p_sev * ahw18 
+	
+	gen				fies_01_ahw = ahw18 if fies_01 == 1
+	gen				fies_02_ahw = ahw18 if fies_02 == 1
+	gen				fies_03_ahw = ahw18 if fies_03 == 1
+	gen				fies_04_ahw = ahw18 if fies_04 == 1
+	gen				fies_05_ahw = ahw18 if fies_05 == 1
+	gen				fies_06_ahw = ahw18 if fies_06 == 1
+	gen				fies_07_ahw = ahw18 if fies_07 == 1
+	gen				fies_08_ahw = ahw18 if fies_08 == 1
+	
 
-	graph bar			(sum) fies_01_hhw fies_02_hhw fies_03_hhw fies_04_hhw fies_05_hhw ///
-							fies_06_hhw fies_07_hhw fies_08_hhw, over(country) /// 
-							ytitle("Population reporting food insecurities") title("C") ///
-							ylabel(0 "0" 10000000 "10,000,000" 20000000 "20,000,000" ///
-							30000000 "30,000,000" 40000000 "40,000,000") ///
+	graph bar			(sum) fies_01_ahw fies_02_ahw fies_03_ahw fies_04_ahw fies_05_ahw ///
+							fies_06_ahw fies_07_ahw fies_08_ahw, over(country) /// 
+							ytitle("Adult population reporting food insecurities") title("C") ///	
+							ylabel(0 "0" 50000000 "50,000,000" /// 
+							150000000 "150,000,000" 250000000 "250,000,000") ///
 							legend( label (1 "Household ran out of food") label (2 "Adult hungry but did not eat") ///
 							label (3 "Adult hungry but did not eat for full day") label (4 "Adult worried about food") ///
 							label (5 "Adult unable to eat healthy food") label (6 "Adult ate only few kinds of foods") ///
 							label (7 "Adult skipped meal") label (8 "Adult ate less") /// 
 							pos(6) row(4)) saving("$output/fies", replace)				
-
+	*** do we want to break this out into multiple graphs + then pin together? 
+							
+							
 * graph D - FIES score and income loss
-	graph 				bar ap_mod ap_sev, over(dwn)  over(country) /// 
+	/*graph 				bar ap_mod ap_sev, over(dwn)  over(country) /// 
 							ytitle("FIES score") title("D")   bar(1, color(turquoise)) ///
-							saving("$output/fies_count", replace)	
+							saving("$output/fies_count", replace)	*/
 	*** this isn't coming out as expected
 							
-	graph 				bar p_mod p_sev, over(dwn_count)  over(country) /// 
-							ytitle("Food insecurity") title("D")   bar(1, color(turquoise)) ///
-							saving("$output/fies_count", replace)	
+	graph 				bar p_mod p_sev, over(dwn)  over(country) /// 
+							ytitle("FIES: Food insecurity prevalence estimates") title("D")   bar(1, color(turquoise)) ///
+							legend( label (1 "Moderate food insecurity") label (2 "Severe food insecurity") ///
+							pos(6)) saving("$output/fies_modsev", replace)	
+	*** change this to be over income quartiles / income information 
 
 * Figure 2 - combine graphs	
 	gr combine 			"$output/income_sector.gph" "$output/bus_emp_inc.gph" ///
@@ -437,12 +451,13 @@
 * graph D - education and food						
 	*graph bar 		dwn, over(edu_act) over(sector) over (country) 
 	
-	lab def 			edu_act 0 "Engaged in learning" 1 "Not engaged in learning" 	
+	lab def 			edu_act 0 "No learning" 1 "Learning" 	
 	label val 			edu_act edu_act  
 
-	graph bar 		fies_count, over(edu_act) over(sector) over (country) /// 
-							ytitle("FIES Count") title("D") ///
-							legend(pos(6)) saving("$output/fies_edu", replace)	
+	graph bar 		p_mod p_sev, over(edu_act) over (country) /// 
+							ytitle("FIES: Food insecurity prevalence estimates") title("D")  bar(1, color(turquoise)) ///
+							legend( label (1 "Moderate food insecurity") label (2 "Severe food insecurity") ///
+							pos(6)) saving("$output/fies_edu", replace)	
 	
 
 * Figure 3 - combine graphs	

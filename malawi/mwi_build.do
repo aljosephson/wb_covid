@@ -1337,8 +1337,7 @@
 * SEC 6A: employment
 	rename			s6q1 emp
 	replace			emp = s6q1_1 if emp == .
-	rename			s6q2hidden emp_pre
-	replace			emp_pre = s6q2_1 if s6q2_1 != .
+	gen				emp_pre = s6q2_1 if s6q2_1 != .
 	rename			s6q3a_1 emp_pre_why
 	rename			s6q3b_1 emp_pre_act
 	rename			s6q4a_1 emp_same
@@ -1374,7 +1373,7 @@
 
 	drop			s6q1_1 s6q2_1 s6q3_os_1 s6q4_ot_1 s6q4b_os_1 s6q4c_os_1 ///
 						s6q5_os_1 s6q8a_os_1 s6q8c_1__2 s6q8c_1__99 s6q10_1__0 ///
-						s6q10_1__1 s6q10_1__2 s6q10_1__3 s6q17_1_ot s6q1hidden
+						s6q10_1__1 s6q10_1__2 s6q10_1__3 s6q17_1_ot
 
 * same respondant employment
 	rename			s6q1a rtrn_emp

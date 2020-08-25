@@ -28,6 +28,7 @@
     global stataVersion 16.1    // set Stata version
     version $stataVersion
 
+	
 * **********************************************************************
 * 0 (a) - Create user specific paths
 * **********************************************************************

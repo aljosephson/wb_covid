@@ -38,7 +38,7 @@
 * ***********************************************************************
 
 * load round 1 of the data
-	use				"$root/wave_01/200610_WB_LSMS_HFPM_HH_Survey_Roster_Round1_Clean_Public", ///
+	use				"$root/wave_01/200610_WB_LSMS_HFPM_HH_Survey_Roster-Round1_Clean-Public", ///
 						clear
 * rename other variables 
 	rename 			individual_id ind_id 
@@ -66,7 +66,7 @@
 	save			"$export/wave_01/hhsize_r1", replace						
 
 * load round 2 of the data
-	use				"$root/wave_02/200620_WB_LSMS_HFPM_HH_Survey_Roster_Round2_Clean_Public", ///
+	use				"$root/wave_02/200620_WB_LSMS_HFPM_HH_Survey_Roster-Round2_Clean-Public", ///
 						clear
 * rename other variables 
 	rename 			individual_id ind_id 
@@ -178,7 +178,7 @@
 * ***********************************************************************
 
 * load round 1 of the data
-	use				"$root/wave_01/200614_WB_LSMS_HFPM_HH_Survey-Round1_Clean-Public_Microdata", ///
+	use				"$root/wave_01/200610_WB_LSMS_HFPM_HH_Survey-Round1_Clean-Public_Microdata", ///
 						clear
 						
 * merge in other sections

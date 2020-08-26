@@ -40,13 +40,27 @@
 * load round 1 of the data
 	use				"$root/wave_01/200610_WB_LSMS_HFPM_HH_Survey_Roster-Round1_Clean-Public", ///
 						clear
-
+* rename other variables 
+	rename 			individual_id ind_id 
+	rename 			bi2_hhm_new new_mem
+	rename 			bi3_hhm_stillm curr_mem
+	rename 			bi4_hhm_gender sex_mem
+	rename 			bi5_hhm_age age_mem
+	rename 			bi5_hhm_age_months age_month_mem
+	rename 			bi6_hhm_relhhh relat_mem
+						
 * generate counting variables
 	gen			hhsize = 1
+	gen 		hhsize_adult = 1 if age_mem > 18 & age_mem < .
+	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
+	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
 * collapse data
-	collapse	(sum) hhsize, by(household_id)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(household_id)
 	lab var		hhsize "Household size"
+	lab var 	hhsize_adult "Household size - only adults"
+	lab var 	hhsize_child "Household size - children 0 - 18"
+	lab var 	hhsize_schchild "Household size - school-age children 5 - 18"
 
 * save temp file
 	save			"$export/wave_01/hhsize_r1", replace						
@@ -54,27 +68,55 @@
 * load round 2 of the data
 	use				"$root/wave_02/200620_WB_LSMS_HFPM_HH_Survey_Roster-Round2_Clean-Public", ///
 						clear
-
+* rename other variables 
+	rename 			individual_id ind_id 
+	rename 			bi2_hhm_new new_mem
+	rename 			bi3_hhm_stillm curr_mem
+	rename 			bi4_hhm_gender sex_mem
+	rename 			bi5_hhm_age age_mem
+	rename 			bi5_hhm_age_months age_month_mem
+	rename 			bi6_hhm_relhhh relat_mem
+						
 * generate counting variables
 	gen			hhsize = 1
+	gen 		hhsize_adult = 1 if age_mem > 18 & age_mem < .
+	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
+	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
 * collapse data
-	collapse	(sum) hhsize, by(household_id)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(household_id)
 	lab var		hhsize "Household size"
+	lab var 	hhsize_adult "Household size - only adults"
+	lab var 	hhsize_child "Household size - children 0 - 18"
+	lab var 	hhsize_schchild "Household size - school-age children 5 - 18"
 
 * save temp file
 	save			"$export/wave_02/hhsize_r2", replace	
 	
 * load round 3 of the data
 	use				"$root/wave_03/200729_WB_LSMS_HFPM_HH_Survey_Roster-Round3_Clean-Public", ///
-						clear
+						clear					
+* rename other variables 
+	rename 			individual_id ind_id 
+	rename 			bi2_hhm_new new_mem
+	rename 			bi3_hhm_stillm curr_mem
+	rename 			bi4_hhm_gender sex_mem
+	rename 			bi5_hhm_age age_mem
+	rename 			bi5_hhm_age_months age_month_mem
+	rename 			bi6_hhm_relhhh relat_mem
 
 * generate counting variables
 	gen			hhsize = 1
+	gen 		hhsize_adult = 1 if age_mem > 18 & age_mem < .
+	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
+	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
 * collapse data
-	collapse	(sum) hhsize, by(household_id)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(household_id)
 	lab var		hhsize "Household size"
+	lab var 	hhsize_adult "Household size - only adults"
+	lab var 	hhsize_child "Household size - children 0 - 18"
+	lab var 	hhsize_schchild "Household size - school-age children 5 - 18"
 
 * save temp file
 	save			"$export/wave_03/hhsize_r3", replace
@@ -97,14 +139,42 @@
 * ***********************************************************************
 
 * load data
+
 	use				"$fies/ET_FIES_round3.dta", clear
 
 	drop 			country round
+
 	rename 			HHID household_id
 
 * save temp file
 	save			"$export/wave_03/fies_r3", replace
-						
+
+	
+* ***********************************************************************
+* 1g - baseline data
+* ***********************************************************************
+
+* load data
+	use				"$root/wave_00/HH/cons_agg_w4.dta", clear
+
+* generate per capita consumption	
+	gen				totcons_adj_norm = (spat_totcons_aeq * adulteq) / hh_size
+
+* convert to monthly
+	replace			totcons_adj_norm = totcons_adj_norm / 12
+	
+* generate consumption quintiles
+	xtile 			quints = totcons_adj_norm [aweight = pw_w4*hh_size], nquantiles(5)
+	lab var			quints "Quintiles based on the national population"
+	lab def			lbqui 1 "Quintile 1" 2 "Quintile 2" 3 "Quintile 3" ///
+						4 "Quintile 4" 5 "Quintile 5"
+
+	keep			household_id quints
+	
+* save temp file
+	save			"$export/wave_01/pov_r0", replace
+	
+	
 * ***********************************************************************
 * 2 - build ethiopia panel
 * ***********************************************************************
@@ -167,6 +237,9 @@
 * ***********************************************************************
 * 3 - clean ethiopia panel
 * ***********************************************************************
+
+* merge in consumption aggregate
+	merge m:1		household_id using "$export/wave_01/pov_r0.dta", keep(match) nogenerate
 
 * rationalize variables across waves
 	gen				phw = phw1 if phw1 != .

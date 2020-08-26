@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj
-* Last edit: 10 August 2020 
+* Last edit: 15 August 2020 
 * Stata v.16.1
 
 * does
@@ -47,6 +47,7 @@
 
 	append using	"$uga/uga_panel", force
 	
+	
 * **********************************************************************
 * 2 - revise ID variables as needed 
 * **********************************************************************
@@ -86,12 +87,19 @@
 	rename			phw hhw
 	lab var			hhw "Household sampling weight"
 	
-	gen				phw = hhw * hhsize if country != 2
-	replace			phw = hhw if country == 2
-	replace			hhw = phw / hhsize if country == 2
+	gen				phw = hhw * hhsize
 	lab var			phw "Population weight"
 	
-	order			phw, after(hhw)
+	gen 			ahw = hhw * hhsize_adult
+	lab var 		ahw "Household adult sampling weight"
+	
+	gen 			chw = hhw * hhsize_child 
+	lab var 		chw "Household child sampling weight"
+	
+	gen 			shw = hhw * hhsize_schchild
+	lab var 		shw "Household school child sampling weight"
+	
+	order			phw ahw chw shw, after(hhw)
 	order			hhsize, before(sex)
 						
 * know 

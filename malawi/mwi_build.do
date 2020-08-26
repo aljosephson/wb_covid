@@ -105,6 +105,7 @@
 * save new file
 	save			"$export/wave_01/sect7_Income_Loss_r1", replace
 
+	
 * ***********************************************************************
 * 1b - reshape section on safety nets wide data - R1
 * ***********************************************************************
@@ -243,6 +244,7 @@
 * save new file
 	save			"$export/wave_02/sect7_Income_Loss_r2", replace
 
+	
 * ***********************************************************************
 * 1d - reshape section on safety nets wide data - R2
 * ***********************************************************************
@@ -601,15 +603,31 @@
 * load data
 	use			"$root/wave_01/sect2_Household_Roster_r1.dta", clear
 
+* rename other variables 
+	rename 			PID ind_id 
+	rename 			new_member new_mem
+	rename 			s2q3 curr_mem
+	rename 			s2q5 sex_mem
+	rename 			s2q6 age_mem
+	rename 			s2q7 relat_mem	
+	
 * generate counting variables
 	gen			hhsize = 1
+	gen 		hhsize_adult = 1 if age_mem > 18 & age_mem < .
+	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
+	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
+	
 * collapse data
-	collapse	(sum) hhsize, by(HHID)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(HHID)
 	lab var		hhsize "Household size"
+	lab var 	hhsize_adult "Household size - only adults"
+	lab var 	hhsize_child "Household size - children 0 - 18"
+	lab var 	hhsize_schchild "Household size - school-age children 5 - 18"
 
 * save temp file
 	save			"$export/wave_01/hhsize_r1", replace
 
+	
 * ***********************************************************************
 * 1i - get household size - R2
 * ***********************************************************************
@@ -617,15 +635,31 @@
 * load data
 	use			"$root/wave_02/sect2_Household_Roster_r2.dta", clear
 
+* rename other variables 
+	rename 			PID ind_id 
+	rename 			new_member new_mem
+	rename 			s2q3 curr_mem
+	rename 			s2q5 sex_mem
+	rename 			s2q6 age_mem
+	rename 			s2q7 relat_mem	
+	
 * generate counting variables
 	gen			hhsize = 1
+	gen 		hhsize_adult = 1 if age_mem > 18 & age_mem < .
+	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
+	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
+	
 * collapse data
-	collapse	(sum) hhsize, by(HHID)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(HHID)
 	lab var		hhsize "Household size"
+	lab var 	hhsize_adult "Household size - only adults"
+	lab var 	hhsize_child "Household size - children 0 - 18"
+	lab var 	hhsize_schchild "Household size - school-age children 5 - 18"
 
 * save temp file
 	save			"$export/wave_02/hhsize_r2", replace
 
+	
 * ***********************************************************************
 * 1j - FIES score - R1
 * ***********************************************************************
@@ -641,6 +675,7 @@
 * ***********************************************************************
 * 1k - FIES score - R2
 * ***********************************************************************
+
 
 * load data
 	use				"$fies/MW_FIES_round2.dta", clear
@@ -1094,6 +1129,9 @@
 	gen				wave = 2
 	lab var			wave "Wave number"
 
+	rename			wt_round2 phw
+	label var		phw "sampling weights"
+	
 * reformat HHID
 	rename			HHID household_id_an
 	label 			var household_id_an "32 character alphanumeric - str32"
@@ -1316,8 +1354,7 @@
 * SEC 6A: employment
 	rename			s6q1 emp
 	replace			emp = s6q1_1 if emp == .
-	rename			s6q2hidden emp_pre
-	replace			emp_pre = s6q2_1 if s6q2_1 != .
+	gen				emp_pre = s6q2_1 if s6q2_1 != .
 	rename			s6q3a_1 emp_pre_why
 	rename			s6q3b_1 emp_pre_act
 	rename			s6q4a_1 emp_same
@@ -1353,7 +1390,7 @@
 
 	drop			s6q1_1 s6q2_1 s6q3_os_1 s6q4_ot_1 s6q4b_os_1 s6q4c_os_1 ///
 						s6q5_os_1 s6q8a_os_1 s6q8c_1__2 s6q8c_1__99 s6q10_1__0 ///
-						s6q10_1__1 s6q10_1__2 s6q10_1__3 s6q17_1_ot s6q1hidden
+						s6q10_1__1 s6q10_1__2 s6q10_1__3 s6q17_1_ot
 
 * same respondant employment
 	rename			s6q1a rtrn_emp
@@ -1440,14 +1477,13 @@
 	rename			s6qb13 bus_emp_inc
 	rename			s6qb14 bus_why
 
-	rename			s6qb15 bus_chlng
 	gen				bus_chlng_fce = 1 if s6qb15__1 == 1
-	replace			bus_chlng_fce = 2 if s6qb15__1 == 1
-	replace			bus_chlng_fce = 3 if s6qb15__1 == 1
-	replace			bus_chlng_fce = 4 if s6qb15__1 == 1
-	replace			bus_chlng_fce = 5 if s6qb15__1 == 1
-	replace			bus_chlng_fce = 6 if s6qb15__1 == 1
-	replace			bus_chlng_fce = 7 if s6qb15__1 == 1
+	replace			bus_chlng_fce = 2 if s6qb15__2 == 1
+	replace			bus_chlng_fce = 3 if s6qb15__3 == 1
+	replace			bus_chlng_fce = 4 if s6qb15__4 == 1
+	replace			bus_chlng_fce = 5 if s6qb15__5 == 1
+	replace			bus_chlng_fce = 6 if s6qb15__6 == 1
+	replace			bus_chlng_fce = 7 if s6qb15__7 == 1
 	lab def			bus_chlng_fce 1 "Difficulty buying and receiving supplies and inputs" ///
 								  2 "Difficulty raising money for the business" ///
 								  3 "Difficulty repaying loans or other debt obligations" ///
@@ -1456,7 +1492,7 @@
 								  6 "Difficulty selling goods or services to customers" ///
 								  7 "Other"
 	lab val			bus_chlng_fce bus_chlng_fce
-	order			bus_chlng_fce, after(bus_chlng)
+	order			bus_chlng_fce, after(bus_why)
 
 	drop			s6bq11a_2 s6bq11a_3 s6q14b_os s6qb15__1 s6qb15__2 ///
 						s6qb15__3 s6qb15__4 s6qb15__5 s6qb15__6 s6qb15__7 ///
@@ -1552,6 +1588,19 @@
 	append 			using "$root/wave_02/r2_sect_all", ///
 						force
 
+* merge in consumption aggregate
+	merge m:1		y4_hhid using "$root/wave_00/IHPS 2019 Households with IHPS 2016 Consumption Quintiles.dta"
+	
+	keep if			_merge == 3
+	drop			_merge
+	
+* define labels
+	rename			quintile quints
+	lab var			quints "Quintiles based on the national population"
+	lab def			lbqui 1 "Quintile 1" 2 "Quintile 2" 3 "Quintile 3" ///
+						4 "Quintile 4" 5 "Quintile 5"
+	lab val			quints lbqui
+	
 * **********************************************************************
 * 5 - end matter, clean up to save
 * **********************************************************************

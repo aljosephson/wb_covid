@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj 
-* Last edit: 13 August 2020 
+* Last edit: 26 August 2020 
 * Stata v.16.1
 
 * does
@@ -26,7 +26,7 @@
 	global	root	=	"$data/ethiopia/raw"
 	global	export	=	"$data/ethiopia/refined"
 	global	logout	=	"$data/ethiopia/logs"
-	global  fies 	= 	"$data/analysis/raw"
+	global  fies 	= 	"$data/analysis/raw/Ethiopia"
 
 * open log
 	cap log 		close
@@ -126,9 +126,9 @@
 * ***********************************************************************
 
 * load data
-	use				"$fies/fies_ethiopia_r2.dta", clear
+	use				"$fies/ET_FIES_round2.dta", clear
 
-	drop 			country wave
+	drop 			country round 
 	rename 			HHID household_id
 
 * save temp file
@@ -139,9 +139,11 @@
 * ***********************************************************************
 
 * load data
-	use				"$fies/fies_ethiopia_r3.dta", clear
-				
-	drop 			country wave
+
+	use				"$fies/ET_FIES_round3.dta", clear
+
+	drop 			country round
+
 	rename 			HHID household_id
 
 * save temp file

@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj 
-* Last edit: 13 August 2020 
+* Last edit: 26 August 2020 
 * Stata v.16.1
 
 * does
@@ -26,7 +26,7 @@
 	global	root	=	"$data/ethiopia/raw"
 	global	export	=	"$data/ethiopia/refined"
 	global	logout	=	"$data/ethiopia/logs"
-	global  fies 	= 	"$data/analysis/raw"
+	global  fies 	= 	"$data/analysis/raw/Ethiopia"
 
 * open log
 	cap log 		close
@@ -38,7 +38,7 @@
 * ***********************************************************************
 
 * load round 1 of the data
-	use				"$root/wave_01/200610_WB_LSMS_HFPM_HH_Survey_Roster_Round1_Clean_Public", ///
+	use				"$root/wave_01/200610_WB_LSMS_HFPM_HH_Survey_Roster-Round1_Clean-Public", ///
 						clear
 
 * generate counting variables
@@ -52,7 +52,7 @@
 	save			"$export/wave_01/hhsize_r1", replace						
 
 * load round 2 of the data
-	use				"$root/wave_02/200620_WB_LSMS_HFPM_HH_Survey_Roster_Round2_Clean_Public", ///
+	use				"$root/wave_02/200620_WB_LSMS_HFPM_HH_Survey_Roster-Round2_Clean-Public", ///
 						clear
 
 * generate counting variables
@@ -84,9 +84,9 @@
 * ***********************************************************************
 
 * load data
-	use				"$fies/fies_ethiopia_r2.dta", clear
+	use				"$fies/ET_FIES_round2.dta", clear
 
-	drop 			country wave
+	drop 			country round 
 	rename 			HHID household_id
 
 * save temp file
@@ -97,9 +97,9 @@
 * ***********************************************************************
 
 * load data
-	use				"$fies/fies_ethiopia_r3.dta", clear
+	use				"$fies/ET_FIES_round3.dta", clear
 
-	drop 			country wave
+	drop 			country round
 	rename 			HHID household_id
 
 * save temp file
@@ -110,7 +110,7 @@
 * ***********************************************************************
 
 * load round 1 of the data
-	use				"$root/wave_01/200614_WB_LSMS_HFPM_HH_Survey-Round1_Clean-Public_Microdata", ///
+	use				"$root/wave_01/200610_WB_LSMS_HFPM_HH_Survey-Round1_Clean-Public_Microdata", ///
 						clear
 						
 * merge in other sections

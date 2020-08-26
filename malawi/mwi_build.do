@@ -25,7 +25,7 @@
 	global	root	=	"$data/malawi/raw"
 	global	export	=	"$data/malawi/refined"
 	global	logout	=	"$data/malawi/logs"
-	global  fies 	= 	"$data/analysis/raw"
+	global  fies 	= 	"$data/analysis/raw/Malawi"
 
 * open log
 	cap log 		close
@@ -631,13 +631,24 @@
 * ***********************************************************************
 
 * load data
-	use				"$fies/fies_malawi_r1.dta", clear
+	use				"$fies/MW_FIES_round1.dta", clear
 
-	drop 			country wave
+	drop 			country round
 
 * save temp file
 	save			"$export/wave_01/fies_r1", replace
+	
+* ***********************************************************************
+* 1k - FIES score - R2
+* ***********************************************************************
 
+* load data
+	use				"$fies/MW_FIES_round2.dta", clear
+
+	drop 			country round 
+	
+* save temp file
+	save			"$export/wave_02/fies_r2", replace
 
 * ***********************************************************************
 * 2 - build malawi panel R1 cross section
@@ -1077,6 +1088,7 @@
 	merge 1:1 		HHID using "$export/wave_02/sect10_Coping_r2.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$export/wave_02/sect11_Safety_Nets_r2.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_02/sect12_Interview_Result_r2.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$export/wave_02/fies_r2.dta", keep(match) nogenerate
 
 * generate round variable
 	gen				wave = 2

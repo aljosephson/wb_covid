@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj
-* Last edit: 16 August 2020 
+* Last edit: 26 August 2020 
 * Stata v.16.1
 
 * does
@@ -246,45 +246,121 @@
 
 * adjust weights 
 	
-	gen 				ahw18 = hhsize_adult * wt_18
-	gen					ap_mod = p_mod * ahw18 
-	gen 				ap_sev = p_sev * ahw18 
+	preserve 
+	drop if country == 1 & wave == 3 
+	drop if country == 2 & wave == 2 
 	
-	gen				fies_01_ahw = ahw18 if fies_01 == 1
-	gen				fies_02_ahw = ahw18 if fies_02 == 1
-	gen				fies_03_ahw = ahw18 if fies_03 == 1
-	gen				fies_04_ahw = ahw18 if fies_04 == 1
-	gen				fies_05_ahw = ahw18 if fies_05 == 1
-	gen				fies_06_ahw = ahw18 if fies_06 == 1
-	gen				fies_07_ahw = ahw18 if fies_07 == 1
-	gen				fies_08_ahw = ahw18 if fies_08 == 1
+	gen				fies_01_ahw = wt_18 if fies_01 == 1 
+	gen				fies_02_ahw = wt_18 if fies_02 == 1
+	gen				fies_03_ahw = wt_18 if fies_03 == 1
+	gen				fies_04_ahw = wt_18 if fies_04 == 1
+	gen				fies_05_ahw = wt_18 if fies_05 == 1
+	gen				fies_06_ahw = wt_18 if fies_06 == 1
+	gen				fies_07_ahw = wt_18 if fies_07 == 1
+	gen				fies_08_ahw = wt_18 if fies_08 == 1
 	
 
 	graph bar			(sum) fies_01_ahw fies_02_ahw fies_03_ahw fies_04_ahw fies_05_ahw ///
-							fies_06_ahw fies_07_ahw fies_08_ahw, over(country) /// 
-							ytitle("Adult population reporting food insecurities") title("C") ///	
-							ylabel(0 "0" 50000000 "50,000,000" /// 
-							150000000 "150,000,000" 250000000 "250,000,000") ///
+							fies_06_ahw fies_07_ahw fies_08_ahw if country == 1, over(country) /// 
+							ytitle("Adult population reporting food insecurities") ///
+							bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
+						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
+						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
+						bar(7, color(eltgreen*1.5)) bar(8, color(stone*1.5)) ///
+							ylabel(0 "0" 10000000 "10,000,000" /// 
+							20000000 "20,000,000" 30000000 "30,000,000") ///
 							legend( label (1 "Household ran out of food") label (2 "Adult hungry but did not eat") ///
 							label (3 "Adult hungry but did not eat for full day") label (4 "Adult worried about food") ///
 							label (5 "Adult unable to eat healthy food") label (6 "Adult ate only few kinds of foods") ///
 							label (7 "Adult skipped meal") label (8 "Adult ate less") /// 
-							pos(6) row(4)) saving("$output/fies", replace)				
-	*** do we want to break this out into multiple graphs + then pin together? 
+							pos(6) row(4)) saving("$output/fiesent1", replace)	
 							
+	graph bar			(sum) fies_01_ahw fies_02_ahw fies_03_ahw fies_04_ahw fies_05_ahw ///
+							fies_06_ahw fies_07_ahw fies_08_ahw if country == 2, over(country) /// 
+							bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
+						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
+						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
+						bar(7, color(eltgreen*1.5)) bar(8, color(stone*1.5)) ///
+							ylabel(0 "0" 2000000 "2,000,000" /// 
+							4000000 "4,000,000" 6000000 "6,000,000" 8000000 "8,000,000") ///
+							legend(off) saving("$output/fiesent2", replace)	
+	 
+	graph bar			(sum) fies_01_ahw fies_02_ahw fies_03_ahw fies_04_ahw fies_05_ahw ///
+							fies_06_ahw fies_07_ahw fies_08_ahw if country == 3, over(country) /// 
+							bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
+						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
+						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
+						bar(7, color(eltgreen*1.5)) bar(8, color(stone*1.5)) ///
+							ylabel(0 "0" 20000000 "25,000,000" /// 
+							40000000 "45,000,000" 65000000 "65,000,000") ///
+							legend(off) saving("$output/fiesent3", replace)	 
 							
+		graph bar			(sum) fies_01_ahw fies_02_ahw fies_03_ahw fies_04_ahw fies_05_ahw ///
+							fies_06_ahw fies_07_ahw fies_08_ahw if country == 4, over(country) /// 
+							bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
+						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
+						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
+						bar(7, color(eltgreen*1.5)) bar(8, color(stone*1.5)) ///
+							ylabel(0 "0" 5000000 "5,000,000" /// 
+							10000000 "10,000,000" 15000000 "15,000,000") ///
+							legend(off) saving("$output/fiesent4", replace)	 
+
+	
+		grc1leg2 "$output/fiesent1.gph" "$output/fiesent2.gph" ///
+				"$output/fiesent3.gph" "$output/fiesent4.gph", ///
+				col(4) iscale(.5) commonscheme ///
+		title("C") saving("$output/fiesent.gph", replace)						
+	
+		graph export "$output/fiesent.png", as(png) replace
+
+ 
+					
 * graph D - FIES score and income loss
 	/*graph 				bar ap_mod ap_sev, over(dwn)  over(country) /// 
 							ytitle("FIES score") title("D")   bar(1, color(turquoise)) ///
 							saving("$output/fies_count", replace)	*/
 	*** this isn't coming out as expected
-							
-	graph 				bar p_mod p_sev, over(dwn)  over(country) /// 
-							ytitle("FIES: Food insecurity prevalence estimates") title("D")   bar(1, color(turquoise)) ///
-							legend( label (1 "Moderate food insecurity") label (2 "Severe food insecurity") ///
-							pos(6)) saving("$output/fies_modsev", replace)	
-	*** change this to be over income quartiles / income information 
+	
+	gen				p_mod_01 = p_mod if quint == 1 
+	gen				p_mod_02 = p_mod if quint == 2 
+	gen				p_mod_03 = p_mod if quint == 3 
+	gen				p_mod_04 = p_mod if quint == 4 
+	gen				p_mod_05 = p_mod if quint == 5 
+	
+	gen				p_sev_01 = p_sev if quint == 1 
+	gen				p_sev_02 = p_sev if quint == 2 
+	gen				p_sev_03 = p_sev if quint == 3 
+	gen				p_sev_04 = p_sev if quint == 4 
+	gen				p_sev_05 = p_sev if quint == 5 
+	
+	colorpalette edkblue khaki, ipolate(15, power(1)) locals
 
+							
+	graph bar 			p_mod_01 p_mod_02 p_mod_03 p_mod_04 p_mod_05, over(country)   ///
+							ytitle("Probability of moderate or severe food insecurity")  ///
+							bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
+							bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
+							bar(5, fcolor(`13') lcolor(none)) legend(off) ///
+							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100") /// 
+							 saving("$output/fies_modsev", replace)				 
+							 
+	graph bar 			p_sev_01 p_sev_02 p_sev_03 p_sev_04 p_sev_05, over(country)  ///
+							ytitle("Probability of severe food insecurity")  ///
+							bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
+							bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
+							bar(5, fcolor(`13') lcolor(none)) legend(label (1 "First")  ///
+							label (2 "Second") label (3 "Third") label (4 "Fourth") ///
+							label (5 "Fifth") order( 5 4 3 2 1) pos(3) col(1)) ///
+							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100") /// 
+							 saving("$output/fies_sev", replace)						
+							
+	graph combine "$output/fies_modsev.gph" "$output/fies_sev.gph", ///
+		col(2) iscale(.5) commonscheme title("D") saving("$output/fies.gph", replace)						
+
+	graph export "$output/fies.png", as(png) replace			
+	
+	restore 
+							
 * Figure 2 - combine graphs	
 	gr combine 			"$output/income_sector.gph" "$output/bus_emp_inc.gph" ///
 							"$output/fies.gph" "$output/fies_count.gph", ///

@@ -163,15 +163,14 @@
 * graph A - income loss by sector
 	graph bar		(sum) farm_hhw bus_hhw wage_hhw remit_hhw other_hhw ///
 						if wave == 1, over(sector) over(country) title("A")  ///
-						ytitle("Population reporting decrease in income") ///
-						ylabel(0 "0" 5000000 "5,000,000" 10000000 "10,000,000" ///
-						15000000 "15,000,000") bar(1, color(navy*1.5)) bar(2, color(teal*1.5)) ///
+						ytitle("Households reporting decrease in income") ///
+						ylabel(0 "0" 3000000 "3,000,000" 6000000 "6,000,000" 9000000 "9,000,000" ///
+						12000000 "12,000,000") bar(1, color(navy*1.5)) bar(2, color(teal*1.5)) ///
 						bar(3, color(khaki*1.5)) bar(4, color(cranberry*1.5)) bar(5, color(purple*1.5)) ///
 						legend( label (1 "Farm income") label (2 "Business income") ///
 						label (3 "Wage income") label (4 "Remittances") ///
 						label (5 "All else")  pos(6) col(3)) saving("$output/income_sector", replace)
 	*** there are xx people living in households who are reporting loss of income 
-
 
 	graph export "$output/income.png", as(png) replace	
 						
@@ -372,10 +371,15 @@
 	
 	graph bar		(sum) cope_01_phw cope_02_phw cope_03_phw cope_04_phw ///
 						cope_05_phw cope_08_phw cope_09_phw cope_10_phw ///
-						cope_11_phw if country == 1, over(country) ///
+						cope_11_phw if country == 1 & wave == 1, over(sector) over(country) ///
+						bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
+						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
+						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
+						bar(7, color(eltgreen*1.5)) bar(8, color(stone*1.5)) ///
+						bar(9, color(navy*1.5)) ///
 						ytitle("Population reporting use of coping strategy") ///
-						ylabel(0 "0" 5000000 "5,000,000" 10000000 "10,000,000" ///
-						15000000 "15,000,000" 20000000 "20,000,000") ///
+						ylabel(0 "0" 2000000 "2,000,000" 4000000 "4,000,000" ///
+						6000000 "6,000,000" ) ///
 						legend( label (1 "Sale of asset") label (2 "Worked more") ///
 						label (3 "Help from family") label (4 "Loan from family") ///
 						label (5 "Accessed credit") label (6 "Sold crop early") ///
@@ -385,62 +389,85 @@
 	
 	graph bar		(sum) cope_01_phw cope_02_phw cope_03_phw cope_04_phw ///
 						cope_05_phw cope_08_phw cope_09_phw cope_10_phw ///
-						cope_11_phw if country == 3, legend(off)  over(country) ///
+						cope_11_phw if country == 2, legend(off) over(sector) over(country) ///
+						bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
+						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
+						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
+						bar(7, color(eltgreen*1.5)) bar(8, color(stone*1.5)) ///
+						bar(9, color(navy*1.5)) ///
+						ylabel(0 "0" 1000000 "1,000,000" 2000000 "2,000,000" ///
+						3000000 "3,000,000") ///
+						saving("$output/cope_mwi.gph", replace)
+	
+	graph bar		(sum) cope_01_phw cope_02_phw cope_03_phw cope_04_phw ///
+						cope_05_phw cope_08_phw cope_09_phw cope_10_phw ///
+						cope_11_phw if country == 3, legend(off) over(sector) over(country) ///
+						bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
+						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
+						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
+						bar(7, color(eltgreen*1.5)) bar(8, color(stone*1.5)) ///
+						bar(9, color(navy*1.5)) ///
 						ylabel(0 "0" 20000000 "20,000,000" 40000000 "40,000,000" ///
-						60000000 "60,000,000" 80000000 "80,000,000") ///
+						60000000 "60,000,000") ///
 						saving("$output/cope_nga.gph", replace)
 	
 	graph bar		(sum) cope_01_phw cope_02_phw cope_03_phw cope_04_phw ///
 						cope_05_phw cope_08_phw cope_09_phw cope_10_phw ///
-						cope_11_phw if country == 4, legend(off) over(country) ///
-						ylabel(0 "0" 5000000 "5,000,000" 10000000 "10,000,000" ///
-						15000000 "15,000,000") //////
+						cope_11_phw if country == 4 & wave == 1, legend(off) over(sector) over(country) ///
+						bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
+						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
+						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
+						bar(7, color(eltgreen*1.5)) bar(8, color(stone*1.5)) ///
+						bar(9, color(navy*1.5)) ///
+						ylabel(0 "0" 3000000 "3,000,000" 6000000 "6,000,000" ///
+						9000000 "9,000,000") ///
 						saving("$output/cope_uga.gph", replace)
 						
+	grc1leg2 "$output/cope_eth.gph" "$output/cope_mwi.gph" "$output/cope_nga.gph" ///
+		"$output/cope_uga.gph", col(4) iscale(.5) commonscheme ///
+		title("B") saving("$output/cope.gph", replace)						
 	
-	grc1leg2 "$output/cope_eth.gph" "$output/cope_nga.gph" "$output/cope_uga.gph", ///
-		col(3) iscale(.5) commonscheme title("B") saving("$output/cope.gph", replace)						
-	
-* graph C - education activities
-	gen				edu_cont_hhw = hhw if edu_cont == 1
-	gen 			edu_act_phw = phw if edu_act == 1
-	gen 			edu_act_hhw = hhw if edu_act == 1
-	gen 			edu_01_hhw = hhw if edu_01 == 1 
-	gen 			edu_02_hhw = hhw if edu_02 == 1 
-	gen 			edu_03_hhw = hhw if edu_03 == 1 
-	gen 			edu_04_hhw = hhw if edu_04 == 1 
-	gen 			edu_05_hhw = hhw if edu_05 == 1 
+		graph export "$output/cope.png", as(png) replace
 
-	graph bar		(sum) edu_01_hhw edu_02_hhw edu_03_hhw edu_04_hhw edu_05_hhw if country == 1, ///
-						over(sector) over(country) legend(off) ///
-						ylabel(0 "0" 500000 "500,000" 1500000 "1,500,000" ///
-						 2500000 "2,500,000") /// 
-						 legend( ///
+* graph C - education activities
+	graph bar		edu_01 edu_02 edu_03 edu_04 edu_05 if country == 1 ///
+						& wave != 3, over(wave, relabel(1 "May" 2 "June") ) ///
+						over(country) ylabel(0 "0" ///
+						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100") /// 
+						bar(1, color(khaki*1.5)) bar(2, color(cranberry*1.5)) ///
+						bar(3, color(teal*1.5)) bar(4, color(lavender*1.5)) ///
+						bar(5, color(brown*1.5)) legend( ///
 						label (1 "Completed assignments provided by teacher") ///
 						label (2 "Using mobile learning apps") ///
 						label (3 "Watched education television") ///
 						label (4 "Listened to educational radio programs") ///
 						label (5 "Session with teacher") pos(6) col(2)) ///	
-						ytitle("Population experiencing various types of educational contact")  ///
+						ytitle("Percentage of households with children experiencing educational contact (%)")  ///
 						 saving("$output/educont_eth", replace)		
 						 
-	graph bar		(sum) edu_01_hhw edu_02_hhw edu_03_hhw edu_04_hhw edu_05_hhw if country == 2, ///
-						over(sector) over(country) legend(off) /// 
-						ylabel(0 "0" 20000 "20,000" 60000 "60,000" ///
-						 100000 "100,000") /// 
-						 saving("$output/educont_mwi", replace)			
+	graph bar		edu_01 edu_02 edu_03 edu_04 edu_05 if country == 2, ///
+						over(wave, relabel(1 "June" 2 "July") ) ///
+						over(country) ylabel(0 "0" ///
+						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100") /// 
+						bar(1, color(khaki*1.5)) bar(2, color(cranberry*1.5)) ///
+						bar(3, color(teal*1.5)) bar(4, color(lavender*1.5)) ///
+						bar(5, color(brown*1.5)) legend(off) saving("$output/educont_mwi", replace)			
 						 
-	graph bar		(sum) edu_01_hhw edu_02_hhw edu_03_hhw edu_04_hhw edu_05_hhw if country == 3, ///
-						over(sector) over(country) legend(off) /// 
-						ylabel(0 "0" 2000000 "2,000,000" 4000000 "4,000,000" ///
-						 6000000 "6,000,000") ///
-						 saving("$output/educont_nga", replace)		
+	graph bar		edu_01 edu_02 edu_03 edu_04 edu_05 if country == 3 ///
+						& wave != 3, over(wave, relabel(1 "May" 2 "June") ) ///
+						over(country) ylabel(0 "0" ///
+						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100") /// 
+						bar(1, color(khaki*1.5)) bar(2, color(cranberry*1.5)) ///
+						bar(3, color(teal*1.5)) bar(4, color(lavender*1.5)) ///
+						bar(5, color(brown*1.5)) legend(off) saving("$output/educont_nga", replace)		
 
-	graph bar		(sum) edu_01_hhw edu_02_hhw edu_03_hhw edu_04_hhw edu_05_hhw if country == 4, ///
-						over(sector) over(country) legend(off) ///
-						ylabel(0 "0" 350000 "350,000" 700000 "700,000" ///
-						 1100000 "1,100,000") ///		
-						 saving("$output/educont_uga", replace)				
+	graph bar		edu_01 edu_02 edu_03 edu_04 edu_05 if country == 4 ///
+						& wave == 1, over(wave, relabel(1 "June") ) ///
+						over(country)  ylabel(0 "0" ///
+						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100") /// 
+						bar(1, color(khaki*1.5)) bar(2, color(cranberry*1.5)) ///
+						bar(3, color(teal*1.5)) bar(4, color(lavender*1.5)) ///
+						bar(5, color(brown*1.5)) legend(off) saving("$output/educont_uga", replace)				
 
 * combine into graph C
 	grc1leg2  		 "$output/educont_eth.gph" "$output/educont_mwi.gph" ///
@@ -448,10 +475,13 @@
 						col(4) iscale(.5) commonscheme imargin(0 0 0 0) legend() title("C") ///
 						saving("$output/educont", replace)	
 
+		graph export "$output/educont.png", as(png) replace
+		
+		
 * graph D - education and food						
 	*graph bar 		dwn, over(edu_act) over(sector) over (country) 
 	
-	lab def 			edu_act 0 "No learning" 1 "Learning" 	
+	lab def 			edu_act 0 "No Learning" 1 "Learning" 	
 	label val 			edu_act edu_act  
 
 	graph bar 		p_mod p_sev, over(edu_act) over (country) /// 
@@ -460,7 +490,7 @@
 							pos(6)) saving("$output/fies_edu", replace)	
 	
 
-* Figure 3 - combine graphs	
+* Figure 4 - combine graphs	
 	gr combine 			"$output/access.gph" "$output/cope.gph" ///
 							"$output/educont.gph" "$output/fies_edu.gph", ///
 							col(2) iscale(.5) commonscheme

@@ -321,7 +321,7 @@
 
 	colorpalette edkblue khaki, ipolate(15, power(1)) locals
 		
-	graph bar 		(sum) ac_med_01 ac_med_02 ac_med_03 ac_med_04 ac_med_05 if ac_med_need == 1,  ///
+	graph bar 		(sum) ac_med_01 ac_med_02 ac_med_03 ac_med_04 ac_med_05 if ac_med_need == 1 & wave == 1,  ///
 						over(country, gap(*.1)) stack  ///
 						ytitle("Population reporting inability to buy medicine") ///
 						ylabel(0 "0" 5000000 "5,000,000" ///
@@ -331,18 +331,18 @@
 						bar(5, fcolor(`13') lcolor(none)) legend(off) ///
 						saving("$output/ac_med", replace)
 	
-	graph bar 		(sum) ac_staple_01 ac_staple_02 ac_staple_03 ac_staple_04 ac_staple_05 if ac_staple_need == 1,  ///
+	graph bar 		(sum) ac_staple_01 ac_staple_02 ac_staple_03 ac_staple_04 ac_staple_05 if ac_staple_need == 1 & wave == 1,  ///
 						over(country, gap(*.1)) stack  ///
 						ytitle("Population reporting inability to buy staple food") ///
 						ylabel(0 "0" 10000000 "10,000,000" ///
-						20000000 "20,000,000" 30000000 "30000,000") ///
+						20000000 "20,000,000" 30000000 "30,000,000") ///
 						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
 						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
 						bar(5, fcolor(`13') lcolor(none)) legend(off) ///
 						saving("$output/ac_staple", replace)		
 
 		
-	graph bar 		(sum) ac_soap_01 ac_soap_02 ac_soap_03 ac_soap_04 ac_soap_05 if ac_soap_need == 1,  ///
+	graph bar 		(sum) ac_soap_01 ac_soap_02 ac_soap_03 ac_soap_04 ac_soap_05 if ac_soap_need == 1 & wave == 1,  ///
 						over(country, gap(*.1)) stack  ///
 						ytitle("Population reporting inability to buy soap") ///
 						ylabel(0 "0" 5000000 "5,000,000" ///

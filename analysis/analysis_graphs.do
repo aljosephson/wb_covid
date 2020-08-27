@@ -43,26 +43,9 @@
 	use				"$ans/lsms_panel", clear
 
 
-* graph A - look at knowledge variables by country
-	graph bar		know_01 know_02 know_03 know_04 know_05 know_06 know_07 know_08, over(country) ///
-						title("A") bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
-						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
-						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
-						bar(7, color(eltgreen*1.5)) bar(8, color(stone*1.5)) ///
-						ytitle("Knowledge of actions to reduce exposure (%)") ///
-						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100") ///
-						legend(label (1 "Handwash with soap") ///
-						label (2 "Avoid physical contact") label (3 "Use masks/gloves") ///
-						label (4 "Avoid travel") label (5 "Stay at home") ///
-						label (6 "Avoid crowds") label (7 "Socially distance") ///
-						label (8 "Avoid face touching") pos (6) col(4)) ///
-						saving("$output/knowledge", replace)  
-
-	graph export "$output/knowledge.png", as(png) replace	
-	
-* graph B - look at government variables 
+* graph A - look at government variables 
 	graph bar		gov_01 gov_02 gov_03 gov_04 gov_05 gov_06 gov_10, over(country) ///
-						title("B") bar(1, color(khaki*1.5)) ///
+						title("A") bar(1, color(khaki*1.5)) ///
 						bar(2, color(cranberry*1.5)) bar(3, color(teal*1.5)) ///
 						bar(4, color(lavender*1.5)) bar(5, color(brown*1.5)) ///
 						bar(6, color(maroon*1.5)) bar(7, color(eltgreen*1.5) ) ///
@@ -76,6 +59,23 @@
 						pos (6) col(4)) saving("$output/restriction", replace) 
 
 	graph export "$output/restriction.png", as(png) replace	 
+	
+* graph B - look at knowledge variables by country
+	graph bar		know_01 know_02 know_03 know_04 know_05 know_06 know_07 know_08, over(country) ///
+						title("B") bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
+						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
+						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
+						bar(7, color(eltgreen*1.5)) bar(8, color(stone*1.5)) ///
+						ytitle("Knowledge of actions to reduce exposure (%)") ///
+						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100") ///
+						legend(label (1 "Handwash with soap") ///
+						label (2 "Avoid physical contact") label (3 "Use masks/gloves") ///
+						label (4 "Avoid travel") label (5 "Stay at home") ///
+						label (6 "Avoid crowds") label (7 "Socially distance") ///
+						label (8 "Avoid face touching") pos (6) col(4)) ///
+						saving("$output/knowledge", replace)  
+
+	graph export "$output/knowledge.png", as(png) replace	
 						  
 * graph C - look at behavior variables
 	graph bar 		(mean) bh_01 bh_02 bh_03 if wave == 1, over(country) ///
@@ -120,7 +120,7 @@
 	restore
 
 * Figure 1 - combine graphs	
-	gr 				combine "$output/knowledge.gph" "$output/restriction.gph" ///
+	gr 				combine "$output/restriction.gph" "$output/knowledge.gph" ///
 						"$output/behavior.gph" "$output/myth.gph", ///
 						col(2) iscale(.45) commonscheme
 

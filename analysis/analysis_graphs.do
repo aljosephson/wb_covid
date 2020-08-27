@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj
-* Last edit: 26 August 2020 
+* Last edit: 27 August 2020 
 * Stata v.16.1
 
 * does
@@ -104,10 +104,10 @@
 * generate graph
 	catplot 		size country myth, percent(country myth) ///
 						title("D") ytitle("Percent") var3opts( ///
-						relabel (1 `""Lemon and alcohol are" "effective sanitizers""' ///
-						2 "Africans are immune" 3 "Children are not affected" ///
-						4 `""Virus cannot surive" "warm weather""' ///
-						5 `""COVID-19 is just" "common flu""')) ///
+						relabel (1 `""Lemon and alcohol are effective" "sanitizers against coronavirus""' ///
+						2 `""Africans are" "immune to coronavirus"""' 3 `""Children are not" "affected by coronavirus"""' ///
+						4 `""Coronavirus cannot survive" "warm weather""' ///
+						5 `""Coronavirus is just" "common flu""')) ///
 						bar(1, color(edkblue*1.5) ) ///
 						bar(2, color(emerald*1.5) ) ///
 						bar(3, color(khaki*1.5) ) ///
@@ -247,8 +247,8 @@
 * adjust weights 
 	
 	preserve 
-	drop if country == 1 & wave == 3 
-	drop if country == 2 & wave == 2 
+	drop if country == 1 & wave == 2 
+	drop if country == 2 & wave == 1 
 	
 	gen				fies_01_ahw = wt_18 if fies_01 == 1 
 	gen				fies_02_ahw = wt_18 if fies_02 == 1
@@ -260,6 +260,8 @@
 	gen				fies_08_ahw = wt_18 if fies_08 == 1
 	
 
+	* update labels - simpify - drop 'adult' etc. 
+	
 	graph bar			(sum) fies_01_ahw fies_02_ahw fies_03_ahw fies_04_ahw fies_05_ahw ///
 							fies_06_ahw fies_07_ahw fies_08_ahw if country == 1, over(country) /// 
 							ytitle("Adult population reporting food insecurities") ///
@@ -320,20 +322,26 @@
 							ytitle("FIES score") title("D")   bar(1, color(turquoise)) ///
 							saving("$output/fies_count", replace)	*/
 	*** this isn't coming out as expected
+
+	gen				wp_mod = wt_18*p_mod if p_mod != 0 
+	gen				wp_sev = wt_18*p_sev if p_sev != 0 
 	
-	gen				p_mod_01 = p_mod if quint == 1 
-	gen				p_mod_02 = p_mod if quint == 2 
-	gen				p_mod_03 = p_mod if quint == 3 
-	gen				p_mod_04 = p_mod if quint == 4 
-	gen				p_mod_05 = p_mod if quint == 5 
+	gen				p_mod_01 = wp_mod if quint == 1 
+	gen				p_mod_02 = wp_mod if quint == 2 
+	gen				p_mod_03 = wp_mod if quint == 3 
+	gen				p_mod_04 = wp_mod if quint == 4 
+	gen				p_mod_05 = wp_mod if quint == 5 
 	
-	gen				p_sev_01 = p_sev if quint == 1 
-	gen				p_sev_02 = p_sev if quint == 2 
-	gen				p_sev_03 = p_sev if quint == 3 
-	gen				p_sev_04 = p_sev if quint == 4 
-	gen				p_sev_05 = p_sev if quint == 5 
+	gen				p_sev_01 = wp_sev if quint == 1 
+	gen				p_sev_02 = wp_sev if quint == 2 
+	gen				p_sev_03 = wp_sev if quint == 3 
+	gen				p_sev_04 = wp_sev if quint == 4 
+	gen				p_sev_05 = wp_sev if quint == 5 
 	
 	colorpalette edkblue khaki, ipolate(15, power(1)) locals
+	
+	*** NEED TO MAKE CHANGES BASED ON WEIGHTING TO THESE GRAPHS 
+	*** something is not correct within this graph 
 
 							
 	graph bar 			p_mod_01 p_mod_02 p_mod_03 p_mod_04 p_mod_05, over(country)   ///
@@ -341,8 +349,7 @@
 							bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
 							bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
 							bar(5, fcolor(`13') lcolor(none)) legend(off) ///
-							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100") /// 
-							 saving("$output/fies_modsev", replace)				 
+							saving("$output/fies_modsev", replace)				 
 							 
 	graph bar 			p_sev_01 p_sev_02 p_sev_03 p_sev_04 p_sev_05, over(country)  ///
 							ytitle("Probability of severe food insecurity")  ///
@@ -351,7 +358,6 @@
 							bar(5, fcolor(`13') lcolor(none)) legend(label (1 "First")  ///
 							label (2 "Second") label (3 "Third") label (4 "Fourth") ///
 							label (5 "Fifth") order( 5 4 3 2 1) pos(3) col(1)) ///
-							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100") /// 
 							 saving("$output/fies_sev", replace)						
 							
 	graph combine "$output/fies_modsev.gph" "$output/fies_sev.gph", ///
@@ -435,6 +441,9 @@
 		graph export "$output/access.png", as(png) replace
 						
 * graph B - coping mechanisms
+
+*** CHANGE FROM POPULATION TO HOUSEHOLD WEIGHTS 
+
 	gen				cope_01_phw = phw if cope_01 == 1
 	gen				cope_02_phw = phw if cope_02 == 1
 	gen				cope_03_phw = phw if cope_03 == 1

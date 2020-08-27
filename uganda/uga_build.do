@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by : alj
-* Last edited: 11 August 2020
+* Last edited: 26 August 2020
 * Stata v.16.1
 
 * does
@@ -23,7 +23,7 @@
 
 * define
 	global	root	=	"$data/uganda/raw"
-	global	fies	=	"$data/analysis/raw"
+	global	fies	=	"$data/analysis/raw/Uganda"
 	global	export	=	"$data/uganda/refined"
 	global	logout	=	"$data/uganda/logs"
 
@@ -349,9 +349,9 @@
 * ***********************************************************************
 
 * load data
-	use				"$fies/fies_uganda_r1.dta", clear
+	use				"$fies/UG_FIES_round1.dta", clear
 
-	drop 			country wave
+	drop 			country round
 	destring 		HHID, replace
 
 * save temp file

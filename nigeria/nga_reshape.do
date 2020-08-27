@@ -2,7 +2,7 @@
 * Created on: August 2020
 * Created by: jdm
 * Edited by: alj
-* Last edited: 14 August 2020 
+* Last edited: 26 August 2020 
 * Stata v.16.1
 
 * does
@@ -24,7 +24,7 @@
 	global	root	=	"$data/nigeria/raw"
 	global	export	=	"$data/nigeria/refined"
 	global	logout	=	"$data/nigeria/logs"
-	global  fies 	= 	"$data/analysis/raw"
+	global  fies 	= 	"$data/analysis/raw/Nigeria"
 
 * open log
 	cap log 		close
@@ -948,9 +948,9 @@
 * ***********************************************************************
 
 * load data
-	use				"$fies/fies_nigeria_r2.dta", clear
+	use				"$fies/NG_FIES_round2.dta", clear
 
-	drop 			country wave
+	drop 			country round
 	rename 			HHID hhid 
 	destring 		hhid, replace
 

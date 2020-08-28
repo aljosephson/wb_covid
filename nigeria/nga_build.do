@@ -141,9 +141,10 @@
 * rationalize variables across waves
 	gen				phw = wt_baseline if wt_baseline != . & wave == 1
 	replace			phw = wt_round2 if wt_round2 != . & wave == 2
+	replace			phw = wt_round3 if wt_round3 != . & wave == 3
 	lab var			phw "sampling weights"
 	order			phw, after(wt_baseline)
-	drop			wt_baseline wt_round2
+	drop			wt_baseline wt_round2 wt_round3 weight
 	
 * rename administrative variables 	
 	

@@ -224,11 +224,12 @@
 	lab val			quints lbqui	
 	
 * rationalize variables across waves
-	gen				phw = phw1 if phw1 != .
-	replace			phw = phw2 if phw2 != .
+	gen				phw = phw1 if phw1 != . & wave == 1
+	replace			phw = phw2 if phw2 != . & wave == 2
+	replace			phw = phw3 if phw3 != . & wave == 3
 	lab var			phw "sampling weights"
 	order			phw, after(phw1)
-	drop			phw1 phw2
+	drop			phw1 phw2 phw3 weight
 	
 * administrative variables 	
 	rename			ii4_resp_id resp_id

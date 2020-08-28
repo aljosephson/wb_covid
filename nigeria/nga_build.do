@@ -105,32 +105,9 @@
 * save temp file
 	save			"$export/wave_03/r3_sect_all", replace	
 
-	
-* ***********************************************************************
-* 1d - baseline data
-* ***********************************************************************
 
-* load baseline data
-	use				"$root/wave_00/totcons_final", replace
-
-* generate monthly household expenditures in constant prices after djusting for region prices
-	gen				cpexp30 = totcons_adj_norm/12
-	
-* generate consumption quintiles
-	xtile 			quints = cpexp30 [aweight = wt_wave4*hhsize], nquantiles(5)
-	lab var			quints "Quintiles based on the national population"
-	lab def			lbqui 1 "Quintile 1" 2 "Quintile 2" 3 "Quintile 3" ///
-						4 "Quintile 4" 5 "Quintile 5"
-	lab val			quints lbqui
-	
-* keep variables we need
-	keep			hhid quints
-	
-* save temp file
-	save			"$export/wave_01/pov_r0", replace
-	
 * ***********************************************************************
-* 1e - build nigeria panel 
+* 1d - build nigeria panel 
 * ***********************************************************************
 
 * load round 1 of the data
@@ -152,8 +129,15 @@
 	format 			%12.0g hhid
 
 * merge in baseline data 
-	merge m:1		hhid using "$export/wave_01/pov_r0.dta", keep(match) nogenerate
+	merge m:1		hhid using "$root/wave_00/Nigeria GHS-Panel 2018-19 Quintiles", keep(match) nogenerate
 
+* rename quintile variable
+	rename 			quintile quints
+	lab var			quints "Quintiles based on the national population"
+	lab def			lbqui 1 "Quintile 1" 2 "Quintile 2" 3 "Quintile 3" ///
+						4 "Quintile 4" 5 "Quintile 5"
+	lab val			quints lbqui	
+	
 * rationalize variables across waves
 	gen				phw = wt_baseline if wt_baseline != . & wave == 1
 	replace			phw = wt_round2 if wt_round2 != . & wave == 2

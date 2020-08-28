@@ -1589,7 +1589,7 @@
 						force
 
 * merge in consumption aggregate
-	merge m:1		y4_hhid using "$root/wave_00/IHPS 2019 Households with IHPS 2016 Consumption Quintiles.dta"
+	merge m:1		y4_hhid using "$root/wave_00/Malawi IHPS 2019 Quintiles.dta"
 	
 	keep if			_merge == 3
 	drop			_merge

@@ -362,11 +362,16 @@
 * ***********************************************************************
 
 * load data
-	use				"$root/wave_00/pov20.dta", clear
+	use				"$root/wave_00/Uganda UNPS 2019-20 Quintiles.dta", clear
 
-	keep			hhid quints
-	rename 			hhid baseline_hhid
+	rename			hhid baseline_hhid
+	rename 			quintile quints
 
+	lab var			quints "Quintiles based on the national population"
+	lab def			lbqui 1 "Quintile 1" 2 "Quintile 2" 3 "Quintile 3" ///
+						4 "Quintile 4" 5 "Quintile 5"
+	lab val			quints lbqui	
+	
 * save temp file
 	save			"$export/wave_01/pov_r0", replace
 
@@ -393,6 +398,7 @@
 	merge 1:1 		HHID using "$root/wave_01/SEC10w.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$export/wave_01/fies_r1.dta", keep(match) nogenerate
 	merge 1:1 		baseline_hhid using "$export/wave_01/pov_r0.dta", keep(match) nogenerate
+	
 
 * reformat HHID
 	format 			%12.0f HHID

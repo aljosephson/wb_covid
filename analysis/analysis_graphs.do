@@ -44,7 +44,7 @@
 
 
 * graph A - look at government variables 
-	graph bar		gov_01 gov_02 gov_03 gov_04 gov_05 gov_06 gov_10, over(country) ///
+	graph bar		gov_01 gov_02 gov_03 gov_04 gov_05 gov_06 gov_10 [pweight = phw], over(country) ///
 						title("A") bar(1, color(khaki*1.5)) ///
 						bar(2, color(cranberry*1.5)) bar(3, color(teal*1.5)) ///
 						bar(4, color(lavender*1.5)) bar(5, color(brown*1.5)) ///
@@ -61,7 +61,8 @@
 	graph export "$output/restriction.png", as(png) replace	 
 	
 * graph B - look at knowledge variables by country
-	graph bar		know_01 know_02 know_03 know_04 know_05 know_06 know_07 know_08, over(country) ///
+	graph bar		know_01 know_02 know_03 know_04 know_05 know_06 ///
+						know_07 know_08 [pweight = phw], over(country) ///
 						title("B") bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
 						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
 						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
@@ -78,7 +79,7 @@
 	graph export "$output/knowledge.png", as(png) replace	
 						  
 * graph C - look at behavior variables
-	graph bar 		(mean) bh_01 bh_02 bh_03 if wave == 1, over(country) ///
+	graph bar 		(mean) bh_01 bh_02 bh_03 if wave == 1 [pweight = phw], over(country) ///
 						title("C") bar(1, color(maroon*1.5)) ///
 						bar(2, color(navy*1.5)) bar(3, color(stone*1.5)) ///
 						ytitle("Changes in Behavior to Reduce Exposure (%)") ///
@@ -95,17 +96,18 @@
 
 * need to drop values and reshape	
 	drop if			country == 1 | country == 3
-	keep 			myth_01 myth_02 myth_03 myth_04 myth_05 country
+	keep 			myth_01 myth_02 myth_03 myth_04 myth_05 country phw
 	gen 			id=_n
 	ren 			(myth_01 myth_02 myth_03 myth_04 myth_05) (size=)
 	reshape long 	size, i(id) j(myth) string
 	drop if 		size == .
 
 * generate graph
-	catplot 		size country myth, percent(country myth) ///
+	catplot 		size country myth [aweight = phw], percent(country myth) ///
 						title("D") ytitle("Percent") var3opts( ///
 						relabel (1 `""Lemon and alcohol are effective" "sanitizers against coronavirus""' ///
-						2 `""Africans are" "immune to coronavirus"""' 3 `""Children are not" "affected by coronavirus"""' ///
+						2 `""Africans are immune" "to coronavirus"""' ///
+						3 `""Coronavirus does not" "affect children"""' ///
 						4 `""Coronavirus cannot survive" "warm weather""' ///
 						5 `""Coronavirus is just" "common flu""')) ///
 						bar(1, color(edkblue*1.5) ) ///
@@ -123,9 +125,6 @@
 	gr 				combine "$output/restriction.gph" "$output/knowledge.gph" ///
 						"$output/behavior.gph" "$output/myth.gph", ///
 						col(2) iscale(.45) commonscheme
-
-	graph export "$output/knowbehave.png", as(png) replace	
-
 	graph export "$output/knowbehave.pdf", as(pdf) replace	
 
 	
@@ -133,52 +132,53 @@
 * 2 - income and fies graphs
 * **********************************************************************
 
-* change in income
-	gen				farm_hhw = hhw if farm_dwn == 1
-	gen				bus_hhw = hhw if bus_dwn == 1
-	gen				wage_hhw = hhw if wage_dwn == 1
-	gen				remit_hhw = hhw if remit_dwn == 1
-	gen				other_hhw = hhw if other_dwn == 1
-
-	gen				farm_phw = phw if farm_dwn == 1
-	gen				bus_phw = phw if bus_dwn == 1
-	gen				wage_phw = phw if wage_dwn == 1
-	gen				remit_phw = phw if remit_dwn == 1
-	gen				other_phw = phw if other_dwn == 1
-	
-
-	gen				fies_01_hhw = hhw if fies_01 == 1
-	gen				fies_02_hhw = hhw if fies_02 == 1
-	gen				fies_03_hhw = hhw if fies_03 == 1
-	gen				fies_04_hhw = hhw if fies_04 == 1
-	gen				fies_05_hhw = hhw if fies_05 == 1
-	gen				fies_06_hhw = hhw if fies_06 == 1
-	gen				fies_07_hhw = hhw if fies_07 == 1
-	gen				fies_08_hhw = hhw if fies_08 == 1
-	
-
 	lab def 			dwn 0 "No loss" 1 "Loss" 	
 	label val 			dwn dwn 
 	
-* graph A - income loss by sector
-	graph bar		(sum) farm_hhw bus_hhw wage_hhw remit_hhw other_hhw ///
-						if wave == 1, over(sector) over(country) title("A")  ///
+* graph A - income loss by sector	
+	graph bar		(sum) farm_dwn bus_dwn wage_dwn remit_dwn other_dwn [pweight = hhw] ///
+						if country == 1 & wave == 1, over(sector) over(country)  ///
 						ytitle("Households reporting decrease in income") ///
-						ylabel(0 "0" 3000000 "3,000,000" 6000000 "6,000,000" 9000000 "9,000,000" ///
-						12000000 "12,000,000") bar(1, color(navy*1.5)) bar(2, color(teal*1.5)) ///
+						ylabel(0 "0" 1000000 "1,000,000" 2000000 "2,000,000" 3000000 "3,000,000" ///
+						4000000 "4,000,000" 5000000 "5,000,000") bar(1, color(navy*1.5)) bar(2, color(teal*1.5)) ///
 						bar(3, color(khaki*1.5)) bar(4, color(cranberry*1.5)) bar(5, color(purple*1.5)) ///
 						legend( label (1 "Farm income") label (2 "Business income") ///
 						label (3 "Wage income") label (4 "Remittances") ///
-						label (5 "All else")  pos(6) col(3)) saving("$output/income_sector", replace)
-	*** there are xx people living in households who are reporting loss of income 
+						label (5 "All else")  pos(6) col(3)) saving("$output/income_eth", replace)
+	
+	graph bar		(sum) farm_dwn bus_dwn wage_dwn remit_dwn other_dwn [pweight = hhw] ///
+						if country == 2 & wave == 1, over(sector) over(country) ///
+						ylabel(0 "0" 1000000 "1,000,000" 2000000 "2,0500,000" ///
+						3000000 "3,000,000") bar(1, color(navy*1.5)) bar(2, color(teal*1.5)) ///
+						bar(3, color(khaki*1.5)) bar(4, color(cranberry*1.5)) ///
+						bar(5, color(purple*1.5)) legend(off) saving("$output/income_mwi", replace)
 
+	graph bar		(sum) farm_dwn bus_dwn wage_dwn remit_dwn other_dwn [pweight = hhw] ///
+						if country == 3 & wave == 1, over(sector) over(country) ///
+						ylabel(0 "0" 5000000 "5,000,000" 10000000 "10,000,000" 15000000 "15,000,000") ///
+						bar(1, color(navy*1.5)) bar(2, color(teal*1.5)) ///
+						bar(3, color(khaki*1.5)) bar(4, color(cranberry*1.5)) ///
+						bar(5, color(purple*1.5)) legend(off) saving("$output/income_nga", replace)
+
+	graph bar		(sum) farm_dwn bus_dwn wage_dwn remit_dwn other_dwn [pweight = hhw] ///
+						if country == 4 & wave == 1, over(sector) over(country) ///
+						ylabel(0 "0" 1000000 "1,000,000" 2000000 "2,000,000" 3000000 "3,000,000" ///
+						4000000 "4,000,000") bar(1, color(navy*1.5)) bar(2, color(teal*1.5)) ///
+						bar(3, color(khaki*1.5)) bar(4, color(cranberry*1.5)) ///
+						bar(5, color(purple*1.5)) legend(off) saving("$output/income_uga", replace)
+	
+	grc1leg2 		"$output/income_eth.gph" "$output/income_mwi.gph" ///
+						"$output/income_nga.gph" "$output/income_uga.gph", ///
+						col(4) iscale(.5) commonscheme ///
+						title("A") saving("$output/income.gph", replace)						
+	
 	graph export "$output/income.png", as(png) replace	
 						
 * graph B - income loss by wave
 	preserve
 
 * need to drop values and reshape
-	keep 			bus_emp_inc country wave
+	keep 			bus_emp_inc country wave hhw
 	replace			bus_emp_inc = 3 if bus_emp_inc == 4
 	gen 			id=_n
 	ren 			(bus_emp_inc) (size=)
@@ -188,11 +188,15 @@
 
 	colorpalette stone maroon, ipolate(15, power(1)) locals
 
+* STILL NEED TO ADD WEIGHTS TO THESE, MISSING WEIGHTS FOR ROUND 3 OF ETH AND NGA	
 	catplot 		size wave country if country == 1, percent(country wave) stack ///
 						var2opts( relabel (1 "May" 2 "June" 3 "July")) ///
 						ytitle("") bar(1, fcolor(`1') lcolor(none)) ///
 						bar(2, fcolor(`7') lcolor(none))  ///
-						bar(3, fcolor(`15') lcolor(none)) legend(off) ///
+						bar(3, fcolor(`15') lcolor(none)) legend( ///
+						label (1 "Higher than before") ///
+						label (2 "Same as before") ///
+						label (3 "Less than before") pos(6) col(3)) ///
 						saving("$output/eth_bus_inc", replace)
 						
 	catplot 		size wave country if country == 2, percent(country wave) stack	 ///
@@ -225,154 +229,75 @@
 						
 	catplot 		size wave country if country == 4, percent(country wave) stack	 ///
 						var2opts( relabel (1 "June" 2 "July")) ///
-						ytitle("Percent") bar(1, fcolor(`1') lcolor(none)) ///
+						ytitle("Percent of households reporting change in business revenue") ///
+						bar(1, fcolor(`1') lcolor(none)) ///
 						bar(2, fcolor(`7') lcolor(none))  ///
-						bar(3, fcolor(`15') lcolor(none)) legend( ///
-						label (1 "Higher than beforeh") ///
-						label (2 "Same as before") ///
-						label (3 "Less than before") ///
-						pos(6) col(3)) saving("$output/uga_bus_inc", replace)
+						bar(3, fcolor(`15') lcolor(none)) legend(off) ///
+						saving("$output/uga_bus_inc", replace)
 
 	restore 
 
-	gr 				combine "$output/eth_bus_inc.gph" "$output/mwi_bus_inc.gph" ///
+	grc1leg2 		"$output/eth_bus_inc.gph" "$output/mwi_bus_inc.gph" ///
 						"$output/nga_bus_inc.gph" "$output/uga_bus_inc.gph", ///
 						col(1) iscale(.5) commonscheme imargin(0 0 0 0) title("B") ///
-						 saving("$output/bus_emp_inc", replace)
+						saving("$output/bus_emp_inc", replace)
 
 	graph export "$output/bus_emp_inc.png", as(png) replace	
-	
-* graph C - FIES population
-
-* adjust weights 
-	
+		
+* graph C - FIES score and consumption quntile
 	preserve 
 	drop if country == 1 & wave == 2 
 	drop if country == 2 & wave == 1 
 	
-	gen				fies_01_ahw = wt_18 if fies_01 == 1 
-	gen				fies_02_ahw = wt_18 if fies_02 == 1
-	gen				fies_03_ahw = wt_18 if fies_03 == 1
-	gen				fies_04_ahw = wt_18 if fies_04 == 1
-	gen				fies_05_ahw = wt_18 if fies_05 == 1
-	gen				fies_06_ahw = wt_18 if fies_06 == 1
-	gen				fies_07_ahw = wt_18 if fies_07 == 1
-	gen				fies_08_ahw = wt_18 if fies_08 == 1
+	gen				p_mod_01 = p_mod if quint == 1 
+	gen				p_mod_02 = p_mod if quint == 2 
+	gen				p_mod_03 = p_mod if quint == 3 
+	gen				p_mod_04 = p_mod if quint == 4 
+	gen				p_mod_05 = p_mod if quint == 5 
 	
-
-	* update labels - simpify - drop 'adult' etc. 
-	
-	graph bar			(sum) fies_01_ahw fies_02_ahw fies_03_ahw fies_04_ahw fies_05_ahw ///
-							fies_06_ahw fies_07_ahw fies_08_ahw if country == 1, over(country) /// 
-							ytitle("Adult population reporting food insecurities") ///
-							bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
-						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
-						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
-						bar(7, color(eltgreen*1.5)) bar(8, color(stone*1.5)) ///
-							ylabel(0 "0" 10000000 "10,000,000" /// 
-							20000000 "20,000,000" 30000000 "30,000,000") ///
-							legend( label (1 "Household ran out of food") label (2 "Adult hungry but did not eat") ///
-							label (3 "Adult hungry but did not eat for full day") label (4 "Adult worried about food") ///
-							label (5 "Adult unable to eat healthy food") label (6 "Adult ate only few kinds of foods") ///
-							label (7 "Adult skipped meal") label (8 "Adult ate less") /// 
-							pos(6) row(4)) saving("$output/fiesent1", replace)	
-							
-	graph bar			(sum) fies_01_ahw fies_02_ahw fies_03_ahw fies_04_ahw fies_05_ahw ///
-							fies_06_ahw fies_07_ahw fies_08_ahw if country == 2, over(country) /// 
-							bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
-						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
-						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
-						bar(7, color(eltgreen*1.5)) bar(8, color(stone*1.5)) ///
-							ylabel(0 "0" 2000000 "2,000,000" /// 
-							4000000 "4,000,000" 6000000 "6,000,000" 8000000 "8,000,000") ///
-							legend(off) saving("$output/fiesent2", replace)	
-	 
-	graph bar			(sum) fies_01_ahw fies_02_ahw fies_03_ahw fies_04_ahw fies_05_ahw ///
-							fies_06_ahw fies_07_ahw fies_08_ahw if country == 3, over(country) /// 
-							bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
-						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
-						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
-						bar(7, color(eltgreen*1.5)) bar(8, color(stone*1.5)) ///
-							ylabel(0 "0" 20000000 "25,000,000" /// 
-							40000000 "45,000,000" 65000000 "65,000,000") ///
-							legend(off) saving("$output/fiesent3", replace)	 
-							
-		graph bar			(sum) fies_01_ahw fies_02_ahw fies_03_ahw fies_04_ahw fies_05_ahw ///
-							fies_06_ahw fies_07_ahw fies_08_ahw if country == 4, over(country) /// 
-							bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
-						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
-						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
-						bar(7, color(eltgreen*1.5)) bar(8, color(stone*1.5)) ///
-							ylabel(0 "0" 5000000 "5,000,000" /// 
-							10000000 "10,000,000" 15000000 "15,000,000") ///
-							legend(off) saving("$output/fiesent4", replace)	 
-
-	
-		grc1leg2 "$output/fiesent1.gph" "$output/fiesent2.gph" ///
-				"$output/fiesent3.gph" "$output/fiesent4.gph", ///
-				col(4) iscale(.5) commonscheme ///
-		title("C") saving("$output/fiesent.gph", replace)						
-	
-		graph export "$output/fiesent.png", as(png) replace
-
- 
-					
-* graph D - FIES score and income loss
-	/*graph 				bar ap_mod ap_sev, over(dwn)  over(country) /// 
-							ytitle("FIES score") title("D")   bar(1, color(turquoise)) ///
-							saving("$output/fies_count", replace)	*/
-	*** this isn't coming out as expected
-
-	gen				wp_mod = wt_18*p_mod if p_mod != 0 
-	gen				wp_sev = wt_18*p_sev if p_sev != 0 
-	
-	gen				p_mod_01 = wp_mod if quint == 1 
-	gen				p_mod_02 = wp_mod if quint == 2 
-	gen				p_mod_03 = wp_mod if quint == 3 
-	gen				p_mod_04 = wp_mod if quint == 4 
-	gen				p_mod_05 = wp_mod if quint == 5 
-	
-	gen				p_sev_01 = wp_sev if quint == 1 
-	gen				p_sev_02 = wp_sev if quint == 2 
-	gen				p_sev_03 = wp_sev if quint == 3 
-	gen				p_sev_04 = wp_sev if quint == 4 
-	gen				p_sev_05 = wp_sev if quint == 5 
+	gen				p_sev_01 = p_sev if quint == 1 
+	gen				p_sev_02 = p_sev if quint == 2 
+	gen				p_sev_03 = p_sev if quint == 3 
+	gen				p_sev_04 = p_sev if quint == 4 
+	gen				p_sev_05 = p_sev if quint == 5 
 	
 	colorpalette edkblue khaki, ipolate(15, power(1)) locals
 	
-	*** NEED TO MAKE CHANGES BASED ON WEIGHTING TO THESE GRAPHS 
-	*** something is not correct within this graph 
-
-							
-	graph bar 			p_mod_01 p_mod_02 p_mod_03 p_mod_04 p_mod_05, over(country)   ///
+	graph bar 			(mean) p_mod_01 p_mod_02 p_mod_03 p_mod_04 p_mod_05 ///
+							[pweight = wt_18], over(country) ylabel(0 "0" ///
+							.2 "20" .4 "40" .6 "60" .8 "80" 1 "100") ///
 							ytitle("Probability of moderate or severe food insecurity")  ///
 							bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
 							bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
-							bar(5, fcolor(`13') lcolor(none)) legend(off) ///
+							bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First")  ///
+							label (2 "Second") label (3 "Third") label (4 "Fourth") ///
+							label (5 "Fifth") order( 5 4 3 2 1) pos(3) col(1) ) /// 
 							saving("$output/fies_modsev", replace)				 
 							 
-	graph bar 			p_sev_01 p_sev_02 p_sev_03 p_sev_04 p_sev_05, over(country)  ///
+	graph bar 			(mean) p_sev_01 p_sev_02 p_sev_03 p_sev_04 p_sev_05 ///
+							[pweight = wt_18], over(country)  ylabel(0 "0" ///
+							.2 "20" .4 "40" .6 "60" .8 "80" 1 "100") ///
 							ytitle("Probability of severe food insecurity")  ///
 							bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
 							bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
-							bar(5, fcolor(`13') lcolor(none)) legend(label (1 "First")  ///
-							label (2 "Second") label (3 "Third") label (4 "Fourth") ///
-							label (5 "Fifth") order( 5 4 3 2 1) pos(3) col(1)) ///
-							 saving("$output/fies_sev", replace)						
-							
-	graph combine "$output/fies_modsev.gph" "$output/fies_sev.gph", ///
-		col(2) iscale(.5) commonscheme title("D") saving("$output/fies.gph", replace)						
+							bar(5, fcolor(`13') lcolor(none)) legend(off) ///
+							saving("$output/fies_sev", replace)						
+	
+	restore
+	
+	grc1leg2 			"$output/fies_modsev.gph" "$output/fies_sev.gph", ///
+							col(2) iscale(.5) pos(3) commonscheme title("C") ///
+							saving("$output/fies.gph", replace)						
 
 	graph export "$output/fies.png", as(png) replace			
-	
-	restore 
+ 	
+* graph D - FIES with worry (concern_01, concern_02)
+
 							
 * Figure 2 - combine graphs	
 	gr combine 			"$output/income_sector.gph" "$output/bus_emp_inc.gph" ///
-							"$output/fies.gph" "$output/fies_count.gph", ///
+							"$output/fies.gph", ///
 							col(2) iscale(.5) commonscheme
-	
-	graph export "$output/incomeimpact.png", width(1920) as(png) replace
 							
 	graph export "$output/incomeimpacts.pdf", as(pdf) replace
 
@@ -382,27 +307,28 @@
 * **********************************************************************
 		
 * graph A - access to med, food, soap
-	gen				ac_med_01 = phw if quint == 1 & ac_med == 0
-	gen				ac_med_02 = phw if quint == 2 & ac_med == 0
-	gen				ac_med_03 = phw if quint == 3 & ac_med == 0
-	gen				ac_med_04 = phw if quint == 4 & ac_med == 0
-	gen				ac_med_05 = phw if quint == 5 & ac_med == 0
+	gen				ac_med_01 = 1 if quint == 1 & ac_med == 0
+	gen				ac_med_02 = 1 if quint == 2 & ac_med == 0
+	gen				ac_med_03 = 1 if quint == 3 & ac_med == 0
+	gen				ac_med_04 = 1 if quint == 4 & ac_med == 0
+	gen				ac_med_05 = 1 if quint == 5 & ac_med == 0
 
-	gen				ac_staple_01 = phw if quint == 1 & ac_staple == 0
-	gen				ac_staple_02 = phw if quint == 2 & ac_staple == 0
-	gen				ac_staple_03 = phw if quint == 3 & ac_staple == 0
-	gen				ac_staple_04 = phw if quint == 4 & ac_staple == 0
-	gen				ac_staple_05 = phw if quint == 5 & ac_staple == 0
+	gen				ac_staple_01 = 1 if quint == 1 & ac_staple == 0
+	gen				ac_staple_02 = 1 if quint == 2 & ac_staple == 0
+	gen				ac_staple_03 = 1 if quint == 3 & ac_staple == 0
+	gen				ac_staple_04 = 1 if quint == 4 & ac_staple == 0
+	gen				ac_staple_05 = 1 if quint == 5 & ac_staple == 0
 
-	gen				ac_soap_01 = phw if quint == 1 & ac_soap == 0
-	gen				ac_soap_02 = phw if quint == 2 & ac_soap == 0
-	gen				ac_soap_03 = phw if quint == 3 & ac_soap == 0
-	gen				ac_soap_04 = phw if quint == 4 & ac_soap == 0
-	gen				ac_soap_05 = phw if quint == 5 & ac_soap == 0	
+	gen				ac_soap_01 = 1 if quint == 1 & ac_soap == 0
+	gen				ac_soap_02 = 1 if quint == 2 & ac_soap == 0
+	gen				ac_soap_03 = 1 if quint == 3 & ac_soap == 0
+	gen				ac_soap_04 = 1 if quint == 4 & ac_soap == 0
+	gen				ac_soap_05 = 1 if quint == 5 & ac_soap == 0	
 
 	colorpalette edkblue khaki, ipolate(15, power(1)) locals
 		
-	graph bar 		(sum) ac_med_01 ac_med_02 ac_med_03 ac_med_04 ac_med_05 if ac_med_need == 1 & wave == 1,  ///
+	graph bar 		(sum) ac_med_01 ac_med_02 ac_med_03 ac_med_04 ac_med_05 ///
+						[pweight = phw] if ac_med_need == 1 & wave == 1, ///
 						over(country, gap(*.1)) stack  ///
 						ytitle("Population reporting inability to buy medicine") ///
 						ylabel(0 "0" 5000000 "5,000,000" ///
@@ -412,7 +338,8 @@
 						bar(5, fcolor(`13') lcolor(none)) legend(off) ///
 						saving("$output/ac_med", replace)
 	
-	graph bar 		(sum) ac_staple_01 ac_staple_02 ac_staple_03 ac_staple_04 ac_staple_05 if ac_staple_need == 1 & wave == 1,  ///
+	graph bar 		(sum) ac_staple_01 ac_staple_02 ac_staple_03 ac_staple_04 ac_staple_05 ///
+						[pweight = phw] if ac_staple_need == 1 & wave == 1,  ///
 						over(country, gap(*.1)) stack  ///
 						ytitle("Population reporting inability to buy staple food") ///
 						ylabel(0 "0" 10000000 "10,000,000" ///
@@ -423,7 +350,8 @@
 						saving("$output/ac_staple", replace)		
 
 		
-	graph bar 		(sum) ac_soap_01 ac_soap_02 ac_soap_03 ac_soap_04 ac_soap_05 if ac_soap_need == 1 & wave == 1,  ///
+	graph bar 		(sum) ac_soap_01 ac_soap_02 ac_soap_03 ac_soap_04 ac_soap_05 ///
+						[pweight = phw] if ac_soap_need == 1 & wave == 1,  ///
 						over(country, gap(*.1)) stack  ///
 						ytitle("Population reporting inability to buy soap") ///
 						ylabel(0 "0" 5000000 "5,000,000" ///
@@ -441,71 +369,57 @@
 		graph export "$output/access.png", as(png) replace
 						
 * graph B - coping mechanisms
-
-*** CHANGE FROM POPULATION TO HOUSEHOLD WEIGHTS 
-
-	gen				cope_01_phw = phw if cope_01 == 1
-	gen				cope_02_phw = phw if cope_02 == 1
-	gen				cope_03_phw = phw if cope_03 == 1
-	gen				cope_04_phw = phw if cope_04 == 1
-	gen				cope_05_phw = phw if cope_05 == 1 | cope_06 == 1 | cope_07 == 1
-	gen				cope_08_phw = phw if cope_08 == 1
-	gen				cope_09_phw = phw if cope_09 == 1
-	gen				cope_10_phw = phw if cope_10 == 1
-	gen				cope_11_phw = phw if cope_11 == 1	
+	gen				cope_01_phw = hhw if cope_01 == 1
+	gen				cope_03_phw = hhw if cope_03 == 1 | cope_04 == 1
+	gen				cope_05_phw = hhw if cope_05 == 1 | cope_06 == 1 | cope_07 == 1
+	gen				cope_09_phw = hhw if cope_09 == 1
+	gen				cope_10_phw = hhw if cope_10 == 1
+	gen				cope_11_phw = hhw if cope_11 == 1	
 	
-	graph bar		(sum) cope_01_phw cope_02_phw cope_03_phw cope_04_phw ///
-						cope_05_phw cope_08_phw cope_09_phw cope_10_phw ///
-						cope_11_phw if country == 1 & wave == 1, over(sector) over(country) ///
+	graph bar		(sum) cope_01_phw cope_03_phw cope_05_phw ///
+						cope_09_phw cope_10_phw cope_11_phw ///
+						if country == 1 & wave == 1, over(sector) over(country) ///
 						bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
 						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
 						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
-						bar(7, color(eltgreen*1.5)) bar(8, color(stone*1.5)) ///
-						bar(9, color(navy*1.5)) ///
 						ytitle("Population reporting use of coping strategy") ///
-						ylabel(0 "0" 2000000 "2,000,000" 4000000 "4,000,000" ///
-						6000000 "6,000,000" ) ///
-						legend( label (1 "Sale of asset") label (2 "Worked more") ///
-						label (3 "Help from family") label (4 "Loan from family") ///
-						label (5 "Accessed credit") label (6 "Sold crop early") ///
-						label (7 "Reduced food cons.") label (8 "Reduced non-food cons.") ///
-						label (9 "Relied on savings") pos(6) col(3)) ///
+						ylabel(0 "0" 500000 "500,000" 1000000 "1,000,000" ///
+						1500000 "1,500,000" ) ///
+						legend( label (1 "Sale of asset") label (2 "Help from family") ///
+						label (3 "Accessed credit") label (4 "Reduced food cons.") ///
+						label (5 "Reduced non-food cons.") ///
+						label (6 "Relied on savings") pos(6) col(3)) ///
 						saving("$output/cope_eth.gph", replace)
 	
-	graph bar		(sum) cope_01_phw cope_02_phw cope_03_phw cope_04_phw ///
-						cope_05_phw cope_08_phw cope_09_phw cope_10_phw ///
+	graph bar		(sum) cope_01_phw cope_03_phw cope_05_phw ///
+						cope_09_phw cope_10_phw cope_11_phw ///
 						cope_11_phw if country == 2, legend(off) over(sector) over(country) ///
 						bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
 						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
 						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
-						bar(7, color(eltgreen*1.5)) bar(8, color(stone*1.5)) ///
 						bar(9, color(navy*1.5)) ///
-						ylabel(0 "0" 1000000 "1,000,000" 2000000 "2,000,000" ///
-						3000000 "3,000,000") ///
+						ylabel(0 "0" 100000 "100,000" 300000 "300,000" ///
+						500000 "500,000") ///
 						saving("$output/cope_mwi.gph", replace)
 	
-	graph bar		(sum) cope_01_phw cope_02_phw cope_03_phw cope_04_phw ///
-						cope_05_phw cope_08_phw cope_09_phw cope_10_phw ///
-						cope_11_phw if country == 3, legend(off) over(sector) over(country) ///
+	graph bar		(sum) cope_01_phw cope_03_phw cope_05_phw ///
+						cope_09_phw cope_10_phw cope_11_phw ///
+						if country == 3, legend(off) over(sector) over(country) ///
 						bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
 						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
 						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
-						bar(7, color(eltgreen*1.5)) bar(8, color(stone*1.5)) ///
-						bar(9, color(navy*1.5)) ///
-						ylabel(0 "0" 20000000 "20,000,000" 40000000 "40,000,000" ///
-						60000000 "60,000,000") ///
+						bar(7, color(eltgreen*1.5)) ylabel(0 "0" 3000000 ///
+						"3,000,000" 6000000 "6,000,000" 9000000 "9,000,000") ///
 						saving("$output/cope_nga.gph", replace)
 	
-	graph bar		(sum) cope_01_phw cope_02_phw cope_03_phw cope_04_phw ///
-						cope_05_phw cope_08_phw cope_09_phw cope_10_phw ///
-						cope_11_phw if country == 4 & wave == 1, legend(off) over(sector) over(country) ///
+	graph bar		(sum) cope_01_phw cope_03_phw cope_05_phw ///
+						cope_09_phw cope_10_phw cope_11_phw ///
+						if country == 4 & wave == 1, legend(off) over(sector) over(country) ///
 						bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
 						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
 						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
-						bar(7, color(eltgreen*1.5)) bar(8, color(stone*1.5)) ///
-						bar(9, color(navy*1.5)) ///
-						ylabel(0 "0" 3000000 "3,000,000" 6000000 "6,000,000" ///
-						9000000 "9,000,000") ///
+						ylabel(0 "0" 500000 "500,000" 1000000 "1,000,000" ///
+						1500000 "1,500,000" ) ///
 						saving("$output/cope_uga.gph", replace)
 						
 	grc1leg2 "$output/cope_eth.gph" "$output/cope_mwi.gph" "$output/cope_nga.gph" ///
@@ -583,6 +497,7 @@
 	graph export "$output/access_cope.png", width(1920) as(png) replace
 							
 	graph export "$output/access_cope.pdf", as(pdf) replace
+	
 	
 * **********************************************************************
 * 4 - basic regressions

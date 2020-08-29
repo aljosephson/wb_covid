@@ -195,7 +195,7 @@
 * generate round variable
 	gen				wave = 3
 	lab var			wave "Wave number"
-	
+
 * save temp file
 	save			"$export/wave_03/r3_sect_all", replace	
 
@@ -476,18 +476,38 @@
 	replace 		sch_child = sch_child_sec if sch_child == 0 & wave == 3 
 	replace 		edu_act = edu_act_prim if edu_act == 0 & wave == 3
 	replace 		edu_act = edu_act_sec if edu_act == 0 & wave == 3
-	replace 		edu_01 = edu_01_prim if edu_01 == 0 & wave == 3
-	replace			edu_01 = edu_01_sec if edu_01 == 0 & wave == 3
-	replace 		edu_02 = edu_02_prim if edu_02 == 0 & wave == 3
-	replace			edu_02 = edu_02_sec if edu_02 == 0 & wave == 3
-	replace 		edu_03 = edu_03_prim if edu_03 == 0 & wave == 3
-	replace			edu_03 = edu_03_sec if edu_03 == 0 & wave == 3
-	replace 		edu_04 = edu_04_prim if edu_04 == 0 & wave == 3
-	replace			edu_04 = edu_04_sec if edu_04 == 0 & wave == 3
-	replace 		edu_05 = edu_05_prim if edu_05 == 0 & wave == 3
-	replace			edu_05 = edu_05_sec if edu_05 == 0 & wave == 3
-	generate 		edu_other = edu_other_prim if wave == 3
-	replace			edu_other = edu_other_sec if edu_other == 0 & wave == 3
+	
+	replace			edu_01 = 0 if edu_01_prim == 0 & wave == 3
+	replace			edu_01 = 0 if edu_01_sec == 0 & wave == 3
+	replace			edu_01 = 1 if edu_01_prim == 1 & wave == 3
+	replace			edu_01 = 1 if edu_01_sec == 1 & wave == 3
+	
+	replace			edu_02 = 0 if edu_02_prim == 0 & wave == 3
+	replace			edu_02 = 0 if edu_02_sec == 0 & wave == 3
+	replace			edu_02 = 1 if edu_02_prim == 1 & wave == 3
+	replace			edu_02 = 1 if edu_02_sec == 1 & wave == 3
+		
+	replace			edu_03 = 0 if edu_03_prim == 0 & wave == 3
+	replace			edu_03 = 0 if edu_03_sec == 0 & wave == 3
+	replace			edu_03 = 1 if edu_03_prim == 1 & wave == 3
+	replace			edu_03 = 1 if edu_03_sec == 1 & wave == 3
+	
+	replace			edu_04 = 0 if edu_04_prim == 0 & wave == 3
+	replace			edu_04 = 0 if edu_04_sec == 0 & wave == 3
+	replace			edu_04 = 1 if edu_04_prim == 1 & wave == 3
+	replace			edu_04 = 1 if edu_04_sec == 1 & wave == 3
+	
+	replace			edu_05 = 0 if edu_05_prim == 0 & wave == 3
+	replace			edu_05 = 0 if edu_05_sec == 0 & wave == 3
+	replace			edu_05 = 1 if edu_05_prim == 1 & wave == 3
+	replace			edu_05 = 1 if edu_05_sec == 1 & wave == 3
+	
+	drop 			ac5_edu_type__98 ac5_edu_type__99 ac5_edu_type__96 ///
+						ac5_edu_type_other edu_01_prim edu_02_prim ///
+						edu_03_prim edu_04_prim edu_05_prim edu_other_prim ///
+						edu_01_sec edu_02_sec edu_03_sec edu_04_sec edu_05_sec ///
+						edu_other_sec
+	
 	
 * perceptions of distribution of aid etc. 
 
@@ -527,8 +547,7 @@
 	drop			kn3_gov kn3_gov_0 kn3_gov__98 kn3_gov__99 kn3_gov__96 ///
 						kn3_gov_other ac2_atb_med_why_other ac2_atb_teff_why_other ///
 						ac2_atb_wheat_why_other ac2_atb_maize_why_other ///
-						ac2_atb_oil_why_other ac5_edu_type ac5_edu_type__98 ///
-						ac5_edu_type__99 ac5_edu_type__96 ac5_edu_type_other ///
+						ac2_atb_oil_why_other ///
 						ac8_med_access_reas_other em9_work_change_why_other ///
 						em3_work_no_why_other em4_work_pre_act_other ///
 						em5_work_pre_status_other em14_work_cur_notable_why_other ///

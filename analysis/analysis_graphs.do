@@ -18,7 +18,8 @@
 	* colrspace
 
 * TO DO:
-	* analysis
+	* make all labels size(medsmall)
+	* make letter title larger
 
 
 * **********************************************************************

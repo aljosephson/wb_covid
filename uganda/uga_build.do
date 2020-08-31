@@ -990,10 +990,10 @@
 * ***********************************************************************
 
 * rename basic information
-	rename			wfinal phw
+	rename			wfinal2 phw
 	lab var			phw "sampling weights"
 
-	gen				wave = 1
+	gen				wave = 2
 	lab var			wave "Wave number"
 	order			baseline_hhid wave phw, after(HHID)
 

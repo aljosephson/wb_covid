@@ -977,9 +977,7 @@
 	merge 1:1 		HHID using "$root/wave_02/SEC7.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_02/SEC9.dta", keep(match) nogenerate
 	merge 1:1 		HHID using "$root/wave_02/SEC10w.dta", keep(match) nogenerate
-*	merge 1:1 		HHID using "$export/wave_02/fies_r2.dta", keep(match) nogenerate
-	merge 1:1 		baseline_hhid using "$export/wave_01/pov_r0.dta", keep(match) nogenerate
-	
+*	merge 1:1 		HHID using "$export/wave_02/fies_r2.dta", keep(match) nogenerate	
 
 * reformat HHID
 	format 			%12.0f HHID
@@ -1282,6 +1280,10 @@
 	append 			using "$root/wave_02/r2_sect_all", ///
 						force
 
+* merge in consumption aggregate
+	merge m:1		baseline_hhid using "$export/wave_01/pov_r0.dta", keep(match) nogenerate
+	
+	
 * **********************************************************************
 * 6 - end matter, clean up to save
 * **********************************************************************

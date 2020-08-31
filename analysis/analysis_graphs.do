@@ -46,14 +46,14 @@
 
 * graph A - look at government variables 
 	graph bar		gov_01 gov_02 gov_04 gov_05 gov_06 gov_10 [pweight = phw], over(country) ///
-						title("A") bar(1, color(khaki*1.5)) ///
+						title("A", size(huge)) bar(1, color(khaki*1.5)) ///
 						bar(2, color(cranberry*1.5)) bar(3, color(teal*1.5)) ///
 						bar(4, color(lavender*1.5)) bar(5, color(brown*1.5)) ///
 						bar(6, color(maroon*1.5)) ///
 						ytitle("Knowledge of government actions to curb spread (%)") ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100") ///
 						legend(label (1 "Advised to stay home") ///
-						label (2 "Restricted dom. travel") ///
+						label (2 "Restricted travel") ///
 						label (3 "Closed schools") label (4 "Curfew/lockdown") ///
 						label (5 "Closed businesses") label (6 "Stopped social gatherings") ///
 						pos (6) col(3) size(medsmall)) saving("$output/restriction", replace) 
@@ -63,7 +63,7 @@
 	
 * graph B - look at knowledge variables by country
 	graph bar		know_01 know_02 know_03 know_05 know_06 know_07 ///
-						[pweight = phw], over(country) title("B") ///
+						[pweight = phw], over(country) title("B", size(huge)) ///
 						bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
 						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
 						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
@@ -80,7 +80,7 @@
 	
 * graph C - look at behavior variables
 	graph bar 		(mean) bh_01 bh_02 bh_03 if wave == 1 [pweight = phw], over(country) ///
-						title("C") bar(1, color(maroon*1.5)) ///
+						title("C", size(huge)) bar(1, color(maroon*1.5)) ///
 						bar(2, color(navy*1.5)) bar(3, color(stone*1.5)) ///
 						ytitle("Changes in Behavior to Reduce Exposure (%)") ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100") ///
@@ -103,7 +103,7 @@
 	drop if 		size == .
 
 	catplot 		size country myth [aweight = phw], percent(country myth) ///
-						title("D") ytitle("Percent") var3opts( ///
+						title("D", size(huge)) ytitle("Percent") var3opts( ///
 						relabel (1 `""Lemon and alcohol are effective" "sanitizers against coronavirus""' ///
 						2 `""Africans are immune" "to coronavirus"""' ///
 						3 `""Coronavirus does not" "affect children"""' ///
@@ -134,8 +134,8 @@
 * **********************************************************************
 
 	lab def 		dwn 0 "No loss" 1 "Loss" 	
-	label val 		dwn dwn 
-
+	label val 		dwn dwn
+	
 	
 * graph A - income loss by sector	
 	graph bar		(sum) farm_dwn bus_dwn wage_dwn remit_dwn other_dwn [pweight = hhw] ///
@@ -172,7 +172,7 @@
 	grc1leg2 		"$output/income_eth.gph" "$output/income_mwi.gph" ///
 						"$output/income_nga.gph" "$output/income_uga.gph", ///
 						col(4) iscale(.5) commonscheme ///
-						title("A") saving("$output/income.gph", replace)						
+						title("A", size(huge)) saving("$output/income.gph", replace)						
 	
 	graph export 	"$output/income.emf", as(emf) replace	
 
@@ -214,20 +214,6 @@
 						bar(3, fcolor(`15') lcolor(none)) legend(off) ///
 						saving("$output/nga_bus_inc", replace)
 						
-	catplot 		size wave country [aweight = hhw] if country == 2, percent(country wave) stack	 ///
-						var2opts( relabel (1 "June" 2 "July")) ///
-						ytitle("") bar(1, fcolor(`1') lcolor(none)) ///
-						bar(2, fcolor(`7') lcolor(none))  ///
-						bar(3, fcolor(`15') lcolor(none)) legend(off) ///
-						saving("$output/mwi_bus_inc", replace)
-						
-	catplot 		size wave country [aweight = hhw] if country == 3, percent(country wave) stack	 ///
-						var2opts( relabel (1 "May" 2 "June" 3 "July")) ///
-						ytitle("") bar(1, fcolor(`1') lcolor(none)) ///
-						bar(2, fcolor(`7') lcolor(none))  ///
-						bar(3, fcolor(`15') lcolor(none)) legend(off) ///
-						saving("$output/nga_bus_inc", replace)
-						
 	catplot 		size wave country [aweight = hhw] if country == 4, percent(country wave) stack	 ///
 						var2opts( relabel (1 "June" 2 "July")) ///
 						ytitle("Percent of households reporting change in business revenue") ///
@@ -240,7 +226,7 @@
 
 	grc1leg2 		"$output/eth_bus_inc.gph" "$output/mwi_bus_inc.gph" ///
 						"$output/nga_bus_inc.gph" "$output/uga_bus_inc.gph", ///
-						col(1) iscale(.5) commonscheme imargin(0 0 0 0) title("B") ///
+						col(1) iscale(.5) commonscheme imargin(0 0 0 0) title("B", size(huge)) ///
 						saving("$output/bus_emp_inc", replace)
 
 	graph export 	"$output/bus_emp_inc.emf", as(emf) replace	
@@ -288,7 +274,7 @@
 	restore
 	
 	grc1leg2 		"$output/fies_modsev.gph" "$output/fies_sev.gph", ///
-						col(2) iscale(.5) pos(3) commonscheme title("C") ///
+						col(2) iscale(.5) pos(3) commonscheme title("C", size(huge)) ///
 						saving("$output/fies.gph", replace)						
 
 	graph export 	"$output/fies.emf", as(emf) replace			
@@ -318,7 +304,7 @@
 	restore 
 	
 	grc1leg2 		"$output/concern_1.gph" "$output/concern_2.gph", ///
-						col(1) iscale(.5) pos(6) commonscheme title("D") ///
+						col(1) iscale(.5) pos(6) commonscheme title("D", size(huge)) ///
 						saving("$output/concerns.gph", replace)		
 	
 	graph export 	"$output/concerns.emf", as(emf) replace			

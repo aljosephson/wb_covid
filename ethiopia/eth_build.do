@@ -159,7 +159,7 @@
 						clear
 						
 * merge in other sections
-	merge 1:1 		household_id using "$export/wave_01/hhsize_r1.dta", keep(match) nogenerate
+	merge 1:1 		household_id using "$export/wave_01/hhsize_r1.dta",  nogenerate
 
 * generate round variable
 	gen				wave = 1
@@ -173,8 +173,8 @@
 						clear
 						
 * merge in other sections
-	merge 1:1 		household_id using "$export/wave_02/hhsize_r2.dta", keep(match) nogenerate
-	merge 1:1 		household_id using "$export/wave_02/fies_r2.dta", keep(match) nogenerate
+	merge 1:1 		household_id using "$export/wave_02/hhsize_r2.dta", nogenerate
+	merge 1:1 		household_id using "$export/wave_02/fies_r2.dta", nogenerate
 
 * generate round variable
 	gen				wave = 2
@@ -188,8 +188,8 @@
 						clear
 						
 * merge in other sections
-	merge 1:1 		household_id using "$export/wave_03/hhsize_r3.dta", keep(match) nogenerate
-	merge 1:1 		household_id using "$export/wave_03/fies_r3.dta", keep(match) nogenerate
+	merge 1:1 		household_id using "$export/wave_03/hhsize_r3.dta", nogenerate
+	merge 1:1 		household_id using "$export/wave_03/fies_r3.dta", nogenerate
 
 
 * generate round variable
@@ -214,7 +214,7 @@
 * ***********************************************************************
 
 * merge in consumption aggregate
-	merge m:1		household_id using "$root/wave_00/Ethiopia ESS 2018-19 Quintiles.dta", keep(match) nogenerate
+	merge m:1		household_id using "$root/wave_00/Ethiopia ESS 2018-19 Quintiles.dta", nogenerate
 
 	rename 			quintile quints
 
@@ -597,6 +597,7 @@
 	lab var			country "Country"
 			
 	drop			resp_id start_date hhh_gender hhh_age same loc_chg same_hhh
+	drop if			wave ==  .
 	
 * **********************************************************************
 * 2 - end matter, clean up to save

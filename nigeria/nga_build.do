@@ -45,11 +45,11 @@
 						clear
 						
 * merge in other sections
-	merge 1:1 		hhid using "$export/wave_01/respond_r1.dta", keep(match) nogenerate
-	merge 1:1 		hhid using "$export/wave_01/hhsize_r1.dta", keep(match) nogenerate
-	merge 1:1 		hhid using "$export/wave_01/r1_sect_7w.dta", keep(match) nogenerate
-	merge 1:1 		hhid using "$export/wave_01/r1_sect_10w.dta", keep(match) nogenerate
-	merge 1:1 		hhid using "$export/wave_01/r1_sect_11w.dta", keep(match) nogenerate
+	merge 1:1 		hhid using "$export/wave_01/respond_r1.dta", nogenerate
+	merge 1:1 		hhid using "$export/wave_01/hhsize_r1.dta", nogenerate
+	merge 1:1 		hhid using "$export/wave_01/r1_sect_7w.dta", nogenerate
+	merge 1:1 		hhid using "$export/wave_01/r1_sect_10w.dta", nogenerate
+	merge 1:1 		hhid using "$export/wave_01/r1_sect_11w.dta", nogenerate
 
 * generate round variable
 	gen				wave = 1
@@ -68,11 +68,11 @@
 						clear
 						
 * merge in other sections
-	merge 1:1 		hhid using "$export/wave_02/respond_r2.dta", keep(match) nogenerate
-	merge 1:1 		hhid using "$export/wave_02/hhsize_r2.dta", keep(match) nogenerate
-	merge 1:1 		hhid using "$export/wave_02/r2_sect_7w.dta", keep(match) nogenerate
-	merge 1:1 		hhid using "$export/wave_02/r2_sect_11w.dta", keep(match) nogenerate
-	merge 1:1		hhid using "$export/wave_02/fies_r2", keep(match) nogenerate
+	merge 1:1 		hhid using "$export/wave_02/respond_r2.dta", nogenerate
+	merge 1:1 		hhid using "$export/wave_02/hhsize_r2.dta", nogenerate
+	merge 1:1 		hhid using "$export/wave_02/r2_sect_7w.dta", nogenerate
+	merge 1:1 		hhid using "$export/wave_02/r2_sect_11w.dta", nogenerate
+	merge 1:1		hhid using "$export/wave_02/fies_r2", nogenerate
 
 	
 * generate round variable
@@ -92,11 +92,11 @@
 						clear
 						
 * merge in other sections
-	merge 1:1 		hhid using "$export/wave_03/respond_r3.dta", keep(match) nogenerate
-	merge 1:1 		hhid using "$export/wave_03/hhsize_r3.dta", keep(match) nogenerate
-	merge 1:1 		hhid using "$export/wave_03/r3_sect_7w.dta", keep(match) nogenerate
-	merge 1:1 		hhid using "$export/wave_03/r3_sect_10w.dta", keep(match) nogenerate
-	merge 1:1 		hhid using "$export/wave_03/r3_sect_11w.dta", keep(match) nogenerate
+	merge 1:1 		hhid using "$export/wave_03/respond_r3.dta", nogenerate
+	merge 1:1 		hhid using "$export/wave_03/hhsize_r3.dta", nogenerate
+	merge 1:1 		hhid using "$export/wave_03/r3_sect_7w.dta", nogenerate
+	merge 1:1 		hhid using "$export/wave_03/r3_sect_10w.dta", nogenerate
+	merge 1:1 		hhid using "$export/wave_03/r3_sect_11w.dta", nogenerate
 
 * generate round variable
 	gen				wave = 3
@@ -129,7 +129,7 @@
 	format 			%12.0g hhid
 
 * merge in baseline data 
-	merge m:1		hhid using "$root/wave_00/Nigeria GHS-Panel 2018-19 Quintiles", keep(match) nogenerate
+	merge m:1		hhid using "$root/wave_00/Nigeria GHS-Panel 2018-19 Quintiles", nogenerate
 
 * rename quintile variable
 	rename 			quintile quints
@@ -532,6 +532,7 @@
 	drop			interviewer_id *_os  s6q10_* s12q3__* s12q4__* /// 
 						s12q5 s12q9 s12q10 s12q10_os s12q11 s12q14 baseline_date ///
 						s12q10a s5*  
+	drop if			wave ==  .
 	
 * create country variables
 	gen				country = 3

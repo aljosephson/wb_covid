@@ -578,20 +578,20 @@
 	use				"$root/wave_01/Cover", clear
 	
 * merge in other sections
-	merge 1:1 		HHID using "$export/wave_01/respond_r1.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$export/wave_01/hhsize_r1.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/SEC2.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/SEC3.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/SEC4.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/SEC5.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/SEC5A.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/SEC6w.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/SEC7.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/SEC8.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/SEC9w.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/SEC9A.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/SEC10w.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$export/wave_01/fies_r1.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$export/wave_01/respond_r1.dta", nogenerate
+	merge 1:1 		HHID using "$export/wave_01/hhsize_r1.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_01/SEC2.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_01/SEC3.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_01/SEC4.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_01/SEC5.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_01/SEC5A.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_01/SEC6w.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_01/SEC7.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_01/SEC8.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_01/SEC9w.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_01/SEC9A.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_01/SEC10w.dta", nogenerate
+	merge 1:1 		HHID using "$export/wave_01/fies_r1.dta", nogenerate
 
 	
 * ***********************************************************************
@@ -921,21 +921,21 @@
 	use				"$root/wave_02/Cover", clear
 
 * merge in other sections
-	merge 1:1 		HHID using "$export/wave_02/respond_r2.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$export/wave_02/hhsize_r2.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_02/SEC2.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_02/SEC3.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_02/SEC4.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_02/SEC5.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_02/SEC5A.dta", keep(match) nogenerate
-*	merge 1:1 		HHID using "$root/wave_02/SEC5B.dta", keep(match) nogenerate *** harvest
-*	merge 1:1 		HHID using "$root/wave_02/SEC5C.dta", keep(match) nogenerate *** livestock
-*	merge 1:1 		HHID using "$root/wave_02/SEC5C_1.dta", keep(match) nogenerate *** livestock
-	merge 1:1 		HHID using "$root/wave_02/SEC6w.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_02/SEC7.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_02/SEC9.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_02/SEC10w.dta", keep(match) nogenerate
-*	merge 1:1 		HHID using "$export/wave_02/fies_r2.dta", keep(match) nogenerate	
+	merge 1:1 		HHID using "$export/wave_02/respond_r2.dta", nogenerate
+	merge 1:1 		HHID using "$export/wave_02/hhsize_r2.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_02/SEC2.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_02/SEC3.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_02/SEC4.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_02/SEC5.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_02/SEC5A.dta", nogenerate
+*	merge 1:1 		HHID using "$root/wave_02/SEC5B.dta", nogenerate *** harvest
+*	merge 1:1 		HHID using "$root/wave_02/SEC5C.dta", nogenerate *** livestock
+*	merge 1:1 		HHID using "$root/wave_02/SEC5C_1.dta", nogenerate *** livestock
+	merge 1:1 		HHID using "$root/wave_02/SEC6w.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_02/SEC7.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_02/SEC9.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_02/SEC10w.dta", nogenerate
+*	merge 1:1 		HHID using "$export/wave_02/fies_r2.dta", nogenerate	
 
 * reformat HHID
 	format 			%12.0f HHID
@@ -1239,7 +1239,7 @@
 						force
 
 * merge in consumption aggregate
-	merge m:1		baseline_hhid using "$export/wave_01/pov_r0.dta", keep(match) nogenerate
+	merge m:1		baseline_hhid using "$export/wave_01/pov_r0.dta", nogenerate
 	
 	
 * **********************************************************************
@@ -1251,6 +1251,7 @@
 	summarize
 
 	rename HHID hhid_uga
+	drop if hhid_uga == .
 
 * save file
 		customsave , idvar(hhid_uga) filename("uga_panel.dta") ///

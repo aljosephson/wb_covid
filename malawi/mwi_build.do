@@ -533,19 +533,19 @@
 	use				"$root/wave_01/secta_Cover_Page_r1", clear
 
 * merge in other sections
-	merge 1:1 		HHID using "$export/wave_01/respond_r1.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$export/wave_01/hhsize_r1.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect3_Knowledge_r1.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect4_Behavior_r1.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect5_Access_r1.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect6_Employment_r1.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$export/wave_01/sect7_Income_Loss_r1.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect8_food_security_r1.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect9_Concerns_r1.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$export/wave_01/sect11_Safety_Nets_r1.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect12_Interview_Result_r1.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect13_Agriculture_r1.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$export/wave_01/fies_r1.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$export/wave_01/respond_r1.dta", nogenerate
+	merge 1:1 		HHID using "$export/wave_01/hhsize_r1.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_01/sect3_Knowledge_r1.dta",nogenerate
+	merge 1:1 		HHID using "$root/wave_01/sect4_Behavior_r1.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_01/sect5_Access_r1.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_01/sect6_Employment_r1.dta", nogenerate
+	merge 1:1 		HHID using "$export/wave_01/sect7_Income_Loss_r1.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_01/sect8_food_security_r1.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_01/sect9_Concerns_r1.dta", nogenerate
+	merge 1:1 		HHID using "$export/wave_01/sect11_Safety_Nets_r1.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_01/sect12_Interview_Result_r1.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_01/sect13_Agriculture_r1.dta", nogenerate
+	merge 1:1 		HHID using "$export/wave_01/fies_r1.dta", nogenerate
 
 * reformat HHID
 	rename			HHID household_id_an
@@ -949,21 +949,21 @@
 	use				"$root/wave_02/secta_Cover_Page_r2", clear
 
 * merge in other sections
-	merge 1:1 		HHID using "$export/wave_02/respond_r2.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$export/wave_02/hhsize_r2.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_02/sect3_Knowledge_r2.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_02/sect4_Behavior_r2.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_02/sect5_Access_r2.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_02/sect6_Employment_r2.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_02/sect6b_NFE_r2.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_02/sect6c_OtherIncome_r2.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$export/wave_02/sect7_Income_Loss_r2.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_02/sect8_food_security_r2.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_02/sect9_Concerns_r2.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$export/wave_02/sect10_Coping_r2.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$export/wave_02/sect11_Safety_Nets_r2.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$root/wave_02/sect12_Interview_Result_r2.dta", keep(match) nogenerate
-	merge 1:1 		HHID using "$export/wave_02/fies_r2.dta", keep(match) nogenerate
+	merge 1:1 		HHID using "$export/wave_02/respond_r2.dta", nogenerate
+	merge 1:1 		HHID using "$export/wave_02/hhsize_r2.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_02/sect3_Knowledge_r2.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_02/sect4_Behavior_r2.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_02/sect5_Access_r2.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_02/sect6_Employment_r2.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_02/sect6b_NFE_r2.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_02/sect6c_OtherIncome_r2.dta", nogenerate
+	merge 1:1 		HHID using "$export/wave_02/sect7_Income_Loss_r2.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_02/sect8_food_security_r2.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_02/sect9_Concerns_r2.dta", nogenerate
+	merge 1:1 		HHID using "$export/wave_02/sect10_Coping_r2.dta", nogenerate
+	merge 1:1 		HHID using "$export/wave_02/sect11_Safety_Nets_r2.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_02/sect12_Interview_Result_r2.dta", nogenerate
+	merge 1:1 		HHID using "$export/wave_02/fies_r2.dta", nogenerate
 
 * generate round variable
 	gen				wave = 2

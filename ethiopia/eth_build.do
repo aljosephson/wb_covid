@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: jdm
-* Edited by: alj 
-* Last edit: 26 August 2020 
+* Edited by: jdm
+* Last edit: 1 September 2020 
 * Stata v.16.1
 
 * does
@@ -393,24 +393,44 @@
 	rename			fi4_skipmeal fies_07
 	rename			fi5_ateless fies_08
 	
-* assistance variables 	
-	rename			as1_assist_type_1 asst_01
-	rename			as1_assist_type_2 asst_02
-	rename			as1_assist_type_3 asst_03
-	rename			as1_assist_type_0 asst_04
-	rename			as3_food_value food_val
-	rename			as2_food_psnp food_psnp
-	rename			as4_food_source food_source
-	rename			as3_forwork_value_food work_food_val
-	rename			as3_forwork_value_cash work_cash_val
-	rename			as2_forwork_psnp work_psnp
-	rename			as4_forwork_source work_source 
-	rename			as3_cash_value cash_val
-	rename			as2_cash_psnp cash_psnp
-	rename			as4_cash_source cash_source
-	rename			as3_other_value other_val
-	rename			as2_other_psnp other_psnp
-	rename			as4_other_source other_source
+* assistance variables - updated via convo with Talip 9/1
+	gen				asst_food = as1_assist_type_1
+	replace			as3_forwork_value_food = . if as3_forwork_value_food < 0
+	replace			asst_food = 1 if as1_assist_type_2 == 1 & as3_forwork_value_food > 0
+	replace			asst_food = 0 if asst_food == .
+	lab var			asst_food "Recieved food assistance"
+	lab def			assist 0 "No" 1 "Yes"
+	lab val			asst_food assist
+	
+	gen				asst_cash = as1_assist_type_3
+	replace			as3_forwork_value_cash = . if as3_forwork_value_cash < 0
+	replace			asst_cash = 1 if as1_assist_type_2 == 1 & as3_forwork_value_cash > 0
+	replace			asst_cash = 0 if asst_cash == .
+	lab var			asst_cash "Recieved cash assistance"
+	lab val			asst_cash assist
+	
+	gen				asst_kind = 1 if as1_assist_type_other != ""
+	replace			asst_kind = 0 if asst_kind == .
+	lab var			asst_kind "Recieved in-kind assistance"
+	lab val			asst_kind assist
+	
+	gen				asst_any = 1 if asst_food == 1 | asst_cash == 1 | ///
+						asst_kind == 1
+	replace			asst_any = 0 if asst_any == .
+	lab var			asst_any "Recieved any assistance"
+	lab val			asst_any assist
+	
+	drop			as1_assist_type as1_assist_type_1 as1_assist_type_2 ///
+						as1_assist_type_3 as1_assist_type_0 as1_assist_type__98 ///
+						as1_assist_type__99 as1_assist_type__96 ///
+						as1_assist_type_other as3_food_value as2_food_psnp ///
+						as4_food_source as4_food_source_other ///
+						as3_forwork_value_food as3_forwork_value_cash ///
+						as2_forwork_psnp as4_forwork_source ///
+						as4_forwork_source_other as3_cash_value as2_cash_psnp ///
+						as4_cash_source as4_cash_source_other as3_other_value ///
+						as2_other_psnp as4_other_source as4_other_source_other
+	
 	rename			ii4_resp_same resp_same
 	rename			ii4_resp_gender resp_gender
 	rename			ii4_resp_age resp_age
@@ -558,10 +578,6 @@
 						em22_farm_norm_why__96 em22_farm_norm_why_other ///
 						lc1_other_source lc4_total_chg_cope lc4_total_chg_cope__98 ///
 						lc4_total_chg_cope__99 lc4_total_chg_cope_other ///
-						as1_assist_type as1_assist_type__98 as1_assist_type__99 ///
-						as1_assist_type__96 as1_assist_type_other ///
-						as4_food_source_other as4_forwork_source_other ///
-						as4_cash_source_other as4_other_source_other ///
 						ir1_endearly ir1_whyendearly ir1_whyendearly_other ///
 						ir_lang ir_understand ir_confident em15b_bus_prev_closed_other ///
 						key em19_bus_inc_low_why__* em19_bus_inc_low_why hh_id hhh_id ///

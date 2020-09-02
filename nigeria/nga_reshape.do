@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: August 2020
 * Created by: jdm
-* Edited by: alj
-* Last edited: 26 August 2020 
+* Edited by: jdm
+* Last edited: 1 September 2020 
 * Stata v.16.1
 
 * does
@@ -378,69 +378,46 @@
 * 3a - section 11 - wave 1
 * ***********************************************************************
 
-* read in section 11, wave 1
+* read in section 11, wave 1 - updated via convo with Talip 9/1
 	use				"$root/wave_01/r1_sect_11", clear
 
 * reformat HHID
 	format 			%5.0f hhid
 	
 * drop other 
-	drop 			s11q3_os zone state lga sector ea 
+	drop 			zone state lga sector ea s11q2 s11q3 s11q3_os
 
 * reshape 
-	reshape 		wide s11q1 s11q2 s11q3, i(hhid) j(assistance_cd)
-	
+	reshape 		wide s11q1, i(hhid) j(assistance_cd)
+
 * rename variables
-	generate		cash_gov = 1 if s11q12 == 1 & s11q32 >= 3
-	lab var			cash_gov "Has any member of your household received cash transfers from government"
-	generate		cash_gov_val = s11q22 if s11q12 == 1 & s11q32 >= 3
-	lab var			cash_gov_val "What was the total value of cash transfers from government"
+	gen				asst_food = 1 if s11q11 == 1
+	replace			asst_food = 0 if s11q11 == 2
+	replace			asst_food = 0 if asst_food == .
+	lab var			asst_food "Recieved food assistance"
+	lab def			assist 0 "No" 1 "Yes"
+	lab val			asst_food assist
 	
-	generate		cash_inst = 1 if s11q12 == 1 & s11q32 <= 4 & s11q32 >= . 
-	lab var			cash_inst "Has any member of your household received cash transfers from government"
-	generate		cash_inst_val = s11q22 if s11q12 == 1 & s11q32 <= 4 & s11q32 >= . 
-	lab var			cash_inst_val "What was the total value of cash transfers from government"	
+	gen				asst_cash = 1 if s11q12 == 1
+	replace			asst_cash = 0 if s11q12 == 2
+	replace			asst_cash = 0 if asst_cash == .
+	lab var			asst_cash "Recieved cash assistance"
+	lab val			asst_cash assist
 	
-	generate		food_gov = 1 if s11q11 == 1 & s11q31 >= 3
-	lab var			food_gov "Has any member of your household received free food from government"
-	generate		food_gov_val = s11q12 if s11q11 == 1 & s11q31 >= 3
-	lab var			food_gov_val "What was the total value of free food from government"
+	gen				asst_kind = 1 if s11q13 == 1
+	replace			asst_kind = 0 if s11q13 == 2
+	replace			asst_kind = 0 if asst_kind == .
+	lab var			asst_kind "Recieved in-kind assistance"
+	lab val			asst_kind assist
 	
-	generate		food_inst= 1 if s11q11 == 1 & s11q31 <= 4 & s11q31 >= . 
-	lab var			food_inst "Has any member of your household received free food from other institutions"
-	generate		food_inst_val = s11q21 if s11q11 == 1 & s11q31 <= 4 & s11q31 >= . 
-	lab var			food_inst_val "What was the total value of free food from other institutions"
-	
-	generate		other_gov = 1 if s11q13 == 1 & s11q33 >= 3
-	lab var			other_gov "Has any member of your household received in-kind transfers from government"
-	generate		other_gov_val = s11q23 if s11q13 == 1 & s11q33 >= 3
-	lab var			other_gov_val "What was the total value of in-kind transfers from government"
-	
-	generate		other_inst = 1 if s11q13 <= 4 & s11q33 >= . 
-	lab var			other_inst "Has any member of your household received in-kind transfers from other institutions"
-	generate		other_inst_val = s11q23 if s11q13 <= 4 & s11q33 >= . 
-	lab var			other_inst_val "What was the total value of in-kind transfers from other institutions"
- 
-* generate assistance variables like in Ethiopia
-	gen				asst_01 = 1 if food_gov == 1 | food_inst == 1
-	replace			asst_01 = 2 if asst_01 == .
-	lab var			asst_01 "Recieved free food"
-	lab val			asst_01 s10q01
-	
-	gen				asst_03 = 1 if cash_gov == 1 | cash_inst == 1
-	replace			asst_03 = 2 if asst_03 == .
-	lab var			asst_03 "Recieved direct cash transfer"
-	lab val			asst_03 s10q01
-	
-	gen				asst_06 = 1 if other_gov == 1 | other_inst == 1
-	replace			asst_06 = 2 if asst_06 == .
-	lab var			asst_06 "Recieved other transfer"
-	lab val			asst_06 s10q01
-	
-	gen				asst_04 = 1 if asst_01 == 2 & asst_03 == 2 & asst_06 == 2
-	replace			asst_04 = 2 if asst_04 == .
-	lab var			asst_04 "Recieved none"
-	lab val			asst_04 s10q01
+	gen				asst_any = 1 if asst_food == 1 | asst_cash == 1 | ///
+						asst_kind == 1
+	replace			asst_any = 0 if asst_any == .
+	lab var			asst_any "Recieved any assistance"
+	lab val			asst_any assist
+
+* drop variables
+	drop			s11q11 s11q12 s11q13
 
 * save temp file
 	save			"$export/wave_01/r1_sect_11w", replace
@@ -450,143 +427,49 @@
 * 3b - section 11 - wave 2
 * ***********************************************************************
 
-* read in section 11, wave 2
+* read in section 11, wave 2 - updated via convo with Talip 9/1
 	use				"$root/wave_02/r2_sect_11", clear
 
 * reformat HHID
 	format 			%5.0f hhid
 	
 * drop other 
-	drop 			s11q3_os s11q6_os zone state lga sector ea 
+	drop 			zone state lga sector ea s11q2 s11q3__1 s11q3__2 ///
+						s11q3__3 s11q3__4 s11q3__5 s11q3__6 s11q3__7 ///
+						s11q3__96 s11q3_os s11q5 s11q6__1 s11q6__2 ///
+						s11q6__3 s11q6__4 s11q6__6 s11q6__7 s11q6__96 s11q6_os
 	
-* reorganize source variable to comport with previous code 
-	gen 			s11q3 = .
-	replace 		s11q3 = 1 if s11q3__1 == 1
-	replace 		s11q3 = 2 if s11q3__2 == 1
-	replace 		s11q3 = 3 if s11q3__3 == 1
-	replace 		s11q3 = 4 if s11q3__4 == 1
-	replace 		s11q3 = 5 if s11q3__5 == 1
-	replace 		s11q3 = 6 if s11q3__6 == 1
-	replace 		s11q3 = 7 if s11q3__7 == 1
-	replace 		s11q3 = 8 if s11q3__96 == 1
-
-	drop			 s11q3__1 s11q3__2 s11q3__3 s11q3__4 s11q3__5 s11q3__6 s11q3__7 s11q3__96
-	
-* reorganize difficulties variable to comport with section 
-	gen 			s11q6 = . 
-	replace 		s11q6 = 1 if s11q6__1 == 1
-	replace 		s11q6 = 2 if s11q6__2 == 1
-	replace 		s11q6 = 3 if s11q6__3 == 1
-	replace 		s11q6 = 4 if s11q6__4 == 1
-	replace 		s11q6 = 6 if s11q6__6 == 1
-	replace 		s11q6 = 7 if s11q6__7 == 1
-	replace 		s11q6 = 8 if s11q6__96 == 1
-	
-	drop 			s11q6__1 s11q6__2 s11q6__3 s11q6__4 s11q6__6 s11q6__7 s11q6__96
-
 * reshape 
-	reshape 		wide s11q1 s11q2 s11q3 s11q5 s11q6, i(hhid) j(assistance_cd)
-	
+	reshape 		wide s11q1, i(hhid) j(assistance_cd)
+
 * rename variables
-	generate		cash_gov = 1 if s11q12 == 1 & s11q32 >= 3
-	lab var			cash_gov "Has any member of your household received cash transfers from government"
-	generate		cash_gov_val = s11q22 if s11q12 == 1 & s11q32 >= 3
-	lab var			cash_gov_val "What was the total value of cash transfers from government"
+	gen				asst_food = 1 if s11q11 == 1
+	replace			asst_food = 0 if s11q11 == 2
+	replace			asst_food = 0 if asst_food == .
+	lab var			asst_food "Recieved food assistance"
+	lab def			assist 0 "No" 1 "Yes"
+	lab val			asst_food assist
 	
-	generate		cash_inst = 1 if s11q12 == 1 & s11q32 <= 4 & s11q32 >= . 
-	lab var			cash_inst "Has any member of your household received cash transfers from non-government"
-	generate		cash_inst_val = s11q22 if s11q12 == 1 & s11q32 <= 4 & s11q32 >= . 
-	lab var			cash_inst_val "What was the total value of cash transfers from government"	
+	gen				asst_cash = 1 if s11q12 == 1
+	replace			asst_cash = 0 if s11q12 == 2
+	replace			asst_cash = 0 if asst_cash == .
+	lab var			asst_cash "Recieved cash assistance"
+	lab val			asst_cash assist
 	
-	generate		food_gov = 1 if s11q11 == 1 & s11q31 >= 3
-	lab var			food_gov "Has any member of your household received free food from government"
-	generate		food_gov_val = s11q21 if s11q11 == 1 & s11q31 >= 3
-	lab var			food_gov_val "What was the total value of free food from government"
+	gen				asst_kind = 1 if s11q13 == 1
+	replace			asst_kind = 0 if s11q13 == 2
+	replace			asst_kind = 0 if asst_kind == .
+	lab var			asst_kind "Recieved in-kind assistance"
+	lab val			asst_kind assist
 	
-	generate		food_inst= 1 if s11q11 == 1 & s11q31 <= 4 & s11q31 >= . 
-	lab var			food_inst "Has any member of your household received free food from other institutions"
-	generate		food_inst_val = s11q21 if s11q11 == 1 & s11q31 <= 4 & s11q31 >= . 
-	lab var			food_inst_val "What was the total value of free food from other institutions"
-	
-	generate		other_gov = 1 if s11q13 == 1 & s11q33 >= 3
-	lab var			other_gov "Has any member of your household received in-kind transfers from government"
-	generate		other_gov_val = s11q23 if s11q13 == 1 & s11q33 >= 3
-	lab var			other_gov_val "What was the total value of in-kind transfers from government"
-	
-	generate		other_inst = 1 if s11q13 <= 4 & s11q33 >= . 
-	lab var			other_inst "Has any member of your household received in-kind transfers from other institutions"
-	generate		other_inst_val = s11q23 if s11q13 <= 4 & s11q33 >= . 
-	lab var			other_inst_val "What was the total value of in-kind transfers from other institutions"
+	gen				asst_any = 1 if asst_food == 1 | asst_cash == 1 | ///
+						asst_kind == 1
+	replace			asst_any = 0 if asst_any == .
+	lab var			asst_any "Recieved any assistance"
+	lab val			asst_any assist
 
-	
-* rename variables for difficulties 
-	generate		cash_gov_diff = 1 if s11q52 == 1 & s11q32 >= 3
-	lab var			cash_gov_diff "Difficulties with cash transfers from government"
-	generate		cash_gov_diff_why = s11q62 if s11q52 == 1 & s11q32 >= 3
-	lab var			cash_gov_diff_why "Reason for difficulties with cash transfers from government"
-	
-	generate		cash_inst_diff = 1 if s11q52 == 1 & s11q32 <= 4 & s11q32 >= . 
-	lab var			cash_inst_diff "Difficulties with cash transfers from other institions"
-	generate		cash_inst_diff_why = s11q62 if s11q52 == 1 & s11q32 <= 4 & s11q32 >= . 
-	lab var			cash_inst_diff_why "Reason for difficulties with cash transfers from other institions"	
-	
-	generate		food_gov_diff = 1 if s11q51 == 1 & s11q31 >= 3
-	lab var			food_gov_diff "Difficulties with free food from government"
-	generate		food_gov_diff_why = s11q61 if s11q51 == 1 & s11q31 >= 3
-	lab var			food_gov_diff_why "Reason for difficulties with free food from government"
-	
-	generate		food_inst_diff = 1 if s11q51 == 1 & s11q31 <= 4 & s11q31 >= . 
-	lab var			food_inst_diff "Difficulties with free food from other institutions"
-	generate		food_inst_diff_why = s11q61 if s11q51 == 1 & s11q31 <= 4 & s11q31 >= . 
-	lab var			food_inst_diff_why "Reason for difficulties with free food from other institutions"
-	
-	generate		other_gov_diff = 1 if s11q53 == 1 & s11q33 >= 3
-	lab var			other_gov_diff "Difficulties with in-kind transfers from government"
-	generate		other_gov_diff_why = s11q63 if s11q53 == 1 & s11q33 >= 3
-	lab var			other_gov_diff_why "Reason for difficulties with in-kind transfers from government"
-	
-	generate		other_inst_diff = 1 if s11q53 <= 4 & s11q33 >= . 
-	lab var			other_inst_diff "Difficulties with in-kind transfers from other institutions"
-	generate		other_inst_diff_why = s11q63 if s11q53 <= 4 & s11q33 >= . 
-	lab var			other_inst_diff_why "Reason for difficulties with in-kind transfers from other institutions"
-	
-* generate assistance variables like in Ethiopia
-	gen				asst_01 = 1 if food_gov == 1 | food_inst == 1
-	replace			asst_01 = 2 if asst_01 == .
-	lab var			asst_01 "Recieved free food"
-	lab val			asst_01 s10q01
-	
-	gen				asst_03 = 1 if cash_gov == 1 | cash_inst == 1
-	replace			asst_03 = 2 if asst_03 == .
-	lab var			asst_03 "Recieved direct cash transfer"
-	lab val			asst_03 s10q01
-	
-	gen				asst_06 = 1 if other_gov == 1 | other_inst == 1
-	replace			asst_06 = 2 if asst_06 == .
-	lab var			asst_06 "Recieved other transfer"
-	lab val			asst_06 s10q01
-	
-	gen				asst_04 = 1 if asst_01 == 2 & asst_03 == 2 & asst_06 == 2
-	replace			asst_04 = 2 if asst_04 == .
-	lab var			asst_04 "Recieved none"
-	lab val			asst_04 s10q01
-	
-* generate difficulty variables like above 
-
-	gen				asst_diff_01 = 1 if food_gov_diff == 1 | food_inst_diff == 1
-	replace			asst_diff_01 = 2 if asst_diff_01 == .
-	lab var			asst_diff_01 "Difficulties with free food"
-	
-	gen				asst_diff_03 = 1 if cash_gov_diff == 1 | cash_inst_diff == 1
-	replace			asst_diff_03 = 2 if asst_diff_03 == .
-	lab var			asst_diff_03 "Difficulties with direct cash transfer"
-	
-	gen				asst_diff_06 = 1 if other_gov_diff == 1 | other_inst_diff == 1
-	replace			asst_diff_06 = 2 if asst_diff_06 == .
-	lab var			asst_diff_06 "Difficulties with other transfer"
-	
-* drop original variables
-	drop 			s11* 
+* drop variables
+	drop			s11q11 s11q12 s11q13
 
 * save temp file
 	save			"$export/wave_02/r2_sect_11w", replace				
@@ -596,143 +479,49 @@
 * 3c - section 11 - wave 3
 * ***********************************************************************
 
-* read in section 11, wave 3
+* read in section 11, wave 3 - updated via convo with Talip 9/1
 	use				"$root/wave_03/r3_sect_11", clear
 
 * reformat HHID
 	format 			%5.0f hhid
 	
 * drop other 
-	drop 			s11q3_os s11q6_os zone state lga sector ea 
-
-* reorganize source variable to comport with previous code 
-	gen 			s11q3 = .
-	replace 		s11q3 = 1 if s11q3__1 == 1
-	replace 		s11q3 = 2 if s11q3__2 == 1
-	replace 		s11q3 = 3 if s11q3__3 == 1
-	replace 		s11q3 = 4 if s11q3__4 == 1
-	replace 		s11q3 = 5 if s11q3__5 == 1
-	replace 		s11q3 = 6 if s11q3__6 == 1
-	replace 		s11q3 = 7 if s11q3__7 == 1
-	replace 		s11q3 = 8 if s11q3__96 == 1
-
-	drop			 s11q3__1 s11q3__2 s11q3__3 s11q3__4 s11q3__5 s11q3__6 s11q3__7 s11q3__96
-	
-* reorganize difficulties variable to comport with section 
-	gen 			s11q6 = . 
-	replace 		s11q6 = 1 if s11q6__1 == 1
-	replace 		s11q6 = 2 if s11q6__2 == 1
-	replace 		s11q6 = 3 if s11q6__3 == 1
-	replace 		s11q6 = 4 if s11q6__4 == 1
-	replace 		s11q6 = 6 if s11q6__6 == 1
-	replace 		s11q6 = 7 if s11q6__7 == 1
-	replace 		s11q6 = 8 if s11q6__96 == 1
-	
-	drop 			s11q6__1 s11q6__2 s11q6__3 s11q6__4 s11q6__6 s11q6__7 s11q6__96
+	drop 			zone state lga sector ea s11q2 s11q3__1 s11q3__2 ///
+						s11q3__3 s11q3__4 s11q3__5 s11q3__6 s11q3__7 ///
+						s11q3__96 s11q3_os s11q5 s11q6__1 s11q6__2 ///
+						s11q6__3 s11q6__4 s11q6__6 s11q6__7 s11q6__96 s11q6_os
 
 * reshape 
-	reshape 		wide s11q1 s11q2 s11q3 s11q5 s11q6, i(hhid) j(assistance_cd)
-	
+	reshape 		wide s11q1, i(hhid) j(assistance_cd)
+
 * rename variables
-	generate		cash_gov = 1 if s11q12 == 1 & s11q32 >= 3
-	lab var			cash_gov "Has any member of your household received cash transfers from government"
-	generate		cash_gov_val = s11q22 if s11q12 == 1 & s11q32 >= 3
-	lab var			cash_gov_val "What was the total value of cash transfers from government"
+	gen				asst_food = 1 if s11q11 == 1
+	replace			asst_food = 0 if s11q11 == 2
+	replace			asst_food = 0 if asst_food == .
+	lab var			asst_food "Recieved food assistance"
+	lab def			assist 0 "No" 1 "Yes"
+	lab val			asst_food assist
 	
-	generate		cash_inst = 1 if s11q12 == 1 & s11q32 <= 4 & s11q32 >= . 
-	lab var			cash_inst "Has any member of your household received cash transfers from non-government"
-	generate		cash_inst_val = s11q22 if s11q12 == 1 & s11q32 <= 4 & s11q32 >= . 
-	lab var			cash_inst_val "What was the total value of cash transfers from government"	
+	gen				asst_cash = 1 if s11q12 == 1
+	replace			asst_cash = 0 if s11q12 == 2
+	replace			asst_cash = 0 if asst_cash == .
+	lab var			asst_cash "Recieved cash assistance"
+	lab val			asst_cash assist
 	
-	generate		food_gov = 1 if s11q11 == 1 & s11q31 >= 3
-	lab var			food_gov "Has any member of your household received free food from government"
-	generate		food_gov_val = s11q21 if s11q11 == 1 & s11q31 >= 3
-	lab var			food_gov_val "What was the total value of free food from government"
+	gen				asst_kind = 1 if s11q13 == 1
+	replace			asst_kind = 0 if s11q13 == 2
+	replace			asst_kind = 0 if asst_kind == .
+	lab var			asst_kind "Recieved in-kind assistance"
+	lab val			asst_kind assist
 	
-	generate		food_inst= 1 if s11q11 == 1 & s11q31 <= 4 & s11q31 >= . 
-	lab var			food_inst "Has any member of your household received free food from other institutions"
-	generate		food_inst_val = s11q21 if s11q11 == 1 & s11q31 <= 4 & s11q31 >= . 
-	lab var			food_inst_val "What was the total value of free food from other institutions"
-	
-	generate		other_gov = 1 if s11q13 == 1 & s11q33 >= 3
-	lab var			other_gov "Has any member of your household received in-kind transfers from government"
-	generate		other_gov_val = s11q23 if s11q13 == 1 & s11q33 >= 3
-	lab var			other_gov_val "What was the total value of in-kind transfers from government"
-	
-	generate		other_inst = 1 if s11q13 <= 4 & s11q33 >= . 
-	lab var			other_inst "Has any member of your household received in-kind transfers from other institutions"
-	generate		other_inst_val = s11q23 if s11q13 <= 4 & s11q33 >= . 
-	lab var			other_inst_val "What was the total value of in-kind transfers from other institutions"
+	gen				asst_any = 1 if asst_food == 1 | asst_cash == 1 | ///
+						asst_kind == 1
+	replace			asst_any = 0 if asst_any == .
+	lab var			asst_any "Recieved any assistance"
+	lab val			asst_any assist
 
-	
-* rename variables for difficulties 
-	generate		cash_gov_diff = 1 if s11q52 == 1 & s11q32 >= 3
-	lab var			cash_gov_diff "Difficulties with cash transfers from government"
-	generate		cash_gov_diff_why = s11q62 if s11q52 == 1 & s11q32 >= 3
-	lab var			cash_gov_diff_why "Reason for difficulties with cash transfers from government"
-	
-	generate		cash_inst_diff = 1 if s11q52 == 1 & s11q32 <= 4 & s11q32 >= . 
-	lab var			cash_inst_diff "Difficulties with cash transfers from other institions"
-	generate		cash_inst_diff_why = s11q62 if s11q52 == 1 & s11q32 <= 4 & s11q32 >= . 
-	lab var			cash_inst_diff_why "Reason for difficulties with cash transfers from other institions"	
-	
-	generate		food_gov_diff = 1 if s11q51 == 1 & s11q31 >= 3
-	lab var			food_gov_diff "Difficulties with free food from government"
-	generate		food_gov_diff_why = s11q61 if s11q51 == 1 & s11q31 >= 3
-	lab var			food_gov_diff_why "Reason for difficulties with free food from government"
-	
-	generate		food_inst_diff = 1 if s11q51 == 1 & s11q31 <= 4 & s11q31 >= . 
-	lab var			food_inst_diff "Difficulties with free food from other institutions"
-	generate		food_inst_diff_why = s11q61 if s11q51 == 1 & s11q31 <= 4 & s11q31 >= . 
-	lab var			food_inst_diff_why "Reason for difficulties with free food from other institutions"
-	
-	generate		other_gov_diff = 1 if s11q53 == 1 & s11q33 >= 3
-	lab var			other_gov_diff "Difficulties with in-kind transfers from government"
-	generate		other_gov_diff_why = s11q63 if s11q53 == 1 & s11q33 >= 3
-	lab var			other_gov_diff_why "Reason for difficulties with in-kind transfers from government"
-	
-	generate		other_inst_diff = 1 if s11q53 <= 4 & s11q33 >= . 
-	lab var			other_inst_diff "Difficulties with in-kind transfers from other institutions"
-	generate		other_inst_diff_why = s11q63 if s11q53 <= 4 & s11q33 >= . 
-	lab var			other_inst_diff_why "Reason for difficulties with in-kind transfers from other institutions"
-	
-* generate assistance variables like in Ethiopia
-	gen				asst_01 = 1 if food_gov == 1 | food_inst == 1
-	replace			asst_01 = 2 if asst_01 == .
-	lab var			asst_01 "Recieved free food"
-	lab val			asst_01 s10q01
-	
-	gen				asst_03 = 1 if cash_gov == 1 | cash_inst == 1
-	replace			asst_03 = 2 if asst_03 == .
-	lab var			asst_03 "Recieved direct cash transfer"
-	lab val			asst_03 s10q01
-	
-	gen				asst_06 = 1 if other_gov == 1 | other_inst == 1
-	replace			asst_06 = 2 if asst_06 == .
-	lab var			asst_06 "Recieved other transfer"
-	lab val			asst_06 s10q01
-	
-	gen				asst_04 = 1 if asst_01 == 2 & asst_03 == 2 & asst_06 == 2
-	replace			asst_04 = 2 if asst_04 == .
-	lab var			asst_04 "Recieved none"
-	lab val			asst_04 s10q01
-	
-* generate difficulty variables like above 
-
-	gen				asst_diff_01 = 1 if food_gov_diff == 1 | food_inst_diff == 1
-	replace			asst_diff_01 = 2 if asst_diff_01 == .
-	lab var			asst_diff_01 "Difficulties with free food"
-	
-	gen				asst_diff_03 = 1 if cash_gov_diff == 1 | cash_inst_diff == 1
-	replace			asst_diff_03 = 2 if asst_diff_03 == .
-	lab var			asst_diff_03 "Difficulties with direct cash transfer"
-	
-	gen				asst_diff_06 = 1 if other_gov_diff == 1 | other_inst_diff == 1
-	replace			asst_diff_06 = 2 if asst_diff_06 == .
-	lab var			asst_diff_06 "Difficulties with other transfer"
-	
-* drop original variables
-	drop 			s11* 
+* drop variables
+	drop			s11q11 s11q12 s11q13
 
 * save temp file
 	save			"$export/wave_03/r3_sect_11w", replace					

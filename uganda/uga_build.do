@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by : jdm
-* Last edited: 31 August 2020
+* Last edited: 1 September 2020
 * Stata v.16.1
 
 * does
@@ -218,66 +218,45 @@
 * 1c - reshape section 10 wide data - R1
 * ***********************************************************************
 
-* load income data
+* load safety net data - updated via convo with Talip 9/1
 	use				"$root/wave_01/SEC10", clear
 
 * reformat HHID
 	format 			%12.0f HHID
 
 * drop other safety nets and missing values
-	drop			other_nets
-	drop if			safety_net__id == .
+	drop			s10q02 s10q04 other_nets
 
 * reshape data
-	reshape 		wide s10q01 s10q02 s10q03 s10q04, i(HHID) j(safety_net__id)
+	reshape 		wide s10q01 s10q03, i(HHID) j(safety_net__id)
+	*** note that cash = 101, food = 102, in-kind = 103 (unlike wave 2)
 
 * rename variables
-	rename			s10q01101 cash_gov
-	lab var			cash_gov "Has any member of your household received cash transfers from government"
-	rename			s10q02101 cash_gov_val
-	lab var			cash_gov_val "What was the total value of cash transfers from government"
-	rename			s10q03101 cash_inst
-	lab var			cash_inst "Has any member of your household received cash transfers from other institutions"
-	rename			s10q04101 cash_inst_val
-	lab var			cash_inst_val "What was the total value of cash transfers from other institutions"
-	rename			s10q01102 food_gov
-	lab var			food_gov "Has any member of your household received free food from government"
-	rename			s10q02102 food_gov_val
-	lab var			food_gov_val "What was the total value of free food from government"
-	rename			s10q03102 food_inst
-	lab var			food_inst "Has any member of your household received free food from other institutions"
-	rename			s10q04102 food_inst_val
-	lab var			food_inst_val "What was the total value of free food from other institutions"
-	rename			s10q01103 kind_gov
-	lab var			kind_gov "Has any member of your household received in-kind transfers from government"
-	rename			s10q02103 kind_gov_val
-	lab var			kind_gov_val "What was the total value of in-kind transfers from government"
-	rename			s10q03103 kind_inst
-	lab var			kind_inst "Has any member of your household received in-kind transfers from other institutions"
-	rename			s10q04103 kind_inst_val
-	lab var			kind_inst_val "What was the total value of in-kind transfers from other institutions"
+	gen				asst_food = 1 if s10q01102 == 1 | s10q03102 == 1
+	replace			asst_food = 0 if asst_food == .
+	lab var			asst_food "Recieved food assistance"
+	lab def			assist 0 "No" 1 "Yes"
+	lab val			asst_food assist
+	
+	gen				asst_cash = 1 if s10q01101 == 1 | s10q03101 ==1
+	replace			asst_cash = 0 if asst_cash == .
+	lab var			asst_cash "Recieved cash assistance"
+	lab val			asst_cash assist
+	
+	gen				asst_kind = 1 if s10q01103 == 1 | s10q03103 == 1
+	replace			asst_kind = 0 if asst_kind == .
+	lab var			asst_kind "Recieved in-kind assistance"
+	lab val			asst_kind assist
+	
+	gen				asst_any = 1 if asst_food == 1 | asst_cash == 1 | ///
+						asst_kind == 1
+	replace			asst_any = 0 if asst_any == .
+	lab var			asst_any "Recieved any assistance"
+	lab val			asst_any assist
 
-* generate assistance variables like in Ethiopia
-	gen				asst_01 = 1 if food_gov == 1 | food_inst == 1
-	replace			asst_01 = 2 if asst_01 == .
-	lab var			asst_01 "Recieved free food"
-	lab val			asst_01 s10q01
-
-	gen				asst_03 = 1 if cash_gov == 1 | cash_inst == 1
-	replace			asst_03 = 2 if asst_03 == .
-	lab var			asst_03 "Recieved direct cash transfer"
-	lab val			asst_03 s10q01
-
-	gen				asst_05 = 1 if kind_gov == 1 | kind_inst == 1
-	replace			asst_05 = 2 if asst_05 == .
-	lab var			asst_05 "Recieved in-kind transfer"
-	lab val			asst_05 s10q01
-
-	gen				asst_04 = 1 if asst_01 == 2 & asst_03 == 2 & asst_05 == 2
-	replace			asst_04 = 2 if asst_04 == .
-	lab var			asst_04 "Recieved none"
-	lab val			asst_04 s10q01
-
+* drop variables
+	drop			s10q01101 s10q03101 s10q01102 s10q03102 s10q01103 s10q03103
+	
 * save temp file
 	save			"$root/wave_01/SEC10w", replace
 
@@ -314,6 +293,7 @@
 * save temp file
 	save			"$export/wave_01/respond_r1", replace
 
+	
 * ***********************************************************************
 * 1e - get household size - R1
 * ***********************************************************************
@@ -377,7 +357,6 @@
 	
 * save temp file
 	save			"$export/wave_01/pov_r0", replace
-
 
 
 * ***********************************************************************
@@ -462,72 +441,51 @@
 * 2b - reshape section 10 wide data - R2
 * ***********************************************************************
 
-* load income data
+* load safety net data - updated via convo with Talip 9/1
 	use				"$root/wave_02/SEC10", clear
 
 * reformat HHID
 	format 			%12.0f HHID
 
 * drop other safety nets and missing values
-	drop			BSEQNO s10q03__n96 s10q06__n96
-	drop if			safety_net__id == .
+	drop			BSEQNO s10q02 s10q03__1 s10q03__2 s10q03__3 s10q03__4 ///
+						s10q03__5 s10q03__6 s10q03__n96 s10q05 s10q06__1 ///
+						s10q06__2 s10q06__3 s10q06__4 s10q06__6 s10q06__7 ///
+						s10q06__8 s10q06__n96
 
-* drop difficulties questions - only 24 responses
-	drop			s10q06__1 s10q06__2 s10q06__3 s10q06__4 s10q06__6 s10q06__7 s10q06__8
-	*** may want to come back to these
-	
-* rename variables for easier work after reshape
-	rename			s10q03__1 gov
-	
-	gen				inst = 1 if s10q03__2 == 1 | s10q03__3 == 1 | ///
-						s10q03__4 == 1 | s10q03__5 == 1 | s10q03__6 == 1
-	replace			inst = 1 if s10q01 == 1 & gov == 0
-	
-	drop 			s10q03__2 s10q03__3 s10q03__4 s10q03__5 s10q03__6 ///
-						s10q01 s10q02 s10q05
-		
-	order			inst, after(gov)
-		
 * reshape data
-	reshape 		wide gov inst, i(HHID) j(safety_net__id)
+	reshape 		wide s10q01, i(HHID) j(safety_net__id)
+	*** note that cash = 102, food = 101, in-kind = 103 (unlike wave 1)
 
 * rename variables
-	rename			gov101 food_gov
-	lab var			food_gov "Has any member of your household received free food from government"
-	rename			gov102 cash_gov
-	lab var			cash_gov "Has any member of your household received cash transfers from government"
-	rename			gov103 kind_gov
-	lab var			kind_gov "Has any member of your household received in-kind transfers from government"
-	rename			inst101 food_inst
-	lab var			food_inst "Has any member of your household received free food from other institutions"
-	rename			inst102 cash_inst
-	lab var			cash_inst "Has any member of your household received cash transfers from other institutions"
-	rename			inst103 kind_inst
-	lab var			kind_inst "Has any member of your household received in-kind transfers from other institutions"
+	gen				asst_food = 1 if s10q01101 == 1
+	replace			asst_food = 0 if s10q01101 == 2
+	replace			asst_food = 0 if asst_food == .
+	lab var			asst_food "Recieved food assistance"
+	lab def			assist 0 "No" 1 "Yes"
+	lab val			asst_food assist
+	
+	gen				asst_cash = 1 if s10q01102 == 1
+	replace			asst_cash = 0 if s10q01102 == 2
+	replace			asst_cash = 0 if asst_cash == .
+	lab var			asst_cash "Recieved cash assistance"
+	lab val			asst_cash assist
+	
+	gen				asst_kind = 1 if s10q01103 == 1
+	replace			asst_kind = 0 if s10q01103 == 2
+	replace			asst_kind = 0 if asst_kind == .
+	lab var			asst_kind "Recieved in-kind assistance"
+	lab val			asst_kind assist
+	
+	gen				asst_any = 1 if asst_food == 1 | asst_cash == 1 | ///
+						asst_kind == 1
+	replace			asst_any = 0 if asst_any == .
+	lab var			asst_any "Recieved any assistance"
+	lab val			asst_any assist
 
-* generate assistance variables like in Ethiopia
-	lab def			s10q01 1 "Yes" 2 "No"
-
-	gen				asst_01 = 1 if food_gov == 1 | food_inst == 1
-	replace			asst_01 = 2 if asst_01 == .
-	lab var			asst_01 "Recieved free food"
-	lab val			asst_01 s10q01
-
-	gen				asst_03 = 1 if cash_gov == 1 | cash_inst == 1
-	replace			asst_03 = 2 if asst_03 == .
-	lab var			asst_03 "Recieved direct cash transfer"
-	lab val			asst_03 s10q01
-
-	gen				asst_05 = 1 if kind_gov == 1 | kind_inst == 1
-	replace			asst_05 = 2 if asst_05 == .
-	lab var			asst_05 "Recieved in-kind transfer"
-	lab val			asst_05 s10q01
-
-	gen				asst_04 = 1 if asst_01 == 2 & asst_03 == 2 & asst_05 == 2
-	replace			asst_04 = 2 if asst_04 == .
-	lab var			asst_04 "Recieved none"
-	lab val			asst_04 s10q01
-
+* drop variables
+	drop			s10q01101 s10q01102 s10q01103
+	
 * save temp file
 	save			"$root/wave_02/SEC10w", replace
 

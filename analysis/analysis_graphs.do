@@ -633,6 +633,17 @@
 
 *	graph export "$output/access_cope.pdf", as(pdf) replace
 
+* test safety net
+	graph bar		asst_food asst_cash asst_kind [pweight = phw], ///
+						over(wave)over(country, lab(labs(vlarge)))  ///
+						ytitle("Individuals recieving assistance (%)", size(large)) ///
+						ylabel(0 "0" .05 "5" .1 "10" .15 "15", labs(medsmall)) ///
+						bar(1, color(teal*1.5)) bar(2, color(cranberry*1.5))  ///
+						bar(3, color(khaki*1.5) ) legend(label (1 "Food")  ///
+						label (2 "Cash") label (3 "In-kind") pos(6) col(3) size(medsmall)) ///
+						saving("$output/assistance", replace)
+
+	graph export "$output/assistance.png", as(png) replace
 
 * **********************************************************************
 * 4 - basic regressions

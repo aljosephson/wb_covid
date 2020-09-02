@@ -530,7 +530,7 @@
 	
 * drop unnecessary variables
 	drop			interviewer_id *_os  s6q10_* s12q3__* s12q4__* /// 
-						s12q5 s12q9 s12q10 s12q10_os s12q11 s12q14 s11* baseline_date ///
+						s12q5 s12q9 s12q10 s12q10_os s12q11 s12q14 baseline_date ///
 						s12q10a s5*  
 	
 * create country variables

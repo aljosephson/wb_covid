@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: jdm
-* Edited by: alj
-* Last edit: 15 August 2020 
+* Edited by: jdm
+* Last edit: 1 September 2020 
 * Stata v.16.1
 
 * does
@@ -494,17 +494,14 @@
 	
 	replace			edu_cont_08 = educ_cont_08 if edu_cont_08 == .
 	drop			educ_cont_08
-	
-	order			asst_01 asst_02 asst_03 asst_04 asst_05 asst_06 asst_inc ///
-						asst_chg asst_diff_01 asst_diff_03 asst_diff_06, after(tot_inc_chg)
+		
+	order			asst_food asst_cash asst_kind asst_any, after(tot_inc_chg)
 	
 	order			ag_prep- ag_price ag_chg_01- ag_seed_07 ag_plan- ag_graze, ///
-						after(kind_inst_val)
+						after(concern_03)
 						
 	order			concern_01 concern_02 concern_03 concern_04 concern_05 ///
 						concern_06, after(myth_07)
-	
-	lab var			cash_gov_date "Date received cash transfers from government"
 	
 	
 * **********************************************************************

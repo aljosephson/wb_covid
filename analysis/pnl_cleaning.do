@@ -438,21 +438,32 @@
 		lab val				`var' yesno
 		}				
 		
+	gen					work_dwn = 1 if farm_dwn == 1 | bus_dwn == 1
+	replace				work_dwn = 0 if farm_dwn == 0 & work_dwn == .
+	replace				work_dwn = 0 if bus_dwn == 0 & work_dwn == .
+	lab var 			work_dwn "Farm/firm income reduced"
+	lab val				work_dwn yesno
+
 	gen 				remit_dwn = 1 if rem_for_dwn == 1 | rem_dom_dwn == 1
-	replace 			remit_dwn = 0 if rem_for_dwn == 0 | rem_dom_dwn == 0
+	replace 			remit_dwn = 0 if rem_for_dwn == 0 & remit_dwn == .
+	replace				remit_dwn = 0 if rem_dom_dwn == 0 & remit_dwn == .
 	lab var 			remit_dwn "Remittances (foreign, domestic) reduced"
 	lab val				remit_dwn yesno
-	gen 				other_dwn = 1 if isp_dwn == 1 | pen_dwn == 1 | gov_dwn == 1 | ngo_dwn == 1 
-	replace				other_dwn = 0 if isp_dwn == 0 | pen_dwn == 0 | gov_dwn == 0 | ngo_dwn == 0 
+	
+	gen 				other_dwn = 1 if isp_dwn == 1| pen_dwn == 1 | gov_dwn == 1 | ngo_dwn == 1 
+	replace				other_dwn = 0 if isp_dwn == 0 & other_dwn == .
+	replace				other_dwn = 0 if pen_dwn == 0 & other_dwn == .
+	replace				other_dwn = 0 if gov_dwn == 0 & other_dwn == .
+	replace				other_dwn = 0 if ngo_dwn == 0 & other_dwn == .
 	lab var 			other_dwn "Other income sources (isp, pen, gov, ngo) reduced"
 	lab val				other_dwn yesno
 	
-	egen 				dwn_count = rsum(farm_dwn bus_dwn wage_dwn remit_dwn other_dwn)
+	egen 				dwn_count = rsum(work_dwn wage_dwn remit_dwn other_dwn)
 	lab var 			dwn_count "count of income sources which are down"
 	replace				dwn_count = . if farm_dwn == . & bus_dwn == . & ///
 							wage_dwn == . & remit_dwn == . & other_dwn == .
 	
-	gen 				dwn_percent = dwn_count / 5
+	gen 				dwn_percent = dwn_count / 4
 	label var 			dwn_percent "percent of income sources which had losses"
 	
 	

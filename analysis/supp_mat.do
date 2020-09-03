@@ -30,8 +30,11 @@
 
 
 * **********************************************************************
-* 1 - create graphs on knowledge and behavior
+* 1 - create tables for Fig. 1
 * **********************************************************************
 
 * read in data
 	use				"$ans/lsms_panel", clear
+
+* regressions of government restrictions
+	reg 			gov_01 ib(2).country [pweight = phw]

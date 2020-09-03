@@ -22,7 +22,7 @@
 * **********************************************************************
 
 * set $pack to 0 to skip package installation
-	global 			pack 	0
+	global 			pack 	1
 		
 * Specify Stata version in use
     global stataVersion 16.1    // set Stata version
@@ -45,6 +45,12 @@
 		global 		data	"G:/My Drive/wb_covid/data"
     }
 
+	if `"`c(username)'"' == "annfu" {
+		global 		code  	"C:/Users/annfu/git/wb_covid"
+		global 		data	"G:/My Drive/wb_covid/data"
+	}
+	
+	
 * **********************************************************************
 * 0 (b) - Check if any required packages are installed:
 * **********************************************************************

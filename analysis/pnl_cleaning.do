@@ -141,6 +141,17 @@
 	order			gov_13 gov_14 gov_15 gov_16 gov_none gov_dnk, after(gov_12)
 	order			edu hhsize, after(relate_hoh)
 
+	gen				cope_any = 1 if cope_01 == 1 | cope_02 == 1 | cope_03 == 1 | ///
+						cope_04 == 1 | cope_05 == 1 | cope_06 == 1 | ///
+						cope_07 == 1 | cope_08 == 1 | cope_09 == 1 | ///
+						cope_10 == 1 | cope_11 == 1 | cope_12 == 1 | ///
+						cope_13 == 1 | cope_14 == 1 | cope_15 == 1
+	replace			cope_any = 0 if cope_any == . & country == 1
+	replace			cope_any = 0 if cope_any == . & country == 2 & wave == 2
+	replace			cope_any = 0 if cope_any == . & country == 3 & wave != 2
+	replace			cope_any = 0 if cope_any == . & country == 4 & wave == 1
+	lab var			cope_any "Adopted any coping strategy"
+	
 	
 * **********************************************************************
 * 3- revise access variables as needed 

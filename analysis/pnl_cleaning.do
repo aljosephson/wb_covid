@@ -56,6 +56,9 @@
 	order			country hhid_eth hhid_mwi hhid_nga hhid_uga wave
 	drop			submission_date round attempt
 	
+* define yes/no label
+	lab	def				yesno 0 "No" 1 "Yes"
+
 * generate household id
 	replace 		hhid_eth = "e" + hhid_eth if hhid_eth != ""
 	
@@ -152,6 +155,13 @@
 	replace			cope_any = 0 if cope_any == . & country == 4 & wave == 1
 	lab var			cope_any "Adopted any coping strategy"
 	
+	local myth		 myth_01 myth_02 myth_03 myth_04 myth_05
+	foreach v in `myth' {
+	    replace `v' = . if `v' == -98
+		replace `v' = 0 if `v' == 2
+		lab val	`v' yesno
+	}	
+	
 	
 * **********************************************************************
 * 3- revise access variables as needed 
@@ -180,7 +190,6 @@
 						ac_bank ac_bank_why, after(bh_08)		
 
 * access to medicine						
-	lab	def				yesno 0 "No" 1 "Yes"
 	lab val				ac_med_need yesno 
 
 	replace				ac_med_need = 0 if ac_med == -97 & country == 1		

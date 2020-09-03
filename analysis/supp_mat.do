@@ -38,7 +38,7 @@
 
 
 * **********************************************************************
-* 1a - create tables for Fig. 1A
+* 1a - create Table S1 for Fig. 1A
 * **********************************************************************
 
 * advised citizens to stay at home
@@ -119,7 +119,7 @@ R^2 should be 4 digits: 0.181
 
 
 * **********************************************************************
-* 1b - create tables for Fig. 1B
+* 1b - create table S2 for Fig. 1B
 * **********************************************************************
 
 * handwashing with Soap Reduces Risk of Coronavirus Contraction
@@ -172,8 +172,101 @@ R^2 should be 4 digits: 0.181
 
 
 * **********************************************************************
-* 1c - create tables for Fig. 1C
+* 1c - create tables S3-S5 for Fig. 1C
 * **********************************************************************
 
+* table S3
 
+* handwashed with Soap More Often Since Outbreak
+	reg 			bh_01 ib(2).country [pweight = phw] if wave == 1
+	
+	* Wald test for differences between other countries
+		test			1.country = 3.country
+		test			1.country = 4.country
+		test			3.country = 4.country
 
+* avoided Handshakes/Physical Greetings Since Outbreak
+	reg 			bh_02 ib(2).country [pweight = phw] if wave == 1
+	
+	* Wald test for differences between other countries
+		test			1.country = 3.country
+		test			1.country = 4.country
+		test			3.country = 4.country
+
+* avoided Crowds and Gatherings Since Outbreak
+	reg 			bh_03 ib(2).country [pweight = phw] if wave == 1
+	
+	* Wald test for differences between other countries
+		test			1.country = 3.country
+		test			1.country = 4.country
+		test			3.country = 4.country
+
+		
+* table S4		
+		
+* percentage over time for Malawi and Uganda
+	mean			bh_01 bh_02 bh_03 [pweight = phw] if country == 2 | ///
+						country == 4, over(country wave)
+		
+
+* table S5
+
+* regressions of behavior on waves in Malawi
+	reg				bh_01 i.wave [pweight = phw] if country == 2 
+	
+	reg				bh_02 i.wave [pweight = phw] if country == 2 
+		
+	reg				bh_02 i.wave [pweight = phw] if country == 2 
+
+* regressions of behavior on waves in Uganda
+	reg				bh_01 i.wave [pweight = phw] if country == 4
+	
+	reg				bh_02 i.wave [pweight = phw] if country == 4
+		
+	reg				bh_02 i.wave [pweight = phw] if country == 4		
+		
+		
+* **********************************************************************
+* 1d - create tables S6-S7 for Fig. 1D
+* **********************************************************************
+
+preserve
+		
+	local myth		 myth_01 myth_02 myth_03 myth_04 myth_05
+	
+	foreach v in `myth' {
+	    replace 		`v' = . if `v' == 3
+	}	
+
+* table S6
+	
+* lemon and alcohol can be used as sanitizers against coronavirus
+	reg 			myth_01 i.country [pweight = phw]
+
+* africans are immune to corona virus
+	reg 			myth_02 i.country [pweight = phw]
+
+* corona virus does not affect children
+	reg 			myth_03 i.country [pweight = phw]
+
+* corona virus cannot survive in warm weather
+	reg 			myth_04 i.country [pweight = phw]
+
+* corona virus is just common flu
+	reg 			myth_05 i.country [pweight = phw]
+
+* table S7
+
+* totals by myths
+	total 			myth_01 myth_02 myth_03 myth_04 myth_05 [pweight = phw], over(country)
+	
+restore
+	
+	
+* **********************************************************************
+* 2 - create tables for Fig. 2
+* **********************************************************************
+	
+	
+	
+	

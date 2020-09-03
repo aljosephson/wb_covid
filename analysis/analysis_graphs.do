@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj
-* Last edit: 3 September 2020 
+* Last edit: 27 August 2020
 * Stata v.16.1
 
 * does
@@ -114,21 +114,20 @@
 	ren 			(myth_01 myth_02 myth_03 myth_04 myth_05) (size=)
 	reshape long 	size, i(id) j(myth) string
 	drop if 		size == .
+	drop if			size == 3
 
 	catplot 		size country myth [aweight = phw], percent(country myth) ///
-						ytitle("Percent", size(vlarge)) var1opts(label(labsize(large))) ///
-						var2opts(label(labsize(large))) var3opts(label(labsize(large)) ///
+						ytitle("Percent", size(vlarge)) var1opts(label(labsize(vlarge))) ///
+						var2opts(label(labsize(vlarge))) var3opts(label(labsize(large)) ///
 						relabel (1 `""Lemon and alcohol are effective" "sanitizers against coronavirus""' ///
 						2 `""Africans are immune" "to coronavirus"""' ///
 						3 `""Coronavirus does not" "affect children"""' ///
 						4 `""Coronavirus cannot survive" "warm weather""' ///
 						5 `""Coronavirus is just" "common flu""'))  ///
 						ylabel(, labs(vlarge)) ///
-						bar(1, color(edkblue*1.5) ) ///
+						bar(1, color(khaki*1.5) ) ///
 						bar(2, color(emerald*1.5) ) ///
-						bar(3, color(khaki*1.5) ) ///
-						legend( label (1 "True") label (2 "False") ///
-						label (3 "Don't Know") pos(6) col(3) ///
+						legend( label (2 "True") label (1 "False") pos(6) col(2) ///
 						size(medsmall)) saving("$output/myth", replace)
 
 	restore
@@ -154,26 +153,28 @@
 * 2 - income and fies graphs
 * **********************************************************************
 
+*** change work_dwn back to farm and fidm
+
 * graph A - income loss by sector
 	preserve
 	
 	keep if			wave == 1
 
-	graph bar		(mean) work_dwn wage_dwn remit_dwn other_dwn [pweight = hhw] ///
+	graph bar		(mean) farm_dwn bus_dwn wage_dwn remit_dwn other_dwn [pweight = hhw] ///
 						, over(sector, lab(labs(large))) ///
 						over(country, lab(labs(vlarge)))  ///
 						ytitle("Households reporting decrease in income (%)", size(vlarge) ) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
-						bar(1, color(navy*1.5)) bar(2, color(khaki*1.5)) ///
-						bar(3, color(cranberry*1.5)) bar(4, color(purple*1.5)) ///
-						legend( label (1 "Farm/firm income") ///
-						label (2 "Wage income") label (3 "Remittances") label (4 "All else") ///
-						pos(6) col(4) size(medsmall)) saving("$output/income_all", replace)
+						bar(1, color(navy*1.5)) bar(2, color(teal*1.5)) bar(3, color(khaki*1.5)) ///
+						bar(4, color(cranberry*1.5)) bar(5, color(purple*1.5)) ///
+						legend( label (1 "Farm income") label (2 "Business income") ///
+						label (3 "Wage income") label (4 "Remittances") label (5 "All else") ///
+						pos(6) col(3) size(medsmall)) saving("$output/income_all", replace)
 
 	restore
 	
 	grc1leg2 		"$output/income_all.gph" , ///
-						col(4) iscale(.5) commonscheme ///
+						col(3) iscale(.5) commonscheme ///
 						title("A", size(huge)) saving("$output/income.gph", replace)
 
 	graph export 	"$output/income.emf", as(emf) replace

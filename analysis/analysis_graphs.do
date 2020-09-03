@@ -342,19 +342,23 @@
 
 	replace			cope_03 = 1 if cope_03 == 1 | cope_04 == 1
 	replace			cope_05 = 1 if cope_05 == 1 | cope_06 == 1 | cope_07 == 1
-
-	graph bar		(mean) cope_01 cope_03 asst_any cope_09 cope_10 cope_11 ///
+	
+	total cope_11 cope_01 cope_09 cope_10  cope_03 asst_any [pweight = hhw]
+	total cope_any [pweight = hhw]
+	mean cope_any [pweight = hhw]
+	
+	graph bar		(mean) cope_11 cope_01 cope_09 cope_10 cope_03 asst_any  ///
 						[pweight = hhw], over(sector, ///
 						label (labsize(large))) over(country, label (labsize(vlarge))) ///
-						bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
-						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
+						bar(1, color(maroon*1.5)) bar(2, color(emidblue*1.5)) ///
+						bar(3, color(emerald*1.5)) bar(4, color(brown*1.5)) ///
 						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
 						ytitle("Households reporting use of coping strategy (%)", size(vlarge)) ///
-						legend( label (1 "Sale of asset") label (2 "Help from family") ///
-						label (3 "Recieved assistance") label (4 "Reduced food cons.") ///
-						label (5 "Reduced non-food cons.") ///
-						label (6 "Relied on savings") size(medsmall) pos(6) col(3)) ///
+						legend( label (1 "Relied on savings") label (2 "Sale of asset") ///
+						label (3 "Reduced food cons.") label (4 "Reduced non-food cons.") ///
+						label (5 "Help from family") ///
+						label (6 "Recieved assistance") size(medsmall) pos(6) col(3)) ///
 						saving("$output/cope_all.gph", replace)
 
 	restore
@@ -496,7 +500,34 @@
 	graph export 	"$output/access.emf", as(emf) replace
 
 
-* graph C - education activities
+* graph C - education and food
+	gen				edu_act_01 = edu_act if quint == 1
+	gen				edu_act_02 = edu_act if quint == 2
+	gen				edu_act_03 = edu_act if quint == 3
+	gen				edu_act_04 = edu_act if quint == 4
+	gen				edu_act_05 = edu_act if quint == 5
+
+	colorpalette edkblue khaki, ipolate(15, power(1)) locals
+
+	graph bar 		(mean) edu_act_01 edu_act_02 edu_act_03 edu_act_04 edu_act_05 ///
+						[pweight = hhw] if wave == 1, over(country, label(labsize(vlarge)))  ///
+						ytitle("Households with children engaged in learning activities (%)", size(vlarge)) ///
+						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
+						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
+						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
+						bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First Quintile")  ///
+						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
+						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
+						saving("$output/edu_quint", replace)
+
+	grc1leg2  		 "$output/edu_quint.gph", ///
+						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() title("C", size(huge)) ///
+						saving("$output/educont", replace)
+
+	graph export "$output/edu_quint.emf", as(emf) replace
+
+
+* graph D - education activities
 	graph bar		edu_04 edu_02 edu_03 edu_05 [pweight = hhw] if country == 1 ///
 						, over(wave, relabel (1 "May" 2 "June" 3 "July") label(labsize(vlarge))) over(country, label(labsize(vlarge))) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
@@ -533,37 +564,10 @@
 
 	grc1leg2  		 "$output/educont_eth.gph" "$output/educont_mwi.gph" ///
 						"$output/educont_nga.gph" "$output/educont_uga.gph", ///
-						col(4) iscale(.5) commonscheme imargin(0 0 0 0) legend() title("C", size(huge)) ///
+						col(4) iscale(.5) commonscheme imargin(0 0 0 0) legend() title("D", size(huge)) ///
 						saving("$output/educont", replace)
 
 	graph export 	"$output/educont.emf", as(emf) replace
-
-
-* graph D - education and food
-	gen				edu_act_01 = edu_act if quint == 1
-	gen				edu_act_02 = edu_act if quint == 2
-	gen				edu_act_03 = edu_act if quint == 3
-	gen				edu_act_04 = edu_act if quint == 4
-	gen				edu_act_05 = edu_act if quint == 5
-
-	colorpalette edkblue khaki, ipolate(15, power(1)) locals
-
-	graph bar 		(mean) edu_act_01 edu_act_02 edu_act_03 edu_act_04 edu_act_05 ///
-						[pweight = hhw], over(country, label(labsize(vlarge)))  ///
-						ytitle("Households with children engaged in learning activities (%)", size(vlarge)) ///
-						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
-						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
-						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
-						bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First Quintile")  ///
-						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
-						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
-						saving("$output/edu_quint", replace)
-
-	grc1leg2  		 "$output/edu_quint.gph", ///
-						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() title("D", size(huge)) ///
-						saving("$output/educont", replace)
-
-	graph export "$output/edu_quint.emf", as(emf) replace
 
 
 

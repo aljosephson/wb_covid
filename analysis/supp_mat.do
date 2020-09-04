@@ -267,6 +267,80 @@ restore
 * 2 - create tables for Fig. 2
 * **********************************************************************
 	
+* **********************************************************************
+* 2a - create Table S8 and S9 for Fig. 2A
+* **********************************************************************
+
+* table S8
+
+* summary statistics on losses of income
+
+	preserve
 	
+	keep if			wave == 1
+
+	total 			dwn farm_dwn bus_dwn wage_dwn remit_dwn ///
+						other_dwn [pweight = phw], over (country)
+
+	mean 			dwn farm_dwn bus_dwn wage_dwn remit_dwn ///
+						other_dwn [pweight = phw], over (country)
+						
+	restore 
+
+* table S9 					
+						
+* regressions for income loss: farm 
+
+	reg 			farm_dwn i.sector ib(2).country [pweight = phw] 
+	
+* Wald test for differences between other countries
+		test			1.country = 3.country
+		test			1.country = 4.country
+		test			3.country = 4.country
+
+* regressions for income loss: business  
+
+	reg 			bus_dwn i.sector ib(2).country [pweight = phw] 
+	
+* Wald test for differences between other countries
+		test			1.country = 3.country
+		test			1.country = 4.country
+		test			3.country = 4.country
+
+* regressions for income loss: wage   
+
+	reg 			wage_dwn i.sector ib(2).country [pweight = phw] 
+	
+* Wald test for differences between other countries
+		test			1.country = 3.country
+		test			1.country = 4.country
+		test			3.country = 4.country
+
+* regressions for income loss: remittances   
+
+	reg 			remit_dwn i.sector ib(2).country [pweight = phw] 
+	
+* Wald test for differences between other countries
+		test			1.country = 3.country
+		test			1.country = 4.country
+		test			3.country = 4.country
+
+* regressions for income loss: other   
+
+	reg 			other_dwn i.sector ib(2).country [pweight = phw] 
+	
+* Wald test for differences between other countries
+		test			1.country = 3.country
+		test			1.country = 4.country
+		test			3.country = 4.country
+
+
+* **********************************************************************
+* 2b - create Table S10 AND for Fig. 2B
+* **********************************************************************
+
+
+
+
 	
 	

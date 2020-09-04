@@ -153,7 +153,7 @@
 * 2 - income and fies graphs
 * **********************************************************************
 
-*** change work_dwn back to farm and fidm
+*** change work_dwn back to farm and firm
 
 * graph A - income loss by sector
 	preserve

@@ -258,7 +258,11 @@ preserve
 * table S7
 
 * totals by myths
-	total 			myth_01 myth_02 myth_03 myth_04 myth_05 [pweight = phw], over(country)
+	total 			myth_01  [pweight = phw], over(country)
+	total 			myth_02  [pweight = phw], over(country)
+	total 			myth_03  [pweight = phw], over(country)
+	total 			myth_04  [pweight = phw], over(country)
+	total 			myth_05  [pweight = phw], over(country)
 	
 restore
 	
@@ -268,30 +272,31 @@ restore
 * **********************************************************************
 	
 * **********************************************************************
-* 2a - create Table S8 and S9 for Fig. 2A
+* 2a - create Table S8-S10 for Fig. 2A
 * **********************************************************************
 
 * table S8
 
 * summary statistics on losses of income
 
-	preserve
+preserve
 	
 	keep if			wave == 1
 
-	total 			dwn farm_dwn bus_dwn wage_dwn remit_dwn ///
-						other_dwn [pweight = phw], over (country)
-
-	mean 			dwn farm_dwn bus_dwn wage_dwn remit_dwn ///
-						other_dwn [pweight = phw], over (country)
+	total 			dwn [pweight = phw] 
+	total 			farm_dwn [pweight = phw] 
+	total 			bus_dwn [pweight = phw] 
+	total 			wage_dwn [pweight = phw] 
+	total 			remit_dwn [pweight = phw] 
+	total 			other_dwn [pweight = phw] 
 						
-	restore 
+restore 
 
-* table S9 					
+* table S9 - regressions for cross-country comparisons 					
 						
 * regressions for income loss: farm 
 
-	reg 			farm_dwn i.sector ib(2).country [pweight = phw] 
+	reg 			farm_dwn ib(2).country [pweight = phw] if wave == 1 
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -300,7 +305,7 @@ restore
 
 * regressions for income loss: business  
 
-	reg 			bus_dwn i.sector ib(2).country [pweight = phw] 
+	reg 			bus_dwn ib(2).country [pweight = phw] if wave == 1 
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -309,7 +314,7 @@ restore
 
 * regressions for income loss: wage   
 
-	reg 			wage_dwn i.sector ib(2).country [pweight = phw] 
+	reg 			wage_dwn ib(2).country [pweight = phw] if wave == 1 
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -318,7 +323,7 @@ restore
 
 * regressions for income loss: remittances   
 
-	reg 			remit_dwn i.sector ib(2).country [pweight = phw] 
+	reg 			remit_dwn ib(2).country [pweight = phw] if wave == 1 
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -327,20 +332,321 @@ restore
 
 * regressions for income loss: other   
 
-	reg 			other_dwn i.sector ib(2).country [pweight = phw] 
+	reg 			other_dwn ib(2).country [pweight = phw] if wave == 1 
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
 		test			1.country = 4.country
 		test			3.country = 4.country
 
+* table s10 - regressions for intra-country comparisons: rural urban 	
+
+* regressions for income loss: farm 
+
+	reg 			farm_dwn i.sector [pweight = phw] if country == 1 & wave == 1
+	reg 			farm_dwn i.sector [pweight = phw] if country == 2 & wave == 1
+	reg 			farm_dwn i.sector [pweight = phw] if country == 3 & wave == 1
+	reg 			farm_dwn i.sector [pweight = phw] if country == 4 & wave == 1
+	
+* regressions for income loss: business 
+
+	reg 			bus_dwn i.sector [pweight = phw] if country == 1 & wave == 1
+	reg 			bus_dwn i.sector [pweight = phw] if country == 2 & wave == 1
+	reg 			bus_dwn i.sector [pweight = phw] if country == 3 & wave == 1
+	reg 			bus_dwn i.sector [pweight = phw] if country == 4 & wave == 1
+	
+* regressions for income loss: wage  
+
+	reg 			wage_dwn i.sector [pweight = phw] if country == 1 & wave == 1
+	reg 			wage_dwn i.sector [pweight = phw] if country == 2 & wave == 1
+	reg 			wage_dwn i.sector [pweight = phw] if country == 3 & wave == 1
+	reg 			wage_dwn i.sector [pweight = phw] if country == 4 & wave == 1
+	
+* regressions for income loss: wage  
+
+	reg 			remit_dwn i.sector [pweight = phw] if country == 1 & wave == 1
+	reg 			remit_dwn i.sector [pweight = phw] if country == 2 & wave == 1
+	reg 			remit_dwn i.sector [pweight = phw] if country == 3 & wave == 1
+	reg 			remit_dwn i.sector [pweight = phw] if country == 4 & wave == 1
+	
+* regressions for income loss: wage  
+
+	reg 			other_dwn i.sector [pweight = phw] if country == 1 & wave == 1
+	reg 			other_dwn i.sector [pweight = phw] if country == 2 & wave == 1
+	reg 			other_dwn i.sector [pweight = phw] if country == 3 & wave == 1
+	reg 			other_dwn i.sector [pweight = phw] if country == 4 & wave == 1
+	
 
 * **********************************************************************
-* 2b - create Table S10 AND for Fig. 2B
+* 2b - create Table S11 for Fig. 2B
 * **********************************************************************
 
+* table s11 
 
-
-
+preserve 
 	
+	drop if bus_emp_inc == -99
+	drop if bus_emp_inc == -98
+
+* regression for business revenue loss - by country and wave 
 	
+	ologit bus_emp_inc i.wave ib(2).country [pweight = phw]
+	
+* Wald test for differences between other countries
+	
+		test			1.country = 3.country
+		test			1.country = 4.country
+		test			3.country = 4.country	
+		
+* Wald test for differences between other wave
+		
+		test 			2.wave = 3.wave 
+
+restore 
+
+
+* **********************************************************************
+* 2c - create Table S12-S14 for Fig. 2C
+* **********************************************************************
+
+* table s12
+
+* summary statistics on moderate and severe food insecurity: means and totals
+
+preserve
+	
+	drop if country == 1 & wave == 2
+	drop if country == 2 & wave == 1
+	
+* means of food insecurity status 	
+	mean p_mod [pweight = wt_18] 
+	mean p_sev [pweight = wt_18] 
+	mean p_mod [pweight = wt_18], over (country) 
+	mean p_sev [pweight = wt_18], over (country) 
+	
+* totals of food insecurity status 	
+	total p_mod [pweight = wt_18] 
+	total p_sev [pweight = wt_18] 
+	total p_mod [pweight = wt_18], over (country)  
+	total p_sev [pweight = wt_18], over (country)  
+	
+restore 
+	
+* table s13 
+
+* regression for moderate food insecurity 
+
+preserve
+	
+	drop if country == 1 & wave == 2
+	drop if country == 2 & wave == 1
+	
+	reg p_mod ib(5).quint ib(2).country [pweight = wt_18]
+	
+* Wald test for differences between other countries
+	
+		test			1.country = 3.country
+		test			1.country = 4.country
+		test			3.country = 4.country	
+
+* table s14 		
+		
+* regression for moderate food insecurity 
+	
+	reg p_sev ib(5).quint ib(2).country [pweight = wt_18]
+	
+* Wald test for differences between other countries
+	
+		test			1.country = 3.country
+		test			1.country = 4.country
+		test			3.country = 4.country	
+				
+		
+restore 
+	
+
+* **********************************************************************
+* 2D - create Table S15 for Fig. 2C
+* **********************************************************************
+
+* table s15
+
+* regression for concerns and food insecurity: moderate  	
+
+preserve
+	
+	drop if			country == 2 & wave == 1
+	
+	reg p_mod concern_01 concern_02 ib(5).quint ib(2).country [pweight = wt_18]
+	
+* Wald test for differences between other countries
+	
+		test			1.country = 4.country
+		
+restore 
+
+* table s16
+
+* regression for concerns and food insecurity: severe  	
+
+preserve
+	
+	drop if			country == 2 & wave == 1
+	
+	reg p_sev concern_01 concern_02 ib(5).quint ib(2).country [pweight = wt_18]
+	
+* Wald test for differences between other countries
+	
+		test			1.country = 4.country
+		
+restore 
+
+
+* table s17
+
+* summary statistics for concerns 
+
+preserve
+	
+	drop if			country == 2 & wave == 1
+	
+	total concern_01 [pweight = wt_18]
+	total concern_02 [pweight = wt_18]		
+	total concern_01 [pweight = wt_18], over (country)  
+	total concern_02 [pweight = wt_18], over (country)  			
+	
+restore 
+
+
+* figure s1 
+* will label as s18 
+preserve
+
+	drop if			country == 2 & wave == 1
+
+	gen				p_mod_01 = p_mod if quint == 1
+	gen				p_mod_02 = p_mod if quint == 2
+	gen				p_mod_03 = p_mod if quint == 3
+	gen				p_mod_04 = p_mod if quint == 4
+	gen				p_mod_05 = p_mod if quint == 5
+
+	colorpalette edkblue khaki, ipolate(15, power(1)) locals
+
+	graph bar 		(mean) p_mod_01 p_mod_02 p_mod_03 p_mod_04 p_mod_05 ///
+						[pweight = wt_18], over(concern_01, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
+						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
+						ytitle("Prevalence of moderate or severe food insecurity", size(vlarge))  ///
+						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
+						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
+						bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First Quintile")  ///
+						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
+						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
+						title("Concerned that family/self will fall ill with COVID-19", size(vlarge)) ///
+						saving("$output/fiesq1_modsev", replace)
+						
+	graph bar 		(mean) p_mod_01 p_mod_02 p_mod_03 p_mod_04 p_mod_05 ///
+						[pweight = wt_18], over(concern_02, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
+						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
+						ytitle("Prevalence of moderate or severe food insecurity", size(vlarge))  ///
+						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
+						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
+						bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First Quintile")  ///
+						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
+						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
+						title("Concerned about the financial threat of COVID-19", size(vlarge)) ///
+						saving("$output/fiesq2_modsev", replace)
+
+	restore
+
+	grc1leg2 		"$output/fiesq1_modsev.gph" "$output/fiesq2_modsev.gph", ///
+						col(3) iscale(.5) pos(6) commonscheme  ///
+						saving("$output/fiesquintetc1.gph", replace)
+
+	graph export 	"$output/fiesquintetc1.emf", as(emf) replace
+	
+* figure s2 
+* will label as s19 
+preserve
+
+	drop if			country == 2 & wave == 1
+
+	gen				p_sev_01 = p_sev if quint == 1
+	gen				p_sev_02 = p_sev if quint == 2
+	gen				p_sev_03 = p_sev if quint == 3
+	gen				p_sev_04 = p_sev if quint == 4
+	gen				p_sev_05 = p_sev if quint == 5
+
+	colorpalette edkblue khaki, ipolate(15, power(1)) locals
+
+	graph bar 		(mean) p_sev_01 p_sev_02 p_sev_03 p_sev_04 p_sev_05 ///
+						[pweight = wt_18], over(concern_01, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
+						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
+						ytitle("Prevalence of severe food insecurity", size(vlarge))  ///
+						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
+						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
+						bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First Quintile")  ///
+						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
+						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
+						title("Concerned that family/self will fall ill with COVID-19", size(vlarge)) ///
+						saving("$output/fiesq1_sev", replace)
+						
+	graph bar 		(mean) p_sev_01 p_sev_02 p_sev_03 p_sev_04 p_sev_05 ///
+						[pweight = wt_18], over(concern_02, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
+						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
+						ytitle("Prevalence of severe food insecurity", size(vlarge))  ///
+						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
+						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
+						bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First Quintile")  ///
+						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
+						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
+						title("Concerned about the financial threat of COVID-19", size(vlarge)) ///
+						saving("$output/fiesq2_sev", replace)
+
+	restore
+
+	grc1leg2 		"$output/fiesq1_sev.gph" "$output/fiesq2_sev.gph", ///
+						col(3) iscale(.5) pos(6) commonscheme  ///
+						saving("$output/fiesquintetc2.gph", replace)
+
+	graph export 	"$output/fiesquintetc12.emf", as(emf) replace
+
+
+* table s20 
+
+* regression for concern 1, by quintile and country 
+
+preserve
+	
+	drop if			country == 2 & wave == 1
+	
+	reg concern_01 ib(5).quint ib(2).country [pweight = wt_18]
+	
+* Wald test for differences between other countries
+	
+		test			1.country = 4.country
+		
+restore 
+
+
+* table s21 
+
+preserve
+	
+	drop if			country == 2 & wave == 1
+	
+	reg concern_02 ib(5).quint ib(2).country [pweight = wt_18]
+	
+* Wald test for differences between other countries
+	
+		test			1.country = 4.country
+		
+restore 
+
+
+* **********************************************************************
+* 3 - create tables for Fig. 3
+* **********************************************************************
+	
+* **********************************************************************
+* 3a - create Table S22... for Fig. 3A
+* **********************************************************************

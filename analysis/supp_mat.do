@@ -175,7 +175,7 @@ R^2 should be 4 digits: 0.181
 * 1c - create tables S3-S5 for Fig. 1C
 * **********************************************************************
 
-* table S3
+*** table S3 ***
 
 * handwashed with Soap More Often Since Outbreak
 	reg 			bh_01 ib(2).country [pweight = phw] if wave == 1
@@ -200,14 +200,12 @@ R^2 should be 4 digits: 0.181
 		test			1.country = 3.country
 		test			1.country = 4.country
 		test			3.country = 4.country
-
 		
-* table S4		
+*** table S4 ***		
 		
 * percentage over time for Malawi and Uganda
 	mean			bh_01 bh_02 bh_03 [pweight = phw] if country == 2 | ///
 						country == 4, over(country wave)
-		
 
 * table S5
 
@@ -238,7 +236,7 @@ preserve
 	    replace 		`v' = . if `v' == 3
 	}	
 
-* table S6
+*** table S6 ***
 	
 * lemon and alcohol can be used as sanitizers against coronavirus
 	reg 			myth_01 i.country [pweight = phw]
@@ -255,7 +253,7 @@ preserve
 * corona virus is just common flu
 	reg 			myth_05 i.country [pweight = phw]
 
-* table S7
+*** table S7 ***
 
 * totals by myths
 	total 			myth_01  [pweight = phw], over(country)
@@ -270,33 +268,27 @@ restore
 * **********************************************************************
 * 2 - create tables for Fig. 2
 * **********************************************************************
-	
+
+
 * **********************************************************************
 * 2a - create Table S8-S10 for Fig. 2A
 * **********************************************************************
 
-* table S8
-
+*** table S8 ***
 * summary statistics on losses of income
+	total 			dwn [pweight = phw] if wave == 1 
+	total 			farm_dwn [pweight = phw] if wave == 1 
+	total 			bus_dwn [pweight = phw] if wave == 1 
+	total 			wage_dwn [pweight = phw] if wave == 1 
+	total 			remit_dwn [pweight = phw] if wave == 1  
+	total 			other_dwn [pweight = phw]  if wave == 1 
 
-preserve
-	
-	keep if			wave == 1
 
-	total 			dwn [pweight = phw] 
-	total 			farm_dwn [pweight = phw] 
-	total 			bus_dwn [pweight = phw] 
-	total 			wage_dwn [pweight = phw] 
-	total 			remit_dwn [pweight = phw] 
-	total 			other_dwn [pweight = phw] 
-						
-restore 
-
-* table S9 - regressions for cross-country comparisons 					
-						
+*** table S9 ***				
+* regressions for cross-country comparisons 
+					
 * regressions for income loss: farm 
-
-	reg 			farm_dwn ib(2).country [pweight = phw] if wave == 1 
+	reg 			farm_dwn ib(2).country [pweight = hhw] if wave == 1 
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -304,8 +296,7 @@ restore
 		test			3.country = 4.country
 
 * regressions for income loss: business  
-
-	reg 			bus_dwn ib(2).country [pweight = phw] if wave == 1 
+	reg 			bus_dwn ib(2).country [pweight = hhw] if wave == 1 
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -313,8 +304,7 @@ restore
 		test			3.country = 4.country
 
 * regressions for income loss: wage   
-
-	reg 			wage_dwn ib(2).country [pweight = phw] if wave == 1 
+	reg 			wage_dwn ib(2).country [pweight = hhw] if wave == 1 
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -322,8 +312,7 @@ restore
 		test			3.country = 4.country
 
 * regressions for income loss: remittances   
-
-	reg 			remit_dwn ib(2).country [pweight = phw] if wave == 1 
+	reg 			remit_dwn ib(2).country [pweight = hhw] if wave == 1 
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -331,57 +320,35 @@ restore
 		test			3.country = 4.country
 
 * regressions for income loss: other   
-
-	reg 			other_dwn ib(2).country [pweight = phw] if wave == 1 
+	reg 			other_dwn ib(2).country [pweight = hhw] if wave == 1 
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
 		test			1.country = 4.country
 		test			3.country = 4.country
 
-* table s10 - regressions for intra-country comparisons: rural urban 	
+*** table s10 ***
+* regressions comparing rural urban, controlling for country
 
 * regressions for income loss: farm 
-
-	reg 			farm_dwn i.sector [pweight = phw] if country == 1 & wave == 1
-	reg 			farm_dwn i.sector [pweight = phw] if country == 2 & wave == 1
-	reg 			farm_dwn i.sector [pweight = phw] if country == 3 & wave == 1
-	reg 			farm_dwn i.sector [pweight = phw] if country == 4 & wave == 1
+	reg 			farm_dwn i.sector ib(2).country [pweight = hhw] if wave == 1
 	
 * regressions for income loss: business 
-
-	reg 			bus_dwn i.sector [pweight = phw] if country == 1 & wave == 1
-	reg 			bus_dwn i.sector [pweight = phw] if country == 2 & wave == 1
-	reg 			bus_dwn i.sector [pweight = phw] if country == 3 & wave == 1
-	reg 			bus_dwn i.sector [pweight = phw] if country == 4 & wave == 1
+	reg 			bus_dwn i.sector ib(2).country [pweight = hhw] if wave == 1
 	
 * regressions for income loss: wage  
-
-	reg 			wage_dwn i.sector [pweight = phw] if country == 1 & wave == 1
-	reg 			wage_dwn i.sector [pweight = phw] if country == 2 & wave == 1
-	reg 			wage_dwn i.sector [pweight = phw] if country == 3 & wave == 1
-	reg 			wage_dwn i.sector [pweight = phw] if country == 4 & wave == 1
+	reg 			wage_dwn i.sector ib(2).country [pweight = hhw] if wave == 1
 	
 * regressions for income loss: wage  
-
-	reg 			remit_dwn i.sector [pweight = phw] if country == 1 & wave == 1
-	reg 			remit_dwn i.sector [pweight = phw] if country == 2 & wave == 1
-	reg 			remit_dwn i.sector [pweight = phw] if country == 3 & wave == 1
-	reg 			remit_dwn i.sector [pweight = phw] if country == 4 & wave == 1
+	reg 			remit_dwn i.sector ib(2).country [pweight = hhw] if wave == 1
 	
 * regressions for income loss: wage  
-
-	reg 			other_dwn i.sector [pweight = phw] if country == 1 & wave == 1
-	reg 			other_dwn i.sector [pweight = phw] if country == 2 & wave == 1
-	reg 			other_dwn i.sector [pweight = phw] if country == 3 & wave == 1
-	reg 			other_dwn i.sector [pweight = phw] if country == 4 & wave == 1
+	reg 			other_dwn i.sector ib(2).country [pweight = hhw] if wave == 1
 	
 
 * **********************************************************************
 * 2b - create Table S11 for Fig. 2B
 * **********************************************************************
-
-* table s11 
 
 preserve 
 	
@@ -389,17 +356,14 @@ preserve
 	drop if bus_emp_inc == -98
 
 * regression for business revenue loss - by country and wave 
-	
 	ologit bus_emp_inc i.wave ib(2).country [pweight = phw]
 	
 * Wald test for differences between other countries
-	
 		test			1.country = 3.country
 		test			1.country = 4.country
 		test			3.country = 4.country	
 		
 * Wald test for differences between other wave
-		
 		test 			2.wave = 3.wave 
 
 restore 
@@ -409,8 +373,7 @@ restore
 * 2c - create Table S12-S14 for Fig. 2C
 * **********************************************************************
 
-* table s12
-
+*** table s12 ***
 * summary statistics on moderate and severe food insecurity: means and totals
 
 preserve
@@ -432,36 +395,29 @@ preserve
 	
 restore 
 	
-* table s13 
-
-* regression for moderate food insecurity 
-
+*** table s13 ***
 preserve
 	
 	drop if country == 1 & wave == 2
 	drop if country == 2 & wave == 1
-	
+
+* regression for moderate food insecurity 
 	reg p_mod ib(5).quint ib(2).country [pweight = wt_18]
 	
 * Wald test for differences between other countries
-	
 		test			1.country = 3.country
 		test			1.country = 4.country
 		test			3.country = 4.country	
 
-* table s14 		
-		
+*** table s14 ***		
 * regression for moderate food insecurity 
-	
 	reg p_sev ib(5).quint ib(2).country [pweight = wt_18]
 	
 * Wald test for differences between other countries
-	
 		test			1.country = 3.country
 		test			1.country = 4.country
 		test			3.country = 4.country	
-				
-		
+					
 restore 
 	
 
@@ -469,8 +425,7 @@ restore
 * 2D - create Table S15 for Fig. 2C
 * **********************************************************************
 
-* table s15
-
+*** table s15 ***
 * regression for concerns and food insecurity: moderate  	
 
 preserve
@@ -480,13 +435,11 @@ preserve
 	reg p_mod concern_01 concern_02 ib(5).quint ib(2).country [pweight = wt_18]
 	
 * Wald test for differences between other countries
-	
 		test			1.country = 4.country
 		
 restore 
 
-* table s16
-
+*** table s16 ***
 * regression for concerns and food insecurity: severe  	
 
 preserve
@@ -496,14 +449,12 @@ preserve
 	reg p_sev concern_01 concern_02 ib(5).quint ib(2).country [pweight = wt_18]
 	
 * Wald test for differences between other countries
-	
 		test			1.country = 4.country
 		
 restore 
 
 
-* table s17
-
+*** table s17 ***
 * summary statistics for concerns 
 
 preserve
@@ -518,8 +469,8 @@ preserve
 restore 
 
 
-* figure s1 
-* will label as s18 
+*** figure s1 ***
+
 preserve
 
 	drop if			country == 2 & wave == 1
@@ -563,9 +514,9 @@ preserve
 						saving("$output/fiesquintetc1.gph", replace)
 
 	graph export 	"$output/fiesquintetc1.emf", as(emf) replace
-	
-* figure s2 
-* will label as s19 
+
+* figure s2 ***
+ 
 preserve
 
 	drop if			country == 2 & wave == 1
@@ -611,8 +562,7 @@ preserve
 	graph export 	"$output/fiesquintetc12.emf", as(emf) replace
 
 
-* table s20 
-
+*** table s20 ***
 * regression for concern 1, by quintile and country 
 
 preserve
@@ -622,13 +572,12 @@ preserve
 	reg concern_01 ib(5).quint ib(2).country [pweight = wt_18]
 	
 * Wald test for differences between other countries
-	
 		test			1.country = 4.country
 		
 restore 
 
 
-* table s21 
+*** table s21 ***
 
 preserve
 	
@@ -637,7 +586,6 @@ preserve
 	reg concern_02 ib(5).quint ib(2).country [pweight = wt_18]
 	
 * Wald test for differences between other countries
-	
 		test			1.country = 4.country
 		
 restore 
@@ -646,7 +594,165 @@ restore
 * **********************************************************************
 * 3 - create tables for Fig. 3
 * **********************************************************************
+
+
+* **********************************************************************
+* 3a - create Table S22-S24 for Fig. 3A
+* **********************************************************************
+
+*** table s22 ***
+preserve
+
+	drop if country == 1 & wave == 1
+	drop if country == 1 & wave == 2
+	drop if country == 3 & wave == 1
+
+	replace			cope_03 = 1 if cope_03 == 1 | cope_04 == 1
+	replace			cope_05 = 1 if cope_05 == 1 | cope_06 == 1 | cope_07 == 1
+
+* total and mean for any
+	total cope_any [pweight = hhw]
+	mean cope_any [pweight = hhw]
+
+* total and mean for relied on savings
+	total cope_11 [pweight = hhw]
+	mean cope_11 [pweight = hhw]
+
+* total and mean for sale of assets
+	total cope_01 [pweight = hhw]
+	mean cope_01 [pweight = hhw]
+
+* total and mean for reduced food consumption
+	total cope_09 [pweight = hhw]
+	mean cope_09 [pweight = hhw]
+
+* total and mean for reduced non_food consumption
+	total cope_10 [pweight = hhw]
+	mean cope_10 [pweight = hhw]
+
+* total and mean for received assistance from friends & family
+	total cope_03 [pweight = hhw]
+	mean cope_03 [pweight = hhw]
+
+* total and mean for recieved any assistance
+	total asst_any [pweight = hhw]
+	mean asst_any [pweight = hhw]
+
+*** table S23 ***				
+* regressions for cross-country comparisons 
+					
+* regressions for relied on savings
+	reg 			cope_11 ib(2).country [pweight = hhw]
 	
+* Wald test for differences between other countries
+		test			1.country = 3.country
+		test			1.country = 4.country
+		test			3.country = 4.country
+
+* regressions for sale of assets
+	reg 			cope_01 ib(2).country [pweight = hhw]
+	
+* Wald test for differences between other countries
+		test			1.country = 3.country
+		test			1.country = 4.country
+		test			3.country = 4.country
+
+* regressions for reduced food consumption 
+	reg 			cope_09 ib(2).country [pweight = hhw] 
+	
+* Wald test for differences between other countries
+		test			1.country = 3.country
+		test			1.country = 4.country
+		test			3.country = 4.country
+
+* regressions for reduced non_food consumption
+	reg 			cope_10 ib(2).country [pweight = hhw]
+	
+* Wald test for differences between other countries
+		test			1.country = 3.country
+		test			1.country = 4.country
+		test			3.country = 4.country
+
+* regressions for received assistance from friends & family  
+	reg 			cope_03 ib(2).country [pweight = hhw] 
+	
+* Wald test for differences between other countries
+		test			1.country = 3.country
+		test			1.country = 4.country
+		test			3.country = 4.country
+
+* regressions for recieved any assistance
+	reg 			asst_any ib(2).country [pweight = hhw]
+	
+* Wald test for differences between other countries
+		test			1.country = 3.country
+		test			1.country = 4.country
+		test			3.country = 4.country
+		
+		
+*** table s24 ***
+* regressions comparing rural urban
+
+* regressions for relied on savings
+	reg 			cope_11 i.sector ib(2).country [pweight = hhw]
+
+* regressions for sale of assets
+	reg 			cope_01 i.sector ib(2).country [pweight = hhw]
+
+* regressions for reduced food consumption 
+	reg 			cope_09 i.sector ib(2).country [pweight = hhw]
+
+* regressions for reduced non_food consumption
+	reg 			cope_10 i.sector ib(2).country [pweight = hhw]
+
+* regressions for received assistance from friends & family 
+	reg 			cope_03 i.sector ib(2).country [pweight = hhw]
+
+* regressions for recieved any assistance 
+	reg 			asst_any i.sector ib(2).country [pweight = hhw]
+	
+restore
+
+
 * **********************************************************************
-* 3a - create Table S22... for Fig. 3A
+* 3b - create Table S25-S26 for Fig. 3B
 * **********************************************************************
+
+*** table s25 ***
+* table of means and totals
+
+* total and mean for access to medicine
+	total ac_med [pweight = phw] if wave == 1
+	mean ac_med [pweight = phw] if wave == 1
+
+* total and mean for access to staple
+	total ac_staple [pweight = phw] if wave == 1
+	mean ac_staple [pweight = phw] if wave == 1
+
+* total and mean for access to soap
+	total ac_soap [pweight = phw] if wave == 1
+	mean ac_soap [pweight = phw] if wave == 1
+
+*** table s26 ***
+* regressions across quintiles
+
+* regression on access to medicine
+	reg			ac_med i.quint [pweight = phw] if wave == 1
+
+* regression on access to staple
+	reg			ac_staple i.quint [pweight = phw] if wave == 1
+	
+* regression on access to soap
+	reg			ac_soap i.quint [pweight = phw] if wave == 1
+
+
+* **********************************************************************
+* 3c - create Table S25-S26 for Fig. 3C
+* **********************************************************************
+
+
+mean sch_child [pweight = shw] if wave == 1
+
+mean edu_act [pweight = shw] if wave == 1
+
+mean edu_cont [pweight = shw] if wave == 1

@@ -344,10 +344,6 @@
 	replace			cope_03 = 1 if cope_03 == 1 | cope_04 == 1
 	replace			cope_05 = 1 if cope_05 == 1 | cope_06 == 1 | cope_07 == 1
 	
-	total cope_11 cope_01 cope_09 cope_10  cope_03 asst_any [pweight = hhw]
-	total cope_any [pweight = hhw]
-	mean cope_any [pweight = hhw]
-	
 	graph bar		(mean) cope_11 cope_01 cope_09 cope_10 cope_03 asst_any  ///
 						[pweight = hhw], over(sector, ///
 						label (labsize(large))) over(country, label (labsize(vlarge))) ///
@@ -370,7 +366,7 @@
 	graph export 	"$output/cope.emf", as(emf) replace
 	
 	
-* graph A - access to med, food, soap
+* graph B - access to med, food, soap
 	gen				ac_med_01 = 1 if quint == 1 & ac_med == 0
 	gen				ac_med_02 = 1 if quint == 2 & ac_med == 0
 	gen				ac_med_03 = 1 if quint == 3 & ac_med == 0
@@ -571,7 +567,6 @@
 	graph export 	"$output/educont.emf", as(emf) replace
 
 
-
 * figure 3 - combine graphs
 * not using this code
 *	gr combine 			"$output/access.gph" "$output/cope.gph" ///
@@ -582,70 +577,11 @@
 
 *	graph export "$output/access_cope.pdf", as(pdf) replace
 
-* test safety net
-	graph bar		(sum) asst_food asst_cash asst_kind [pweight = phw], ///
-						over(wave)over(country, lab(labs(vlarge)))  ///
-						ytitle("Individuals recieving assistance (%)", size(vlarge)) ///
-						bar(1, color(teal*1.5)) bar(2, color(cranberry*1.5))  ///
-						bar(3, color(khaki*1.5) ) legend(label (1 "Food")  ///
-						label (2 "Cash") label (3 "In-kind") pos(6) col(3) size(medsmall)) ///
-						saving("$output/assist", replace)
-
-	grc1leg2  		 "$output/assist", ///
-						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() title("C", size(huge)) ///
-						saving("$output/assistance", replace)
-	
-	graph export "$output/assistance.png", as(png) replace
-
-
-
-* test safety net
-	graph bar		 asst_food asst_cash asst_kind [pweight = phw], ///
-						over(concern_02, relabel(1 "No Concern" 2 "Concerned")) over(country, lab(labs(vlarge)))  ///
-						ytitle("Individuals recieving assistance (%)", size(large)) ///
-						bar(1, color(teal*1.5)) bar(2, color(cranberry*1.5))  ///
-						bar(3, color(khaki*1.5) ) legend(label (1 "Food")  ///
-						label (2 "Cash") label (3 "In-kind") pos(6) col(3) size(medsmall)) ///
-						saving("$output/asst_concern", replace)
-
-	graph export "$output/asst_concern.png", as(png) replace
-	
-	
-* **********************************************************************
-* 4 - basic regressions
-* **********************************************************************
-
-* connect household roster to this household data in household panel
-* then we can do by gender or age to see % of those people in household facing that issue
-
-reg bh_01 i.farm_dwn i.sex i.sector i.country
-reg bh_01 i.bus_dwn i.sex i.sector i.country
-reg bh_01 i.bus_dwn age i.sex i.sector i.country
-reg bh_02 i.bus_dwn age i.sex i.sector i.country
-reg bh_03 i.bus_dwn age i.sex i.sector i.country
-
-
-	reg 			dwn_count age i.sex i.sector i.country
-	** robust to different measures of dwn (e.g. dwn)
-	*** urban areas associated with fewer losses of income, relative to urban areas
-	*** malawi, nigeria, and uganda all have more losses of income, relative to ethiopia
-	*** * possible measurement issues in ethiopia
-
-	reg 			edu_act i.sector i.sex i.country
-	reg 			edu_cont i.sector i.sex i.country
-	reg 			edu_act fies_count i.sector i.sex i.country
-	*** lower fies count - associated with educational activities
-
 * **********************************************************************
 * 4 - end matter, clean up to save
 * **********************************************************************
 
-compress
-describe
-summarize
-
-* save file
-	save			"$export/lsms_panel", replace
-
+	clear all
+	
 * close the log
 	log	close

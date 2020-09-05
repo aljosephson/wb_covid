@@ -2,7 +2,7 @@
 * Created on: September 2020 
 * Created by: amf
 * Edited by: jdm
-* Last edit: 3 September 2020 
+* Last edit: 5 September 2020 
 * Stata v.16.1
 
 * does
@@ -756,3 +756,10 @@ mean sch_child [pweight = shw] if wave == 1
 mean edu_act [pweight = shw] if wave == 1
 
 mean edu_cont [pweight = shw] if wave == 1
+
+* **********************************************************************
+* 3d - create Table S ... for Fig. 3D
+* **********************************************************************
+
+
+/*END*/

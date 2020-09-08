@@ -56,13 +56,13 @@
 						label (2 "Restricted travel") ///
 						label (3 "Closed schools") label (4 "Curfew/lockdown") ///
 						label (5 "Closed businesses") label (6 "Stopped social gatherings") ///
-						pos (6) col(3) size(medsmall)) saving("$output/restriction", replace)
+						pos (6) col(3) size(medsmall)) saving("$output/restrictiona", replace)
 
-	grc1leg2  		 "$output/restriction.gph", ///
+	grc1leg2  		 "$output/restrictiona.gph", ///
 						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
 						title("A", size(huge)) saving("$output/restriction", replace)
 
-	grc1leg2  		 "$output/restriction.gph", ///
+	grc1leg2  		 "$output/restrictiona.gph", ///
 						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
 						 saving("$output/restriction1", replace)						
 						
@@ -82,13 +82,13 @@
 						label (2 "Avoid physical contact") label (3 "Use masks/gloves") ///
 						label (4 "Stay at home") label (5 "Avoid crowds") ///
 						label (6 "Socially distance") pos (6) col(3) ///
-						size(medsmall)) saving("$output/knowledge", replace)
+						size(medsmall)) saving("$output/knowledgea", replace)
 
-	grc1leg2  		 "$output/knowledge.gph", ///
+	grc1leg2  		 "$output/knowledgea.gph", ///
 						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
 						title("B", size(huge)) saving("$output/knowledge", replace)
 
-	grc1leg2  		 "$output/knowledge.gph", ///
+	grc1leg2  		 "$output/knowledgea.gph", ///
 						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
 						saving("$output/knowledge1", replace)						
 						
@@ -106,13 +106,13 @@
 						legend(	label (1 "Increased hand washing") ///
 						label (2 "Avoided physical contact") ///
 						label (3 "Avoided crowds") pos(6) col(3) ///
-						size(medsmall)) saving("$output/behavior", replace)
+						size(medsmall)) saving("$output/behaviora", replace)
 
-	grc1leg2  		 "$output/behavior.gph", ///
+	grc1leg2  		 "$output/behaviora.gph", ///
 						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
 						title("C", size(huge)) saving("$output/behavior", replace)
 
-	grc1leg2  		 "$output/behavior.gph", ///
+	grc1leg2  		 "$output/behaviora.gph", ///
 						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
 						saving("$output/behavior1", replace)						
 						
@@ -143,15 +143,15 @@
 						bar(1, color(khaki*1.5) ) ///
 						bar(2, color(emerald*1.5) ) ///
 						legend( label (2 "True") label (1 "False") pos(6) col(2) ///
-						size(medsmall)) saving("$output/myth", replace)
+						size(medsmall)) saving("$output/mytha", replace)
 
 	restore
 	
-	grc1leg2  		 "$output/myth.gph", ///
+	grc1leg2  		 "$output/mytha.gph", ///
 						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
 						title("D", size(huge) span) saving("$output/myth", replace)
 
-	grc1leg2  		 "$output/myth.gph", ///
+	grc1leg2  		 "$output/mytha.gph", ///
 						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
 						 saving("$output/myth1", replace)						
 						
@@ -189,15 +189,15 @@
 						bar(4, color(cranberry*1.5)) bar(5, color(purple*1.5)) ///
 						legend( label (1 "Farm income") label (2 "Business income") ///
 						label (3 "Wage income") label (4 "Remittances") label (5 "All else") ///
-						pos(6) col(3) size(medsmall)) saving("$output/income_all", replace)
+						pos(6) col(3) size(medsmall)) saving("$output/income_alla", replace)
 
 	restore
 	
-	grc1leg2 		"$output/income_all.gph" , ///
+	grc1leg2 		"$output/income_alla.gph" , ///
 						col(3) iscale(.5) commonscheme ///
 						title("A", size(huge)) saving("$output/income.gph", replace)
 
-	grc1leg2 		"$output/income_all.gph" , ///
+	grc1leg2 		"$output/income_alla.gph" , ///
 						col(3) iscale(.5) commonscheme ///
 						 saving("$output/income1.gph", replace)						
 						
@@ -268,7 +268,7 @@
 	grc1leg2 		"$output/eth_bus_inc.gph" "$output/mwi_bus_inc.gph" ///
 						"$output/nga_bus_inc.gph" "$output/uga_bus_inc.gph", ///
 						col(1) iscale(.5) commonscheme imargin(0 0 0 0)  ///
-						saving("$output/bus_emp_inc", replace)
+						saving("$output/bus_emp_inc1", replace)
 
 	graph export 	"$output/bus_emp_inc.emf", as(emf) replace
 	graph export 	"$output/bus_emp_inc1.eps", as(eps) replace
@@ -397,14 +397,14 @@
 						label (3 "Reduced food cons.") label (4 "Reduced non-food cons.") ///
 						label (5 "Help from family") ///
 						label (6 "Recieved assistance") size(medsmall) pos(6) col(3)) ///
-						saving("$output/cope_all.gph", replace)
+						saving("$output/cope_alla.gph", replace)
 
 	restore
 
-	grc1leg2 		"$output/cope_all.gph", col(4) iscale(.5) commonscheme ///
+	grc1leg2 		"$output/cope_alla.gph", col(4) iscale(.5) commonscheme ///
 						title("A", size(huge)) saving("$output/cope.gph", replace)
 
-	grc1leg2 		"$output/cope_all.gph", col(4) iscale(.5) commonscheme ///
+	grc1leg2 		"$output/cope_alla.gph", col(4) iscale(.5) commonscheme ///
 						 saving("$output/cope1.gph", replace)						
 						
 	graph export 	"$output/cope.emf", as(emf) replace
@@ -565,13 +565,13 @@
 						bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First Quintile")  ///
 						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
 						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
-						saving("$output/edu_quint", replace)
+						saving("$output/edu_quinta", replace)
 
-	grc1leg2  		 "$output/edu_quint.gph", ///
+	grc1leg2  		 "$output/edu_quinta.gph", ///
 						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() title("C", size(huge)) ///
 						saving("$output/edu_quint", replace)
 						
-	grc1leg2  		 "$output/edu_quint.gph", ///
+	grc1leg2  		 "$output/edu_quinta.gph", ///
 						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend()  ///
 						saving("$output/edu_quint1", replace)
 

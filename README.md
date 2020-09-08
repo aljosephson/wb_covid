@@ -1,4 +1,4 @@
-# wb_covid
+# Microeconomic impacts of COVID-19 in Africa: Replication Code
  This README describes the directory structure & should enable users to replicate all tables and figures for work related to the World Bank LSMS and World Bank COVID surveys. 
 
  ## Index
@@ -11,9 +11,8 @@
 ## Introduction
 
 Contributors:
-* Jeffrey D. Michler
 * Anna Josephson
-* Talip Kilic
+* Jeffrey D. Michler
 
 As described in more detail below, scripts various
 go through each step, from cleaning raw data to analysis.

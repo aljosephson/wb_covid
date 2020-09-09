@@ -56,13 +56,19 @@
 						label (2 "Restricted travel") ///
 						label (3 "Closed schools") label (4 "Curfew/lockdown") ///
 						label (5 "Closed businesses") label (6 "Stopped social gatherings") ///
-						pos (6) col(3) size(medsmall)) saving("$output/restriction", replace)
+						pos (6) col(3) size(medsmall)) saving("$output/restrictiona", replace)
 
-	grc1leg2  		 "$output/restriction.gph", ///
+	grc1leg2  		 "$output/restrictiona.gph", ///
 						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
 						title("A", size(huge)) saving("$output/restriction", replace)
 
 	graph export 	"$output/restriction.emf", as(emf) replace
+
+	grc1leg2  		 "$output/restrictiona.gph", ///
+						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
+						 saving("$output/restriction1", replace)						
+						
+	graph export 	"$output/restriction1.eps", as(eps) replace
 
 
 * graph B - look at knowledge variables by country
@@ -77,13 +83,19 @@
 						label (2 "Avoid physical contact") label (3 "Use masks/gloves") ///
 						label (4 "Stay at home") label (5 "Avoid crowds") ///
 						label (6 "Socially distance") pos (6) col(3) ///
-						size(medsmall)) saving("$output/knowledge", replace)
+						size(medsmall)) saving("$output/knowledgea", replace)
 
-	grc1leg2  		 "$output/knowledge.gph", ///
+	grc1leg2  		 "$output/knowledgea.gph", ///
 						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
 						title("B", size(huge)) saving("$output/knowledge", replace)
-
+						
 	graph export 	"$output/knowledge.emf", as(emf) replace
+
+	grc1leg2  		 "$output/knowledgea.gph", ///
+						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
+						saving("$output/knowledge1", replace)						
+						
+	graph export 	"$output/knowledge1.eps", as(eps) replace
 
 
 * graph C - look at behavior variables
@@ -96,13 +108,19 @@
 						legend(	label (1 "Increased hand washing") ///
 						label (2 "Avoided physical contact") ///
 						label (3 "Avoided crowds") pos(6) col(3) ///
-						size(medsmall)) saving("$output/behavior", replace)
+						size(medsmall)) saving("$output/behaviora", replace)
 
-	grc1leg2  		 "$output/behavior.gph", ///
+	grc1leg2  		 "$output/behaviora.gph", ///
 						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
 						title("C", size(huge)) saving("$output/behavior", replace)
-
+						
 	graph export 	"$output/behavior.emf", as(emf) replace
+						
+	grc1leg2  		 "$output/behaviora.gph", ///
+						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
+						saving("$output/behavior1", replace)						
+						
+	graph export 	"$output/behavior1.eps", as(eps) replace
 
 
 * graph D - myth variables
@@ -128,15 +146,21 @@
 						bar(1, color(khaki*1.5) ) ///
 						bar(2, color(emerald*1.5) ) ///
 						legend( label (2 "True") label (1 "False") pos(6) col(2) ///
-						size(medsmall)) saving("$output/myth", replace)
+						size(medsmall)) saving("$output/mytha", replace)
 
 	restore
 	
-	grc1leg2  		 "$output/myth.gph", ///
+	grc1leg2  		 "$output/mytha.gph", ///
 						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
 						title("D", size(huge) span) saving("$output/myth", replace)
-
+						
 	graph export 	"$output/myth.emf", as(emf) replace
+
+	grc1leg2  		 "$output/mytha.gph", ///
+						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
+						 saving("$output/myth1", replace)						
+						
+	graph export 	"$output/myth1.eps", as(eps) replace
 
 
 * figure 1 - combine graphs
@@ -169,15 +193,21 @@
 						bar(4, color(cranberry*1.5)) bar(5, color(purple*1.5)) ///
 						legend( label (1 "Farm income") label (2 "Business income") ///
 						label (3 "Wage income") label (4 "Remittances") label (5 "All else") ///
-						pos(6) col(3) size(medsmall)) saving("$output/income_all", replace)
+						pos(6) col(3) size(medsmall)) saving("$output/income_alla", replace)
 
 	restore
 	
-	grc1leg2 		"$output/income_all.gph" , ///
+	grc1leg2 		"$output/income_alla.gph" , ///
 						col(3) iscale(.5) commonscheme ///
 						title("A", size(huge)) saving("$output/income.gph", replace)
-
+						
 	graph export 	"$output/income.emf", as(emf) replace
+						
+	grc1leg2 		"$output/income_alla.gph" , ///
+						col(3) iscale(.5) commonscheme ///
+						 saving("$output/income1.gph", replace)						
+						
+	graph export 	"$output/income1.eps", as(eps) replace
 
 
 * graph B - income loss by wave
@@ -239,8 +269,15 @@
 						"$output/nga_bus_inc.gph" "$output/uga_bus_inc.gph", ///
 						col(1) iscale(.5) commonscheme imargin(0 0 0 0) title("B", size(huge)) ///
 						saving("$output/bus_emp_inc", replace)
-
+						
 	graph export 	"$output/bus_emp_inc.emf", as(emf) replace
+					
+	grc1leg2 		"$output/eth_bus_inc.gph" "$output/mwi_bus_inc.gph" ///
+						"$output/nga_bus_inc.gph" "$output/uga_bus_inc.gph", ///
+						col(1) iscale(.5) commonscheme imargin(0 0 0 0)  ///
+						saving("$output/bus_emp_inc1", replace)
+
+	graph export 	"$output/bus_emp_inc1.eps", as(eps) replace
 
 
 * graph C - FIES score and consumption quntile
@@ -287,8 +324,14 @@
 	grc1leg2 		"$output/fies_modsev.gph" "$output/fies_sev.gph", ///
 						col(3) iscale(.5) pos(6) commonscheme title("C", size(huge)) ///
 						saving("$output/fies.gph", replace)
-
+						
 	graph export 	"$output/fies.emf", as(emf) replace
+
+	grc1leg2 		"$output/fies_modsev.gph" "$output/fies_sev.gph", ///
+						col(3) iscale(.5) pos(6) commonscheme  ///
+						saving("$output/fies1.gph", replace)						
+						
+	graph export 	"$output/fies1.eps", as(eps) replace
 
 
 * graph D - concerns with FIES
@@ -317,8 +360,14 @@
 	grc1leg2 		"$output/concern_1.gph" "$output/concern_2.gph", ///
 						col(1) iscale(.5) pos(6) commonscheme title("D", size(huge) span) ///
 						saving("$output/concerns.gph", replace)
-
+						
 	graph export 	"$output/concerns.emf", as(emf) replace
+
+	grc1leg2 		"$output/concern_1.gph" "$output/concern_2.gph", ///
+						col(1) iscale(.5) pos(6) commonscheme  ///
+						saving("$output/concerns1.gph", replace)						
+						
+	graph export 	"$output/concerns1.eps", as(eps) replace
 
 
 * figure 2 - combine graphs
@@ -344,10 +393,6 @@
 	replace			cope_03 = 1 if cope_03 == 1 | cope_04 == 1
 	replace			cope_05 = 1 if cope_05 == 1 | cope_06 == 1 | cope_07 == 1
 	
-	total cope_11 cope_01 cope_09 cope_10  cope_03 asst_any [pweight = hhw]
-	total cope_any [pweight = hhw]
-	mean cope_any [pweight = hhw]
-	
 	graph bar		(mean) cope_11 cope_01 cope_09 cope_10 cope_03 asst_any  ///
 						[pweight = hhw], over(sector, ///
 						label (labsize(large))) over(country, label (labsize(vlarge))) ///
@@ -360,34 +405,39 @@
 						label (3 "Reduced food cons.") label (4 "Reduced non-food cons.") ///
 						label (5 "Help from family") ///
 						label (6 "Recieved assistance") size(medsmall) pos(6) col(3)) ///
-						saving("$output/cope_all.gph", replace)
+						saving("$output/cope_alla.gph", replace)
 
 	restore
 
-	grc1leg2 		"$output/cope_all.gph", col(4) iscale(.5) commonscheme ///
+	grc1leg2 		"$output/cope_alla.gph", col(4) iscale(.5) commonscheme ///
 						title("A", size(huge)) saving("$output/cope.gph", replace)
-
+						
 	graph export 	"$output/cope.emf", as(emf) replace
-	
-	
-* graph A - access to med, food, soap
-	gen				ac_med_01 = 1 if quint == 1 & ac_med == 0
-	gen				ac_med_02 = 1 if quint == 2 & ac_med == 0
-	gen				ac_med_03 = 1 if quint == 3 & ac_med == 0
-	gen				ac_med_04 = 1 if quint == 4 & ac_med == 0
-	gen				ac_med_05 = 1 if quint == 5 & ac_med == 0
 
-	gen				ac_staple_01 = 1 if quint == 1 & ac_staple == 0
-	gen				ac_staple_02 = 1 if quint == 2 & ac_staple == 0
-	gen				ac_staple_03 = 1 if quint == 3 & ac_staple == 0
-	gen				ac_staple_04 = 1 if quint == 4 & ac_staple == 0
-	gen				ac_staple_05 = 1 if quint == 5 & ac_staple == 0
+	grc1leg2 		"$output/cope_alla.gph", col(4) iscale(.5) commonscheme ///
+						 saving("$output/cope1.gph", replace)						
+						
+	graph export 	"$output/cope1.eps", as(eps) replace
 
-	gen				ac_soap_01 = 1 if quint == 1 & ac_soap == 0
-	gen				ac_soap_02 = 1 if quint == 2 & ac_soap == 0
-	gen				ac_soap_03 = 1 if quint == 3 & ac_soap == 0
-	gen				ac_soap_04 = 1 if quint == 4 & ac_soap == 0
-	gen				ac_soap_05 = 1 if quint == 5 & ac_soap == 0
+	
+* graph B - access to med, food, soap
+	gen				ac_med_01 = 1 if quint == 1 & ac_med == 1
+	gen				ac_med_02 = 1 if quint == 2 & ac_med == 1
+	gen				ac_med_03 = 1 if quint == 3 & ac_med == 1
+	gen				ac_med_04 = 1 if quint == 4 & ac_med == 1
+	gen				ac_med_05 = 1 if quint == 5 & ac_med == 1
+
+	gen				ac_staple_01 = 1 if quint == 1 & ac_staple == 1
+	gen				ac_staple_02 = 1 if quint == 2 & ac_staple == 1
+	gen				ac_staple_03 = 1 if quint == 3 & ac_staple == 1
+	gen				ac_staple_04 = 1 if quint == 4 & ac_staple == 1
+	gen				ac_staple_05 = 1 if quint == 5 & ac_staple == 1
+
+	gen				ac_soap_01 = 1 if quint == 1 & ac_soap == 1
+	gen				ac_soap_02 = 1 if quint == 2 & ac_soap == 1
+	gen				ac_soap_03 = 1 if quint == 3 & ac_soap == 1
+	gen				ac_soap_04 = 1 if quint == 4 & ac_soap == 1
+	gen				ac_soap_05 = 1 if quint == 5 & ac_soap == 1
 
 
 /* count graph
@@ -438,29 +488,29 @@
 */
 * percent graph
 
-	replace				ac_med_01 = 0 if quint == 1 & ac_med == 1
-	replace				ac_med_02 = 0 if quint == 2 & ac_med == 1
-	replace				ac_med_03 = 0 if quint == 3 & ac_med == 1
-	replace				ac_med_04 = 0 if quint == 4 & ac_med == 1
-	replace				ac_med_05 = 0 if quint == 5 & ac_med == 1
+	replace				ac_med_01 = 0 if quint == 1 & ac_med == 0
+	replace				ac_med_02 = 0 if quint == 2 & ac_med == 0
+	replace				ac_med_03 = 0 if quint == 3 & ac_med == 0
+	replace				ac_med_04 = 0 if quint == 4 & ac_med == 0
+	replace				ac_med_05 = 0 if quint == 5 & ac_med == 0
 
-	replace				ac_staple_01 = 0 if quint == 1 & ac_staple == 1
-	replace				ac_staple_02 = 0 if quint == 2 & ac_staple == 1
-	replace				ac_staple_03 = 0 if quint == 3 & ac_staple == 1
-	replace				ac_staple_04 = 0 if quint == 4 & ac_staple == 1
-	replace				ac_staple_05 = 0 if quint == 5 & ac_staple == 1
+	replace				ac_staple_01 = 0 if quint == 1 & ac_staple == 0
+	replace				ac_staple_02 = 0 if quint == 2 & ac_staple == 0
+	replace				ac_staple_03 = 0 if quint == 3 & ac_staple == 0
+	replace				ac_staple_04 = 0 if quint == 4 & ac_staple == 0
+	replace				ac_staple_05 = 0 if quint == 5 & ac_staple == 0
 
-	replace				ac_soap_01 = 0 if quint == 1 & ac_soap == 1
-	replace				ac_soap_02 = 0 if quint == 2 & ac_soap == 1
-	replace				ac_soap_03 = 0 if quint == 3 & ac_soap == 1
-	replace				ac_soap_04 = 0 if quint == 4 & ac_soap == 1
-	replace				ac_soap_05 = 0 if quint == 5 & ac_soap == 1
+	replace				ac_soap_01 = 0 if quint == 1 & ac_soap == 0
+	replace				ac_soap_02 = 0 if quint == 2 & ac_soap == 0
+	replace				ac_soap_03 = 0 if quint == 3 & ac_soap == 0
+	replace				ac_soap_04 = 0 if quint == 4 & ac_soap == 0
+	replace				ac_soap_05 = 0 if quint == 5 & ac_soap == 0
 
 	colorpalette edkblue khaki, ipolate(15, power(1)) locals
 
 
 	graph bar 		(mean) ac_med_01 ac_med_02 ac_med_03 ac_med_04 ac_med_05 ///
-						[pweight = phw] if ac_med_need == 1 & wave == 1, ///
+						[pweight = phw] if wave == 1, ///
 						over(country, label(labsize(medlarge)))  ///
 						ytitle("Individuals reporting inability to buy medicine (%)", size(vlarge)) ///
 						ylabel(0 "0" ///
@@ -469,11 +519,11 @@
 						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
 						bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First Quintile")  ///
 						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
-						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
+						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) 	///
 						saving("$output/ac_med", replace)
 
 	graph bar 		(mean) ac_staple_01 ac_staple_02 ac_staple_03 ac_staple_04 ac_staple_05 ///
-						[pweight = phw] if ac_staple_need == 1 & wave == 1,  ///
+						[pweight = phw] if wave == 1,  ///
 						over(country, label(labsize(medlarge)))   ///
 						ytitle("Individuals reporting inability to buy staple food (%)", size(vlarge)) ///
 						ylabel(0 "0" ///
@@ -484,7 +534,7 @@
 						saving("$output/ac_staple", replace)
 
 	graph bar 		(mean) ac_soap_01 ac_soap_02 ac_soap_03 ac_soap_04 ac_soap_05 ///
-						[pweight = phw] if ac_soap_need == 1 & wave == 1,  ///
+						[pweight = phw] if wave == 1 & country != 1,  ///
 						over(country, label(labsize(medlarge)))   ///
 						ytitle("Individuals reporting inability to buy soap (%)", size(vlarge)) ///
 						ylabel(0 "0" ///
@@ -497,8 +547,14 @@
 	grc1leg2		"$output/ac_med.gph" "$output/ac_staple.gph" "$output/ac_soap.gph", ///
 						col(3) iscale(.5) pos(6) commonscheme title("B", size(huge)) ///
 						saving("$output/access.gph", replace)
-
+						
 	graph export 	"$output/access.emf", as(emf) replace
+
+	grc1leg2		"$output/ac_med.gph" "$output/ac_staple.gph" "$output/ac_soap.gph", ///
+						col(3) iscale(.5) pos(6) commonscheme  ///
+						saving("$output/access1.gph", replace)						
+						
+	graph export 	"$output/access1.eps", as(eps) replace
 
 
 * graph C - education and food
@@ -519,13 +575,19 @@
 						bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First Quintile")  ///
 						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
 						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
-						saving("$output/edu_quint", replace)
+						saving("$output/edu_quinta", replace)
 
-	grc1leg2  		 "$output/edu_quint.gph", ///
+	grc1leg2  		 "$output/edu_quinta.gph", ///
 						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() title("C", size(huge)) ///
-						saving("$output/educont", replace)
-
+						saving("$output/edu_quint", replace)
+						
 	graph export "$output/edu_quint.emf", as(emf) replace
+						
+	grc1leg2  		 "$output/edu_quinta.gph", ///
+						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend()  ///
+						saving("$output/edu_quint1", replace)
+
+	graph export "$output/edu_quint1.eps", as(eps) replace
 
 
 * graph D - education activities
@@ -567,9 +629,15 @@
 						"$output/educont_nga.gph" "$output/educont_uga.gph", ///
 						col(4) iscale(.5) commonscheme imargin(0 0 0 0) legend() title("D", size(huge)) ///
 						saving("$output/educont", replace)
-
+						
 	graph export 	"$output/educont.emf", as(emf) replace
 
+	grc1leg2  		 "$output/educont_eth.gph" "$output/educont_mwi.gph" ///
+						"$output/educont_nga.gph" "$output/educont_uga.gph", ///
+						col(4) iscale(.5) commonscheme imargin(0 0 0 0) legend()  ///
+						saving("$output/educont1", replace)						
+						
+	graph export 	"$output/educont1.eps", as(eps) replace
 
 
 * figure 3 - combine graphs
@@ -582,70 +650,11 @@
 
 *	graph export "$output/access_cope.pdf", as(pdf) replace
 
-* test safety net
-	graph bar		(sum) asst_food asst_cash asst_kind [pweight = phw], ///
-						over(wave)over(country, lab(labs(vlarge)))  ///
-						ytitle("Individuals recieving assistance (%)", size(vlarge)) ///
-						bar(1, color(teal*1.5)) bar(2, color(cranberry*1.5))  ///
-						bar(3, color(khaki*1.5) ) legend(label (1 "Food")  ///
-						label (2 "Cash") label (3 "In-kind") pos(6) col(3) size(medsmall)) ///
-						saving("$output/assist", replace)
-
-	grc1leg2  		 "$output/assist", ///
-						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() title("C", size(huge)) ///
-						saving("$output/assistance", replace)
-	
-	graph export "$output/assistance.png", as(png) replace
-
-
-
-* test safety net
-	graph bar		 asst_food asst_cash asst_kind [pweight = phw], ///
-						over(concern_02, relabel(1 "No Concern" 2 "Concerned")) over(country, lab(labs(vlarge)))  ///
-						ytitle("Individuals recieving assistance (%)", size(large)) ///
-						bar(1, color(teal*1.5)) bar(2, color(cranberry*1.5))  ///
-						bar(3, color(khaki*1.5) ) legend(label (1 "Food")  ///
-						label (2 "Cash") label (3 "In-kind") pos(6) col(3) size(medsmall)) ///
-						saving("$output/asst_concern", replace)
-
-	graph export "$output/asst_concern.png", as(png) replace
-	
-	
-* **********************************************************************
-* 4 - basic regressions
-* **********************************************************************
-
-* connect household roster to this household data in household panel
-* then we can do by gender or age to see % of those people in household facing that issue
-
-reg bh_01 i.farm_dwn i.sex i.sector i.country
-reg bh_01 i.bus_dwn i.sex i.sector i.country
-reg bh_01 i.bus_dwn age i.sex i.sector i.country
-reg bh_02 i.bus_dwn age i.sex i.sector i.country
-reg bh_03 i.bus_dwn age i.sex i.sector i.country
-
-
-	reg 			dwn_count age i.sex i.sector i.country
-	** robust to different measures of dwn (e.g. dwn)
-	*** urban areas associated with fewer losses of income, relative to urban areas
-	*** malawi, nigeria, and uganda all have more losses of income, relative to ethiopia
-	*** * possible measurement issues in ethiopia
-
-	reg 			edu_act i.sector i.sex i.country
-	reg 			edu_cont i.sector i.sex i.country
-	reg 			edu_act fies_count i.sector i.sex i.country
-	*** lower fies count - associated with educational activities
-
 * **********************************************************************
 * 4 - end matter, clean up to save
 * **********************************************************************
 
-compress
-describe
-summarize
-
-* save file
-	save			"$export/lsms_panel", replace
-
+	clear all
+	
 * close the log
 	log	close

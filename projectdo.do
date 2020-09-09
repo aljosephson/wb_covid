@@ -22,7 +22,7 @@
 * **********************************************************************
 
 * set $pack to 0 to skip package installation
-	global 			pack 	1
+	global 			pack 	0
 		
 * Specify Stata version in use
     global stataVersion 16.1    // set Stata version
@@ -82,25 +82,15 @@ if $pack == 1 {
 			}
 		}
 
+	* install -xfill- package
+		net install xfill, replace from(https://www.sealedenvelope.com/)
+
 	* update all ado files
 		ado update, update
 
 	* set graph and Stata preferences
-		set scheme plotplainblind, perm
+		set scheme plotplain, perm
 		set more off
-		
-* The package -xfill- is not on ssc so installing here
-	cap which xfill
-	if _rc != 0 {
-        capture window stopbox rusure "You are missing some packages." "Do you want to install xfill?"
-        if _rc == 0 {
-            qui: net install xfill, replace from(https://www.sealedenvelope.com/)
-        }
-        else {
-        	exit 199
-        }
-	}
-		
 }
 
 

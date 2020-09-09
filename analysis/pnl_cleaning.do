@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: jdm
-* Last edit: 1 September 2020 
+* Last edit: 8 September 2020 
 * Stata v.16.1
 
 * does
@@ -14,7 +14,7 @@
 	* cleaned country data
 
 * TO DO:
-	* complete
+	* need to revist access for some variables
 
 
 * **********************************************************************
@@ -189,32 +189,29 @@
 						ac_water ac_water_why ///
 						ac_bank ac_bank_why, after(bh_08)		
 
-* access to medicine						
-	lab val				ac_med_need yesno 
+* access to medicine
+	lab val				ac_med .
+	lab var				ac_med "Unable to access medicine"
 
-	replace				ac_med_need = 0 if ac_med == -97 & country == 1		
-	replace				ac_med_need = 1 if ac_med_need == . & country == 1
-	replace				ac_med = 1 if ac_med == -98 & country == 1
+	replace				ac_med = . if ac_med == -97 & country == 1
+	replace				ac_med = . if ac_med == -98 & country == 1
 	replace				ac_med = 1 if ac_med == -99 & country == 1
+	replace				ac_med = 2 if ac_med == 1 & country == 1
+	replace				ac_med = 1 if ac_med == 0 & country == 1
+	replace				ac_med = 0 if ac_med == 2 & country == 1
 	
-	replace				ac_med_need = 0 if ac_med_need == 2
-	replace				ac_med = -97 if ac_med_need == 0 & ac_med == .
-	replace				ac_med = 0 if ac_med == 2
+	replace				ac_med = 0 if ac_med == 1 & country == 2
+	replace				ac_med = 1 if ac_med == 2 & country == 2
 	
-	replace				ac_med_need = . if country == 3 & wave == 2
-	replace				ac_med = . if country == 3 & wave == 2
-	replace				ac_med_why = . if country == 3 & wave == 2
-	
-	replace				ac_med = . if ac_med == -97
+	replace				ac_med = 0 if ac_med == 1 & country == 3
+	replace				ac_med = 1 if ac_med == 2 & country == 3
 
-	replace				ac_med_need = 0 if ac_med == 3 & country == 4
-	replace				ac_med_need = 1 if ac_med_need == . & country == 4
 	replace				ac_med = . if ac_med == 3 & country == 4
-	replace				ac_med = 2 if ac_med == 0 & country == 4
-	replace				ac_med = 0 if ac_med == 1 & country == 4
-	replace				ac_med = 1 if ac_med == 2 & country == 4
+	replace				ac_med = 0 if ac_med == 2 & country == 4
 	
-* access to medical services
+	lab val				ac_med yesno
+	
+/* access to medical services
 	replace				ac_medserv_need = . if country == 1
 	replace				ac_medserv = . if country == 1
 	replace				ac_medserv_why = . if country == 1
@@ -232,129 +229,129 @@
 	
 	lab val				ac_medserv yesno
 	lab val				ac_medserv_need yesno	
-
+*/
 * access to soap
-	replace				ac_soap_need = . if country == 1
-	replace				ac_soap = . if country == 1
-	replace				ac_soap_why = . if country == 1
+	lab val				ac_soap .
+	lab var				ac_soap "Unable to access soap"
 	
-	replace				ac_soap_need = 0 if ac_soap == . & country == 2
-	replace				ac_soap_need = 1 if ac_soap_need == . & country == 2
+	replace				ac_soap = 0 if ac_soap == 1
+	replace				ac_soap = 1 if ac_soap == 2
 	
-	replace				ac_soap_need = 0 if ac_soap == . & country == 3
-	replace				ac_soap_need = 1 if ac_soap_need == . & country == 3
-	replace				ac_soap = 0 if ac_soap == 2
-
-	replace				ac_soap_need = 0 if ac_soap == . & country == 4
-	replace				ac_soap_need = 1 if ac_soap_need == . & country == 4
-	replace				ac_soap =0 if ac_soap == 2 & country == 4
-	
-	lab val				ac_soap_need yesno
 	lab val				ac_soap yesno
 	
 * access oil/teff/wheat in Ethiopia
-	gen					ac_oil_need = 0 if ac_oil == -97 & country == 1
-	replace				ac_oil_need = 1 if ac_oil_need == . & country == 1
 	replace				ac_oil = . if ac_oil == -97
-	lab val				ac_oil_need yesno
+	replace				ac_oil = . if ac_oil == -98
+	replace				ac_oil = 2 if ac_oil == 1
+	replace				ac_oil = 1 if ac_oil == 0
+	replace				ac_oil = 0 if ac_oil == 2
+	lab var				ac_oil "Unable to access oil"
 	lab val				ac_oil yesno
-	order				ac_oil_need, before(ac_oil)
 	
-	gen					ac_teff_need = 0 if ac_teff == -97 & country == 1
-	replace				ac_teff_need = 1 if ac_teff_need == . & country == 1
+	replace				ac_teff = . if ac_teff == -99
 	replace				ac_teff = . if ac_teff == -97
-	lab val				ac_teff_need yesno
+	replace				ac_teff = . if ac_teff == -98
+	replace				ac_teff = 2 if ac_teff == 1
+	replace				ac_teff = 1 if ac_teff == 0
+	replace				ac_teff = 0 if ac_teff == 2
+	lab var				ac_teff "Unable to access teff"
 	lab val				ac_teff yesno
-	order				ac_teff_need, before(ac_teff)
 	
-	gen					ac_wheat_need = 0 if ac_wheat == -97 & country == 1
-	replace				ac_wheat_need = 1 if ac_wheat_need == . & country == 1
+	replace				ac_wheat = . if ac_wheat == -99
 	replace				ac_wheat = . if ac_wheat == -97
-	lab val				ac_wheat_need yesno
+	replace				ac_wheat = . if ac_wheat == -98
+	replace				ac_wheat = 2 if ac_wheat == 1
+	replace				ac_wheat = 1 if ac_wheat == 0
+	replace				ac_wheat = 0 if ac_wheat == 2
+	lab var				ac_wheat "Unable to access wheat"
 	lab val				ac_wheat yesno
-	order				ac_wheat_need, before(ac_wheat)
 	
-	replace				ac_maize_need = 0 if ac_maize == -97 & country == 1
-	replace				ac_maize_need = 1 if ac_maize_need == . & country == 1
+	replace				ac_maize = . if ac_maize == -99 & country == 1
 	replace				ac_maize = . if ac_maize == -97 & country == 1
+	replace				ac_maize = . if ac_maize == -98 & country == 1
+	replace				ac_maize = 2 if ac_maize == 1 & country == 1
+	replace				ac_maize = 1 if ac_maize == 0 & country == 1
+	replace				ac_maize = 0 if ac_maize == 2 & country == 1
+	lab var				ac_maize "Unable to access maize"
+	lab val				ac_maize yesno
 
 * access to maize/clean/water in Malawi
-	replace				ac_maize_need = 0 if ac_maize_need == 2 & country == 2
-	lab val				ac_maize_need yesno
-	replace				ac_maize = 0 if ac_maize == 2 & country == 2
-	lab val				ac_maize yesno
-	
-	replace				ac_clean_need = 0 if ac_clean_need == 2 & country == 2
-	lab val				ac_clean_need yesno
-	replace				ac_clean = 0 if ac_clean == 2 & country == 2
+	replace				ac_maize = 0 if ac_maize == 1 & country == 2
+	replace				ac_maize = 1 if ac_maize == 2 & country == 2
+
+	lab val				ac_clean .
+	replace				ac_clean = 0 if ac_clean == 1 & country == 2
+	replace				ac_clean = 1 if ac_clean == 2 & country == 2
 	lab val				ac_clean yesno
 	
 	drop				ac_water ac_water_why ac_staple_def
 
 * access to staples in Nigeria
-	replace				ac_rice_need = 0 if ac_rice_need != 1 & country == 3 & wave == 1
-	lab val				ac_rice_need yesno
-	replace				ac_rice = 0 if ac_rice == 2 & country == 3 & wave == 1
+	replace				ac_rice = 0 if ac_rice == 1 & country == 3
+	replace				ac_rice = 1 if ac_rice == 2 & country == 3
+	lab var				ac_rice "Unable to access rice"
 	lab val				ac_rice yesno
 	
-	replace				ac_beans_need = 0 if ac_beans_need != 1 & country == 3 & wave == 1
-	lab val				ac_beans_need yesno
-	replace				ac_beans = 0 if ac_beans == 2 & country == 3 & wave == 1
+	replace				ac_beans = 0 if ac_beans == 1 & country == 3
+	replace				ac_beans = 1 if ac_beans == 2 & country == 3
+	lab var				ac_beans "Unable to access beans"
 	lab val				ac_beans yesno
 	
-	replace				ac_cass_need = 0 if ac_cass_need != 1 & country == 3 & wave == 1
-	lab val				ac_cass_need yesno
-	replace				ac_cass = 0 if ac_cass == 2 & country == 3 & wave == 1
+	replace				ac_cass = 0 if ac_cass == 1 & country == 3
+	replace				ac_cass = 1 if ac_cass == 2 & country == 3
+	lab var				ac_cass "Unable to access cassava"
 	lab val				ac_cass yesno
-	
-	replace				ac_yam_need = 0 if ac_yam_need != 1 & country == 3 & wave == 1
-	lab val				ac_yam_need yesno
-	replace				ac_yam = 0 if ac_yam == 2 & country == 3 & wave == 1
+
+	replace				ac_yam = 0 if ac_yam == 1 & country == 3
+	replace				ac_yam = 1 if ac_yam == 2 & country == 3
+	lab var				ac_yam "Unable to access yam"
 	lab val				ac_yam yesno
 	
-	replace				ac_sorg_need = 0 if ac_sorg_need != 1 & country == 3 & wave == 1
-	lab val				ac_sorg_need yesno
-	replace				ac_sorg = 0 if ac_sorg == 2 & country == 3 & wave == 1
-	lab val				ac_sorg yesno
+	replace				ac_sorg = 0 if ac_sorg == 1 & country == 3
+	replace				ac_sorg = 1 if ac_sorg == 2 & country == 3
+	lab var				ac_sorg "Unable to access sorghum"
+	lab val				ac_sorg yesno	
 	
-	replace				ac_clean_need = 0 if ac_clean_need != 1 & country == 3 & wave == 1
-	replace				ac_clean = 0 if ac_clean == 2 & country == 3 & wave == 1
+	replace				ac_clean = 0 if ac_clean == 1 & country == 3
+	replace				ac_clean = 1 if ac_clean == 2 & country == 3	
 	
 	drop				ac_bank ac_bank_why
 	
 * access to staple	
-	replace				ac_staple_need = 0 if ac_staple_need == 2
-	lab val				ac_staple_need yesno
-	replace				ac_staple = 0 if ac_staple == 2
+	lab val				ac_staple .
+	replace				ac_staple = 0 if ac_staple == 1 & country == 2
+	replace				ac_staple = 1 if ac_staple == 2 & country == 2
+
+	replace				ac_staple = . if ac_staple == 3 & country == 4
+	replace				ac_staple = 0 if ac_staple == 2 & country == 4	
+	lab var				ac_staple "Unable to access staple"
 	lab val				ac_staple yesno
 	
-	replace				ac_staple_need = 1 if ac_oil_need == 1 | ac_teff_need == 1 | ///
-							ac_wheat_need == 1 | ac_maize_need == 1 | ///
-							ac_rice_need == 1 | ac_beans_need == 1 | ///
-							ac_cass_need == 1 | ac_yam_need == 1 | ///
-							ac_sorg_need == 1
-	replace				ac_staple_need = 0 if ac_staple_need == .
-	replace				ac_staple_need = . if country == 3 & wave == 2
+	replace				ac_staple_need = 2 if ac_oil == . & ac_teff == . & ///
+							ac_wheat == . & ac_maize == . & country == 1
 	
+	replace				ac_staple_need = 2 if  ac_rice== . & ac_beans == . & ///
+							ac_cass == . & ac_yam == . & ac_sorg == . & ///
+							country == 3
+	
+	replace				ac_staple_need = 1 if ac_staple_need == . & country == 1
+	replace				ac_staple_need = 1 if ac_staple_need == . & country == 3 & wave != 2
+							
 	replace				ac_staple = 1 if ac_oil == 1 | ac_teff == 1 | ///
-							ac_wheat == 1 | ac_maize == 1 | ///
-							ac_rice== 1 | ac_beans == 1 | ///
+							ac_wheat == 1 | ac_maize == 1 & ac_staple_need == 1
+	replace				ac_staple = 0 if ac_staple == . & ac_staple_need == 1 & ///
+							country == 1					
+							
+	replace				ac_staple = 1 if ac_rice== 1 | ac_beans == 1 | ///
 							ac_cass == 1 | ac_yam == 1 | ///
-							ac_sorg == 1	
-	replace				ac_staple = 0 if ac_staple == . & ac_staple_need == 1
-	replace				ac_staple = . if country == 3 & wave == 2
+							ac_sorg == 1 & ac_staple_need == 1
+	replace				ac_staple = 0 if ac_rice== 0 | ac_beans == 0 | ///
+							ac_cass == 0 | ac_yam == 0 | ///
+							ac_sorg == 0 & ac_staple == . & ac_staple_need == 1 & ///
+							country == 3
+		
 	drop				ac_staple_why ac_sauce_def ac_sauce ac_sauce_why ///
-							ac_drink ac_drink_why
-
-	replace				ac_staple_need = 1 if ac_staple != 3 & country == 4
-	replace				ac_staple = . if ac_staple == 3 & country == 4
-	replace				ac_staple = 2 if ac_staple == 0 & country == 4
-	replace				ac_staple = 0 if ac_staple == 1 & country == 4
-	replace				ac_staple = 1 if ac_staple == 2 & country == 4
-	
-	lab var				ac_oil_need "Did you or anyone in your household need to buy oil"
-	lab var				ac_teff_need "Did you or anyone in your household need to buy teff"
-	lab var				ac_wheat_need "Did you or anyone in your household need to buy wheat"
+							ac_drink ac_drink_why *need
 
 	
 * **********************************************************************

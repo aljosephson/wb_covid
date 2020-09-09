@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: jdm
-* Edited by: alj
-* Last edited: 26 August 2020 
+* Edited by: jdm
+* Last edited: 8 September 2020 
 * Stata v.16.1
 
 * does
@@ -14,7 +14,7 @@
 	* raw Nigeria data
 
 * TO DO:
-	* complete
+	* need to revist access variables in round 2
 
 
 * **********************************************************************
@@ -78,6 +78,10 @@
 * generate round variable
 	gen				wave = 2
 	lab var			wave "Wave number"
+	
+* drop conflicting access variables
+	drop			s5q1a s5q1a1 s5q1a1_os s5q1b s5q1b1 s5q1b1_os s5q1c ///
+						s5q1d s5q2 s5q3 s5q4 s5q4_os
 	
 * save temp file
 	save			"$export/wave_02/r2_sect_all", replace	
@@ -388,7 +392,7 @@
 	rename 			s5q9 ac_bank 
 	rename 			s5q10 ac_bank_why 
 	
-* round 2 access differs from round 1 access 
+/* round 2 access differs from round 1 access 
 	
 	rename 			s5q1e suff_waterdrink
 	rename 			s5q1f suff_waterdrink_why 
@@ -396,7 +400,7 @@
 	rename 			s5q1b suff_waterwash 
 	rename 			s5q1c freq_washsoap 
 	rename 			s5q1d freq_mask
-	
+*/	
 *** EMPLOYMENT 
 
 	rename			s6q1 emp

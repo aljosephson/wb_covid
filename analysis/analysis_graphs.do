@@ -509,7 +509,7 @@
 	colorpalette edkblue khaki, ipolate(15, power(1)) locals
 
 
-	graph bar 		(mean) ac_staple_01 ac_staple_02 ac_staple_03 ac_staple_04 ac_staple_05 ///
+	graph bar 		(mean) ac_med_01 ac_med_02 ac_med_03 ac_med_04 ac_med_05 ///
 						[pweight = phw] if wave == 1, ///
 						over(country, label(labsize(medlarge)))  ///
 						ytitle("Individuals reporting inability to buy medicine (%)", size(vlarge)) ///

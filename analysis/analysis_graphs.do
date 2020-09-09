@@ -412,23 +412,23 @@
 
 	
 * graph B - access to med, food, soap
-	gen				ac_med_01 = 1 if quint == 1 & ac_med == 0
-	gen				ac_med_02 = 1 if quint == 2 & ac_med == 0
-	gen				ac_med_03 = 1 if quint == 3 & ac_med == 0
-	gen				ac_med_04 = 1 if quint == 4 & ac_med == 0
-	gen				ac_med_05 = 1 if quint == 5 & ac_med == 0
+	gen				ac_med_01 = 1 if quint == 1 & ac_med == 1
+	gen				ac_med_02 = 1 if quint == 2 & ac_med == 1
+	gen				ac_med_03 = 1 if quint == 3 & ac_med == 1
+	gen				ac_med_04 = 1 if quint == 4 & ac_med == 1
+	gen				ac_med_05 = 1 if quint == 5 & ac_med == 1
 
-	gen				ac_staple_01 = 1 if quint == 1 & ac_staple == 0
-	gen				ac_staple_02 = 1 if quint == 2 & ac_staple == 0
-	gen				ac_staple_03 = 1 if quint == 3 & ac_staple == 0
-	gen				ac_staple_04 = 1 if quint == 4 & ac_staple == 0
-	gen				ac_staple_05 = 1 if quint == 5 & ac_staple == 0
+	gen				ac_staple_01 = 1 if quint == 1 & ac_staple == 1
+	gen				ac_staple_02 = 1 if quint == 2 & ac_staple == 1
+	gen				ac_staple_03 = 1 if quint == 3 & ac_staple == 1
+	gen				ac_staple_04 = 1 if quint == 4 & ac_staple == 1
+	gen				ac_staple_05 = 1 if quint == 5 & ac_staple == 1
 
-	gen				ac_soap_01 = 1 if quint == 1 & ac_soap == 0
-	gen				ac_soap_02 = 1 if quint == 2 & ac_soap == 0
-	gen				ac_soap_03 = 1 if quint == 3 & ac_soap == 0
-	gen				ac_soap_04 = 1 if quint == 4 & ac_soap == 0
-	gen				ac_soap_05 = 1 if quint == 5 & ac_soap == 0
+	gen				ac_soap_01 = 1 if quint == 1 & ac_soap == 1
+	gen				ac_soap_02 = 1 if quint == 2 & ac_soap == 1
+	gen				ac_soap_03 = 1 if quint == 3 & ac_soap == 1
+	gen				ac_soap_04 = 1 if quint == 4 & ac_soap == 1
+	gen				ac_soap_05 = 1 if quint == 5 & ac_soap == 1
 
 
 /* count graph
@@ -479,29 +479,29 @@
 */
 * percent graph
 
-	replace				ac_med_01 = 0 if quint == 1 & ac_med == 1
-	replace				ac_med_02 = 0 if quint == 2 & ac_med == 1
-	replace				ac_med_03 = 0 if quint == 3 & ac_med == 1
-	replace				ac_med_04 = 0 if quint == 4 & ac_med == 1
-	replace				ac_med_05 = 0 if quint == 5 & ac_med == 1
+	replace				ac_med_01 = 0 if quint == 1 & ac_med == 0
+	replace				ac_med_02 = 0 if quint == 2 & ac_med == 0
+	replace				ac_med_03 = 0 if quint == 3 & ac_med == 0
+	replace				ac_med_04 = 0 if quint == 4 & ac_med == 0
+	replace				ac_med_05 = 0 if quint == 5 & ac_med == 0
 
-	replace				ac_staple_01 = 0 if quint == 1 & ac_staple == 1
-	replace				ac_staple_02 = 0 if quint == 2 & ac_staple == 1
-	replace				ac_staple_03 = 0 if quint == 3 & ac_staple == 1
-	replace				ac_staple_04 = 0 if quint == 4 & ac_staple == 1
-	replace				ac_staple_05 = 0 if quint == 5 & ac_staple == 1
+	replace				ac_staple_01 = 0 if quint == 1 & ac_staple == 0
+	replace				ac_staple_02 = 0 if quint == 2 & ac_staple == 0
+	replace				ac_staple_03 = 0 if quint == 3 & ac_staple == 0
+	replace				ac_staple_04 = 0 if quint == 4 & ac_staple == 0
+	replace				ac_staple_05 = 0 if quint == 5 & ac_staple == 0
 
-	replace				ac_soap_01 = 0 if quint == 1 & ac_soap == 1
-	replace				ac_soap_02 = 0 if quint == 2 & ac_soap == 1
-	replace				ac_soap_03 = 0 if quint == 3 & ac_soap == 1
-	replace				ac_soap_04 = 0 if quint == 4 & ac_soap == 1
-	replace				ac_soap_05 = 0 if quint == 5 & ac_soap == 1
+	replace				ac_soap_01 = 0 if quint == 1 & ac_soap == 0
+	replace				ac_soap_02 = 0 if quint == 2 & ac_soap == 0
+	replace				ac_soap_03 = 0 if quint == 3 & ac_soap == 0
+	replace				ac_soap_04 = 0 if quint == 4 & ac_soap == 0
+	replace				ac_soap_05 = 0 if quint == 5 & ac_soap == 0
 
 	colorpalette edkblue khaki, ipolate(15, power(1)) locals
 
 
-	graph bar 		(mean) ac_med_01 ac_med_02 ac_med_03 ac_med_04 ac_med_05 ///
-						[pweight = phw] if ac_med_need == 1 & wave == 1, ///
+	graph bar 		(mean) ac_staple_01 ac_staple_02 ac_staple_03 ac_staple_04 ac_staple_05 ///
+						[pweight = phw] if wave == 1, ///
 						over(country, label(labsize(medlarge)))  ///
 						ytitle("Individuals reporting inability to buy medicine (%)", size(vlarge)) ///
 						ylabel(0 "0" ///
@@ -510,11 +510,11 @@
 						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
 						bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First Quintile")  ///
 						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
-						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
+						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) 	///
 						saving("$output/ac_med", replace)
 
 	graph bar 		(mean) ac_staple_01 ac_staple_02 ac_staple_03 ac_staple_04 ac_staple_05 ///
-						[pweight = phw] if ac_staple_need == 1 & wave == 1,  ///
+						[pweight = phw] if wave == 1,  ///
 						over(country, label(labsize(medlarge)))   ///
 						ytitle("Individuals reporting inability to buy staple food (%)", size(vlarge)) ///
 						ylabel(0 "0" ///
@@ -525,7 +525,7 @@
 						saving("$output/ac_staple", replace)
 
 	graph bar 		(mean) ac_soap_01 ac_soap_02 ac_soap_03 ac_soap_04 ac_soap_05 ///
-						[pweight = phw] if ac_soap_need == 1 & wave == 1,  ///
+						[pweight = phw] if wave == 1 & country != 1,  ///
 						over(country, label(labsize(medlarge)))   ///
 						ytitle("Individuals reporting inability to buy soap (%)", size(vlarge)) ///
 						ylabel(0 "0" ///
@@ -544,6 +544,7 @@
 						saving("$output/access1.gph", replace)						
 						
 	graph export 	"$output/access.emf", as(emf) replace
+						
 	graph export 	"$output/access1.eps", as(eps) replace
 
 

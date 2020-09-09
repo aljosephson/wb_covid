@@ -276,12 +276,12 @@ restore
 
 *** table S8 ***
 * summary statistics on losses of income
-	total 			dwn [pweight = phw] if wave == 1 
-	total 			farm_dwn [pweight = phw] if wave == 1 
-	total 			bus_dwn [pweight = phw] if wave == 1 
-	total 			wage_dwn [pweight = phw] if wave == 1 
-	total 			remit_dwn [pweight = phw] if wave == 1  
-	total 			other_dwn [pweight = phw]  if wave == 1 
+	mean 			dwn [pweight = phw] if wave == 1 
+	mean 			farm_dwn [pweight = phw] if wave == 1 
+	mean 			bus_dwn [pweight = phw] if wave == 1 
+	mean 			wage_dwn [pweight = phw] if wave == 1 
+	mean 			remit_dwn [pweight = phw] if wave == 1  
+	mean			other_dwn [pweight = phw]  if wave == 1 
 
 
 *** table S9 ***				

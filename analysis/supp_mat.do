@@ -43,7 +43,8 @@
 
 * advised citizens to stay at home
 	reg 			gov_01 ib(2).country [pweight = phw] if wave == 1
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", replace excel dec(3) ctitle(S1 Stay at home) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					replace excel dec(3) ctitle(S1 Stay at home) label
 	
 	* Wald test for differences between other countries
 		test			1.country = 3.country
@@ -70,7 +71,8 @@
 		
 * restricted travel within country/area
 	reg 			gov_02 ib(2).country [pweight = phw] if wave == 1
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S1 Restricted travel) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S1 Restricted travel) label
 	
 	* Wald test for differences between other countries
 		test			1.country = 3.country
@@ -96,7 +98,8 @@
 		
 * closure of schools
 	reg 			gov_04 ib(2).country [pweight = phw] if wave == 1
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S1 Close schools) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S1 Close schools) label
 	
 	* Wald test for differences between other countries
 		test			1.country = 3.country
@@ -122,7 +125,8 @@
 
 * curfew/lockdown
 	reg 			gov_05 ib(2).country [pweight = phw] if wave == 1
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S1 Lockdown) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S1 Lockdown) label
 	
 	* Wald test for differences between other countries
 		test			1.country = 3.country
@@ -148,7 +152,8 @@
 		
 * closure of non-essential businesses
 	reg 			gov_06 ib(2).country [pweight = phw] if wave == 1
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S1 Close businesses) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S1 Close businesses) label
 	
 	* Wald test for differences between other countries
 		test			1.country = 3.country
@@ -174,7 +179,8 @@
 
 * stopping or limiting social gatherings
 	reg 			gov_10 ib(2).country [pweight = phw] if wave == 1
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S1 Limit social gatherings) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S1 Limit social gatherings) label
 	
 	* Wald test for differences between other countries
 		test			1.country = 3.country
@@ -217,42 +223,14 @@
 		}
 		gen 					testcountries = ""
 		replace 				testcountries = "Ethiopia-Nigeria" in 1
-		replace 				testcountries = "Ethipia-Uganda" in 2
+		replace 				testcountries = "Ethiopia-Uganda" in 2
 		replace 				testcountries = "Nigeria-Uganda" in 3
 		order 					testc *
 							
-		export excel using "paper\intermediate\Supplementary_Materials_Excel_Tables_Test_Results", sheetreplace sheet(testresultsS1) first(var)
+		export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
+								sheetreplace sheet(testresultsS1) first(var)
 		restore
-
 		
-/* We would like these regressions results all in one table	somthing like this:
-
--------------------------------------------------------------------------------------------------
-					Stay at 	Restrict	Close		Lockdown	Close			Limit social
-					home		travel		schools					Businesses		gatherings
--------------------------------------------------------------------------------------------------
-Ethiopia			0.138***
-					(0.013)
-Nigeria
-
-Uganda			
-
--------------------------------------------------------------------------------------------------
-Ethiopia-Nigeria	0.000***
-Ethipia-Uganda
-Nigeria-Uganda
--------------------------------------------------------------------------------------------------
-Observations
-R^2
--------------------------------------------------------------------------------------------------
-
-Do not report estimate of the constant
-Report p-value for Wald tests between coefficients
-All coefficients and standard errors should be 4 digits. So 0.143 or 143.0 or 14.30
-Observations should be whole number with common: 8,576
-R^2 should be 4 digits: 0.181
-*/
-
 
 * **********************************************************************
 * 1b - create table S2 for Fig. 1B
@@ -260,7 +238,8 @@ R^2 should be 4 digits: 0.181
 
 * handwashing with Soap Reduces Risk of Coronavirus Contraction
 	reg 			know_01 ib(2).country [pweight = phw] if wave == 1
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S2 Soap reduces risk) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S2 Soap reduces risk) label
 	
 	* Wald test for differences between other countries
 		test			1.country = 3.country
@@ -287,7 +266,8 @@ R^2 should be 4 digits: 0.181
 
 * avoiding Handshakes/Physical Greetings Reduces Risk of Coronavirus Contract
 	reg 			know_02 ib(2).country [pweight = phw] if wave == 1
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S2 Avoid physical greetings) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S2 Avoid physical greetings) label
 	
 	* Wald test for differences between other countries
 		test			1.country = 3.country
@@ -313,7 +293,8 @@ R^2 should be 4 digits: 0.181
 
 * using Masks or Gloves Reduces Risk of Coronavirus Contraction
 	reg 			know_03 ib(2).country [pweight = phw] if wave == 1
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S2 Use masks of gloves) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S2 Use masks or gloves) label
 	
 	* Wald test for differences between other countries
 		test			1.country = 3.country
@@ -339,7 +320,8 @@ R^2 should be 4 digits: 0.181
 
 * staying at Home Reduces Risk of Coronavirus Contraction
 	reg 			know_05 ib(2).country [pweight = phw] if wave == 1
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S2 Stay at home) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S2 Stay at home) label
 	
 	* Wald test for differences between other countries
 		test			1.country = 3.country
@@ -365,7 +347,8 @@ R^2 should be 4 digits: 0.181
 		
 * avoiding Crowds and Gatherings Reduces Risk of Coronavirus Contraction
 	reg 			know_06 ib(2).country [pweight = phw] if wave == 1
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S2 Avoid crowds) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S2 Avoid crowds) label
 	
 	* Wald test for differences between other countries
 		test			1.country = 3.country
@@ -391,7 +374,8 @@ R^2 should be 4 digits: 0.181
 
 * mainting Social Distance of at least 1 Meter Reduces Risk of Coronavirus Co
 	reg 			know_07 ib(2).country [pweight = phw] if wave == 1
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S2 Maintain distance of 1 meter) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S2 Maintain distance of one meter) label
 	
 	* Wald test for differences between other countries
 		test			1.country = 3.country
@@ -437,10 +421,11 @@ R^2 should be 4 digits: 0.181
 		}
 		gen 					testcountries = ""
 		replace 				testcountries = "Ethiopia-Nigeria" in 1
-		replace 				testcountries = "Ethipia-Uganda" in 2
+		replace 				testcountries = "Ethiopia-Uganda" in 2
 		replace 				testcountries = "Nigeria-Uganda" in 3
 		order 					testc *
-		export excel using "paper\intermediate\Supplementary_Materials_Excel_Tables_Test_Results", sheetreplace sheet(testresultsS2) first(var)
+		export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
+								sheetreplace sheet(testresultsS2) first(var)
 		restore
 
 * **********************************************************************
@@ -451,7 +436,8 @@ R^2 should be 4 digits: 0.181
 
 * handwashed with Soap More Often Since Outbreak
 	reg 			bh_01 ib(2).country [pweight = phw] if wave == 1
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S3 Handwashed with soap more often) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S3 Handwashed with soap more often) label
 	
 	* Wald test for differences between other countries
 		test			1.country = 3.country
@@ -478,7 +464,8 @@ R^2 should be 4 digits: 0.181
 		
 * avoided Handshakes/Physical Greetings Since Outbreak
 	reg 			bh_02 ib(2).country [pweight = phw] if wave == 1
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S3 Avoided physical greetings) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S3 Avoided physical greetings) label
 	
 	* Wald test for differences between other countries
 		test			1.country = 3.country
@@ -505,7 +492,8 @@ R^2 should be 4 digits: 0.181
 
 * avoided Crowds and Gatherings Since Outbreak
 	reg 			bh_03 ib(2).country [pweight = phw] if wave == 1
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S3 Avoided crowds) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S3 Avoided crowds) label
 	
 	* Wald test for differences between other countries
 		test			1.country = 3.country
@@ -551,39 +539,100 @@ R^2 should be 4 digits: 0.181
 		}
 		gen 					testcountries = ""
 		replace 				testcountries = "Ethiopia-Nigeria" in 1
-		replace 				testcountries = "Ethipia-Uganda" in 2
+		replace 				testcountries = "Ethiopia-Uganda" in 2
 		replace 				testcountries = "Nigeria-Uganda" in 3
 		order 					testc *
-		export excel using "paper\intermediate\Supplementary_Materials_Excel_Tables_Test_Results", sheetreplace sheet(testresultsS3) first(var)
+		export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
+								sheetreplace sheet(testresultsS3) first(var)
 		restore
 	
 * table S4		
 		
 * percentage over time for Malawi and Uganda
-	mean			bh_01 bh_02 bh_03 [pweight = phw] if country == 2 | ///
-						country == 4, over(country wave)
+	mean			bh_01 [pweight = phw] if country == 2, over(wave)
+		local		n_c2b1 = e(N)
+		local 		mean_c2b1w1 = el(e(b),1,1)
+		local 		mean_c2b1w2 = el(e(b),1,2)
+		local		sd_c2b1w1 = el(e(sd),1,1)
+		local		sd_c2b1w2 = el(e(sd),1,2)
+	mean			bh_02 [pweight = phw] if country == 2, over(wave) 
+		local		n_c2b2 = e(N)
+		local 		mean_c2b2w1 = el(e(b),1,1)
+		local 		mean_c2b2w2 = el(e(b),1,2)
+		local		sd_c2b2w1 = el(e(sd),1,1)
+		local		sd_c2b2w2 = el(e(sd),1,2)
+	mean			bh_03 [pweight = phw] if country == 2, over(wave)
+		local		n_c2b3 = e(N)
+		local 		mean_c2b3w1 = el(e(b),1,1)
+		local 		mean_c2b3w2 = el(e(b),1,2)
+		local		sd_c2b3w1 = el(e(sd),1,1)
+		local		sd_c2b3w2 = el(e(sd),1,2)
+	mean			bh_01 [pweight = phw] if country == 4, over(wave) 
+		local		n_c4b1 = e(N)
+		local 		mean_c4b1w1 = el(e(b),1,1)
+		local 		mean_c4b1w2 = el(e(b),1,2)
+		local		sd_c4b1w1 = el(e(sd),1,1)
+		local		sd_c4b1w2 = el(e(sd),1,2)
+	mean			bh_02 [pweight = phw] if country == 4, over(wave) 
+		local		n_c4b2 = e(N)
+		local 		mean_c4b2w1 = el(e(b),1,1)
+		local 		mean_c4b2w2 = el(e(b),1,2)
+		local		sd_c4b2w1 = el(e(sd),1,1)
+		local		sd_c4b2w2 = el(e(sd),1,2)
+	mean			bh_03 [pweight = phw] if country == 4, over(wave) 
+		local		n_c4b3 = e(N)
+		local 		mean_c4b3w1 = el(e(b),1,1)
+		local 		mean_c4b3w2 = el(e(b),1,2)
+		local		sd_c4b3w1 = el(e(sd),1,1)
+		local		sd_c4b3w2 = el(e(sd),1,2)
+	
+	//preserve
+	clear
+	set 			obs 5
+	gen 			wave = cond(_n<3,"w1",cond(_n<5,"w2",""))
+	gen 			stat = cond(_n == 1 | _n == 3, "Mean",cond(_n == 5, "Observations","Standard Deviation"))
+	foreach 		country in c2 c4 {
+		foreach 	behavior in 1 2 3 {
+			gen 	`country'_b`behavior' = .
+		}
+	}
+	
+	
+	foreach 			c in 2 4 {
+		forval 			b = 1/3 {
+			forval		w = 1/2 {
+				replace c`c'_b`b' = `mean_c`c'b`b'w`w'' if wave == "w`w'" & stat == "Mean"	
+			}
+		}
+	}
 
 * table S5
 
 * regressions of behavior on waves in Malawi
 	reg				bh_01 i.wave [pweight = phw] if country == 2 
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S5 Malawi Behavior 1) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S5 Malawi Behavior 1) label
 	
 	reg				bh_02 i.wave [pweight = phw] if country == 2 
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S5 Malawi Behavior 2) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S5 Malawi Behavior 2) label
 	
 	reg				bh_03 i.wave [pweight = phw] if country == 2 
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S5 Malawi Behavior 3) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S5 Malawi Behavior 3) label
 	
 * regressions of behavior on waves in Uganda
 	reg				bh_01 i.wave [pweight = phw] if country == 4
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S5 Uganda Behavior 1) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S5 Uganda Behavior 1) label
 	
 	reg				bh_02 i.wave [pweight = phw] if country == 4
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S5 Uganda Behavior 2) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S5 Uganda Behavior 2) label
 	
 	reg				bh_03 i.wave [pweight = phw] if country == 4		
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S5 Uganda Behavior 3) label	
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S5 Uganda Behavior 3) label	
 		
 * **********************************************************************
 * 1d - create tables S6-S7 for Fig. 1D
@@ -601,22 +650,27 @@ preserve
 	
 * lemon and alcohol can be used as sanitizers against coronavirus
 	reg 			myth_01 i.country [pweight = phw]
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S6 Lemon and alcohol) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S6 Lemon and alcohol) label
 	
 * africans are immune to corona virus
 	reg 			myth_02 i.country [pweight = phw]
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S6 Africans immune) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S6 Africans immune) label
 * corona virus does not affect children
 	reg 			myth_03 i.country [pweight = phw]
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S6 Not affect children) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S6 Not affect children) label
 	
 * corona virus cannot survive in warm weather
 	reg 			myth_04 i.country [pweight = phw]
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S6 Survive warm weather) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S6 Survive warm weather) label
 	
 * corona virus is just common flu
 	reg 			myth_05 i.country [pweight = phw]
-	outreg2 		using "paper\intermediate\Supplementary_Materials_Excel_Tables_Reg_Results", append excel dec(3) ctitle(S6 Common flu) label
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+					append excel dec(3) ctitle(S6 Common flu) label
 
 *** table S7 ***
 

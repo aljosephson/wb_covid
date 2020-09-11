@@ -356,6 +356,8 @@
 						saving("$output/concern_2", replace)
 
 	restore
+	
+	*** Nigeria has information on concerns in wave 1, but only FIES in wave 2
 
 	grc1leg2 		"$output/concern_1.gph" "$output/concern_2.gph", ///
 						col(1) iscale(.5) pos(6) commonscheme title("D", size(huge) span) ///

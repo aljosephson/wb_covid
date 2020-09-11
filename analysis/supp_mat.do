@@ -546,67 +546,79 @@
 								sheetreplace sheet(testresultsS3) first(var)
 		restore
 	
-* table S4		
+*** table S4 ***
 		
 * percentage over time for Malawi and Uganda
-	mean			bh_01 [pweight = phw] if country == 2, over(wave)
-		local		n_c2b1 = e(N)
-		local 		mean_c2b1w1 = el(e(b),1,1)
-		local 		mean_c2b1w2 = el(e(b),1,2)
-		local		sd_c2b1w1 = el(e(sd),1,1)
-		local		sd_c2b1w2 = el(e(sd),1,2)
-	mean			bh_02 [pweight = phw] if country == 2, over(wave) 
-		local		n_c2b2 = e(N)
-		local 		mean_c2b2w1 = el(e(b),1,1)
-		local 		mean_c2b2w2 = el(e(b),1,2)
-		local		sd_c2b2w1 = el(e(sd),1,1)
-		local		sd_c2b2w2 = el(e(sd),1,2)
-	mean			bh_03 [pweight = phw] if country == 2, over(wave)
-		local		n_c2b3 = e(N)
-		local 		mean_c2b3w1 = el(e(b),1,1)
-		local 		mean_c2b3w2 = el(e(b),1,2)
-		local		sd_c2b3w1 = el(e(sd),1,1)
-		local		sd_c2b3w2 = el(e(sd),1,2)
-	mean			bh_01 [pweight = phw] if country == 4, over(wave) 
-		local		n_c4b1 = e(N)
-		local 		mean_c4b1w1 = el(e(b),1,1)
-		local 		mean_c4b1w2 = el(e(b),1,2)
-		local		sd_c4b1w1 = el(e(sd),1,1)
-		local		sd_c4b1w2 = el(e(sd),1,2)
-	mean			bh_02 [pweight = phw] if country == 4, over(wave) 
-		local		n_c4b2 = e(N)
-		local 		mean_c4b2w1 = el(e(b),1,1)
-		local 		mean_c4b2w2 = el(e(b),1,2)
-		local		sd_c4b2w1 = el(e(sd),1,1)
-		local		sd_c4b2w2 = el(e(sd),1,2)
-	mean			bh_03 [pweight = phw] if country == 4, over(wave) 
-		local		n_c4b3 = e(N)
-		local 		mean_c4b3w1 = el(e(b),1,1)
-		local 		mean_c4b3w2 = el(e(b),1,2)
-		local		sd_c4b3w1 = el(e(sd),1,1)
-		local		sd_c4b3w2 = el(e(sd),1,2)
-	
-	//preserve
-	clear
-	set 			obs 5
-	gen 			wave = cond(_n<3,"w1",cond(_n<5,"w2",""))
-	gen 			stat = cond(_n == 1 | _n == 3, "Mean",cond(_n == 5, "Observations","Standard Deviation"))
-	foreach 		country in c2 c4 {
-		foreach 	behavior in 1 2 3 {
-			gen 	`country'_b`behavior' = .
-		}
-	}
-	
-	
-	foreach 			c in 2 4 {
-		forval 			b = 1/3 {
-			forval		w = 1/2 {
-				replace c`c'_b`b' = `mean_c`c'b`b'w`w'' if wave == "w`w'" & stat == "Mean"	
+
+	* calculate statistics and store results
+		mean			bh_01 [pweight = phw] if country == 2, over(wave)
+			local		n_c2b1 = e(N)
+			local 		mean_c2b1w1 = el(e(b),1,1)
+			local 		mean_c2b1w2 = el(e(b),1,2)
+			local		sd_c2b1w1 = el(e(sd),1,1)
+			local		sd_c2b1w2 = el(e(sd),1,2)
+		mean			bh_02 [pweight = phw] if country == 2, over(wave) 
+			local		n_c2b2 = e(N)
+			local 		mean_c2b2w1 = el(e(b),1,1)
+			local 		mean_c2b2w2 = el(e(b),1,2)
+			local		sd_c2b2w1 = el(e(sd),1,1)
+			local		sd_c2b2w2 = el(e(sd),1,2)
+		mean			bh_03 [pweight = phw] if country == 2, over(wave)
+			local		n_c2b3 = e(N)
+			local 		mean_c2b3w1 = el(e(b),1,1)
+			local 		mean_c2b3w2 = el(e(b),1,2)
+			local		sd_c2b3w1 = el(e(sd),1,1)
+			local		sd_c2b3w2 = el(e(sd),1,2)
+		mean			bh_01 [pweight = phw] if country == 4, over(wave) 
+			local		n_c4b1 = e(N)
+			local 		mean_c4b1w1 = el(e(b),1,1)
+			local 		mean_c4b1w2 = el(e(b),1,2)
+			local		sd_c4b1w1 = el(e(sd),1,1)
+			local		sd_c4b1w2 = el(e(sd),1,2)
+		mean			bh_02 [pweight = phw] if country == 4, over(wave) 
+			local		n_c4b2 = e(N)
+			local 		mean_c4b2w1 = el(e(b),1,1)
+			local 		mean_c4b2w2 = el(e(b),1,2)
+			local		sd_c4b2w1 = el(e(sd),1,1)
+			local		sd_c4b2w2 = el(e(sd),1,2)
+		mean			bh_03 [pweight = phw] if country == 4, over(wave) 
+			local		n_c4b3 = e(N)
+			local 		mean_c4b3w1 = el(e(b),1,1)
+			local 		mean_c4b3w2 = el(e(b),1,2)
+			local		sd_c4b3w1 = el(e(sd),1,1)
+			local		sd_c4b3w2 = el(e(sd),1,2)
+			
+	* create table S4 with locals
+		preserve
+		clear
+		set 			obs 5
+		gen 			wave = cond(_n<3,"w1",cond(_n<5,"w2",""))
+		gen 			stat = cond(_n == 1 | _n == 3, "mean",cond(_n == 5, "Observations","sd"))
+		foreach 		country in c2 c4 {
+			foreach 	behavior in 1 2 3 {
+				gen 	`country'_b`behavior' = .
 			}
 		}
-	}
-
-* table S5
+		foreach 			c in 2 4 {
+			forval 			b = 1/3 {
+				forval		w = 1/2 {
+					foreach stat in mean sd {
+					  replace c`c'_b`b' = ``stat'_c`c'b`b'w`w'' if wave == "w`w'" & stat == "`stat'"  
+					}
+				}
+			}
+		}
+		foreach c in 2 4 {
+		    forval b = 1/3 {
+			    replace c`c'_b`b' = `n_c`c'b`b'' if stat == "Observations"
+			}
+		}
+		export 			excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
+						sheetreplace sheet(sumstatsS4) first(var)
+		restore
+		
+		
+*** table S5 ***
 
 * regressions of behavior on waves in Malawi
 	reg				bh_01 i.wave [pweight = phw] if country == 2 
@@ -671,19 +683,72 @@ preserve
 	reg 			myth_05 i.country [pweight = phw]
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S6 Common flu) label
+restore
 
 *** table S7 ***
 
 * totals by myths
-	total 			myth_01  [pweight = phw], over(country)
+
+	total 			myth_01  [pweight = phw] if myth_01 == 3, over(country)
+			local		n_m1 = e(N)
+			local 		tot_c2m1 = el(e(b),1,1)
+			local 		tot_c4m1 = el(e(b),1,2)
+			local		v_c2m1 = el(e(V),1,1)
+			local		v_c4m1 = el(e(V),1,2)
 	total 			myth_02  [pweight = phw], over(country)
+			local		n_m2 = e(N)
+			local 		tot_c2m2 = el(e(b),1,1)
+			local 		tot_c4m2 = el(e(b),1,2)
+			local		v_c2m2 = el(e(V),1,1)
+			local		v_c4m2 = el(e(V),1,2)
 	total 			myth_03  [pweight = phw], over(country)
+			local		n_m3 = e(N)
+			local 		tot_c2m3 = el(e(b),1,1)
+			local 		tot_c4m3 = el(e(b),1,2)
+			local		v_c2m3 = el(e(V),1,1)
+			local		v_c4m3 = el(e(V),1,2)
 	total 			myth_04  [pweight = phw], over(country)
+			local		n_m4 = e(N)
+			local 		tot_c2m4 = el(e(b),1,1)
+			local 		tot_c4m4 = el(e(b),1,2)
+			local		v_c2m4 = el(e(V),1,1)
+			local		v_c4m4 = el(e(V),1,2)
 	total 			myth_05  [pweight = phw], over(country)
+			local		n_m5 = e(N)
+			local 		tot_c2m5 = el(e(b),1,1)
+			local 		tot_c4m5 = el(e(b),1,2)
+			local		v_c2m5 = el(e(V),1,1)
+			local		v_c4m5 = el(e(V),1,2)
 	
-restore
 
 	
+	
+	
+	
+//preserve
+	clear
+	set 			obs 5
+	gen 			myth = _n
+	expand 			2
+	sort 			m
+	gen 			country = 2
+	replace 		country = 4 if mod(_n,2) == 0 
+	gen 			tot = . 
+	gen 			v = .
+	foreach 		c in 2 4 {
+		forval 		m = 1/5 {
+			foreach stat in tot v {
+				replace `stat' = ``stat'_c`c'm`m'' if myth == `m' & country == `c'
+			}
+		}
+	}
+	gen 			Observations = .
+	forval 			m = 1/5 {
+		replace 	Observations = `n_m`m''
+	}
+	export 			excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
+					sheetreplace sheet(sumstatsS7) first(var)
+
 * **********************************************************************
 * 2 - create tables for Fig. 2
 * **********************************************************************

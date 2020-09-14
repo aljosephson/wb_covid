@@ -1206,44 +1206,96 @@ restore
 * table of means and totals
 
 * total and mean for access to medicine
-	total ac_med [pweight = phw] if wave == 1
-	mean ac_med [pweight = phw] if wave == 1
+	total 			ac_med [pweight = phw] if wave == 1
+	mean 			ac_med [pweight = phw] if wave == 1
 
 * total and mean for access to staple
-	total ac_staple [pweight = phw] if wave == 1
-	mean ac_staple [pweight = phw] if wave == 1
+	total 			ac_staple [pweight = phw] if wave == 1
+	mean 			ac_staple [pweight = phw] if wave == 1
 
 * total and mean for access to soap
-	total ac_soap [pweight = phw] if wave == 1
-	mean ac_soap [pweight = phw] if wave == 1
+	total 			ac_soap [pweight = phw] if wave == 1
+	mean 			ac_soap [pweight = phw] if wave == 1
 
 *** table s26 ***
 * regressions across quintiles
 
 * regression on access to medicine
-	reg			ac_med i.quint [pweight = phw] if wave == 1
+	reg				ac_med i.quint ib(2).country [pweight = phw] if wave == 1
 
 * regression on access to staple
-	reg			ac_staple i.quint [pweight = phw] if wave == 1
+	reg				ac_staple i.quint ib(2).country [pweight = phw] if wave == 1
 	
 * regression on access to soap
-	reg			ac_soap i.quint [pweight = phw] if wave == 1
+	reg				ac_soap i.quint ib(2).country [pweight = phw] if wave == 1
 
 
 * **********************************************************************
-* 3c - create Table S25-S26 for Fig. 3C
+* 3c - create Table S27-S28 for Fig. 3C
 * **********************************************************************
 
+*** table s27 ***
+* total over all four countries
+	total 			edu_act [pweight = shw] if wave == 1
+	
+* by country
+	total 			edu_act [pweight = shw] if wave == 1, over(country)
 
-mean sch_child [pweight = shw] if wave == 1
+*** table s28 ***
+* regression of educational activity on quintile
+	reg				edu_act i.quint ib(2).country [pweight = phw] if wave == 1
 
-mean edu_act [pweight = shw] if wave == 1
-
-mean edu_cont [pweight = shw] if wave == 1
-
+	
 * **********************************************************************
-* 3d - create Table S ... for Fig. 3D
+* 3d - create Figure S3 and Table S29-S30 for Fig. 3D
 * **********************************************************************
+
+*** figure s3 ***
+	graph bar 			p_mod p_sev [pweight = wt_18], over(edu_act, lab(labs(vlarge))) ///
+							over(country, lab(labs(vlarge))) ylabel(0 "0" .2 "20" .4 "40" .6 "60" ///
+							.8 "80" 1 "100", labs(large)) ytitle("Prevalence of food insecurity", size(large)) ///
+							bar(1, color(stone*1.5)) bar(2, color(maroon*1.5)) ///
+							legend(label (1 "Moderate or severe")  ///
+							label (2 "Severe") pos(6) col(2) size(medsmall)) ///
+							title("Children engaged in learning activities (yes/no)", size(vlarge)) ///
+							saving("$output/fies_edu", replace)
+						
+	grc1leg2 			"$output/fies_edu.gph", ///
+							col(3) iscale(.5) pos(6) commonscheme  ///
+							saving("$output/fies_edu1.gph", replace)						
+						
+	graph export 		"$output/fies_edu1.emf", as(emf) replace
+
+*** table s29 ***
+* fies and educational activity
+	reg					p_mod edu_act ib(2).country i.wave [pweight = shw]
+
+	reg					p_sev edu_act ib(2).country i.wave [pweight = shw]
+
+*** table s30 ***
+* changes in educational activity over time by country
+	
+	* ethiopia
+	reg					edu_act i.wave [pweight = shw] if country == 1
+	reg					edu_04 i.wave [pweight = shw] if country == 1
+	reg					edu_02 i.wave [pweight = shw] if country == 1
+	reg					edu_03 i.wave [pweight = shw] if country == 1
+	reg					edu_05 i.wave [pweight = shw] if country == 1
+	
+	* malawi
+	reg					edu_act i.wave [pweight = shw] if country == 2
+	reg					edu_04 i.wave [pweight = shw] if country == 2
+	reg					edu_02 i.wave [pweight = shw] if country == 2
+	reg					edu_03 i.wave [pweight = shw] if country == 2
+	reg					edu_05 i.wave [pweight = shw] if country == 2
+	
+	* nigeria
+	reg					edu_act i.wave [pweight = shw] if country == 3
+	reg					edu_04 i.wave [pweight = shw] if country == 3
+	reg					edu_02 i.wave [pweight = shw] if country == 3
+	reg					edu_03 i.wave [pweight = shw] if country == 3
+	reg					edu_05 i.wave [pweight = shw] if country == 3
+
 
 
 /*END*/

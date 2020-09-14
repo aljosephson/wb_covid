@@ -441,53 +441,6 @@
 	gen				ac_soap_04 = 1 if quint == 4 & ac_soap == 1
 	gen				ac_soap_05 = 1 if quint == 5 & ac_soap == 1
 
-
-/* count graph
-
-	colorpalette edkblue khaki, ipolate(15, power(1)) locals
-
-
-	graph bar 		(sum) ac_med_01 ac_med_02 ac_med_03 ac_med_04 ac_med_05 ///
-						[pweight = phw] if ac_med_need == 1 & wave == 1, ///
-						over(country, gap(*.1) label(labsize(small))) stack  ///
-						ytitle("Population reporting inability to buy medicine", size(vlarge)) ///
-						ylabel(0 "0" 5000000 "5,000,000" ///
-						10000000 "10,000,000" 15000000 "15,000,000", labs(large)) ///
-						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
-						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
-						bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First Quintile")  ///
-						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
-						label (5 "Fifth Quintile") order( 5 4 3 2 1) pos(6) col(3) size(medsmall)) ///
-						saving("$output/ac_med", replace)
-
-	graph bar 		(sum) ac_staple_01 ac_staple_02 ac_staple_03 ac_staple_04 ac_staple_05 ///
-						[pweight = phw] if ac_staple_need == 1 & wave == 1,  ///
-						over(country, gap(*.1) label(labsize(small))) stack  ///
-						ytitle("Population reporting inability to buy staple food", size(vlarge)) ///
-						ylabel(0 "0" 10000000 "10,000,000" ///
-						20000000 "20,000,000" 30000000 "30,000,000", labs(large)) ///
-						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
-						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
-						bar(5, fcolor(`13') lcolor(none)) legend(off) ///
-						saving("$output/ac_staple", replace)
-
-	graph bar 		(sum) ac_soap_01 ac_soap_02 ac_soap_03 ac_soap_04 ac_soap_05 ///
-						[pweight = phw] if ac_soap_need == 1 & wave == 1,  ///
-						over(country, gap(*.1) label(labsize(small))) stack  ///
-						ytitle("Population reporting inability to buy soap", size(vlarge)) ///
-						ylabel(0 "0" 5000000 "5,000,000" ///
-						10000000 "10,000,000" 15000000 "15,000,000", labs(large)) ///
-						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
-						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
-						bar(5, fcolor(`13') lcolor(none)) legend(off) ///
-						saving("$output/ac_soap", replace)
-
-	grc1leg2		"$output/ac_med.gph" "$output/ac_staple.gph" "$output/ac_soap.gph", ///
-						col(3) iscale(.5) pos(6) commonscheme title("A", size(huge)) ///
-						saving("$output/access.gph", replace)
-
-	graph export 	"$output/access.emfcount", as(emf) replace
-*/
 * percent graph
 
 	replace				ac_med_01 = 0 if quint == 1 & ac_med == 0

@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: jdm
-* Edited by: jdm
-* Last edit: 8 September 2020 
+* Edited by: alj
+* Last edit: 13 September 2020 
 * Stata v.16.1
 
 * does
@@ -14,7 +14,7 @@
 	* cleaned country data
 
 * TO DO:
-	* need to revist access for some variables
+	* need to revist access for some variables - done?
 
 
 * **********************************************************************

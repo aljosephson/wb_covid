@@ -1,7 +1,7 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: alj 
-* Last edit: 7 August 2020 
+* Last edit: 13 August 2020 
 * Stata v.16.1
 
 * does
@@ -41,6 +41,13 @@
 	
 * generate round variable
 	gen				wave = 1
+	lab var			wave "Wave number"
+	
+* read in data + append waves 
+	use				"$root/wave_02/SEC1", clear
+	
+* generate round variable
+	gen				wave = 2
 	lab var			wave "Wave number"
 	
 	format 			%12.0f HHID

@@ -214,7 +214,7 @@
 	
 	keep if			wave == 1
 	
-	lab def sex 1 "male" 2 "female"
+	lab def sex 1 "Male" 2 "Female"
 	label val sexhh sex 	
 	
 	graph bar		(mean) farm_dwn bus_dwn wage_dwn remit_dwn other_dwn [pweight = hhw] ///
@@ -228,6 +228,12 @@
 						label (3 "Wage income") label (4 "Remittances") label (5 "All else") ///
 						pos(6) col(3) size(medsmall)) saving("$output/income_allsex", replace)
 
+	reg				farm_dwn i.sexhh i.country [pweight = hhw] 	
+	reg				bus_dwn i.sexhh i.country [pweight = hhw] 	
+	reg				wage_dwn i.sexhh i.country [pweight = hhw] 	
+	reg				remit_dwn i.sexhh i.country [pweight = hhw] 	
+	reg				other_dwn i.sexhh i.country [pweight = hhw] 			
+						
 	restore
 	
 	grc1leg2 		"$output/income_allsex.gph" , ///
@@ -372,7 +378,7 @@
 	drop if 		country == 1 & wave == 2
 	drop if 		country == 2 & wave == 1
 	
-	lab def sex 1 "male" 2 "female"
+	lab def sex 1 "Male" 2 "Female"
 	label val sexhh sex 
 
 	graph bar 		(mean) p_mod p_sev [pweight = wt_18], over(sexhh, lab(labs(vlarge))) ///
@@ -384,6 +390,9 @@
 						label (2 "Severe food insecurity") order( 1 2) pos(6) col(3) size(medsmall)) ///
 						saving("$output/fies_modsevsex", replace)
 
+	reg				p_mod i.sexhh i.country [pweight = wt_18]
+	reg				p_sev i.sexhh i.country [pweight = wt_18]
+						
 	restore
 
 	grc1leg2 		"$output/fies_modsevsex.gph", ///
@@ -396,7 +405,7 @@
 						col(3) iscale(.5) pos(6) commonscheme  ///
 						saving("$output/fies1sex.gph", replace)						
 						
-	graph export 	"$output/fies1sex.png", as(png) replace
+	graph export 	"$output/fies1sex.eps", as(eps) replace
 
 	
 
@@ -455,7 +464,10 @@
 						pos(6) col(1) size(medsmall)) ///
 						title("Concerns about COVID-19", size(vlarge)) ///
 						saving("$output/concern_sex", replace)
-						
+		
+	reg				concern_01 i.sexhh i.country [pweight = phw]
+	reg				concern_02 i.sexhh i.country [pweight = phw]
+	
 	restore
 	
 	grc1leg2 		"$output/concern_sex.gph", ///
@@ -468,7 +480,7 @@
 						col(1) iscale(.5) pos(6) commonscheme  ///
 						saving("$output/concerns1sex.gph", replace)						
 						
-	graph export 	"$output/concerns1sex.png", as(png) replace
+	graph export 	"$output/concerns1sex.eps", as(eps) replace
 	
 	
 * figure 2 - combine graphs

@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: August 2020
 * Created by: jdm
-* Edited by: jdm
-* Last edited: 1 September 2020 
+* Edited by: alj
+* Last edited: 13 September 2020 
 * Stata v.16.1
 
 * does
@@ -637,7 +637,7 @@
 
 	
 * ***********************************************************************
-* 4a - household size - wave 1
+* 4a - household size and gender of HOH - wave 1
 * ***********************************************************************
 	
 * load data
@@ -657,8 +657,13 @@
 	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
 	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
+* create hh head gender
+	gen 			sexhh = . 
+	replace			sexhh = sex_mem if relat_mem == 1
+	label var 		sexhh "Sex of household head"
+	
 * collapse data
-	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(hhid)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(hhid)
 	lab var		hhsize "Household size"
 	lab var 	hhsize_adult "Household size - only adults"
 	lab var 	hhsize_child "Household size - children 0 - 18"
@@ -669,7 +674,7 @@
 
 	
 * ***********************************************************************
-* 4b - household size - wave 2
+* 4b - household size and gender of HOH - wave 2
 * ***********************************************************************
 	
 * load data
@@ -688,9 +693,14 @@
 	gen 		hhsize_adult = 1 if age_mem > 18 & age_mem < .
 	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
 	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
+
+* create hh head gender
+	gen 			sexhh = . 
+	replace			sexhh = sex_mem if relat_mem == 1
+	label var 		sexhh "Sex of household head"
 	
 * collapse data
-	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(hhid)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(hhid)
 	lab var		hhsize "Household size"
 	lab var 	hhsize_adult "Household size - only adults"
 	lab var 	hhsize_child "Household size - children 0 - 18"
@@ -701,7 +711,7 @@
 	
 	
 * ***********************************************************************
-* 4c - household size - wave 3
+* 4c - household size and gender of HOH - wave 3
 * ***********************************************************************
 	
 * load data
@@ -720,14 +730,18 @@
 	gen 		hhsize_adult = 1 if age_mem > 18 & age_mem < .
 	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
 	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
+
+* create hh head gender
+	gen 			sexhh = . 
+	replace			sexhh = sex_mem if relat_mem == 1
+	label var 		sexhh "Sex of household head"
 	
 * collapse data
-	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(hhid)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(hhid)
 	lab var		hhsize "Household size"
 	lab var 	hhsize_adult "Household size - only adults"
 	lab var 	hhsize_child "Household size - children 0 - 18"
 	lab var 	hhsize_schchild "Household size - school-age children 5 - 18"
-
 
 * save temp file
 	save			"$export/wave_03/hhsize_r3", replace

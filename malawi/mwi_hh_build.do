@@ -35,7 +35,6 @@
 * 1 - create malawi hh roster 
 * ***********************************************************************
 
-
 * read in data + append waves 
 	use				"$mwi/wave_01/sect2_Household_Roster", clear
 	

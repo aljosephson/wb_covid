@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: jdm, alj
-* Last edit: 10 September 2020 
+* Last edit: 13 September 2020 
 * Stata v.16.1
 
 * does
@@ -34,7 +34,7 @@
 
 
 * ***********************************************************************
-* 1a - get household size
+* 1a - get household size and gender of household head 
 * ***********************************************************************
 
 * load round 1 of the data
@@ -58,6 +58,7 @@
 * create hh head gender
 	gen 			sexhh = . 
 	replace			sexhh = sex_mem if relat_mem == 1
+	label var 		sexhh "Sex of household head"
 	
 * collapse data
 	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(household_id)
@@ -90,10 +91,10 @@
 * create hh head gender
 	gen 			sexhh = . 
 	replace			sexhh = sex_mem if relat_mem == 1
+	label var 		sexhh "Sex of household head"	
 	
 * collapse data
-	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(household_id)
-	
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(household_id)	
 	lab var		hhsize "Household size"
 	lab var 	hhsize_adult "Household size - only adults"
 	lab var 	hhsize_child "Household size - children 0 - 18"
@@ -120,9 +121,13 @@
 	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
 	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
+* create hh head gender
+	gen 			sexhh = . 
+	replace			sexhh = sex_mem if relat_mem == 1
+	label var 		sexhh "Sex of household head"
 	
 * collapse data
-	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(household_id)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(household_id)
 	lab var		hhsize "Household size"
 	lab var 	hhsize_adult "Household size - only adults"
 	lab var 	hhsize_child "Household size - children 0 - 18"

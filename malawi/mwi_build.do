@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: alj
-* Edited by: jdm
-* Last edited: 1 September 2020
+* Edited by: alj
+* Last edited: 13 September 2020
 * Stata v.16.1
 
 * does
@@ -437,7 +437,7 @@
 
 
 * ***********************************************************************
-* 1h - get household size - R1
+* 1h - get household size and gender of HOH - R1
 * ***********************************************************************
 
 * load data
@@ -457,8 +457,13 @@
 	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
 	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
+* create hh head gender
+	gen 			sexhh = . 
+	replace			sexhh = sex_mem if relat_mem == 1
+	label var 		sexhh "Sex of household head"
+	
 * collapse data
-	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(HHID)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(HHID)
 	lab var		hhsize "Household size"
 	lab var 	hhsize_adult "Household size - only adults"
 	lab var 	hhsize_child "Household size - children 0 - 18"
@@ -469,7 +474,7 @@
 
 	
 * ***********************************************************************
-* 1i - get household size - R2
+* 1i - get household size and gender of HOH - R2
 * ***********************************************************************
 
 * load data
@@ -489,8 +494,13 @@
 	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
 	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
+* create hh head gender
+	gen 			sexhh = . 
+	replace			sexhh = sex_mem if relat_mem == 1
+	label var 		sexhh "Sex of household head"
+	
 * collapse data
-	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(HHID)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(HHID)
 	lab var		hhsize "Household size"
 	lab var 	hhsize_adult "Household size - only adults"
 	lab var 	hhsize_child "Household size - children 0 - 18"

@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj
-* Last edit: 27 August 2020
+* Last edit: 13 September 2020
 * Stata v.16.1
 
 * does
@@ -18,8 +18,8 @@
 	* colrspace
 
 * TO DO:
-	* make all labels size(medsmall)
-	* make letter title larger
+	* ongoing ... 
+	* gender graphs set of .png instead of .eps
 
 
 * **********************************************************************
@@ -209,6 +209,38 @@
 						
 	graph export 	"$output/income1.eps", as(eps) replace
 
+* graph Aa - income loss by gender
+	preserve
+	
+	keep if			wave == 1
+	
+	lab def sex 1 "male" 2 "female"
+	label val sexhh sex 	
+	
+	graph bar		(mean) farm_dwn bus_dwn wage_dwn remit_dwn other_dwn [pweight = hhw] ///
+						, over(sexhh, lab(labs(large))) ///
+						over(country, lab(labs(vlarge)))  ///
+						ytitle("Households reporting decrease in income (%)", size(vlarge) ) ///
+						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
+						bar(1, color(navy*1.5)) bar(2, color(teal*1.5)) bar(3, color(khaki*1.5)) ///
+						bar(4, color(cranberry*1.5)) bar(5, color(purple*1.5)) ///
+						legend( label (1 "Farm income") label (2 "Business income") ///
+						label (3 "Wage income") label (4 "Remittances") label (5 "All else") ///
+						pos(6) col(3) size(medsmall)) saving("$output/income_allsex", replace)
+
+	restore
+	
+	grc1leg2 		"$output/income_allsex.gph" , ///
+						col(3) iscale(.5) commonscheme ///
+						title("A", size(huge)) saving("$output/incomesex.gph", replace)
+						
+	graph export 	"$output/incomesex.emf", as(emf) replace
+						
+	grc1leg2 		"$output/income_allsex.gph" , ///
+						col(3) iscale(.5) commonscheme ///
+						 saving("$output/income1sex.gph", replace)						
+						
+	graph export 	"$output/income1sex.png", as(png) replace
 
 * graph B - income loss by wave
 	preserve
@@ -333,6 +365,40 @@
 						
 	graph export 	"$output/fies1.eps", as(eps) replace
 
+	
+
+* graph Ca - FIES score and gender 
+	preserve
+	drop if 		country == 1 & wave == 2
+	drop if 		country == 2 & wave == 1
+	
+	lab def sex 1 "male" 2 "female"
+	label val sexhh sex 
+
+	graph bar 		(mean) p_mod p_sev [pweight = wt_18], over(sexhh, lab(labs(vlarge))) ///
+						over(country, lab(labs(vlarge))) ylabel(0 "0" ///
+						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
+						ytitle("Prevalence of moderate or severe food insecurity", size(vlarge))  ///
+						bar(1, color(stone*1.5)) bar(2, color(ebblue*1.5))  ///
+						legend(label (1 "Moderate or severe food insecurity")  ///
+						label (2 "Severe food insecurity") order( 1 2) pos(6) col(3) size(medsmall)) ///
+						saving("$output/fies_modsevsex", replace)
+
+	restore
+
+	grc1leg2 		"$output/fies_modsevsex.gph", ///
+						col(3) iscale(.5) pos(6) commonscheme title("C", size(huge)) ///
+						saving("$output/fiessex.gph", replace)
+						
+	graph export 	"$output/fiessex.emf", as(emf) replace
+
+	grc1leg2 		"$output/fies_modsevsex.gph", ///
+						col(3) iscale(.5) pos(6) commonscheme  ///
+						saving("$output/fies1sex.gph", replace)						
+						
+	graph export 	"$output/fies1sex.png", as(png) replace
+
+	
 
 * graph D - concerns with FIES
 	preserve
@@ -372,6 +438,39 @@
 	graph export 	"$output/concerns1.eps", as(eps) replace
 
 
+
+* graph Da - concerns with gender
+	preserve
+	drop if			country == 2 & wave == 1
+	
+	lab def sex 1 "male" 2 "female"
+	label val sexhh sex 
+	
+	graph hbar		(mean) concern_01 concern_02 [pweight = phw], over(sexhh, lab(labs(vlarge))) ///
+						over(country, lab(labs(vlarge))) ylabel(0 "0" .2 "20" .4 "40" .6 "60" ///
+						.8 "80" 1 "100", labs(large)) ytitle("Percent of households reporting concern", size(large)) ///
+						bar(1, color(stone*1.5)) bar(2, color(maroon*1.5)) ///
+						legend(label (1 "Concerned that family or self will fall ill with COVID-19")  ///
+						label (2 "Concerned about the financial threat of COVID-19") ///
+						pos(6) col(1) size(medsmall)) ///
+						title("Concerns about COVID-19", size(vlarge)) ///
+						saving("$output/concern_sex", replace)
+						
+	restore
+	
+	grc1leg2 		"$output/concern_sex.gph", ///
+						col(1) iscale(.5) pos(6) commonscheme title("D", size(huge) span) ///
+						saving("$output/concernssex.gph", replace)
+						
+	graph export 	"$output/concernssex.emf", as(emf) replace
+
+	grc1leg2 		"$output/concern_sex.gph", ///
+						col(1) iscale(.5) pos(6) commonscheme  ///
+						saving("$output/concerns1sex.gph", replace)						
+						
+	graph export 	"$output/concerns1sex.png", as(png) replace
+	
+	
 * figure 2 - combine graphs
 * not used
 	*gr combine 		"$output/income.gph" "$output/bus_emp_inc.gph" ///
@@ -391,7 +490,8 @@
 	drop if country == 1 & wave == 1
 	drop if country == 1 & wave == 2
 	drop if country == 3 & wave == 1
-
+	
+	
 	replace			cope_03 = 1 if cope_03 == 1 | cope_04 == 1
 	replace			cope_05 = 1 if cope_05 == 1 | cope_06 == 1 | cope_07 == 1
 	
@@ -421,6 +521,46 @@
 						
 	graph export 	"$output/cope1.eps", as(eps) replace
 
+
+* graph Aa - coping mechanisms, by gender
+	preserve
+	drop if country == 1 & wave == 1
+	drop if country == 1 & wave == 2
+	drop if country == 3 & wave == 1
+	
+	lab def sex 1 "male" 2 "female"
+	label val sexhh sex 
+
+	replace			cope_03 = 1 if cope_03 == 1 | cope_04 == 1
+	replace			cope_05 = 1 if cope_05 == 1 | cope_06 == 1 | cope_07 == 1
+	
+	graph bar		(mean) cope_11 cope_01 cope_09 cope_10 cope_03 asst_any  ///
+						[pweight = hhw], over(sexhh, ///
+						label (labsize(large))) over(country, label (labsize(vlarge))) ///
+						bar(1, color(maroon*1.5)) bar(2, color(emidblue*1.5)) ///
+						bar(3, color(emerald*1.5)) bar(4, color(brown*1.5)) ///
+						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
+						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
+						ytitle("Households reporting use of coping strategy (%)", size(vlarge)) ///
+						legend( label (1 "Relied on savings") label (2 "Sale of asset") ///
+						label (3 "Reduced food cons.") label (4 "Reduced non-food cons.") ///
+						label (5 "Help from family") ///
+						label (6 "Recieved assistance") size(medsmall) pos(6) col(3)) ///
+						saving("$output/cope_allsex.gph", replace)
+
+	restore
+
+	grc1leg2 		"$output/cope_allsex.gph", col(4) iscale(.5) commonscheme ///
+						title("A", size(huge)) saving("$output/copesex.gph", replace)
+						
+	graph export 	"$output/copesex.emf", as(emf) replace
+
+	grc1leg2 		"$output/cope_allsex.gph", col(4) iscale(.5) commonscheme ///
+						 saving("$output/cope1sex.gph", replace)						
+						
+	graph export 	"$output/cope1sex.png", as(png) replace
+
+	
 	
 * graph B - access to med, food, soap
 	gen				ac_med_01 = 1 if quint == 1 & ac_med == 1

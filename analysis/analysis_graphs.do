@@ -6,7 +6,7 @@
 * Stata v.16.1
 
 * does
-	* produces graphs for presentation
+	* produces graphs for paper
 
 * assumes
 	* cleaned country data
@@ -83,12 +83,6 @@
 						
 	graph export 	"$output/knowledge.emf", as(emf) replace
 
-	grc1leg2  		 "$output/knowledgea.gph", ///
-						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
-						saving("$output/knowledge1", replace)						
-						
-	graph export 	"$output/knowledge1.eps", as(eps) replace
-
 
 * graph C - look at behavior variables
 	graph bar 		(mean) bh_01 bh_02 bh_03 if wave == 1 [pweight = phw], ///
@@ -107,12 +101,6 @@
 						title("C", size(huge)) saving("$output/behavior", replace)
 						
 	graph export 	"$output/behavior.emf", as(emf) replace
-						
-	grc1leg2  		 "$output/behaviora.gph", ///
-						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
-						saving("$output/behavior1", replace)						
-						
-	graph export 	"$output/behavior1.eps", as(eps) replace
 
 
 * graph D - myth variables
@@ -148,22 +136,6 @@
 						
 	graph export 	"$output/myth.emf", as(emf) replace
 
-	grc1leg2  		 "$output/mytha.gph", ///
-						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend() ///
-						 saving("$output/myth1", replace)						
-						
-	graph export 	"$output/myth1.eps", as(eps) replace
-
-
-* figure 1 - combine graphs
-* not using this code
-*	gr 				combine "$output/restriction.gph" "$output/knowledge.gph" ///
-*						"$output/behavior.gph" "$output/myth.gph", ///
-*						col(2) iscale(.45) commonscheme
-
-*	graph export 	"$output/knowbehave.emf", as(emf) replace
-*	graph export 	"$output/knowbehave.pdf", as(pdf) replace
-
 
 * **********************************************************************
 * 2 - income and fies graphs
@@ -195,11 +167,6 @@
 						
 	graph export 	"$output/income.emf", as(emf) replace
 						
-	grc1leg2 		"$output/income_alla.gph" , ///
-						col(3) iscale(.5) commonscheme ///
-						 saving("$output/income1.gph", replace)						
-						
-	graph export 	"$output/income1.eps", as(eps) replace
 
 * graph Aa - income loss by gender
 	preserve
@@ -228,11 +195,6 @@
 						
 	graph export 	"$output/incomesex.emf", as(emf) replace
 						
-	grc1leg2 		"$output/income_allsex.gph" , ///
-						col(3) iscale(.5) commonscheme ///
-						 saving("$output/income1sex.gph", replace)						
-						
-	graph export 	"$output/income1sex.png", as(png) replace
 
 * graph B - income loss by wave
 	preserve
@@ -295,13 +257,6 @@
 						saving("$output/bus_emp_inc", replace)
 						
 	graph export 	"$output/bus_emp_inc.emf", as(emf) replace
-					
-	grc1leg2 		"$output/eth_bus_inc.gph" "$output/mwi_bus_inc.gph" ///
-						"$output/nga_bus_inc.gph" "$output/uga_bus_inc.gph", ///
-						col(1) iscale(.5) commonscheme imargin(0 0 0 0)  ///
-						saving("$output/bus_emp_inc1", replace)
-
-	graph export 	"$output/bus_emp_inc1.eps", as(eps) replace
 
 
 * graph C - FIES score and consumption quntile
@@ -351,13 +306,6 @@
 						
 	graph export 	"$output/fies.emf", as(emf) replace
 
-	grc1leg2 		"$output/fies_modsev.gph" "$output/fies_sev.gph", ///
-						col(3) iscale(.5) pos(6) commonscheme  ///
-						saving("$output/fies1.gph", replace)						
-						
-	graph export 	"$output/fies1.eps", as(eps) replace
-
-	
 
 * graph Ca - FIES score and gender 
 	preserve
@@ -387,13 +335,6 @@
 						
 	graph export 	"$output/fiessex.emf", as(emf) replace
 
-	grc1leg2 		"$output/fies_modsevsex.gph", ///
-						col(3) iscale(.5) pos(6) commonscheme  ///
-						saving("$output/fies1sex.gph", replace)						
-						
-	graph export 	"$output/fies1sex.eps", as(eps) replace
-
-	
 
 * graph D - concerns with FIES
 	preserve
@@ -426,13 +367,6 @@
 						
 	graph export 	"$output/concerns.emf", as(emf) replace
 
-	grc1leg2 		"$output/concern_1.gph" "$output/concern_2.gph", ///
-						col(1) iscale(.5) pos(6) commonscheme  ///
-						saving("$output/concerns1.gph", replace)						
-						
-	graph export 	"$output/concerns1.eps", as(eps) replace
-
-
 
 * graph Da - concerns with gender
 	preserve
@@ -461,22 +395,6 @@
 						saving("$output/concernssex.gph", replace)
 						
 	graph export 	"$output/concernssex.emf", as(emf) replace
-
-	grc1leg2 		"$output/concern_sex.gph", ///
-						col(1) iscale(.5) pos(6) commonscheme  ///
-						saving("$output/concerns1sex.gph", replace)						
-						
-	graph export 	"$output/concerns1sex.eps", as(eps) replace
-	
-	
-* figure 2 - combine graphs
-* not used
-	*gr combine 		"$output/income.gph" "$output/bus_emp_inc.gph" ///
-	*					"$output/fies.gph" "$output/concerns.gph", ///
-	*					col(2) iscale(.5) commonscheme
-
-	*graph export 	"$output/incomeimpacts.emf", as(emf) replace
-	*graph export 	"$output/incomeimpacts.pdf", as(pdf) replace
 
 
 * **********************************************************************
@@ -514,11 +432,6 @@
 						
 	graph export 	"$output/cope.emf", as(emf) replace
 
-	grc1leg2 		"$output/cope_alla.gph", col(4) iscale(.5) commonscheme ///
-						 saving("$output/cope1.gph", replace)						
-						
-	graph export 	"$output/cope1.eps", as(eps) replace
-
 
 * graph Aa - coping mechanisms, by gender
 	preserve
@@ -553,12 +466,6 @@
 						
 	graph export 	"$output/copesex.emf", as(emf) replace
 
-	grc1leg2 		"$output/cope_allsex.gph", col(4) iscale(.5) commonscheme ///
-						 saving("$output/cope1sex.gph", replace)						
-						
-	graph export 	"$output/cope1sex.png", as(png) replace
-
-	
 	
 * graph B - access to med, food, soap
 	gen				ac_med_01 = 1 if quint == 1 & ac_med == 1
@@ -579,25 +486,23 @@
 	gen				ac_soap_04 = 1 if quint == 4 & ac_soap == 1
 	gen				ac_soap_05 = 1 if quint == 5 & ac_soap == 1
 
-* percent graph
+	replace			ac_med_01 = 0 if quint == 1 & ac_med == 0
+	replace			ac_med_02 = 0 if quint == 2 & ac_med == 0
+	replace			ac_med_03 = 0 if quint == 3 & ac_med == 0
+	replace			ac_med_04 = 0 if quint == 4 & ac_med == 0
+	replace			ac_med_05 = 0 if quint == 5 & ac_med == 0
 
-	replace				ac_med_01 = 0 if quint == 1 & ac_med == 0
-	replace				ac_med_02 = 0 if quint == 2 & ac_med == 0
-	replace				ac_med_03 = 0 if quint == 3 & ac_med == 0
-	replace				ac_med_04 = 0 if quint == 4 & ac_med == 0
-	replace				ac_med_05 = 0 if quint == 5 & ac_med == 0
+	replace			ac_staple_01 = 0 if quint == 1 & ac_staple == 0
+	replace			ac_staple_02 = 0 if quint == 2 & ac_staple == 0
+	replace			ac_staple_03 = 0 if quint == 3 & ac_staple == 0
+	replace			ac_staple_04 = 0 if quint == 4 & ac_staple == 0
+	replace			ac_staple_05 = 0 if quint == 5 & ac_staple == 0
 
-	replace				ac_staple_01 = 0 if quint == 1 & ac_staple == 0
-	replace				ac_staple_02 = 0 if quint == 2 & ac_staple == 0
-	replace				ac_staple_03 = 0 if quint == 3 & ac_staple == 0
-	replace				ac_staple_04 = 0 if quint == 4 & ac_staple == 0
-	replace				ac_staple_05 = 0 if quint == 5 & ac_staple == 0
-
-	replace				ac_soap_01 = 0 if quint == 1 & ac_soap == 0
-	replace				ac_soap_02 = 0 if quint == 2 & ac_soap == 0
-	replace				ac_soap_03 = 0 if quint == 3 & ac_soap == 0
-	replace				ac_soap_04 = 0 if quint == 4 & ac_soap == 0
-	replace				ac_soap_05 = 0 if quint == 5 & ac_soap == 0
+	replace			ac_soap_01 = 0 if quint == 1 & ac_soap == 0
+	replace			ac_soap_02 = 0 if quint == 2 & ac_soap == 0
+	replace			ac_soap_03 = 0 if quint == 3 & ac_soap == 0
+	replace			ac_soap_04 = 0 if quint == 4 & ac_soap == 0
+	replace			ac_soap_05 = 0 if quint == 5 & ac_soap == 0
 
 	colorpalette edkblue khaki, ipolate(15, power(1)) locals
 
@@ -643,13 +548,7 @@
 						
 	graph export 	"$output/access.emf", as(emf) replace
 
-	grc1leg2		"$output/ac_med.gph" "$output/ac_staple.gph" "$output/ac_soap.gph", ///
-						col(3) iscale(.5) pos(6) commonscheme  ///
-						saving("$output/access1.gph", replace)						
-						
-	graph export 	"$output/access1.eps", as(eps) replace
-
-
+	
 * graph C - education and food
 	gen				edu_act_01 = edu_act if quint == 1
 	gen				edu_act_02 = edu_act if quint == 2
@@ -676,12 +575,6 @@
 						
 	graph export "$output/edu_quint.emf", as(emf) replace
 						
-	grc1leg2  		 "$output/edu_quinta.gph", ///
-						col(3) iscale(.5) commonscheme imargin(0 0 0 0) legend()  ///
-						saving("$output/edu_quint1", replace)
-
-	graph export "$output/edu_quint1.eps", as(eps) replace
-
 
 * graph D - education activities
 	graph bar		edu_04 edu_02 edu_03 edu_05 [pweight = hhw] if country == 1 ///
@@ -725,23 +618,6 @@
 						
 	graph export 	"$output/educont.emf", as(emf) replace
 
-	grc1leg2  		 "$output/educont_eth.gph" "$output/educont_mwi.gph" ///
-						"$output/educont_nga.gph" "$output/educont_uga.gph", ///
-						col(4) iscale(.5) commonscheme imargin(0 0 0 0) legend()  ///
-						saving("$output/educont1", replace)						
-						
-	graph export 	"$output/educont1.eps", as(eps) replace
-
-
-* figure 3 - combine graphs
-* not using this code
-*	gr combine 			"$output/access.gph" "$output/cope.gph" ///
-*							"$output/educont.gph" "$output/edu_quint.gph", ///
-*							col(2) iscale(.5) commonscheme
-
-*	graph export "$output/access_cope.emf", as(emf) replace
-
-*	graph export "$output/access_cope.pdf", as(pdf) replace
 
 * **********************************************************************
 * 4 - end matter, clean up to save

@@ -727,75 +727,93 @@ restore
 
 *** table S8 ***
 * summary statistics on losses of income
-	mean 			dwn [pweight = phw] if wave == 1 
-	mean 			farm_dwn [pweight = phw] if wave == 1 
-	mean 			bus_dwn [pweight = phw] if wave == 1 
-	mean 			wage_dwn [pweight = phw] if wave == 1 
-	mean 			remit_dwn [pweight = phw] if wave == 1  
-	mean			other_dwn [pweight = phw]  if wave == 1 
-
-
+	foreach var in dwn farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
+		mean 			`var' [pweight = phw] if wave == 1 
+			local 			n_`var' = e(N)
+			local 			mean_`var' = el(e(b),1,1)
+			local 			sd_`var' = sqrt(el(e(V),1,1))
+	}	
+	* format table
+		preserve
+			keep 			dwn farm_dwn bus_dwn wage_dwn remit_dwn other_dwn
+			drop 			if dwn < 2 //drop all observations
+			label 			variable dwn "Any type of income loss"
+			label 			variable remit_dwn "Remittances reduced"
+			label 			variable other_dwn "Other income sources reduced"
+			set 			obs 3
+			gen 			stat = cond(_n == 1, "mean",cond(_n == 2, "sd","n"))
+			order 			stat dwn *
+			foreach 		var in farm_dwn bus_dwn wage_dwn remit_dwn other_dwn{
+				decode 		`var', gen(`var'_de)
+				destring 	`var'_de, replace
+				drop 		`var'
+			}
+	* populate table with stored results
+			foreach 		var in dwn farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
+			    foreach 	s in n mean sd {
+					replace `var' = ``s'_`var'' if stat == "`s'"
+				}
+			}
+			
+		export 			excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
+						sheetreplace sheet(sumstatsS8) first(varlabels)
+		restore				
+			
 *** table S9 ***				
 * regressions for cross-country comparisons 
 					
-* regressions for income loss: farm 
-	reg 			farm_dwn ib(2).country [pweight = hhw] if wave == 1, vce(robust) 
-	
-* Wald test for differences between other countries
+* regressions for income loss: farm
+	reg 			farm_dwn ib(2).country [pweight = hhw] if wave == 1, vce(robust)
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
+					replace excel dec(3) ctitle(S9 farm_dwn) 
+	* Wald test for differences between other countries
 		test			1.country = 3.country
+		local 			t1_farm_dwn = r(p)
 		test			1.country = 4.country
+		local 			t2_farm_dwn = r(p)
 		test			3.country = 4.country
+		local 			t3_farm_dwn = r(p)	
 
-* regressions for income loss: business  
-	reg 			bus_dwn ib(2).country [pweight = hhw] if wave == 1, vce(robust) 
-	
-* Wald test for differences between other countries
+* regressions for income loss: business, wage, remittances, other 						
+	foreach 		var in bus_dwn wage_dwn remit_dwn other_dwn {
+		reg 			`var' ib(2).country [pweight = hhw] if wave == 1, vce(robust)
+		outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
+						append excel dec(3) ctitle(S9 `var') 
+	* Wald test for differences between other countries
 		test			1.country = 3.country
+		local 			t1_`var' = r(p)
 		test			1.country = 4.country
+		local 			t2_`var' = r(p)
 		test			3.country = 4.country
+		local 			t3_`var' = r(p)
+	}
 
-* regressions for income loss: wage   
-	reg 			wage_dwn ib(2).country [pweight = hhw] if wave == 1, vce(robust) 
+	preserve 
+		clear
+		set obs 3
+		gen 					testcountries =  "Ethiopia-Nigeria"
+		replace 				testcountries = "Ethiopia-Uganda" in 2
+		replace 				testcountries = "Nigeria-Uganda" in 3
+		foreach 				var in farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
+								gen `var' = cond(_n == 1, `t1_`var'', cond(_n == 2, `t2_`var'',`t3_`var''))
+		}
 	
-* Wald test for differences between other countries
-		test			1.country = 3.country
-		test			1.country = 4.country
-		test			3.country = 4.country
-
-* regressions for income loss: remittances   
-	reg 			remit_dwn ib(2).country [pweight = hhw] if wave == 1, vce(robust) 
+		export 				excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
+							sheetreplace sheet(testresultsS9) first(var)
+	restore
 	
-* Wald test for differences between other countries
-		test			1.country = 3.country
-		test			1.country = 4.country
-		test			3.country = 4.country
-
-* regressions for income loss: other   
-	reg 			other_dwn ib(2).country [pweight = hhw] if wave == 1, vce(robust) 
 	
-* Wald test for differences between other countries
-		test			1.country = 3.country
-		test			1.country = 4.country
-		test			3.country = 4.country
-
+	
 *** table s10 ***
 * regressions comparing rural urban, controlling for country
 
-* regressions for income loss: farm 
-	reg 			farm_dwn i.sector ib(2).country [pweight = hhw] if wave == 1, vce(robust)
-	
-* regressions for income loss: business 
-	reg 			bus_dwn i.sector ib(2).country [pweight = hhw] if wave == 1, vce(robust)
-	
-* regressions for income loss: wage  
-	reg 			wage_dwn i.sector ib(2).country [pweight = hhw] if wave == 1, vce(robust)
-	
-* regressions for income loss: wage  
-	reg 			remit_dwn i.sector ib(2).country [pweight = hhw] if wave == 1, vce(robust)
-	
-* regressions for income loss: wage  
-	reg 			other_dwn i.sector ib(2).country [pweight = hhw] if wave == 1, vce(robust)
-	
+* regressions for income loss: farm, business, wage, remittances, other
+	foreach 		var in farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
+		reg 			`var' i.sector ib(2).country [pweight = hhw] if wave == 1, vce(robust)
+		outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
+						append excel dec(3) ctitle(S10 `var') 	
+	}
+
 
 * **********************************************************************
 * 2b - create Table S11 for Fig. 2B

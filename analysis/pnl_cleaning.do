@@ -155,11 +155,13 @@
 	replace			cope_any = 0 if cope_any == . & country == 4 & wave == 1
 	lab var			cope_any "Adopted any coping strategy"
 	
+	lab def			myth 0 "No" 1 "Yes" 3 "Don't Know"
+	
 	local myth		 myth_01 myth_02 myth_03 myth_04 myth_05
 	foreach v in `myth' {
-	    replace `v' = . if `v' == -98
+	    replace `v' = 3 if `v' == -98
 		replace `v' = 0 if `v' == 2
-		lab val	`v' yesno
+		lab val	`v' myth
 	}	
 	
 	

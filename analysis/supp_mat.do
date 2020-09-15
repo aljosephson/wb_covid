@@ -42,7 +42,7 @@
 * **********************************************************************
 
 * advised citizens to stay at home
-	reg 			gov_01 ib(2).country [pweight = phw] if wave == 1
+	reg 			gov_01 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					replace excel dec(3) ctitle(S1 Stay at home) label
 	
@@ -70,7 +70,7 @@
 		restore
 		
 * restricted travel within country/area
-	reg 			gov_02 ib(2).country [pweight = phw] if wave == 1
+	reg 			gov_02 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S1 Restricted travel) label
 	
@@ -97,7 +97,7 @@
 		restore
 		
 * closure of schools
-	reg 			gov_04 ib(2).country [pweight = phw] if wave == 1
+	reg 			gov_04 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S1 Close schools) label
 	
@@ -124,7 +124,7 @@
 		restore
 
 * curfew/lockdown
-	reg 			gov_05 ib(2).country [pweight = phw] if wave == 1
+	reg 			gov_05 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S1 Lockdown) label
 	
@@ -151,7 +151,7 @@
 		restore
 		
 * closure of non-essential businesses
-	reg 			gov_06 ib(2).country [pweight = phw] if wave == 1
+	reg 			gov_06 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S1 Close businesses) label
 	
@@ -178,7 +178,7 @@
 		restore
 
 * stopping or limiting social gatherings
-	reg 			gov_10 ib(2).country [pweight = phw] if wave == 1
+	reg 			gov_10 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S1 Limit social gatherings) label
 	
@@ -237,7 +237,7 @@
 * **********************************************************************
 
 * handwashing with Soap Reduces Risk of Coronavirus Contraction
-	reg 			know_01 ib(2).country [pweight = phw] if wave == 1
+	reg 			know_01 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S2 Soap reduces risk) label
 	
@@ -265,7 +265,7 @@
 		restore
 
 * avoiding Handshakes/Physical Greetings Reduces Risk of Coronavirus Contract
-	reg 			know_02 ib(2).country [pweight = phw] if wave == 1
+	reg 			know_02 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S2 Avoid physical greetings) label
 	
@@ -292,7 +292,7 @@
 		restore
 
 * using Masks or Gloves Reduces Risk of Coronavirus Contraction
-	reg 			know_03 ib(2).country [pweight = phw] if wave == 1
+	reg 			know_03 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S2 Use masks or gloves) label
 	
@@ -319,7 +319,7 @@
 		restore
 
 * staying at Home Reduces Risk of Coronavirus Contraction
-	reg 			know_05 ib(2).country [pweight = phw] if wave == 1
+	reg 			know_05 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S2 Stay at home) label
 	
@@ -346,7 +346,7 @@
 		restore
 		
 * avoiding Crowds and Gatherings Reduces Risk of Coronavirus Contraction
-	reg 			know_06 ib(2).country [pweight = phw] if wave == 1
+	reg 			know_06 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S2 Avoid crowds) label
 	
@@ -373,7 +373,7 @@
 		restore
 
 * mainting Social Distance of at least 1 Meter Reduces Risk of Coronavirus Co
-	reg 			know_07 ib(2).country [pweight = phw] if wave == 1
+	reg 			know_07 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S2 Maintain distance of one meter) label
 	
@@ -435,7 +435,7 @@
 *** table S3 ***
 
 * handwashed with Soap More Often Since Outbreak
-	reg 			bh_01 ib(2).country [pweight = phw] if wave == 1
+	reg 			bh_01 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S3 Handwashed with soap more often) label
 	
@@ -463,7 +463,7 @@
 		restore
 		
 * avoided Handshakes/Physical Greetings Since Outbreak
-	reg 			bh_02 ib(2).country [pweight = phw] if wave == 1
+	reg 			bh_02 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S3 Avoided physical greetings) label
 	
@@ -491,7 +491,7 @@
 		
 
 * avoided Crowds and Gatherings Since Outbreak
-	reg 			bh_03 ib(2).country [pweight = phw] if wave == 1
+	reg 			bh_03 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S3 Avoided crowds) label
 	
@@ -551,44 +551,18 @@
 * percentage over time for Malawi and Uganda
 
 	* calculate statistics and store results
-		mean			bh_01 [pweight = phw] if country == 2, over(wave)
-			local		n_c2b1 = e(N)
-			local 		mean_c2b1w1 = el(e(b),1,1)
-			local 		mean_c2b1w2 = el(e(b),1,2)
-			local		sd_c2b1w1 = el(e(sd),1,1)
-			local		sd_c2b1w2 = el(e(sd),1,2)
-		mean			bh_02 [pweight = phw] if country == 2, over(wave) 
-			local		n_c2b2 = e(N)
-			local 		mean_c2b2w1 = el(e(b),1,1)
-			local 		mean_c2b2w2 = el(e(b),1,2)
-			local		sd_c2b2w1 = el(e(sd),1,1)
-			local		sd_c2b2w2 = el(e(sd),1,2)
-		mean			bh_03 [pweight = phw] if country == 2, over(wave)
-			local		n_c2b3 = e(N)
-			local 		mean_c2b3w1 = el(e(b),1,1)
-			local 		mean_c2b3w2 = el(e(b),1,2)
-			local		sd_c2b3w1 = el(e(sd),1,1)
-			local		sd_c2b3w2 = el(e(sd),1,2)
-		mean			bh_01 [pweight = phw] if country == 4, over(wave) 
-			local		n_c4b1 = e(N)
-			local 		mean_c4b1w1 = el(e(b),1,1)
-			local 		mean_c4b1w2 = el(e(b),1,2)
-			local		sd_c4b1w1 = el(e(sd),1,1)
-			local		sd_c4b1w2 = el(e(sd),1,2)
-		mean			bh_02 [pweight = phw] if country == 4, over(wave) 
-			local		n_c4b2 = e(N)
-			local 		mean_c4b2w1 = el(e(b),1,1)
-			local 		mean_c4b2w2 = el(e(b),1,2)
-			local		sd_c4b2w1 = el(e(sd),1,1)
-			local		sd_c4b2w2 = el(e(sd),1,2)
-		mean			bh_03 [pweight = phw] if country == 4, over(wave) 
-			local		n_c4b3 = e(N)
-			local 		mean_c4b3w1 = el(e(b),1,1)
-			local 		mean_c4b3w2 = el(e(b),1,2)
-			local		sd_c4b3w1 = el(e(sd),1,1)
-			local		sd_c4b3w2 = el(e(sd),1,2)
+		foreach c in 2 4 {
+			forval b = 1/3 {
+				forval w = 1/2 {
+					mean			bh_0`b' [pweight = phw] if country == `c', over(wave)	
+						local		n_c`c'b`b' = e(N)
+						local 		mean_c`c'b`b'w`w' = el(e(b),1,`w')
+						local		sd_c`c'b`b'w`w' = sqrt(el(e(V),`w',`w'))
+				}
+			}
+		}
 			
-	* create table S4 with locals
+	* create table S4 with stored locals
 		preserve
 		clear
 		set 			obs 5
@@ -621,28 +595,28 @@
 *** table S5 ***
 
 * regressions of behavior on waves in Malawi
-	reg				bh_01 i.wave [pweight = phw] if country == 2 
+	reg				bh_01 i.wave [pweight = phw] if country == 2, vce(robust) 
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S5 Malawi Behavior 1) label
 	
-	reg				bh_02 i.wave [pweight = phw] if country == 2 
+	reg				bh_02 i.wave [pweight = phw] if country == 2, vce(robust) 
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S5 Malawi Behavior 2) label
 	
-	reg				bh_03 i.wave [pweight = phw] if country == 2 
+	reg				bh_03 i.wave [pweight = phw] if country == 2, vce(robust) 
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S5 Malawi Behavior 3) label
 	
 * regressions of behavior on waves in Uganda
-	reg				bh_01 i.wave [pweight = phw] if country == 4
+	reg				bh_01 i.wave [pweight = phw] if country == 4, vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S5 Uganda Behavior 1) label
 	
-	reg				bh_02 i.wave [pweight = phw] if country == 4
+	reg				bh_02 i.wave [pweight = phw] if country == 4, vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S5 Uganda Behavior 2) label
 	
-	reg				bh_03 i.wave [pweight = phw] if country == 4		
+	reg				bh_03 i.wave [pweight = phw] if country == 4, vce(robust)		
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S5 Uganda Behavior 3) label	
 		
@@ -661,26 +635,26 @@ preserve
 *** table S6 ***
 	
 * lemon and alcohol can be used as sanitizers against coronavirus
-	reg 			myth_01 i.country [pweight = phw]
+	reg 			myth_01 i.country [pweight = phw], vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S6 Lemon and alcohol) label
 	
 * africans are immune to corona virus
-	reg 			myth_02 i.country [pweight = phw]
+	reg 			myth_02 i.country [pweight = phw], vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S6 Africans immune) label
 * corona virus does not affect children
-	reg 			myth_03 i.country [pweight = phw]
+	reg 			myth_03 i.country [pweight = phw], vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S6 Not affect children) label
 	
 * corona virus cannot survive in warm weather
-	reg 			myth_04 i.country [pweight = phw]
+	reg 			myth_04 i.country [pweight = phw], vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S6 Survive warm weather) label
 	
 * corona virus is just common flu
-	reg 			myth_05 i.country [pweight = phw]
+	reg 			myth_05 i.country [pweight = phw], vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 					append excel dec(3) ctitle(S6 Common flu) label
 restore
@@ -688,66 +662,59 @@ restore
 *** table S7 ***
 
 * totals by myths
+	
+	forval x = 1/5 {
+	    gen myth_0`x'y = cond(myth_0`x' == 1,1,cond(myth_01 == 0 | myth_01 == 3, 0,.))
+	    gen myth_0`x'n = cond(myth_0`x' == 0,1,cond(myth_01 == 1 | myth_01 == 3, 0,.))
+	    gen myth_0`x'k = cond(myth_0`x' == 3,1,cond(myth_01 == 0 | myth_01 == 1, 0,.))
+	}
 
-	total 			myth_01  [pweight = phw] if myth_01 == 3, over(country)
-			local		n_m1 = e(N)
-			local 		tot_c2m1 = el(e(b),1,1)
-			local 		tot_c4m1 = el(e(b),1,2)
-			local		v_c2m1 = el(e(V),1,1)
-			local		v_c4m1 = el(e(V),1,2)
-	total 			myth_02  [pweight = phw], over(country)
-			local		n_m2 = e(N)
-			local 		tot_c2m2 = el(e(b),1,1)
-			local 		tot_c4m2 = el(e(b),1,2)
-			local		v_c2m2 = el(e(V),1,1)
-			local		v_c4m2 = el(e(V),1,2)
-	total 			myth_03  [pweight = phw], over(country)
-			local		n_m3 = e(N)
-			local 		tot_c2m3 = el(e(b),1,1)
-			local 		tot_c4m3 = el(e(b),1,2)
-			local		v_c2m3 = el(e(V),1,1)
-			local		v_c4m3 = el(e(V),1,2)
-	total 			myth_04  [pweight = phw], over(country)
-			local		n_m4 = e(N)
-			local 		tot_c2m4 = el(e(b),1,1)
-			local 		tot_c4m4 = el(e(b),1,2)
-			local		v_c2m4 = el(e(V),1,1)
-			local		v_c4m4 = el(e(V),1,2)
-	total 			myth_05  [pweight = phw], over(country)
-			local		n_m5 = e(N)
-			local 		tot_c2m5 = el(e(b),1,1)
-			local 		tot_c4m5 = el(e(b),1,2)
-			local		v_c2m5 = el(e(V),1,1)
-			local		v_c4m5 = el(e(V),1,2)
+	forval m = 1/5 {
+		total 			myth_0`m'y myth_0`m'n myth_0`m'k [pweight = phw], over(country)
+			local		n_m`m' = e(N)
+			local 		ytot_c2m`m' = el(e(b),1,1)
+			local 		ytot_c4m`m' = el(e(b),1,2)
+			local 		ntot_c2m`m' = el(e(b),1,3)
+			local 		ntot_c4m`m' = el(e(b),1,4)
+			local 		ktot_c2m`m' = el(e(b),1,5)
+			local 		ktot_c4m`m' = el(e(b),1,6)
+			local		yse_c2m`m' = sqrt(el(e(V),1,1))
+			local		yse_c4m`m' = sqrt(el(e(V),2,2))
+			local		nse_c2m`m' = sqrt(el(e(V),3,3))
+			local		nse_c4m`m' = sqrt(el(e(V),4,4))	
+			local		kse_c2m`m' = sqrt(el(e(V),5,5))
+			local		kse_c4m`m' = sqrt(el(e(V),6,6))			
+	}	
 	
-
-	
-	
-	
-	
-//preserve
-	clear
-	set 			obs 5
-	gen 			myth = _n
-	expand 			2
-	sort 			m
-	gen 			country = 2
-	replace 		country = 4 if mod(_n,2) == 0 
-	gen 			tot = . 
-	gen 			v = .
-	foreach 		c in 2 4 {
-		forval 		m = 1/5 {
-			foreach stat in tot v {
-				replace `stat' = ``stat'_c`c'm`m'' if myth == `m' & country == `c'
+	* format table
+	preserve
+		clear
+		set 			obs 7
+		gen 			response = cond(_n<3,"y",cond(_n>2 & _n<5,"n",cond(_n>4 & _n<7,"k","")))
+		gen 			stat = cond(mod(_n,2)==0,"se","tot")
+		replace 		stat = "Observations" in 7
+		expand 			2
+		gen 			country = cond(_n<8,2,4)
+		forval 			x = 1/5 {
+						gen myth_0`x' = .
+		}
+	* replace values with stored locals
+		foreach c in 2 4 {
+			forval m = 1/5 {
+				foreach s in tot se {
+					foreach r in y n k {
+						replace myth_0`m' = ``r'`s'_c`c'm`m'' if response == "`r'" & stat == "`s'" & country == `c' 
+					}
+				}
 			}
 		}
-	}
-	gen 			Observations = .
-	forval 			m = 1/5 {
-		replace 	Observations = `n_m`m''
-	}
+		forval x = 1/5 {
+			replace myth_0`x' = `n_m`x'' if stat == "Observations"
+		} 
+	
 	export 			excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
 					sheetreplace sheet(sumstatsS7) first(var)
+	restore
 
 * **********************************************************************
 * 2 - create tables for Fig. 2
@@ -772,7 +739,7 @@ restore
 * regressions for cross-country comparisons 
 					
 * regressions for income loss: farm 
-	reg 			farm_dwn ib(2).country [pweight = hhw] if wave == 1 
+	reg 			farm_dwn ib(2).country [pweight = hhw] if wave == 1, vce(robust) 
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -780,7 +747,7 @@ restore
 		test			3.country = 4.country
 
 * regressions for income loss: business  
-	reg 			bus_dwn ib(2).country [pweight = hhw] if wave == 1 
+	reg 			bus_dwn ib(2).country [pweight = hhw] if wave == 1, vce(robust) 
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -788,7 +755,7 @@ restore
 		test			3.country = 4.country
 
 * regressions for income loss: wage   
-	reg 			wage_dwn ib(2).country [pweight = hhw] if wave == 1 
+	reg 			wage_dwn ib(2).country [pweight = hhw] if wave == 1, vce(robust) 
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -796,7 +763,7 @@ restore
 		test			3.country = 4.country
 
 * regressions for income loss: remittances   
-	reg 			remit_dwn ib(2).country [pweight = hhw] if wave == 1 
+	reg 			remit_dwn ib(2).country [pweight = hhw] if wave == 1, vce(robust) 
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -804,7 +771,7 @@ restore
 		test			3.country = 4.country
 
 * regressions for income loss: other   
-	reg 			other_dwn ib(2).country [pweight = hhw] if wave == 1 
+	reg 			other_dwn ib(2).country [pweight = hhw] if wave == 1, vce(robust) 
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -815,19 +782,19 @@ restore
 * regressions comparing rural urban, controlling for country
 
 * regressions for income loss: farm 
-	reg 			farm_dwn i.sector ib(2).country [pweight = hhw] if wave == 1
+	reg 			farm_dwn i.sector ib(2).country [pweight = hhw] if wave == 1, vce(robust)
 	
 * regressions for income loss: business 
-	reg 			bus_dwn i.sector ib(2).country [pweight = hhw] if wave == 1
+	reg 			bus_dwn i.sector ib(2).country [pweight = hhw] if wave == 1, vce(robust)
 	
 * regressions for income loss: wage  
-	reg 			wage_dwn i.sector ib(2).country [pweight = hhw] if wave == 1
+	reg 			wage_dwn i.sector ib(2).country [pweight = hhw] if wave == 1, vce(robust)
 	
 * regressions for income loss: wage  
-	reg 			remit_dwn i.sector ib(2).country [pweight = hhw] if wave == 1
+	reg 			remit_dwn i.sector ib(2).country [pweight = hhw] if wave == 1, vce(robust)
 	
 * regressions for income loss: wage  
-	reg 			other_dwn i.sector ib(2).country [pweight = hhw] if wave == 1
+	reg 			other_dwn i.sector ib(2).country [pweight = hhw] if wave == 1, vce(robust)
 	
 
 * **********************************************************************
@@ -886,7 +853,7 @@ preserve
 	drop if country == 2 & wave == 1
 
 * regression for moderate food insecurity 
-	reg p_mod ib(5).quint ib(2).country [pweight = wt_18]
+	reg p_mod ib(5).quint ib(2).country [pweight = wt_18], vce(robust)
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -895,7 +862,7 @@ preserve
 
 *** table s14 ***		
 * regression for moderate food insecurity 
-	reg p_sev ib(5).quint ib(2).country [pweight = wt_18]
+	reg p_sev ib(5).quint ib(2).country [pweight = wt_18], vce(robust)
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -916,7 +883,7 @@ preserve
 	
 	drop if			country == 2 & wave == 1
 	
-	reg p_mod concern_01 concern_02 ib(5).quint ib(2).country [pweight = wt_18]
+	reg p_mod concern_01 concern_02 ib(5).quint ib(2).country [pweight = wt_18], vce(robust)
 	
 * Wald test for differences between other countries
 		test			1.country = 4.country
@@ -930,7 +897,7 @@ preserve
 	
 	drop if			country == 2 & wave == 1
 	
-	reg p_sev concern_01 concern_02 ib(5).quint ib(2).country [pweight = wt_18]
+	reg p_sev concern_01 concern_02 ib(5).quint ib(2).country [pweight = wt_18], vce(robust)
 	
 * Wald test for differences between other countries
 		test			1.country = 4.country
@@ -1053,7 +1020,7 @@ preserve
 	
 	drop if			country == 2 & wave == 1
 	
-	reg concern_01 ib(5).quint ib(2).country [pweight = wt_18]
+	reg concern_01 ib(5).quint ib(2).country [pweight = wt_18], vce(robust)
 	
 * Wald test for differences between other countries
 		test			1.country = 4.country
@@ -1067,7 +1034,7 @@ preserve
 	
 	drop if			country == 2 & wave == 1
 	
-	reg concern_02 ib(5).quint ib(2).country [pweight = wt_18]
+	reg concern_02 ib(5).quint ib(2).country [pweight = wt_18], vce(robust)
 	
 * Wald test for differences between other countries
 		test			1.country = 4.country
@@ -1126,7 +1093,7 @@ preserve
 * regressions for cross-country comparisons 
 					
 * regressions for relied on savings
-	reg 			cope_11 ib(2).country [pweight = hhw]
+	reg 			cope_11 ib(2).country [pweight = hhw], vce(robust)
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -1134,7 +1101,7 @@ preserve
 		test			3.country = 4.country
 
 * regressions for sale of assets
-	reg 			cope_01 ib(2).country [pweight = hhw]
+	reg 			cope_01 ib(2).country [pweight = hhw], vce(robust)
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -1142,7 +1109,7 @@ preserve
 		test			3.country = 4.country
 
 * regressions for reduced food consumption 
-	reg 			cope_09 ib(2).country [pweight = hhw] 
+	reg 			cope_09 ib(2).country [pweight = hhw], vce(robust) 
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -1150,7 +1117,7 @@ preserve
 		test			3.country = 4.country
 
 * regressions for reduced non_food consumption
-	reg 			cope_10 ib(2).country [pweight = hhw]
+	reg 			cope_10 ib(2).country [pweight = hhw], vce(robust)
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -1158,7 +1125,7 @@ preserve
 		test			3.country = 4.country
 
 * regressions for received assistance from friends & family  
-	reg 			cope_03 ib(2).country [pweight = hhw] 
+	reg 			cope_03 ib(2).country [pweight = hhw], vce(robust) 
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -1166,7 +1133,7 @@ preserve
 		test			3.country = 4.country
 
 * regressions for recieved any assistance
-	reg 			asst_any ib(2).country [pweight = hhw]
+	reg 			asst_any ib(2).country [pweight = hhw], vce(robust)
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -1178,22 +1145,22 @@ preserve
 * regressions comparing rural urban
 
 * regressions for relied on savings
-	reg 			cope_11 i.sector ib(2).country [pweight = hhw]
+	reg 			cope_11 i.sector ib(2).country [pweight = hhw], vce(robust)
 
 * regressions for sale of assets
-	reg 			cope_01 i.sector ib(2).country [pweight = hhw]
+	reg 			cope_01 i.sector ib(2).country [pweight = hhw], vce(robust)
 
 * regressions for reduced food consumption 
-	reg 			cope_09 i.sector ib(2).country [pweight = hhw]
+	reg 			cope_09 i.sector ib(2).country [pweight = hhw], vce(robust)
 
 * regressions for reduced non_food consumption
-	reg 			cope_10 i.sector ib(2).country [pweight = hhw]
+	reg 			cope_10 i.sector ib(2).country [pweight = hhw], vce(robust)
 
 * regressions for received assistance from friends & family 
-	reg 			cope_03 i.sector ib(2).country [pweight = hhw]
+	reg 			cope_03 i.sector ib(2).country [pweight = hhw], vce(robust)
 
 * regressions for recieved any assistance 
-	reg 			asst_any i.sector ib(2).country [pweight = hhw]
+	reg 			asst_any i.sector ib(2).country [pweight = hhw], vce(robust)
 	
 restore
 
@@ -1221,13 +1188,13 @@ restore
 * regressions across quintiles
 
 * regression on access to medicine
-	reg				ac_med i.quint ib(2).country [pweight = phw] if wave == 1
+	reg				ac_med i.quint ib(2).country [pweight = phw] if wave == 1, vce(robust)
 
 * regression on access to staple
-	reg				ac_staple i.quint ib(2).country [pweight = phw] if wave == 1
+	reg				ac_staple i.quint ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	
 * regression on access to soap
-	reg				ac_soap i.quint ib(2).country [pweight = phw] if wave == 1
+	reg				ac_soap i.quint ib(2).country [pweight = phw] if wave == 1, vce(robust)
 
 
 * **********************************************************************
@@ -1243,7 +1210,7 @@ restore
 
 *** table s28 ***
 * regression of educational activity on quintile
-	reg				edu_act i.quint ib(2).country [pweight = phw] if wave == 1
+	reg				edu_act i.quint ib(2).country [pweight = phw] if wave == 1, vce(robust)
 
 	
 * **********************************************************************
@@ -1268,33 +1235,33 @@ restore
 
 *** table s29 ***
 * fies and educational activity
-	reg					p_mod edu_act ib(2).country i.wave [pweight = shw]
+	reg					p_mod edu_act ib(2).country i.wave [pweight = shw], vce(robust)
 
-	reg					p_sev edu_act ib(2).country i.wave [pweight = shw]
+	reg					p_sev edu_act ib(2).country i.wave [pweight = shw], vce(robust)
 
 *** table s30 ***
 * changes in educational activity over time by country
 	
 	* ethiopia
-	reg					edu_act i.wave [pweight = shw] if country == 1
-	reg					edu_04 i.wave [pweight = shw] if country == 1
-	reg					edu_02 i.wave [pweight = shw] if country == 1
-	reg					edu_03 i.wave [pweight = shw] if country == 1
-	reg					edu_05 i.wave [pweight = shw] if country == 1
+	reg					edu_act i.wave [pweight = shw] if country == 1, vce(robust)
+	reg					edu_04 i.wave [pweight = shw] if country == 1, vce(robust)
+	reg					edu_02 i.wave [pweight = shw] if country == 1, vce(robust)
+	reg					edu_03 i.wave [pweight = shw] if country == 1, vce(robust)
+	reg					edu_05 i.wave [pweight = shw] if country == 1, vce(robust)
 	
 	* malawi
-	reg					edu_act i.wave [pweight = shw] if country == 2
-	reg					edu_04 i.wave [pweight = shw] if country == 2
-	reg					edu_02 i.wave [pweight = shw] if country == 2
-	reg					edu_03 i.wave [pweight = shw] if country == 2
-	reg					edu_05 i.wave [pweight = shw] if country == 2
+	reg					edu_act i.wave [pweight = shw] if country == 2, vce(robust)
+	reg					edu_04 i.wave [pweight = shw] if country == 2, vce(robust)
+	reg					edu_02 i.wave [pweight = shw] if country == 2, vce(robust)
+	reg					edu_03 i.wave [pweight = shw] if country == 2, vce(robust)
+	reg					edu_05 i.wave [pweight = shw] if country == 2, vce(robust)
 	
 	* nigeria
-	reg					edu_act i.wave [pweight = shw] if country == 3
-	reg					edu_04 i.wave [pweight = shw] if country == 3
-	reg					edu_02 i.wave [pweight = shw] if country == 3
-	reg					edu_03 i.wave [pweight = shw] if country == 3
-	reg					edu_05 i.wave [pweight = shw] if country == 3
+	reg					edu_act i.wave [pweight = shw] if country == 3, vce(robust)
+	reg					edu_04 i.wave [pweight = shw] if country == 3, vce(robust)
+	reg					edu_02 i.wave [pweight = shw] if country == 3, vce(robust)
+	reg					edu_03 i.wave [pweight = shw] if country == 3, vce(robust)
+	reg					edu_05 i.wave [pweight = shw] if country == 3, vce(robust)
 
 
 

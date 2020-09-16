@@ -326,19 +326,19 @@
 	
 	total			cope_any [pweight = phw]
 	mean			cope_any [pweight = phw]
-	
-	graph bar		(mean) cope_11 cope_01 cope_09 cope_10 cope_03 asst_any  ///
+		
+	graph bar		(mean) cope_11 cope_01 cope_09 cope_10 cope_03 asst_any cope_none ///
 						[pweight = hhw], over(sector, ///
 						label (labsize(large))) over(country, label (labsize(vlarge))) ///
 						bar(1, color(maroon*1.5)) bar(2, color(emidblue*1.5)) ///
 						bar(3, color(emerald*1.5)) bar(4, color(brown*1.5)) ///
-						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
+						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) bar(7, color(purple*1.5)) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
 						ytitle("Households reporting use of coping strategy (%)", size(vlarge)) ///
 						legend( label (1 "Relied on savings") label (2 "Sale of asset") ///
 						label (3 "Reduced food cons.") label (4 "Reduced non-food cons.") ///
-						label (5 "Help from family") ///
-						label (6 "Recieved assistance") size(medsmall) pos(6) col(3)) ///
+						label (5 "Help from family") label (6 "Recieved assistance") ///
+						label (7 "Did nothing") size(medsmall) pos(6) col(3)) ///
 						saving("$output/cope_alla.gph", replace)
 
 	restore
@@ -391,7 +391,7 @@
 	graph bar 		(mean) ac_med_01 ac_med_02 ac_med_03 ac_med_04 ac_med_05 ///
 						[pweight = phw] if wave == 1, ///
 						over(country, label(labsize(medlarge)))  ///
-						ytitle("Individuals reporting inability to buy medicine (%)", size(vlarge)) ///
+						ytitle("Prevalence of household's inability to buy medicine (%)", size(vlarge)) ///
 						ylabel(0 "0" ///
 						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
 						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
@@ -404,7 +404,7 @@
 	graph bar 		(mean) ac_staple_01 ac_staple_02 ac_staple_03 ac_staple_04 ac_staple_05 ///
 						[pweight = phw] if wave == 1,  ///
 						over(country, label(labsize(medlarge)))   ///
-						ytitle("Individuals reporting inability to buy staple food (%)", size(vlarge)) ///
+						ytitle("Prevalence of household's inability to buy staple food (%)", size(vlarge)) ///
 						ylabel(0 "0" ///
 						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
 						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
@@ -415,7 +415,7 @@
 	graph bar 		(mean) ac_soap_01 ac_soap_02 ac_soap_03 ac_soap_04 ac_soap_05 ///
 						[pweight = phw] if wave == 1 & country != 1,  ///
 						over(country, label(labsize(medlarge)))   ///
-						ytitle("Individuals reporting inability to buy soap (%)", size(vlarge)) ///
+						ytitle("Prevalence of household's inability to buy soap (%)", size(vlarge)) ///
 						ylabel(0 "0" ///
 						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
 						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///

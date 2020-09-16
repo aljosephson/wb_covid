@@ -155,6 +155,10 @@
 	replace			cope_any = 0 if cope_any == . & country == 4 & wave == 1
 	lab var			cope_any "Adopted any coping strategy"
 	
+	gen				cope_none = 1 if cope_any == 0
+	replace			cope_none = 0 if cope_any == 1
+	lab var			cope_none "Did nothing"
+	
 	lab def			myth 0 "No" 1 "Yes" 3 "Don't Know"
 	
 	local myth		 myth_01 myth_02 myth_03 myth_04 myth_05

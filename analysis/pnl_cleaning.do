@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: jdm
-* Edited by: alj
-* Last edit: 13 September 2020 
+* Edited by: jdm
+* Last edit: 16 September 2020 
 * Stata v.16.1
 
 * does
@@ -574,10 +574,20 @@
 	
 	replace 				sch_child = 0 if sch_child == 2
 	replace					sch_child = . if sch_child == -99 
+
 	
+* **********************************************************************
+* 9 - merge in covid data
+* **********************************************************************	
+
+* merge in covid data
+	merge m:1 				country region using "$export\covid_data"
+	
+	drop if					_merge == 2
+	drop 					_merge
 
 * *********************************************************************
-* 9 - end matter, clean up to save
+* 10 - end matter, clean up to save
 * **********************************************************************
 
 compress

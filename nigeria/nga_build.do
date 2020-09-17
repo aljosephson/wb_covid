@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: jdm
-* Edited by: alj
-* Last edited: 13 September 2020 
+* Edited by: jdm
+* Last edited: 16 September 2020 
 * Stata v.16.1
 
 * does
@@ -160,21 +160,37 @@
 	drop			urb_rural
 	order			sector, after(phw)
 	
-	gen 			region = . 
-	replace			region = 20 if zone == 1
-	replace			region = 21 if zone == 2
-	replace 		region = 22 if zone == 3
-	replace			region = 23 if zone == 4
-	replace			region = 24 if zone == 5
-	replace 		region = 25 if zone == 6	
-	lab define		region 1 "Tigray" 2 "Afar" 3 "Amhara" 4 "Oromia" 5 "Somali" ///
-						6 "Benishangul-Gumuz" 7 "SNNPR" 8 "Bambela" 9 "Harar" ///
-						10 "Addis Ababa" 11 "Dire Dawa" 12 "Central" ///
-						13 "Eastern" 14 "Kampala" 15 "Northern" 16 "Western" /// 
-						17 "North" 18 "Central" 19 "South" /// 
-						20 "North Central" 21 "North East" 22 "North West" /// 
-						23 "South East" 24 "South South" 25 "South West"
-	drop			zone
+	gen 			region = 3000 + state
+
+	lab define		region 1001 "Tigray" 1002 "Afar" 1003 "Amhara" 1004 ///
+						"Oromia" 1005 "Somali" 1006 "Benishangul-Gumuz" 1007 ///
+						"SNNPR" 1008 "Gambela" 1009 "Harar" 1010 ///
+						"Addis Ababa" 1011 "Dire Dawa" 2101 "Chitipa" 2102 ///
+						"Karonga" 2103 "Nkhata Bay" 2104 "Rumphi" 2105 ///
+						"Mzimba" 2106 "Likoma" 2107 "Mzuzu City" 2201 ///
+						"Kasungu" 2202 "Nkhotakota" 2203 "Ntchisi" 2204 ///
+						"Dowa" 2205 "Salima" 2206 "Lilongwe" 2207 ///
+						"Mchinji" 2208 "Dedza" 2209 "Ntcheu" 2210 ///
+						"Lilongwe City" 2301 "Mangochi" 2302 "Machinga" 2303 ///
+						"Zomba" 2304 "Chiradzulu" 2305 "Blantyre" 2306 ///
+						"Mwanza" 2307 "Thyolo" 2308 "Mulanje" 2309 ///
+						"Phalombe" 2310 "Chikwawa" 2311 "Nsanje" 2312 ///
+						"Balaka" 2313 "Neno" 2314 "Zomba City" 2315 ///
+						"Blantyre City" 3001 "Abia" 3002 "Adamawa" 3003 ///
+						"Akwa Ibom" 3004 "Anambra" 3005 "Bauchi" 3006 ///
+						"Bayelsa" 3007 "Benue" 3008 "Borno" 3009 ///
+						"Cross River" 3010 "Delta" 3011 "Ebonyi" 3012 ///
+						"Edo" 3013 "Ekiti" 3014 "Enugu" 3015 "Gombe" 3016 ///
+						"Imo" 3017 "Jigawa" 3018 "Kaduna" 3019 "Kano" 3020 ///
+						"Katsina" 3021 "Kebbi" 3022 "Kogi" 3023 "Kwara" 3024 ///
+						"Lagos" 3025 "Nasarawa" 3026 "Niger" 3027 "Ogun" 3028 ///
+						"Ondo" 3029 "Osun" 3030 "Oyo" 3031 "Plateau" 3032 ///
+						"Rivers" 3033 "Sokoto" 3034 "Taraba" 3035 "Yobe" 3036 ///
+						"Zamfara" 3037 "FCT" 4012 "Central" 4013 ///
+						"Eastern" 4014 "Kampala" 4015 "Northern" 4016 ///
+						"Western" 4017 "North" 4018 "Central" 4019 "South", replace
+	lab val 		region region
+	drop			zone state
 	order			region, after(sector)
 	lab var			region "Region"	
 	

@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: jdm
-* Edited by: jdm, alj
-* Last edit: 13 September 2020 
+* Edited by: jdm
+* Last edit: 16 September 2020 
 * Stata v.16.1
 
 * does
@@ -613,6 +613,48 @@
 			
 	drop			resp_id start_date hhh_gender hhh_age same loc_chg same_hhh
 	drop if			wave ==  .
+
+* rename regions
+	replace 		region = 1001 if region == 1
+	replace 		region = 1002 if region == 2
+	replace 		region = 1003 if region == 3
+	replace 		region = 1004 if region == 4
+	replace 		region = 1005 if region == 5
+	replace 		region = 1006 if region == 6
+	replace 		region = 1007 if region == 7
+	replace 		region = 1008 if region == 12
+	replace			region = 1009 if region == 13
+	replace			region = 1010 if region == 14
+	replace			region = 1011 if region == 15
+	
+	lab def			region 1001 "Tigray" 1002 "Afar" 1003 "Amhara" 1004 ///
+						"Oromia" 1005 "Somali" 1006 "Benishangul-Gumuz" 1007 ///
+						"SNNPR" 1008 "Gambela" 1009 "Harar" 1010 ///
+						"Addis Ababa" 1011 "Dire Dawa" 2101 "Chitipa" 2102 ///
+						"Karonga" 2103 "Nkhata Bay" 2104 "Rumphi" 2105 ///
+						"Mzimba" 2106 "Likoma" 2107 "Mzuzu City" 2201 ///
+						"Kasungu" 2202 "Nkhotakota" 2203 "Ntchisi" 2204 ///
+						"Dowa" 2205 "Salima" 2206 "Lilongwe" 2207 ///
+						"Mchinji" 2208 "Dedza" 2209 "Ntcheu" 2210 ///
+						"Lilongwe City" 2301 "Mangochi" 2302 "Machinga" 2303 ///
+						"Zomba" 2304 "Chiradzulu" 2305 "Blantyre" 2306 ///
+						"Mwanza" 2307 "Thyolo" 2308 "Mulanje" 2309 ///
+						"Phalombe" 2310 "Chikwawa" 2311 "Nsanje" 2312 ///
+						"Balaka" 2313 "Neno" 2314 "Zomba City" 2315 ///
+						"Blantyre City" 3001 "Abia" 3002 "Adamawa" 3003 ///
+						"Akwa Ibom" 3004 "Anambra" 3005 "Bauchi" 3006 ///
+						"Bayelsa" 3007 "Benue" 3008 "Borno" 3009 ///
+						"Cross River" 3010 "Delta" 3011 "Ebonyi" 3012 ///
+						"Edo" 3013 "Ekiti" 3014 "Enugu" 3015 "Gombe" 3016 ///
+						"Imo" 3017 "Jigawa" 3018 "Kaduna" 3019 "Kano" 3020 ///
+						"Katsina" 3021 "Kebbi" 3022 "Kogi" 3023 "Kwara" 3024 ///
+						"Lagos" 3025 "Nasarawa" 3026 "Niger" 3027 "Ogun" 3028 ///
+						"Ondo" 3029 "Osun" 3030 "Oyo" 3031 "Plateau" 3032 ///
+						"Rivers" 3033 "Sokoto" 3034 "Taraba" 3035 "Yobe" 3036 ///
+						"Zamfara" 3037 "FCT" 4012 "Central" 4013 ///
+						"Eastern" 4014 "Kampala" 4015 "Northern" 4016 ///
+						"Western" 4017 "North" 4018 "Central" 4019 "South", replace
+	lab val			region region
 	
 * **********************************************************************
 * 2 - end matter, clean up to save

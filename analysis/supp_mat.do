@@ -1003,44 +1003,47 @@ preserve
 	
 	drop if					country == 2 & wave == 1
 	
-	reg p_mod concern_01 concern_02 ib(5).quint ib(2).country [pweight = wt_18], vce(robust)
+	reg p_mod concern_01 concern_02 ib(2).country [pweight = wt_18], vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
 					append excel dec(3) ctitle(S15 concerns & food insec mod)
 					
 * Wald test for differences between other countries
-	test					1.country = 4.country
-	local 					t = r(p)
+		test			1.country = 3.country
+		local 			t1_mod = r(p)
+		test			1.country = 4.country
+		local 			t2_mod = r(p)
+		test			3.country = 4.country
+		local 			t3_mod = r(p)	
 
-* create table of stored test results 
-	clear 
-	set 					obs 1
-	gen 					test = "Ethiopia-Uganda"
-	gen 					result = `t'
-	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
-							sheetreplace sheet(testresultsS15) first(var)
-restore 
-
-*** table s16 ***
 * regression for concerns and food insecurity: severe  	
 
 preserve
 	
 	drop if					country == 2 & wave == 1
 	
-	reg p_sev concern_01 concern_02 ib(5).quint ib(2).country [pweight = wt_18], vce(robust)
+	reg p_sev concern_01 concern_02 ib(2).country [pweight = wt_18], vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
-					append excel dec(3) ctitle(S16 concerns & food insec sev)	
+					append excel dec(3) ctitle(S15 concerns & food insec sev)	
 * Wald test for differences between other countries
-	test					1.country = 4.country
-	local 					t = r(p)
+		test			1.country = 3.country
+		local 			t1_sev = r(p)
+		test			1.country = 4.country
+		local 			t2_sev = r(p)
+		test			3.country = 4.country
+		local 			t3_sev = r(p)	
 	
 * create table of stored test results 
-	clear 
-	set 					obs 1
-	gen 					test = "Ethiopia-Uganda"
-	gen 					result = `t'
+		clear
+		set obs 3
+		gen 					testcountries =  "Ethiopia-Nigeria"
+		replace 				testcountries = "Ethiopia-Uganda" in 2
+		replace 				testcountries = "Nigeria-Uganda" in 3
+		foreach 				var in farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
+								gen `var' = cond(_n == 1, `t1_`var'', cond(_n == 2, `t2_`var'',`t3_`var''))
+		}
+	
 	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
-							sheetreplace sheet(testresultsS16) first(var)
+							sheetreplace sheet(testresultsS15) first(var)
 restore 
 
 *** table s17 ***
@@ -1279,7 +1282,9 @@ preserve
 					
 * regressions for relied on savings
 	reg 			cope_11 ib(2).country [pweight = hhw], vce(robust)
-	
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
+					append excel dec(3) ctitle(S21 *******)
+					
 * Wald test for differences between other countries
 		test			1.country = 3.country
 		test			1.country = 4.country
@@ -1287,7 +1292,9 @@ preserve
 
 * regressions for sale of assets
 	reg 			cope_01 ib(2).country [pweight = hhw], vce(robust)
-	
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
+					append excel dec(3) ctitle(S21 *******)	
+					
 * Wald test for differences between other countries
 		test			1.country = 3.country
 		test			1.country = 4.country
@@ -1295,7 +1302,9 @@ preserve
 
 * regressions for reduced food consumption 
 	reg 			cope_09 ib(2).country [pweight = hhw], vce(robust) 
-	
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
+					append excel dec(3) ctitle(S21 *******)
+					
 * Wald test for differences between other countries
 		test			1.country = 3.country
 		test			1.country = 4.country
@@ -1303,7 +1312,9 @@ preserve
 
 * regressions for reduced non_food consumption
 	reg 			cope_10 ib(2).country [pweight = hhw], vce(robust)
-	
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
+					append excel dec(3) ctitle(S21 *******)
+					
 * Wald test for differences between other countries
 		test			1.country = 3.country
 		test			1.country = 4.country
@@ -1311,7 +1322,9 @@ preserve
 
 * regressions for received assistance from friends & family  
 	reg 			cope_03 ib(2).country [pweight = hhw], vce(robust) 
-	
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
+					append excel dec(3) ctitle(S21 *******)
+					
 * Wald test for differences between other countries
 		test			1.country = 3.country
 		test			1.country = 4.country
@@ -1319,7 +1332,9 @@ preserve
 
 * regressions for recieved any assistance
 	reg 			asst_any ib(2).country [pweight = hhw], vce(robust)
-	
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
+					append excel dec(3) ctitle(S21 *******)
+					
 * Wald test for differences between other countries
 		test			1.country = 3.country
 		test			1.country = 4.country
@@ -1331,22 +1346,34 @@ preserve
 
 * regressions for relied on savings
 	reg 			cope_11 i.sector ib(2).country [pweight = hhw], vce(robust)
-
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
+					append excel dec(3) ctitle(S22 relied on savings)
+					
 * regressions for sale of assets
 	reg 			cope_01 i.sector ib(2).country [pweight = hhw], vce(robust)
-
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
+					append excel dec(3) ctitle(S22 sale of assets)
+					
 * regressions for reduced food consumption 
 	reg 			cope_09 i.sector ib(2).country [pweight = hhw], vce(robust)
-
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
+					append excel dec(3) ctitle(S22 reduce food consumption)
+					
 * regressions for reduced non_food consumption
 	reg 			cope_10 i.sector ib(2).country [pweight = hhw], vce(robust)
-
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
+					append excel dec(3) ctitle(S22 reduce non-food consumption)
+					
 * regressions for received assistance from friends & family 
 	reg 			cope_03 i.sector ib(2).country [pweight = hhw], vce(robust)
-
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
+					append excel dec(3) ctitle(S22 assistance from family and friends)
+					
 * regressions for recieved any assistance 
 	reg 			asst_any i.sector ib(2).country [pweight = hhw], vce(robust)
-	
+	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
+					append excel dec(3) ctitle(S22 any assistance)
+						
 restore
 
 

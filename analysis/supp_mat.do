@@ -871,16 +871,15 @@ preserve
 	drop if country == 2 & wave == 1
 
 * regression for moderate food insecurity 
-	reg p_mod ib(5).quint ib(2).country [pweight = wt_18], vce(robust)
+	reg p_mod ib(2).country [pweight = wt_18], vce(robust)
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
 		test			1.country = 4.country
 		test			3.country = 4.country	
 
-*** table s14 ***		
 * regression for moderate food insecurity 
-	reg p_sev ib(5).quint ib(2).country [pweight = wt_18], vce(robust)
+	reg p_sev ib(2).country [pweight = wt_18], vce(robust)
 	
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -888,42 +887,45 @@ preserve
 		test			3.country = 4.country	
 					
 restore 
+
+*** put p_mod as one column and p_sev as another column 
 	
 
 * **********************************************************************
-* 2D - create Table S15 for Fig. 2C
+* 2D - create Table S14 for Fig. 2C
 * **********************************************************************
 
-*** table s15 ***
+*** table s14 ***
 * regression for concerns and food insecurity: moderate  	
 
 preserve
 	
 	drop if			country == 2 & wave == 1
 	
-	reg p_mod concern_01 concern_02 ib(5).quint ib(2).country [pweight = wt_18], vce(robust)
+	reg p_mod concern_01 concern_02 ib(2).country [pweight = wt_18], vce(robust)
 	
 * Wald test for differences between other countries
 		test			1.country = 4.country
 		
 restore 
 
-*** table s16 ***
 * regression for concerns and food insecurity: severe  	
 
 preserve
 	
 	drop if			country == 2 & wave == 1
 	
-	reg p_sev concern_01 concern_02 ib(5).quint ib(2).country [pweight = wt_18], vce(robust)
+	reg p_sev concern_01 concern_02 ib(2).country [pweight = wt_18], vce(robust)
 	
 * Wald test for differences between other countries
 		test			1.country = 4.country
 		
 restore 
 
+*** jeff already gave code??
+*** i think that as before these could be a single table?
 
-*** table s17 ***
+*** table s16 ***
 * summary statistics for concerns 
 
 preserve

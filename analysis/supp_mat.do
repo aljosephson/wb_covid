@@ -947,10 +947,10 @@ preserve
 	drop if country == 2 & wave == 1
 
 * regression for moderate food insecurity 
-	reg p_mod ib(5).quint ib(2).country [pweight = wt_18], vce(robust)
+	reg p_mod ib(2).country [pweight = wt_18], vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
 					append excel dec(3) ctitle(S13 mod food insecurity)
-					
+
 * Wald test for differences between other countries
 		test			1.country = 3.country
 		local 			tm1 = r(p)
@@ -962,9 +962,13 @@ preserve
 
 *** table s14 ***		
 * regression for severe food insecurity 
-	reg p_sev ib(5).quint ib(2).country [pweight = wt_18], vce(robust)
+	reg p_sev ib(2).country [pweight = wt_18], vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
 					append excel dec(3) ctitle(S14 sev food insecurity)
+
+* regression for moderate food insecurity 
+	reg p_sev ib(2).country [pweight = wt_18], vce(robust)
+	
 * Wald test for differences between other countries
 		test			1.country = 3.country
 		local 			ts1 = r(p)
@@ -990,22 +994,24 @@ preserve
 	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
 							sheetreplace sheet(testresultsS13&14) first(var)
 restore 
+
+*** put p_mod as one column and p_sev as another column 
 	
 
 * **********************************************************************
-* 2D - create Table S15 for Fig. 2C
+* 2D - create Table S14 for Fig. 2C
 * **********************************************************************
 
-*** table s15 ***
+*** table s14 ***
 * regression for concerns and food insecurity: moderate  	
 
 preserve
 	
 	drop if					country == 2 & wave == 1
-	
+
 	reg p_mod concern_01 concern_02 ib(2).country [pweight = wt_18], vce(robust)
 	outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
-					append excel dec(3) ctitle(S15 concerns & food insec mod)
+					append excel dec(3) ctitle(S14 concerns & food insec mod)
 					
 * Wald test for differences between other countries
 		test			1.country = 3.country
@@ -1046,7 +1052,8 @@ preserve
 							sheetreplace sheet(testresultsS15) first(var)
 restore 
 
-*** table s17 ***
+*** table s15 ***
+
 * summary statistics for concerns 
 
 preserve
@@ -1180,7 +1187,8 @@ preserve
 	graph export 	"$output/fiesquintetc12.emf", as(emf) replace
 
 
-*** table s18 ***
+*** table s16 ***
+
 * regression for concern 1, by quintile and country 
 
 preserve
@@ -1204,9 +1212,6 @@ preserve
 						sheetreplace sheet(testresultsS18) first(var)	
 restore 
 
-
-*** table s19 ***
-
 preserve
 	
 	drop if			country == 2 & wave == 1
@@ -1228,6 +1233,8 @@ preserve
 						sheetreplace sheet(testresultsS19) first(var)	
 		
 restore 
+
+*** these can probably be a single table? 
 
 
 * **********************************************************************

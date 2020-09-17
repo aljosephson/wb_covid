@@ -925,7 +925,7 @@ restore
 *** jeff already gave code??
 *** i think that as before these could be a single table?
 
-*** table s16 ***
+*** table s15 ***
 * summary statistics for concerns 
 
 preserve
@@ -1033,7 +1033,7 @@ preserve
 	graph export 	"$output/fiesquintetc12.emf", as(emf) replace
 
 
-*** table s20 ***
+*** table s16 ***
 * regression for concern 1, by quintile and country 
 
 preserve
@@ -1047,9 +1047,6 @@ preserve
 		
 restore 
 
-
-*** table s21 ***
-
 preserve
 	
 	drop if			country == 2 & wave == 1
@@ -1060,6 +1057,8 @@ preserve
 		test			1.country = 4.country
 		
 restore 
+
+*** these can probably be a single table? 
 
 
 * **********************************************************************

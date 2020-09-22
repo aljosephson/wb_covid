@@ -572,6 +572,10 @@
 	replace					edu_act = . if edu_act == -99 
 	replace 				edu_act = . if edu_act == -98 
 	
+	gen						edu_none = 1 if edu_act == 0
+	replace					edu_none = 0 if edu_act == 1
+	lab var					edu_none "Child not engaged in any learning activity"
+	
 	replace 				sch_child = 0 if sch_child == 2
 	replace					sch_child = . if sch_child == -99 
 

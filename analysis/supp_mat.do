@@ -774,17 +774,18 @@ restore
 preserve
 	
 	drop if					country == 2 & wave == 1
+	drop if					country == 4 & wave == 2
 	
 * summary statistics for concerns 
 	foreach 				var in concern_01 concern_02 {
-	    total 				`var' [pweight = wt_18]
+	    total 				`var' [pweight = phw]
 			local			n_`var'_ca = e(N)
 			local 			tot_`var'_ca = el(e(b),1,1)
 			local 			sd_`var'_ca = sqrt(el(e(V),1,1))
 	}
 	foreach 				var in concern_01 concern_02 {
 	    foreach 			c in 1 2 4 {
-		    total 			`var' [pweight = wt_18] if country == `c'
+		    total 			`var' [pweight = phw] if country == `c'
 				local		n_`var'_c`c' = e(N)
 				local 		tot_`var'_c`c' = el(e(b),1,1)
 				local		sd_`var'_c`c' = sqrt(el(e(V),1,1)) 
@@ -909,6 +910,7 @@ preserve
 preserve
 	
 	drop if				country == 2 & wave == 1
+	drop if				country == 4 & wave == 2
 	
 * regression for concern 1, by quintile and country 
 	reg 					concern_01 ib(5).quint ib(2).country [pweight = hhw], vce(robust)
@@ -1004,9 +1006,12 @@ restore
 
 preserve
 
-	drop 					if country == 1 & wave == 1
-	drop 					if country == 1 & wave == 2
-	drop					if country == 3 & wave == 1
+	drop if 				country == 1 & wave == 1
+	drop if 				country == 1 & wave == 2
+	drop if					country == 2 & wave == 1
+	drop if					country == 3 & wave == 1
+	drop if					country == 3 & wave == 2
+	drop if					country == 4 & wave == 2
 
 	replace					cope_03 = 1 if cope_03 == 1 | cope_04 == 1
 	replace					cope_05 = 1 if cope_05 == 1 | cope_06 == 1 | cope_07 == 1
@@ -1042,9 +1047,12 @@ restore
 
 preserve
 
-	drop 					if country == 1 & wave == 1
-	drop 					if country == 1 & wave == 2
-	drop 					if country == 3 & wave == 1
+	drop if 				country == 1 & wave == 1
+	drop if 				country == 1 & wave == 2
+	drop if					country == 2 & wave == 1
+	drop if					country == 3 & wave == 1
+	drop if					country == 3 & wave == 2
+	drop if					country == 4 & wave == 2
 
 	replace					cope_03 = 1 if cope_03 == 1 | cope_04 == 1
 	replace					cope_05 = 1 if cope_05 == 1 | cope_06 == 1 | cope_07 == 1
@@ -1097,9 +1105,12 @@ restore
 
 preserve
 
-	drop 					if country == 1 & wave == 1
-	drop 					if country == 1 & wave == 2
-	drop 					if country == 3 & wave == 1
+	drop if 				country == 1 & wave == 1
+	drop if 				country == 1 & wave == 2
+	drop if					country == 2 & wave == 1
+	drop if					country == 3 & wave == 1
+	drop if					country == 3 & wave == 2
+	drop if					country == 4 & wave == 2
 
 	replace					cope_03 = 1 if cope_03 == 1 | cope_04 == 1
 	replace					cope_05 = 1 if cope_05 == 1 | cope_06 == 1 | cope_07 == 1
@@ -1179,15 +1190,15 @@ restore
 
 *** table s22 ***
 
-* total education action Children Engaged in Learning Activities After Outbreakover all four countries
-	total 					edu_act [pweight = shw] if wave == 1
+* total number of children NOT engaged in Learning Activities After Outbreakover all four countries
+	total 					edu_none [pweight = shw] if wave == 1
 		local 				n_all = e(N)
 		local 				tot_all = el(e(b),1,1)
 		local 				tsd_all = sqrt(el(e(V),1,1))
 
 * by country
 	forval 					c = 1/4 {
-		total 				edu_act [pweight = shw] if wave == 1 & country == `c'
+		total 				edu_none [pweight = shw] if wave == 1 & country == `c'
 			local 			n_c`c' = e(N)
 			local 			tot_c`c' = el(e(b),1,1)
 			local 			tsd_c`c' = sqrt(el(e(V),1,1))
@@ -1221,6 +1232,9 @@ restore
 * **********************************************************************
 
 *** figure s3 ***
+	preserve
+	
+	
 	graph bar 			p_mod p_sev [pweight = wt_18], over(edu_act, lab(labs(vlarge))) ///
 							over(country, lab(labs(vlarge))) ylabel(0 "0" .2 "20" .4 "40" .6 "60" ///
 							.8 "80" 1 "100", labs(large)) ytitle("Prevalence of food insecurity", size(large)) ///
@@ -1239,14 +1253,20 @@ restore
 *** table s24 ***
 
 * fies and educational activity
-	reg						p_mod edu_act ib(2).country i.wave [pweight = shw], vce(robust)
-	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
+	preserve
+	
+	drop if				country == 2 & wave == 1
+
+	reg					p_mod edu_act ib(2).country [pweight = shw], vce(robust)
+	outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
 							append excel dec(3) ctitle(S24 edu act mod)
 					
-	reg						p_sev edu_act ib(2).country i.wave [pweight = shw], vce(robust)
-	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
+	reg					p_sev edu_act ib(2).country [pweight = shw], vce(robust)
+	outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
 							append excel dec(3) ctitle(S24 edu act sev)
-						
+	
+	restore
+	
 *** table s25 ***
 
 * changes in educational activity over time by country

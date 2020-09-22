@@ -411,7 +411,6 @@ restore
 
 	forval 					m = 1/5 {
 		total 				myth_0`m'y myth_0`m'n myth_0`m'k [pweight = phw], over(country)
-			local			n_m`m' = e(N)
 			local 			ytot_c2m`m' = el(e(b),1,1)
 			local 			ytot_c4m`m' = el(e(b),1,2)
 			local 			ntot_c2m`m' = el(e(b),1,3)
@@ -425,7 +424,14 @@ restore
 			local			kse_c2m`m' = sqrt(el(e(V),5,5))
 			local			kse_c4m`m' = sqrt(el(e(V),6,6))			
 	}	
-	
+		
+	forval 					m = 1/5 {
+		total 				myth_0`m'y myth_0`m'n myth_0`m'k [pweight = phw] if country == 2
+		local				c2_n_m`m' = e(N)
+		total 				myth_0`m'y myth_0`m'n myth_0`m'k [pweight = phw] if country == 4
+		local				c4_n_m`m' = e(N)
+	}
+		
 	* format table
 		preserve
 			clear
@@ -438,6 +444,7 @@ restore
 			forval 			x = 1/5 {
 							gen myth_0`x' = .
 			}
+			
 		* replace values with stored locals
 			foreach 		c in 2 4 {
 				forval 		m = 1/5 {
@@ -448,10 +455,11 @@ restore
 					}
 				}
 			}
-			forval 			x = 1/5 {
-				replace 	myth_0`x' = `n_m`x'' if stat == "Observations"
-			} 
-		
+			foreach c in 2 4 {
+				forval 			x = 1/5 {
+					replace 	myth_0`x' = `c`c'_n_m`x'' if stat == "Observations" & country == `c'
+				} 
+			}
 			export 			excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
 							sheetreplace sheet(sumstatsS7) first(var)
 		restore
@@ -1232,8 +1240,7 @@ restore
 * **********************************************************************
 
 *** figure s3 ***
-	preserve
-	
+	preserve //Do we need this preserve here?
 	
 	graph bar 			p_mod p_sev [pweight = wt_18], over(edu_act, lab(labs(vlarge))) ///
 							over(country, lab(labs(vlarge))) ylabel(0 "0" .2 "20" .4 "40" .6 "60" ///
@@ -1249,7 +1256,9 @@ restore
 							saving("$output/fies_edu1.gph", replace)						
 						
 	graph export 		"$output/fies_edu1.emf", as(emf) replace
-
+	
+	restore
+	
 *** table s24 ***
 
 * fies and educational activity

@@ -480,7 +480,10 @@ restore
 		mean 				`var' [pweight = phw] if wave == 1 
 			local 			n_`var' = e(N)
 			local 			mean_`var' = el(e(b),1,1)
-			local 			sd_`var' = sqrt(el(e(V),1,1))
+			local 			msd_`var' = sqrt(el(e(V),1,1))
+		total 				`var' [pweight = hhw]
+			local 			tot_`var' = el(e(b),1,1)
+			local 			tsd_`var' = sqrt(el(e(V),1,1))
 	}	
 	* format table
 		preserve
@@ -489,17 +492,17 @@ restore
 			label 			variable dwn "Any type of income loss"
 			label 			variable remit_dwn "Remittances reduced"
 			label 			variable other_dwn "Other income sources reduced"
-			set 			obs 3
-			gen 			stat = cond(_n == 1, "mean",cond(_n == 2, "sd","n"))
+			set 			obs 5
+			gen 			stat = cond(_n==1,"tot",cond(_n==2,"tsd",cond(_n==3,"mean",cond(_n==4,"msd","n"))))
 			order 			stat dwn *
-			foreach 		var in farm_dwn bus_dwn wage_dwn remit_dwn other_dwn{
+			foreach 		var in farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
 				decode 		`var', gen(`var'_de)
 				destring 	`var'_de, replace
 				drop 		`var'
 			}
 	* populate table with stored results
 			foreach 		var in dwn farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
-			    foreach 	s in n mean sd {
+			    foreach 	s in n mean msd tot tsd {
 					replace `var' = ``s'_`var'' if stat == "`s'"
 				}
 			}
@@ -575,7 +578,7 @@ preserve
 
 * regression for business revenue loss - by country and wave 
 	ologit 					bus_emp_inc i.wave ib(2).country [pweight = phw]
-	local 					loglike = e(ll)
+	local 					pr2 = e(r2_p)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
 							append excel dec(3) ctitle(S11 bus rev loss)
 * Wald test for differences between other countries
@@ -597,9 +600,9 @@ preserve
 	replace 				test = "Ethiopia-Uganda" in 2
 	replace 				test = "Nigeria-Uganda" in 3 
 	replace 				test = "Wave 2-Wave 3" in 4
-	replace 				test = "Log Likelihood" in 5
+	replace 				test = "Pseudo R-Squared" in 5
 	gen 					result = cond(_n == 1, `ct1', cond(_n == 2, `ct2',cond(_n == 3, `ct3',`wt')))
-	replace 				result = `loglike' in 5
+	replace 				result = `pr2' in 5
 	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
 							sheetreplace sheet(testresultsS11) first(var)
 restore 
@@ -792,7 +795,7 @@ preserve
 			local 			sd_`var'_ca = sqrt(el(e(V),1,1))
 	}
 	foreach 				var in concern_01 concern_02 {
-	    foreach 			c in 1 2 4 {
+	    foreach 			c in 1 2 3 4 {
 		    total 			`var' [pweight = phw] if country == `c'
 				local		n_`var'_c`c' = e(N)
 				local 		tot_`var'_c`c' = el(e(b),1,1)
@@ -805,10 +808,10 @@ preserve
 	set 					obs 6
 	gen 					concern = cond(_n<4,"concern_01","concern_02")
 	gen 					stat = cond(_n==1|_n==4,"tot",cond(_n==2|_n==5,"sd","n"))
-	foreach 				c in a 1 2 4 {
+	foreach 				c in a 1 2 3 4 {
 		gen 				c`c' = .
 	}
-	foreach 				c in a 1 2 4 {
+	foreach 				c in a 1 2 3 4 {
 	    foreach 			stat in tot sd n {
 		    foreach 		con in concern_01 concern_02 {
 				replace 	c`c' = ``stat'_`con'_c`c'' if concern == "`con'" & stat == "`stat'"
@@ -921,7 +924,7 @@ preserve
 	drop if				country == 4 & wave == 2
 	
 * regression for concern 1, by quintile and country 
-	reg 					concern_01 ib(5).quint ib(2).country [pweight = hhw], vce(robust)
+	reg 					concern_01 ib(1).quint ib(2).country [pweight = hhw], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
 							append excel dec(3) ctitle(S16 concern 1 by quintile)
 					
@@ -932,23 +935,10 @@ preserve
 		local 				c1_t2 = r(p)
 		test				3.country = 4.country
 		local 				c1_t3 = r(p)
-		
-* Wald test for differences between quintiles
-		test 				1.quint = 2.quint
-		local 				con1_t12 = r(p)
-		test 				1.quint = 3.quint
-		local 				con1_t13 = r(p)
-		test 				1.quint = 4.quint
-		local 				con1_t14 = r(p)
-		test 				2.quint = 3.quint
-		local 				con1_t23 = r(p)
-		test 				2.quint = 4.quint
-		local 				con1_t24 = r(p)
-		test 				3.quint = 4.quint
-		local 				con1_t34 = r(p)
+	
 		
 * regression for concern 2, by quintile and country 	
-	reg 					concern_02 ib(5).quint ib(2).country [pweight = hhw], vce(robust)
+	reg 					concern_02 ib(1).quint ib(2).country [pweight = hhw], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
 							append excel dec(3) ctitle(S16 concern 2 by quintile)
 	
@@ -959,24 +949,10 @@ preserve
 		local 				c2_t2 = r(p)
 		test				3.country = 4.country
 		local 				c2_t3 = r(p)
-		
-* Wald test for differences between quintiles
-		test 				1.quint = 2.quint
-		local 				con2_t12 = r(p)
-		test 				1.quint = 3.quint
-		local 				con2_t13 = r(p)
-		test 				1.quint = 4.quint
-		local 				con2_t14 = r(p)
-		test 				2.quint = 3.quint
-		local 				con2_t23 = r(p)
-		test 				2.quint = 4.quint
-		local 				con2_t24 = r(p)
-		test 				3.quint = 4.quint
-		local 				con2_t34 = r(p)
 				
 * create table of stored results
 	clear
-	set 					obs 9
+	set 					obs 3
 	gen 					testcountries =  cond(_n==1,"Ethiopia-Nigeria","")
 	replace 				testcountries = "Ethiopia-Uganda" in 2
 	replace 				testcountries = "Nigeria-Uganda" in 3
@@ -985,14 +961,6 @@ preserve
 		forval 				t = 1/3 {
 		    replace 		result_concern_`c' = `c`c'_t`t'' if _n == `t'
 		}
-	}
-	local 					counter = 4
-	foreach 				t in 12 13 14 23 24 34 {
-		replace 			test = "quint_`t'" in `counter'
-		forval 				c = 1/2 {
-			replace 		result_concern_`c' = `con`c'_t`t'' in `counter'
-		}
-		local				 counter = `counter'+1
 	}
 	
 	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
@@ -1180,18 +1148,54 @@ restore
 	reg						ac_med i.quint ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
 							append excel dec(3) ctitle(S21 access to medicine)
-							
+	
+	* Wald test for differences between other countries
+		test				1.country = 3.country
+		local 				med_t1 = r(p)
+		test				1.country = 4.country
+		local 				med_t2 = r(p)
+		test				3.country = 4.country
+		local 				med_t3 = r(p)		
+		
 * regression on access to staple
 	reg						ac_staple i.quint ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
 							append excel dec(3) ctitle(S21 access to staple)
-							
+	
+	* Wald test for differences between other countries
+		test				1.country = 3.country
+		local 				stap_t1 = r(p)
+		test				1.country = 4.country
+		local 				stap_t2 = r(p)
+		test				3.country = 4.country
+		local 				stap_t3 = r(p)	
+		
 * regression on access to soap
 	reg						ac_soap i.quint ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
 							append excel dec(3) ctitle(S21 access to soap)
-
-					
+	
+	* Wald test for differences between other countries
+		test				3.country = 4.country
+		local 				soap_t3 = r(p)		
+		
+* create table of stored results
+preserve
+	clear
+	set 					obs 3
+	gen 					testcountries =  "Ethiopia-Nigeria"
+	replace 				testcountries = "Ethiopia-Uganda" in 2
+	replace 				testcountries = "Nigeria-Uganda" in 3
+	foreach					var in med stap {
+	    gen 				`var' = .
+		forval 				t = 1/3 {
+		    replace 		`var' = ``var'_t`t'' in `t'
+		}
+	}
+	gen 					soap = `soap_t3' in 3
+	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
+							sheetreplace sheet(testresultsS21) first(var)	
+restore					
 * **********************************************************************
 * 3c - create Table S22-S23 for Fig. 3C
 * **********************************************************************
@@ -1233,8 +1237,31 @@ restore
 	reg						edu_act i.quint ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
 							append excel dec(3) ctitle(S23 edu act on quint)
-	
-	
+		
+	* Wald test for differences between other countries
+		test				1.country = 3.country
+		local 				t1 = r(p)
+		test				1.country = 4.country
+		local 				t2 = r(p)
+		test				3.country = 4.country
+		local 				t3 = r(p)		
+		
+* create table of stored results
+preserve
+	clear
+	set 					obs 3
+	gen 					testcountries =  "Ethiopia-Nigeria"
+	replace 				testcountries = "Ethiopia-Uganda" in 2
+	replace 				testcountries = "Nigeria-Uganda" in 3
+	gen 					pval = .
+	forval 					t = 1/3 {
+		replace 			pval = `t`t'' in `t'
+	}
+	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
+							sheetreplace sheet(testresultsS23) first(var)
+restore
+
+		
 * **********************************************************************
 * 3d - create Figure S3 and Table S24-S25 for Fig. 3D
 * **********************************************************************
@@ -1269,11 +1296,40 @@ restore
 	reg					p_mod edu_act ib(2).country [pweight = shw], vce(robust)
 	outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
 							append excel dec(3) ctitle(S24 edu act mod)
-					
+
+	* Wald test for differences between other countries
+		test				1.country = 3.country
+		local 				mod_t1 = r(p)
+		test				1.country = 4.country
+		local 				mod_t2 = r(p)
+		test				3.country = 4.country
+		local 				mod_t3 = r(p)		
+
 	reg					p_sev edu_act ib(2).country [pweight = shw], vce(robust)
 	outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
 							append excel dec(3) ctitle(S24 edu act sev)
-	
+	* Wald test for differences between other countries
+		test				1.country = 3.country
+		local 				sev_t1 = r(p)
+		test				1.country = 4.country
+		local 				sev_t2 = r(p)
+		test				3.country = 4.country
+		local 				sev_t3 = r(p)		
+		
+* create table of stored results
+	clear
+	set 					obs 3
+	gen 					testcountries =  "Ethiopia-Nigeria"
+	replace 				testcountries = "Ethiopia-Uganda" in 2
+	replace 				testcountries = "Nigeria-Uganda" in 3
+	foreach					var in mod sev {
+	    gen 				`var' = .
+		forval 				t = 1/3 {
+		    replace 		`var' = ``var'_t`t'' in `t'
+		}
+	}
+	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
+							sheetreplace sheet(testresultsS24) first(var)
 	restore
 	
 *** table s25 ***

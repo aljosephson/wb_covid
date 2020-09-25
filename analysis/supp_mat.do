@@ -2,7 +2,7 @@
 * Created on: September 2020 
 * Created by: amf
 * Edited by: jdm, alj 
-* Last edit: 5 September 2020 
+* Last edit: 25 September 2020 
 * Stata v.16.1
 
 * does
@@ -477,7 +477,7 @@ restore
 
 * summary statistics on losses of income
 	foreach 				var in dwn farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
-		mean 				`var' [pweight = phw] if wave == 1 
+		mean 				`var' [pweight = hhw] if wave == 1 
 			local 			n_`var' = e(N)
 			local 			mean_`var' = el(e(b),1,1)
 			local 			msd_`var' = sqrt(el(e(V),1,1))
@@ -510,7 +510,93 @@ restore
 		export 				excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
 							sheetreplace sheet(sumstatsS8) first(varlabels)
 		restore				
+
+*** table S9 ***	
+* mean and total (with std errors) for all countries for the income receipt variable for each country 
+		
+	foreach 				var in farm_inc bus_inc wage_inc remit_inc other_inc {
+		mean 				`var' [pweight = hhw] if wave == 1 
+			local 			n_`var' = e(N)
+			local 			mean_`var' = el(e(b),1,1)
+			local 			msd_`var' = sqrt(el(e(V),1,1))
+		total 				`var' [pweight = hhw]
+			local 			tot_`var' = el(e(b),1,1)
+			local 			tsd_`var' = sqrt(el(e(V),1,1))
+	}	
+	
+		
+	foreach 				var in farm_inc bus_inc wage_inc remit_inc other_inc {
+		mean 				`var' [pweight = hhw] if wave == 1 & country == 1
+			local 			n_`var' = e(N)
+			local 			mean_`var' = el(e(b),1,1)
+			local 			msd_`var' = sqrt(el(e(V),1,1))
+		total 				`var' [pweight = hhw]
+			local 			tot_`var' = el(e(b),1,1)
+			local 			tsd_`var' = sqrt(el(e(V),1,1))
+	}	
+	
+	foreach 				var in farm_inc bus_inc wage_inc remit_inc other_inc {
+		mean 				`var' [pweight = hhw] if wave == 1 & country == 2
+			local 			n_`var' = e(N)
+			local 			mean_`var' = el(e(b),1,1)
+			local 			msd_`var' = sqrt(el(e(V),1,1))
+		total 				`var' [pweight = hhw]
+			local 			tot_`var' = el(e(b),1,1)
+			local 			tsd_`var' = sqrt(el(e(V),1,1))
+	}	
+	
+	foreach 				var in farm_inc bus_inc wage_inc remit_inc other_inc {
+		mean 				`var' [pweight = hhw] if wave == 1 & country == 3
+			local 			n_`var' = e(N)
+			local 			mean_`var' = el(e(b),1,1)
+			local 			msd_`var' = sqrt(el(e(V),1,1))
+		total 				`var' [pweight = hhw]
+			local 			tot_`var' = el(e(b),1,1)
+			local 			tsd_`var' = sqrt(el(e(V),1,1))
+	}	
+	
+	foreach 				var in farm_inc bus_inc wage_inc remit_inc other_inc {
+		mean 				`var' [pweight = hhw] if wave == 1 & country == 4
+			local 			n_`var' = e(N)
+			local 			mean_`var' = el(e(b),1,1)
+			local 			msd_`var' = sqrt(el(e(V),1,1))
+		total 				`var' [pweight = hhw]
+			local 			tot_`var' = el(e(b),1,1)
+			local 			tsd_`var' = sqrt(el(e(V),1,1))
+	}	
+	
+	/*
+	* format table
+		preserve
+			keep 			dwn farm_dwn bus_dwn wage_dwn remit_dwn other_dwn
+			drop 			if dwn < 2 //drop all observations
+			label 			variable dwn "Any type of income loss"
+			label 			variable remit_dwn "Remittances reduced"
+			label 			variable other_dwn "Other income sources reduced"
+			set 			obs 5
+			gen 			stat = cond(_n==1,"tot",cond(_n==2,"tsd",cond(_n==3,"mean",cond(_n==4,"msd","n"))))
+			order 			stat dwn *
+			foreach 		var in farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
+				decode 		`var', gen(`var'_de)
+				destring 	`var'_de, replace
+				drop 		`var'
+			}
+	* populate table with stored results
+			foreach 		var in dwn farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
+			    foreach 	s in n mean msd tot tsd {
+					replace `var' = ``s'_`var'' if stat == "`s'"
+				}
+			}
 			
+		export 				excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
+							sheetreplace sheet(sumstatsS8) first(varlabels)
+							
+		** alj - haven't updated this part of the code yet - so currently not exporting, don't want to mess up system which exists for tables 	*/ 				
+		
+		restore				
+		
+*** NEED TO UPDATE ALL TABLE NUMBERS FROM THIS POINT *** 
+		
 *** table S9 ***	
 			
 * regressions for cross-country comparisons 
@@ -565,7 +651,6 @@ restore
 		outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
 							append excel dec(3) ctitle(S10 `var') 	
 	}
-
 
 * **********************************************************************
 * 2b - create Table S11 for Fig. 2B

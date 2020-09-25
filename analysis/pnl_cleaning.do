@@ -578,10 +578,23 @@
 	
 	replace 				sch_child = 0 if sch_child == 2
 	replace					sch_child = . if sch_child == -99 
-
+	
 	
 * **********************************************************************
-* 9 - merge in covid data
+* 9 - clean up education receipts 
+* **********************************************************************
+
+* generate remittance income variable 
+	gen 					remit_inc = 1 if rem_dom == 2
+	replace					remit_inc = 1 if rem_for == 2 
+	replace					remit_inc = 0 if remit_inc == .
+	replace 				remit_inc = . if rem_dom == -99 & remit_inc == .
+	replace 				remit_inc = . if rem_for == -99 & remit_inc == .
+
+* others fine as is: bus_inc farm_inc wage_inc 
+	
+* **********************************************************************
+* 10 - merge in covid data
 * **********************************************************************	
 
 * merge in covid data
@@ -591,7 +604,7 @@
 	drop 					_merge
 
 * *********************************************************************
-* 10 - end matter, clean up to save
+* 11 - end matter, clean up to save
 * **********************************************************************
 
 compress

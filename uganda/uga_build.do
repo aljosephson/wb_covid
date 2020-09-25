@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by : jdm
-* Last edited: 16 September 2020
+* Last edited: 25 September 2020
 * Stata v.16.1
 
 * does
@@ -130,9 +130,7 @@
 * generate shock variables
 	forval i = 1/13 {
 		gen				shock_0`i' = 0 if s9q01 == 2 & shocks__id == `i'
-		replace			shock_0`i' = 1 if s9q02 == 3 & shocks__id == `i'
-		replace			shock_0`i' = 2 if s9q02 == 2 & shocks__id == `i'
-		replace			shock_0`i' = 3 if s9q02 == 1 & shocks__id == `i'
+		replace			shock_0`i' = 1 if s9q01 == 1 & shocks__id == `i'
 		}
 
 	rename			shock_010 shock_10
@@ -192,6 +190,15 @@
 		lab val		`var' shock
 		}
 
+* generate any shock variable
+	gen				shock_any = 1 if shock_01 == 1 | shock_02 == 1 | ///
+						shock_03 == 1 | shock_04 == 1 | shock_05 == 1 | ///
+						shock_06 == 1 | shock_07 == 1 | shock_08 == 1 | ///
+						shock_09 == 1 | shock_10 == 1 | shock_11 == 1 | ///
+						shock_12 == 1 | shock_13 == 1 | shock_14== 1
+	replace			shock_any = 0 if shock_any == .
+	lab var			shock_any "Experience some shock"
+	
 	lab var			cope_01 "Sale of assets (Agricultural and Non_agricultural)"
 	lab var			cope_02 "Engaged in additional income generating activities"
 	lab var			cope_03 "Received assistance from friends & family"

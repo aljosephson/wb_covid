@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: jdm
-* Last edit: 16 September 2020 
+* Last edit: 25 September 2020 
 * Stata v.16.1
 
 * does
@@ -267,7 +267,6 @@
 	rename			bi_locchange loc_chg
 	rename			bi_same_hhh same_hhh
 
-
 * covid variables
 	rename			kn1_heard know
 	rename			kn2_meas_handwash know_01
@@ -378,6 +377,21 @@
 	rename			lc1_other oth_inc
 	rename			lc2_other_chg oth_chg
 	rename			lc3_total_chg tot_inc_chg
+	
+* generate any shock variable
+	gen				shock_any = 1 if farm_inc == 1 & farm_chg == 3 | farm_chg == 4
+	replace			shock_any = 1 if bus_inc == 1 & bus_chg == 3 | bus_chg == 4
+	replace			shock_any = 1 if wage_inc == 1 & wage_chg == 3 | wage_chg == 4
+	replace			shock_any = 1 if rem_dom == 1 & rem_dom_chg == 3 | rem_dom_chg == 4
+	replace			shock_any = 1 if rem_for == 1 & rem_for_chg == 3 | rem_for_chg == 4
+	replace			shock_any = 1 if isp_inc == 1 & isp_chg == 3 | isp_chg == 4
+	replace			shock_any = 1 if pen_inc == 1 & pen_chg == 3 | pen_chg == 4
+	replace			shock_any = 1 if gov_inc == 1 & gov_chg == 3 | gov_chg == 4
+	replace			shock_any = 1 if ngo_inc == 1 & ngo_chg == 3 | ngo_chg == 4
+	replace			shock_any = 1 if oth_inc == 1 & oth_chg == 3 | oth_chg == 4
+	replace			shock_any = 0 if shock_any == .
+	lab var			shock_any "Experience some shock"
+	
 	
 * coping variables 	
 	rename			lc4_total_chg_cope_1 cope_01

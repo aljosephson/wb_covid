@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: August 2020
 * Created by: jdm
-* Edited by: alj
-* Last edited: 13 September 2020 
+* Edited by: jdm
+* Last edited: 25 September 2020 
 * Stata v.16.1
 
 * does
@@ -250,6 +250,14 @@
 	foreach var of varlist shock_01-shock_14 {
 		lab val		`var' shock 
 		}
+		
+* generate any shock variable
+	gen				shock_any = 1 if shock_01 == 1 | shock_05 == 1 | ///
+						shock_06 == 1 | shock_07 == 1 | shock_08 == 1 | ///
+						shock_10 == 1 | shock_11 == 1 | shock_12 == 1 | ///
+						shock_14 == 1
+	replace			shock_any = 0 if shock_any == .
+	lab var			shock_any "Experience some shock"
 	
 	lab var			cope_01 "Sale of assets (Agricultural and Non_agricultural)"
 	lab var			cope_02 "Engaged in additional income generating activities"
@@ -346,6 +354,14 @@
 	foreach var of varlist shock_01-shock_14 {
 		lab val		`var' shock 
 		}
+		
+* generate any shock variable
+	gen				shock_any = 1 if shock_01 == 1 | shock_05 == 1 | ///
+						shock_06 == 1 | shock_07 == 1 | shock_08 == 1 | ///
+						shock_10 == 1 | shock_11 == 1 | shock_12 == 1 | ///
+						shock_14 == 1
+	replace			shock_any = 0 if shock_any == .
+	lab var			shock_any "Experience some shock"
 	
 	lab var			cope_01 "Sale of assets (Agricultural and Non_agricultural)"
 	lab var			cope_02 "Engaged in additional income generating activities"

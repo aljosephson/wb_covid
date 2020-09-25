@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: alj
 * Edited by: jdm
-* Last edited: 16 September 2020
+* Last edited: 25 September 2020
 * Stata v.16.1
 
 * does
@@ -344,6 +344,14 @@
 	lab var			shock_14 "Other shock"
 	lab var 		shock_16 "Disruption of farming, livestock, fishing, etc."
 
+* generate any shock variable
+	gen				shock_any = 1 if shock_05 == 1 | shock_06 == 1 | ///
+						shock_07 == 1 | shock_16 == 1 | shock_10 == 1 | ///
+						shock_11 == 1 | shock_12 == 1 | shock_03 == 1 | ///
+						shock_14 == 1
+	replace			shock_any = 0 if shock_any == .
+	lab var			shock_any "Experience some shock"
+	
 	lab var			cope_01 "Sale of assets (Agricultural and Non_agricultural)"
 	lab var			cope_02 "Engaged in additional income generating activities"
 	lab var			cope_03 "Received assistance from friends & family"

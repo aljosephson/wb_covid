@@ -548,7 +548,7 @@ local tabnum = `tabnum' + 1
 				local 			n_`var'_c`c' = e(N)
 				local 			mean_`var'_c`c' = el(e(b),1,1)
 				local 			msd_`var'_c`c' = sqrt(el(e(V),1,1))
-			total 				`var' [pweight = hhw]
+			total 				`var' [pweight = hhw] if wave == 1 & country == `c'
 				local 			tot_`var'_c`c' = el(e(b),1,1)
 				local 			tsd_`var'_c`c' = sqrt(el(e(V),1,1))
 		}	

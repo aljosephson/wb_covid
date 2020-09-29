@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj
-* Last edit: 13 September 2020
+* Last edit: 28 September 2020
 * Stata v.16.1
 
 * does
@@ -107,9 +107,9 @@
 	preserve
 
 	drop if			country == 1 | country == 3
-	keep 			myth_01 myth_02 myth_03 myth_04 myth_05 country phw
+	keep 			myth_02 myth_03 myth_04 myth_05 country phw
 	gen 			id=_n
-	ren 			(myth_01 myth_02 myth_03 myth_04 myth_05) (size=)
+	ren 			(myth_02 myth_03 myth_04 myth_05) (size=)
 	reshape long 	size, i(id) j(myth) string
 	drop if 		size == .
 	drop if			size == 3
@@ -117,11 +117,10 @@
 	catplot 		size country myth [aweight = phw], percent(country myth) ///
 						ytitle("Percent", size(vlarge)) var1opts(label(labsize(vlarge))) ///
 						var2opts(label(labsize(vlarge))) var3opts(label(labsize(large)) ///
-						relabel (1 `""Lemon and alcohol are effective" "sanitizers against coronavirus""' ///
-						2 `""Africans are immune" "to coronavirus"""' ///
-						3 `""Coronavirus does not" "affect children"""' ///
-						4 `""Coronavirus cannot survive" "warm weather""' ///
-						5 `""Coronavirus is just" "common flu""'))  ///
+						relabel (1 `""Africans are immune" "to coronavirus"""' ///
+						2 `""Coronavirus does not" "affect children"""' ///
+						3 `""Coronavirus cannot survive" "warm weather""' ///
+						4 `""Coronavirus is just" "common flu""'))  ///
 						ylabel(, labs(vlarge)) ///
 						bar(1, color(khaki*1.5) ) ///
 						bar(2, color(emerald*1.5) ) ///
@@ -422,7 +421,8 @@
 						legend( label (1 "Relied on savings") label (2 "Sale of asset") ///
 						label (3 "Reduced food cons.") label (4 "Reduced non-food cons.") ///
 						label (5 "Help from family") ///
-						label (6 "Recieved assistance") size(medsmall) pos(6) col(3)) ///
+						label (6 "Recieved assistance") /// 
+						label (7 "Did nothing") size(medsmall) pos(6) col(3)) ///
 						saving("$output/cope_alla.gph", replace)
 
 	restore

@@ -376,7 +376,7 @@ local tabnum = `tabnum' + 1
 
 preserve
 		
-	local 					myth myth_01 myth_02 myth_03 myth_04 myth_05
+	local 					myth myth_02 myth_03 myth_04 myth_05
 	foreach 				v in `myth' {
 	    replace 			`v' = . if `v' == 3
 	}	
@@ -386,14 +386,15 @@ preserve
 local tabnum = `tabnum' + 1
 	
 * lemon and alcohol can be used as sanitizers against coronavirus
-	reg 					myth_01 i.country [pweight = phw], vce(robust)
-	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-							append excel dec(3) ctitle(S`tabnum' Lemon and alcohol) label
+*	reg 					myth_01 i.country [pweight = phw], vce(robust)
+*	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
+*							append excel dec(3) ctitle(S`tabnum' Lemon and alcohol) label
 	
 * africans are immune to corona virus
 	reg 					myth_02 i.country [pweight = phw], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 							append excel dec(3) ctitle(S`tabnum' Africans immune) label
+							
 * corona virus does not affect children
 	reg 					myth_03 i.country [pweight = phw], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///

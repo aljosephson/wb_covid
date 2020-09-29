@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: jdm
-* Edited by: jdm
-* Last edit: 25 September 2020 
+* Edited by: alj
+* Last edit: 28 September 2020 
 * Stata v.16.1
 
 * does

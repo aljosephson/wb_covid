@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: jdm
-* Edited by : jdm
-* Last edited: 25 September 2020
+* Edited by : alj
+* Last edited: 28 September 2020
 * Stata v.16.1
 
 * does
@@ -984,7 +984,7 @@
 * ***********************************************************************
 
 * rename basic information
-	rename			wfinal2 phw
+	rename			wfinal phw
 	lab var			phw "sampling weights"
 
 	gen				wave = 2
@@ -1046,8 +1046,10 @@
 	rename			Sq02 start_date
 	rename			s2gq01 revised
 
-	drop			BSEQNO Cq08 Cq08_1a Cq08_1b Cq08_1c Cq08_1d start_date ///
-						Sq04 sec0_startime sec0_endtime
+	*drop			BSEQNO Cq08 Cq08_1a Cq08_1b Cq08_1c Cq08_1d start_date ///
+	*					Sq04 sec0_startime sec0_endtime
+						
+	drop			BSEQNO start_date sec0_endtime						
 	
 * rename government contribution to spread
 	rename			s2gq02__1 spread_01
@@ -1134,9 +1136,7 @@
 	rename			s5q09 emp_hh
 	
 	rename			s5aq11 bus_emp
-	rename			s5aq11a_1 bus_stat
-	replace			bus_stat = s5aq11a_2 if bus_stat == .
-	replace			bus_stat = s5aq11a_3 if bus_stat == .
+	rename			s5aq11a bus_stat
 	
 	gen				bus_stat_why = 1 if s5aq11b__1 == 1
 	replace			bus_stat_why = 2 if s5aq11b__2 == 1
@@ -1195,7 +1195,7 @@
 	order			bus_cndct_how, after(bus_cndct)
 
 	drop			s5q03 s5q04a_2 s5q10__0 s5q10__1 s5q10__2 s5q10__3 s5q10__4 ///
-						s5q10__5 s5aq11a_2 business_case_filter s5aq11a_3 ///
+						s5q10__5 business_case_filter ///
 						s5aq11b__1 s5aq11b__2 s5aq11b__3 s5aq11b__4 s5aq11b__5 ///
 						s5aq11b__6 s5aq11b__7 s5aq11b__8 s5aq11b__9 s5aq11b__10 ///
 						s5aq11b__n96 s5aq14_2 s5aq15__1 s5aq15__2 s5aq15__3 ///

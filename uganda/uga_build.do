@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: jdm
-* Edited by : alj
-* Last edited: 28 September 2020
+* Edited by : jdm
+* Last edited: 29 September 2020
 * Stata v.16.1
 
 * does
@@ -14,7 +14,6 @@
 	* raw Uganda data
 
 * TO DO:
-	* FIES R2 data
 	* clean agriculture and livestock
 
 
@@ -350,7 +349,7 @@
 * save temp file
 	save			"$export/wave_01/fies_r1", replace
 
-	
+
 * ***********************************************************************
 * 1g - baseline data
 * ***********************************************************************
@@ -575,7 +574,7 @@
 * 2f - FIES - R2
 * ***********************************************************************
 
-/* load data
+* load data
 	use				"$fies/UG_FIES_round2.dta", clear
 
 	drop 			country round
@@ -583,7 +582,6 @@
 
 * save temp file
 	save			"$export/wave_02/fies_r2", replace
-*/
 
 
 * ***********************************************************************
@@ -973,7 +971,7 @@
 	merge 1:1 		HHID using "$root/wave_02/SEC7.dta", nogenerate
 	merge 1:1 		HHID using "$root/wave_02/SEC9.dta", nogenerate
 	merge 1:1 		HHID using "$root/wave_02/SEC10w.dta", nogenerate
-*	merge 1:1 		HHID using "$export/wave_02/fies_r2.dta", nogenerate	
+	merge 1:1 		HHID using "$export/wave_02/fies_r2.dta", nogenerate	
 
 * reformat HHID
 	format 			%12.0f HHID

@@ -22,7 +22,7 @@
 * **********************************************************************
 
 * set $pack to 0 to skip package installation
-	global 			pack 	1
+	global 			pack 	0
 		
 * Specify Stata version in use
     global stataVersion 16.1    // set Stata version
@@ -98,17 +98,21 @@ if $pack == 1 {
 * 1 - run household data cleaning .do file
 * **********************************************************************
 
-*	do 			"$code/ethiopia/eth_build.do"			//	builds Ethiopia panel
-*	do 			"$code/malawi/mwi_build.do"				//	builds Malawi panel
-*	do 			"$code/nigeria/nga_build.do"			//	builds Nigeria panel
-*	do 			"$code/uganda/uga_build.do"				//	builds Uganda panel
-*	do			"$code/analysis/pnl_cleaning.do"		//	builds 4 country panel
+	do 			"$code/ethiopia/eth_build.do"			//	builds Ethiopia panel
+	do 			"$code/malawi/mwi_build.do"				//	builds Malawi panel
+	do 			"$code/nigeria/nga_reshape.do"			//	reshapes Nigeria wide data
+	do 			"$code/nigeria/nga_build.do"			//	builds Nigeria panel
+	do 			"$code/uganda/uga_build.do"				//	builds Uganda panel
+		
+* **********************************************************************
+* 2 - run analysis .do files
+* **********************************************************************
+
+	do			"$code/analysis/pnl_cleaning.do"		//	builds 4 country panel
+
+*	do			"$code/analysis/analysis_graphs.do"		//	produces graphs in paper
 	
-* **********************************************************************
-* 2 - run regression .do files
-* **********************************************************************
+*	do			"$code/analysis/supp_mat.do"			//	produces tables in supplemental material
 
 
-* **********************************************************************
-* 3 - run analysis .do files
-* **********************************************************************
+/* END */

@@ -1,4 +1,4 @@
-# Microeconomic impacts of COVID-19 in Africa: Replication Code
+# Socioeconomic impacts of COVID-19 in four African countries: Replication Code
  This README describes the directory structure & should enable users to replicate all tables and figures for work related to the World Bank LSMS and World Bank COVID surveys. 
 
  ## Index

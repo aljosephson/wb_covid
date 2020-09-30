@@ -40,17 +40,16 @@ The code in this repository cleans the raw phone surveys and replicates material
 
 #### Stata reqs
 
-The data processing and analysis requires a number of user-written
-    Stata programs:
-    1. `blindschemes`
-    2. `estout`
-    3. `mdesc`
-    4. `grc1leg2`
-    5. `distinct`
-    6. `winsor2`
-    7. `palettes`
-    8. `catplot`
-    9. `colrspace` 
+The data processing and analysis requires a number of user-written Stata programs:
+   * 1. `blindschemes`
+   * 2. `estout`
+   * 3. `mdesc`
+   * 4. `grc1leg2`
+   * 5. `distinct`
+   * 6. `winsor2`
+   * 7. `palettes`
+   * 8. `catplot`
+   * 9. `colrspace` 
 
 #### Folder structure
 

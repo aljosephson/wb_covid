@@ -45,6 +45,12 @@
 		global 		data	"G:/My Drive/wb_covid/data"
     }
 
+	if `"`c(username)'"' == "annfu" {
+		global 		code  	"C:/Users/annfu/git/wb_covid"
+		global 		data	"G:/My Drive/wb_covid/data"
+	}
+	
+	
 * **********************************************************************
 * 0 (b) - Check if any required packages are installed:
 * **********************************************************************
@@ -52,12 +58,8 @@
 * install packages if global is set to 1
 if $pack == 1 {
 	
-	* temporarily set delimiter to ; so can break the line
-		#delimit ;
 	* for packages/commands, make a local containing any required packages
-		loc userpack "blindschemes mdesc estout reghdfe ftools distinct 
-		 winsor2 palettes catplot grc1leg2 colrspace" ;
-		#delimit cr
+		loc userpack "blindschemes mdesc estout distinct winsor2 palettes catplot grc1leg2 colrspace" 
 	
 	* install packages that are on ssc	
 		foreach package in `userpack' {
@@ -76,25 +78,15 @@ if $pack == 1 {
 			}
 		}
 
+	* install -xfill- package
+		net install xfill, replace from(https://www.sealedenvelope.com/)
+
 	* update all ado files
 		ado update, update
 
 	* set graph and Stata preferences
-		set scheme plotplainblind, perm
+		set scheme plotplain, perm
 		set more off
-		
-* The package -xfill- is not on ssc so installing here
-	cap which xfill
-	if _rc != 0 {
-        capture window stopbox rusure "You are missing some packages." "Do you want to install xfill?"
-        if _rc == 0 {
-            qui: net install xfill, replace from(https://www.sealedenvelope.com/)
-        }
-        else {
-        	exit 199
-        }
-	}
-		
 }
 
 
@@ -104,15 +96,18 @@ if $pack == 1 {
 
 *	do 			"$code/ethiopia/eth_build.do"			//	builds Ethiopia panel
 *	do 			"$code/malawi/mwi_build.do"				//	builds Malawi panel
+*	do 			"$code/nigeria/nga_reshape.do"			//	reshapes Nigeria wide data
 *	do 			"$code/nigeria/nga_build.do"			//	builds Nigeria panel
 *	do 			"$code/uganda/uga_build.do"				//	builds Uganda panel
+		
+* **********************************************************************
+* 2 - run analysis .do files
+* **********************************************************************
+
+*	do			"$code/analysis/covid_data.do"			//  reads in covid data
 *	do			"$code/analysis/pnl_cleaning.do"		//	builds 4 country panel
-	
-* **********************************************************************
-* 2 - run regression .do files
-* **********************************************************************
+*	do			"$code/analysis/analysis_graphs.do"		//	produces graphs in paper
+*	do			"$code/analysis/supp_mat.do"			//	produces tables in supplemental material
 
 
-* **********************************************************************
-* 3 - run analysis .do files
-* **********************************************************************
+/* END */

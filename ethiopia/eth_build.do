@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: jdm
-* Last edit: 1 September 2020 
+* Last edit: 25 September 2020 
 * Stata v.16.1
 
 * does
@@ -34,7 +34,7 @@
 
 
 * ***********************************************************************
-* 1a - get household size
+* 1a - get household size and gender of household head 
 * ***********************************************************************
 
 * load round 1 of the data
@@ -55,8 +55,13 @@
 	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
 	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
+* create hh head gender
+	gen 			sexhh = . 
+	replace			sexhh = sex_mem if relat_mem == 1
+	label var 		sexhh "Sex of household head"
+	
 * collapse data
-	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(household_id)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(household_id)
 	lab var		hhsize "Household size"
 	lab var 	hhsize_adult "Household size - only adults"
 	lab var 	hhsize_child "Household size - children 0 - 18"
@@ -83,8 +88,13 @@
 	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
 	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
+* create hh head gender
+	gen 			sexhh = . 
+	replace			sexhh = sex_mem if relat_mem == 1
+	label var 		sexhh "Sex of household head"	
+	
 * collapse data
-	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(household_id)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(household_id)	
 	lab var		hhsize "Household size"
 	lab var 	hhsize_adult "Household size - only adults"
 	lab var 	hhsize_child "Household size - children 0 - 18"
@@ -111,8 +121,13 @@
 	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
 	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
+* create hh head gender
+	gen 			sexhh = . 
+	replace			sexhh = sex_mem if relat_mem == 1
+	label var 		sexhh "Sex of household head"
+	
 * collapse data
-	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(household_id)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(household_id)
 	lab var		hhsize "Household size"
 	lab var 	hhsize_adult "Household size - only adults"
 	lab var 	hhsize_child "Household size - children 0 - 18"
@@ -252,7 +267,6 @@
 	rename			bi_locchange loc_chg
 	rename			bi_same_hhh same_hhh
 
-
 * covid variables
 	rename			kn1_heard know
 	rename			kn2_meas_handwash know_01
@@ -363,6 +377,21 @@
 	rename			lc1_other oth_inc
 	rename			lc2_other_chg oth_chg
 	rename			lc3_total_chg tot_inc_chg
+	
+* generate any shock variable
+	gen				shock_any = 1 if farm_inc == 1 & farm_chg == 3 | farm_chg == 4
+	replace			shock_any = 1 if bus_inc == 1 & bus_chg == 3 | bus_chg == 4
+	replace			shock_any = 1 if wage_inc == 1 & wage_chg == 3 | wage_chg == 4
+	replace			shock_any = 1 if rem_dom == 1 & rem_dom_chg == 3 | rem_dom_chg == 4
+	replace			shock_any = 1 if rem_for == 1 & rem_for_chg == 3 | rem_for_chg == 4
+	replace			shock_any = 1 if isp_inc == 1 & isp_chg == 3 | isp_chg == 4
+	replace			shock_any = 1 if pen_inc == 1 & pen_chg == 3 | pen_chg == 4
+	replace			shock_any = 1 if gov_inc == 1 & gov_chg == 3 | gov_chg == 4
+	replace			shock_any = 1 if ngo_inc == 1 & ngo_chg == 3 | ngo_chg == 4
+	replace			shock_any = 1 if oth_inc == 1 & oth_chg == 3 | oth_chg == 4
+	replace			shock_any = 0 if shock_any == .
+	lab var			shock_any "Experience some shock"
+	
 	
 * coping variables 	
 	rename			lc4_total_chg_cope_1 cope_01
@@ -598,6 +627,48 @@
 			
 	drop			resp_id start_date hhh_gender hhh_age same loc_chg same_hhh
 	drop if			wave ==  .
+
+* rename regions
+	replace 		region = 1001 if region == 1
+	replace 		region = 1002 if region == 2
+	replace 		region = 1003 if region == 3
+	replace 		region = 1004 if region == 4
+	replace 		region = 1005 if region == 5
+	replace 		region = 1006 if region == 6
+	replace 		region = 1007 if region == 7
+	replace 		region = 1008 if region == 12
+	replace			region = 1009 if region == 13
+	replace			region = 1010 if region == 14
+	replace			region = 1011 if region == 15
+	
+	lab def			region 1001 "Tigray" 1002 "Afar" 1003 "Amhara" 1004 ///
+						"Oromia" 1005 "Somali" 1006 "Benishangul-Gumuz" 1007 ///
+						"SNNPR" 1008 "Gambela" 1009 "Harar" 1010 ///
+						"Addis Ababa" 1011 "Dire Dawa" 2101 "Chitipa" 2102 ///
+						"Karonga" 2103 "Nkhata Bay" 2104 "Rumphi" 2105 ///
+						"Mzimba" 2106 "Likoma" 2107 "Mzuzu City" 2201 ///
+						"Kasungu" 2202 "Nkhotakota" 2203 "Ntchisi" 2204 ///
+						"Dowa" 2205 "Salima" 2206 "Lilongwe" 2207 ///
+						"Mchinji" 2208 "Dedza" 2209 "Ntcheu" 2210 ///
+						"Lilongwe City" 2301 "Mangochi" 2302 "Machinga" 2303 ///
+						"Zomba" 2304 "Chiradzulu" 2305 "Blantyre" 2306 ///
+						"Mwanza" 2307 "Thyolo" 2308 "Mulanje" 2309 ///
+						"Phalombe" 2310 "Chikwawa" 2311 "Nsanje" 2312 ///
+						"Balaka" 2313 "Neno" 2314 "Zomba City" 2315 ///
+						"Blantyre City" 3001 "Abia" 3002 "Adamawa" 3003 ///
+						"Akwa Ibom" 3004 "Anambra" 3005 "Bauchi" 3006 ///
+						"Bayelsa" 3007 "Benue" 3008 "Borno" 3009 ///
+						"Cross River" 3010 "Delta" 3011 "Ebonyi" 3012 ///
+						"Edo" 3013 "Ekiti" 3014 "Enugu" 3015 "Gombe" 3016 ///
+						"Imo" 3017 "Jigawa" 3018 "Kaduna" 3019 "Kano" 3020 ///
+						"Katsina" 3021 "Kebbi" 3022 "Kogi" 3023 "Kwara" 3024 ///
+						"Lagos" 3025 "Nasarawa" 3026 "Niger" 3027 "Ogun" 3028 ///
+						"Ondo" 3029 "Osun" 3030 "Oyo" 3031 "Plateau" 3032 ///
+						"Rivers" 3033 "Sokoto" 3034 "Taraba" 3035 "Yobe" 3036 ///
+						"Zamfara" 3037 "FCT" 4012 "Central" 4013 ///
+						"Eastern" 4014 "Kampala" 4015 "Northern" 4016 ///
+						"Western" 4017 "North" 4018 "Central" 4019 "South", replace
+	lab val			region region
 	
 * **********************************************************************
 * 2 - end matter, clean up to save

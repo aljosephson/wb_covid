@@ -2,7 +2,7 @@
 * Created on: August 2020
 * Created by: jdm
 * Edited by: jdm
-* Last edited: 1 September 2020 
+* Last edited: 25 September 2020 
 * Stata v.16.1
 
 * does
@@ -250,6 +250,14 @@
 	foreach var of varlist shock_01-shock_14 {
 		lab val		`var' shock 
 		}
+		
+* generate any shock variable
+	gen				shock_any = 1 if shock_01 == 1 | shock_05 == 1 | ///
+						shock_06 == 1 | shock_07 == 1 | shock_08 == 1 | ///
+						shock_10 == 1 | shock_11 == 1 | shock_12 == 1 | ///
+						shock_14 == 1
+	replace			shock_any = 0 if shock_any == .
+	lab var			shock_any "Experience some shock"
 	
 	lab var			cope_01 "Sale of assets (Agricultural and Non_agricultural)"
 	lab var			cope_02 "Engaged in additional income generating activities"
@@ -346,6 +354,14 @@
 	foreach var of varlist shock_01-shock_14 {
 		lab val		`var' shock 
 		}
+		
+* generate any shock variable
+	gen				shock_any = 1 if shock_01 == 1 | shock_05 == 1 | ///
+						shock_06 == 1 | shock_07 == 1 | shock_08 == 1 | ///
+						shock_10 == 1 | shock_11 == 1 | shock_12 == 1 | ///
+						shock_14 == 1
+	replace			shock_any = 0 if shock_any == .
+	lab var			shock_any "Experience some shock"
 	
 	lab var			cope_01 "Sale of assets (Agricultural and Non_agricultural)"
 	lab var			cope_02 "Engaged in additional income generating activities"
@@ -637,7 +653,7 @@
 
 	
 * ***********************************************************************
-* 4a - household size - wave 1
+* 4a - household size and gender of HOH - wave 1
 * ***********************************************************************
 	
 * load data
@@ -657,8 +673,13 @@
 	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
 	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
+* create hh head gender
+	gen 			sexhh = . 
+	replace			sexhh = sex_mem if relat_mem == 1
+	label var 		sexhh "Sex of household head"
+	
 * collapse data
-	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(hhid)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(hhid)
 	lab var		hhsize "Household size"
 	lab var 	hhsize_adult "Household size - only adults"
 	lab var 	hhsize_child "Household size - children 0 - 18"
@@ -669,7 +690,7 @@
 
 	
 * ***********************************************************************
-* 4b - household size - wave 2
+* 4b - household size and gender of HOH - wave 2
 * ***********************************************************************
 	
 * load data
@@ -688,9 +709,14 @@
 	gen 		hhsize_adult = 1 if age_mem > 18 & age_mem < .
 	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
 	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
+
+* create hh head gender
+	gen 			sexhh = . 
+	replace			sexhh = sex_mem if relat_mem == 1
+	label var 		sexhh "Sex of household head"
 	
 * collapse data
-	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(hhid)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(hhid)
 	lab var		hhsize "Household size"
 	lab var 	hhsize_adult "Household size - only adults"
 	lab var 	hhsize_child "Household size - children 0 - 18"
@@ -701,7 +727,7 @@
 	
 	
 * ***********************************************************************
-* 4c - household size - wave 3
+* 4c - household size and gender of HOH - wave 3
 * ***********************************************************************
 	
 * load data
@@ -720,14 +746,18 @@
 	gen 		hhsize_adult = 1 if age_mem > 18 & age_mem < .
 	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
 	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
+
+* create hh head gender
+	gen 			sexhh = . 
+	replace			sexhh = sex_mem if relat_mem == 1
+	label var 		sexhh "Sex of household head"
 	
 * collapse data
-	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(hhid)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(hhid)
 	lab var		hhsize "Household size"
 	lab var 	hhsize_adult "Household size - only adults"
 	lab var 	hhsize_child "Household size - children 0 - 18"
 	lab var 	hhsize_schchild "Household size - school-age children 5 - 18"
-
 
 * save temp file
 	save			"$export/wave_03/hhsize_r3", replace

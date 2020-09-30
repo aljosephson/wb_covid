@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: alj
 * Edited by: jdm
-* Last edited: 1 September 2020
+* Last edited: 25 September 2020
 * Stata v.16.1
 
 * does
@@ -344,6 +344,14 @@
 	lab var			shock_14 "Other shock"
 	lab var 		shock_16 "Disruption of farming, livestock, fishing, etc."
 
+* generate any shock variable
+	gen				shock_any = 1 if shock_05 == 1 | shock_06 == 1 | ///
+						shock_07 == 1 | shock_16 == 1 | shock_10 == 1 | ///
+						shock_11 == 1 | shock_12 == 1 | shock_03 == 1 | ///
+						shock_14 == 1
+	replace			shock_any = 0 if shock_any == .
+	lab var			shock_any "Experience some shock"
+	
 	lab var			cope_01 "Sale of assets (Agricultural and Non_agricultural)"
 	lab var			cope_02 "Engaged in additional income generating activities"
 	lab var			cope_03 "Received assistance from friends & family"
@@ -437,7 +445,7 @@
 
 
 * ***********************************************************************
-* 1h - get household size - R1
+* 1h - get household size and gender of HOH - R1
 * ***********************************************************************
 
 * load data
@@ -457,8 +465,13 @@
 	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
 	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
+* create hh head gender
+	gen 			sexhh = . 
+	replace			sexhh = sex_mem if relat_mem == 1
+	label var 		sexhh "Sex of household head"
+	
 * collapse data
-	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(HHID)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(HHID)
 	lab var		hhsize "Household size"
 	lab var 	hhsize_adult "Household size - only adults"
 	lab var 	hhsize_child "Household size - children 0 - 18"
@@ -469,7 +482,7 @@
 
 	
 * ***********************************************************************
-* 1i - get household size - R2
+* 1i - get household size and gender of HOH - R2
 * ***********************************************************************
 
 * load data
@@ -489,8 +502,13 @@
 	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
 	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
+* create hh head gender
+	gen 			sexhh = . 
+	replace			sexhh = sex_mem if relat_mem == 1
+	label var 		sexhh "Sex of household head"
+	
 * collapse data
-	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(HHID)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(HHID)
 	lab var		hhsize "Household size"
 	lab var 	hhsize_adult "Household size - only adults"
 	lab var 	hhsize_child "Household size - children 0 - 18"
@@ -574,20 +592,42 @@
 	drop			urb_rural
 	order			sector, after(phw)
 
-	gen 			region = .
+	gen 			region = 2000 + hh_a01
 	replace			region = 17 if region == 100
 	replace			region = 18 if region == 200
 	replace 		region = 19 if region == 300
-	lab def			region 1 "Tigray" 2 "Afar" 3 "Amhara" 4 "Oromia" 5 "Somali" ///
-						6 "Benishangul-Gumuz" 7 "SNNPR" 8 "Bambela" 9 "Harar" ///
-						10 "Addis Ababa" 11 "Dire Dawa" 12 "Central" ///
-						13 "Eastern" 14 "Kampala" 15 "Northern" 16 "Western" ///
-						17 "North" 18 "Central" 19 "South"
-	drop			hh_a00
+	lab def			region 1001 "Tigray" 1002 "Afar" 1003 "Amhara" 1004 ///
+						"Oromia" 1005 "Somali" 1006 "Benishangul-Gumuz" 1007 ///
+						"SNNPR" 1008 "Gambela" 1009 "Harar" 1010 ///
+						"Addis Ababa" 1011 "Dire Dawa" 2101 "Chitipa" 2102 ///
+						"Karonga" 2103 "Nkhata Bay" 2104 "Rumphi" 2105 ///
+						"Mzimba" 2106 "Likoma" 2107 "Mzuzu City" 2201 ///
+						"Kasungu" 2202 "Nkhotakota" 2203 "Ntchisi" 2204 ///
+						"Dowa" 2205 "Salima" 2206 "Lilongwe" 2207 ///
+						"Mchinji" 2208 "Dedza" 2209 "Ntcheu" 2210 ///
+						"Lilongwe City" 2301 "Mangochi" 2302 "Machinga" 2303 ///
+						"Zomba" 2304 "Chiradzulu" 2305 "Blantyre" 2306 ///
+						"Mwanza" 2307 "Thyolo" 2308 "Mulanje" 2309 ///
+						"Phalombe" 2310 "Chikwawa" 2311 "Nsanje" 2312 ///
+						"Balaka" 2313 "Neno" 2314 "Zomba City" 2315 ///
+						"Blantyre City" 3001 "Abia" 3002 "Adamawa" 3003 ///
+						"Akwa Ibom" 3004 "Anambra" 3005 "Bauchi" 3006 ///
+						"Bayelsa" 3007 "Benue" 3008 "Borno" 3009 ///
+						"Cross River" 3010 "Delta" 3011 "Ebonyi" 3012 ///
+						"Edo" 3013 "Ekiti" 3014 "Enugu" 3015 "Gombe" 3016 ///
+						"Imo" 3017 "Jigawa" 3018 "Kaduna" 3019 "Kano" 3020 ///
+						"Katsina" 3021 "Kebbi" 3022 "Kogi" 3023 "Kwara" 3024 ///
+						"Lagos" 3025 "Nasarawa" 3026 "Niger" 3027 "Ogun" 3028 ///
+						"Ondo" 3029 "Osun" 3030 "Oyo" 3031 "Plateau" 3032 ///
+						"Rivers" 3033 "Sokoto" 3034 "Taraba" 3035 "Yobe" 3036 ///
+						"Zamfara" 3037 "FCT" 4012 "Central" 4013 ///
+						"Eastern" 4014 "Kampala" 4015 "Northern" 4016 ///
+						"Western" 4017 "North" 4018 "Central" 4019 "South", replace
+	lab val			region region
+	drop			hh_a00 hh_a01
 	order			region, after(sector)
 	lab var			region "Region"
 
-	rename			hh_a01 zone_id
 	rename			interviewDate start_date
 	rename			Above_18 above18
 	rename 			s3q1  know
@@ -1000,20 +1040,43 @@
 	drop			urb_rural
 	order			sector, after(wave)
 
-	gen 			region = .
+
+	gen 			region = 2000 + hh_a01
 	replace			region = 17 if region == 100
 	replace			region = 18 if region == 200
 	replace 		region = 19 if region == 300
-	lab def			region 1 "Tigray" 2 "Afar" 3 "Amhara" 4 "Oromia" 5 "Somali" ///
-						6 "Benishangul-Gumuz" 7 "SNNPR" 8 "Bambela" 9 "Harar" ///
-						10 "Addis Ababa" 11 "Dire Dawa" 12 "Central" ///
-						13 "Eastern" 14 "Kampala" 15 "Northern" 16 "Western" ///
-						17 "North" 18 "Central" 19 "South"
-	drop			hh_a00
+	lab def			region 1001 "Tigray" 1002 "Afar" 1003 "Amhara" 1004 ///
+						"Oromia" 1005 "Somali" 1006 "Benishangul-Gumuz" 1007 ///
+						"SNNPR" 1008 "Gambela" 1009 "Harar" 1010 ///
+						"Addis Ababa" 1011 "Dire Dawa" 2101 "Chitipa" 2102 ///
+						"Karonga" 2103 "Nkhata Bay" 2104 "Rumphi" 2105 ///
+						"Mzimba" 2106 "Likoma" 2107 "Mzuzu City" 2201 ///
+						"Kasungu" 2202 "Nkhotakota" 2203 "Ntchisi" 2204 ///
+						"Dowa" 2205 "Salima" 2206 "Lilongwe" 2207 ///
+						"Mchinji" 2208 "Dedza" 2209 "Ntcheu" 2210 ///
+						"Lilongwe City" 2301 "Mangochi" 2302 "Machinga" 2303 ///
+						"Zomba" 2304 "Chiradzulu" 2305 "Blantyre" 2306 ///
+						"Mwanza" 2307 "Thyolo" 2308 "Mulanje" 2309 ///
+						"Phalombe" 2310 "Chikwawa" 2311 "Nsanje" 2312 ///
+						"Balaka" 2313 "Neno" 2314 "Zomba City" 2315 ///
+						"Blantyre City" 3001 "Abia" 3002 "Adamawa" 3003 ///
+						"Akwa Ibom" 3004 "Anambra" 3005 "Bauchi" 3006 ///
+						"Bayelsa" 3007 "Benue" 3008 "Borno" 3009 ///
+						"Cross River" 3010 "Delta" 3011 "Ebonyi" 3012 ///
+						"Edo" 3013 "Ekiti" 3014 "Enugu" 3015 "Gombe" 3016 ///
+						"Imo" 3017 "Jigawa" 3018 "Kaduna" 3019 "Kano" 3020 ///
+						"Katsina" 3021 "Kebbi" 3022 "Kogi" 3023 "Kwara" 3024 ///
+						"Lagos" 3025 "Nasarawa" 3026 "Niger" 3027 "Ogun" 3028 ///
+						"Ondo" 3029 "Osun" 3030 "Oyo" 3031 "Plateau" 3032 ///
+						"Rivers" 3033 "Sokoto" 3034 "Taraba" 3035 "Yobe" 3036 ///
+						"Zamfara" 3037 "FCT" 4012 "Central" 4013 ///
+						"Eastern" 4014 "Kampala" 4015 "Northern" 4016 ///
+						"Western" 4017 "North" 4018 "Central" 4019 "South", replace
+	lab val			region region
+	drop			hh_a00 hh_a01
 	order			region, after(sector)
 	lab var			region "Region"
 
-	rename			hh_a01 zone_id
 	rename			interviewDate start_date
 	rename			Above_18 above18
 

@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by : jdm
-* Last edited: 1 September 2020
+* Last edited: 29 September 2020
 * Stata v.16.1
 
 * does
@@ -14,7 +14,6 @@
 	* raw Uganda data
 
 * TO DO:
-	* FIES R2 data
 	* clean agriculture and livestock
 
 
@@ -130,9 +129,7 @@
 * generate shock variables
 	forval i = 1/13 {
 		gen				shock_0`i' = 0 if s9q01 == 2 & shocks__id == `i'
-		replace			shock_0`i' = 1 if s9q02 == 3 & shocks__id == `i'
-		replace			shock_0`i' = 2 if s9q02 == 2 & shocks__id == `i'
-		replace			shock_0`i' = 3 if s9q02 == 1 & shocks__id == `i'
+		replace			shock_0`i' = 1 if s9q01 == 1 & shocks__id == `i'
 		}
 
 	rename			shock_010 shock_10
@@ -192,6 +189,15 @@
 		lab val		`var' shock
 		}
 
+* generate any shock variable
+	gen				shock_any = 1 if shock_01 == 1 | shock_02 == 1 | ///
+						shock_03 == 1 | shock_04 == 1 | shock_05 == 1 | ///
+						shock_06 == 1 | shock_07 == 1 | shock_08 == 1 | ///
+						shock_09 == 1 | shock_10 == 1 | shock_11 == 1 | ///
+						shock_12 == 1 | shock_13 == 1 | shock_14== 1
+	replace			shock_any = 0 if shock_any == .
+	lab var			shock_any "Experience some shock"
+	
 	lab var			cope_01 "Sale of assets (Agricultural and Non_agricultural)"
 	lab var			cope_02 "Engaged in additional income generating activities"
 	lab var			cope_03 "Received assistance from friends & family"
@@ -295,10 +301,10 @@
 
 	
 * ***********************************************************************
-* 1e - get household size - R1
+* 1e - get household size and gender of HOH - R1
 * ***********************************************************************
 
-* load data
+* load data 
 	use				"$root/wave_01/SEC1.dta", clear
 
 * rename other variables 
@@ -315,8 +321,13 @@
 	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
 	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
+* create hh head gender
+	gen 			sexhh = . 
+	replace			sexhh = sex_mem if relat_mem == 1
+	label var 		sexhh "Sex of household head"
+	
 * collapse data
-	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(HHID)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(HHID)
 	lab var		hhsize "Household size"
 	lab var 	hhsize_adult "Household size - only adults"
 	lab var 	hhsize_child "Household size - children 0 - 18"
@@ -325,7 +336,6 @@
 * save temp file
 	save			"$export/wave_01/hhsize_r1", replace
 
-	
 * ***********************************************************************
 * 1f - FIES - R1
 * ***********************************************************************
@@ -339,7 +349,7 @@
 * save temp file
 	save			"$export/wave_01/fies_r1", replace
 
-	
+
 * ***********************************************************************
 * 1g - baseline data
 * ***********************************************************************
@@ -524,7 +534,7 @@
 
 	
 * ***********************************************************************
-* 2e - get household size - R2
+* 2e - get household size and gender of HOH - R2
 * ***********************************************************************
 
 * load data
@@ -544,8 +554,13 @@
 	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
 	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
+* create hh head gender
+	gen 			sexhh = . 
+	replace			sexhh = sex_mem if relat_mem == 1
+	label var 		sexhh "Sex of household head"
+	
 * collapse data
-	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild, by(HHID)
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(HHID)
 	lab var		hhsize "Household size"
 	lab var 	hhsize_adult "Household size - only adults"
 	lab var 	hhsize_child "Household size - children 0 - 18"
@@ -559,7 +574,7 @@
 * 2f - FIES - R2
 * ***********************************************************************
 
-/* load data
+* load data
 	use				"$fies/UG_FIES_round2.dta", clear
 
 	drop 			country round
@@ -567,7 +582,6 @@
 
 * save temp file
 	save			"$export/wave_02/fies_r2", replace
-*/
 
 
 * ***********************************************************************
@@ -614,16 +628,38 @@
 	drop			urban
 	order			sector, after(phw)
 
-	gen				Region = 12 if region == "Central"
-	replace			Region = 13 if region == "Eastern"
-	replace			Region = 14 if region == "Kampala"
-	replace			Region = 15 if region == "Northern"
-	replace			Region = 16 if region == "Western"
-	lab def			region 1 "Tigray" 2 "Afar" 3 "Amhara" 4 "Oromia" 5 "Somali" ///
-						6 "Benishangul-Gumuz" 7 "SNNPR" 8 "Bambela" 9 "Harar" ///
-						10 "Addis Ababa" 11 "Dire Dawa" 12 "Central" ///
-						13 "Eastern" 14 "Kampala" 15 "Northern" 16 "Western" ///
-						17 "North" 18 "Central" 19 "South"
+	gen				Region = 4012 if region == "Central"
+	replace			Region = 4013 if region == "Eastern"
+	replace			Region = 4014 if region == "Kampala"
+	replace			Region = 4015 if region == "Northern"
+	replace			Region = 4016 if region == "Western"
+	lab define		region 1001 "Tigray" 1002 "Afar" 1003 "Amhara" 1004 ///
+						"Oromia" 1005 "Somali" 1006 "Benishangul-Gumuz" 1007 ///
+						"SNNPR" 1008 "Gambela" 1009 "Harar" 1010 ///
+						"Addis Ababa" 1011 "Dire Dawa" 2101 "Chitipa" 2102 ///
+						"Karonga" 2103 "Nkhata Bay" 2104 "Rumphi" 2105 ///
+						"Mzimba" 2106 "Likoma" 2107 "Mzuzu City" 2201 ///
+						"Kasungu" 2202 "Nkhotakota" 2203 "Ntchisi" 2204 ///
+						"Dowa" 2205 "Salima" 2206 "Lilongwe" 2207 ///
+						"Mchinji" 2208 "Dedza" 2209 "Ntcheu" 2210 ///
+						"Lilongwe City" 2301 "Mangochi" 2302 "Machinga" 2303 ///
+						"Zomba" 2304 "Chiradzulu" 2305 "Blantyre" 2306 ///
+						"Mwanza" 2307 "Thyolo" 2308 "Mulanje" 2309 ///
+						"Phalombe" 2310 "Chikwawa" 2311 "Nsanje" 2312 ///
+						"Balaka" 2313 "Neno" 2314 "Zomba City" 2315 ///
+						"Blantyre City" 3001 "Abia" 3002 "Adamawa" 3003 ///
+						"Akwa Ibom" 3004 "Anambra" 3005 "Bauchi" 3006 ///
+						"Bayelsa" 3007 "Benue" 3008 "Borno" 3009 ///
+						"Cross River" 3010 "Delta" 3011 "Ebonyi" 3012 ///
+						"Edo" 3013 "Ekiti" 3014 "Enugu" 3015 "Gombe" 3016 ///
+						"Imo" 3017 "Jigawa" 3018 "Kaduna" 3019 "Kano" 3020 ///
+						"Katsina" 3021 "Kebbi" 3022 "Kogi" 3023 "Kwara" 3024 ///
+						"Lagos" 3025 "Nasarawa" 3026 "Niger" 3027 "Ogun" 3028 ///
+						"Ondo" 3029 "Osun" 3030 "Oyo" 3031 "Plateau" 3032 ///
+						"Rivers" 3033 "Sokoto" 3034 "Taraba" 3035 "Yobe" 3036 ///
+						"Zamfara" 3037 "FCT" 4012 "Central" 4013 ///
+						"Eastern" 4014 "Kampala" 4015 "Northern" 4016 ///
+						"Western" 4017 "North" 4018 "Central" 4019 "South", replace
 	lab val			Region region
 	drop			region
 	rename			Region region
@@ -935,7 +971,7 @@
 	merge 1:1 		HHID using "$root/wave_02/SEC7.dta", nogenerate
 	merge 1:1 		HHID using "$root/wave_02/SEC9.dta", nogenerate
 	merge 1:1 		HHID using "$root/wave_02/SEC10w.dta", nogenerate
-*	merge 1:1 		HHID using "$export/wave_02/fies_r2.dta", nogenerate	
+	merge 1:1 		HHID using "$export/wave_02/fies_r2.dta", nogenerate	
 
 * reformat HHID
 	format 			%12.0f HHID
@@ -946,7 +982,7 @@
 * ***********************************************************************
 
 * rename basic information
-	rename			wfinal2 phw
+	rename			wfinal phw
 	lab var			phw "sampling weights"
 
 	gen				wave = 2
@@ -961,16 +997,39 @@
 	drop			urban
 	order			sector, after(phw)
 
-	gen				Region = 12 if region == "Central"
-	replace			Region = 13 if region == "Eastern"
-	replace			Region = 14 if region == "Kampala"
-	replace			Region = 15 if region == "Northern"
-	replace			Region = 16 if region == "Western"
-	lab def			region 1 "Tigray" 2 "Afar" 3 "Amhara" 4 "Oromia" 5 "Somali" ///
-						6 "Benishangul-Gumuz" 7 "SNNPR" 8 "Bambela" 9 "Harar" ///
-						10 "Addis Ababa" 11 "Dire Dawa" 12 "Central" ///
-						13 "Eastern" 14 "Kampala" 15 "Northern" 16 "Western" ///
-						17 "North" 18 "Central" 19 "South"
+
+	gen				Region = 4012 if region == "Central"
+	replace			Region = 4013 if region == "Eastern"
+	replace			Region = 4014 if region == "Kampala"
+	replace			Region = 4015 if region == "Northern"
+	replace			Region = 4016 if region == "Western"
+	lab define		region 1001 "Tigray" 1002 "Afar" 1003 "Amhara" 1004 ///
+						"Oromia" 1005 "Somali" 1006 "Benishangul-Gumuz" 1007 ///
+						"SNNPR" 1008 "Gambela" 1009 "Harar" 1010 ///
+						"Addis Ababa" 1011 "Dire Dawa" 2101 "Chitipa" 2102 ///
+						"Karonga" 2103 "Nkhata Bay" 2104 "Rumphi" 2105 ///
+						"Mzimba" 2106 "Likoma" 2107 "Mzuzu City" 2201 ///
+						"Kasungu" 2202 "Nkhotakota" 2203 "Ntchisi" 2204 ///
+						"Dowa" 2205 "Salima" 2206 "Lilongwe" 2207 ///
+						"Mchinji" 2208 "Dedza" 2209 "Ntcheu" 2210 ///
+						"Lilongwe City" 2301 "Mangochi" 2302 "Machinga" 2303 ///
+						"Zomba" 2304 "Chiradzulu" 2305 "Blantyre" 2306 ///
+						"Mwanza" 2307 "Thyolo" 2308 "Mulanje" 2309 ///
+						"Phalombe" 2310 "Chikwawa" 2311 "Nsanje" 2312 ///
+						"Balaka" 2313 "Neno" 2314 "Zomba City" 2315 ///
+						"Blantyre City" 3001 "Abia" 3002 "Adamawa" 3003 ///
+						"Akwa Ibom" 3004 "Anambra" 3005 "Bauchi" 3006 ///
+						"Bayelsa" 3007 "Benue" 3008 "Borno" 3009 ///
+						"Cross River" 3010 "Delta" 3011 "Ebonyi" 3012 ///
+						"Edo" 3013 "Ekiti" 3014 "Enugu" 3015 "Gombe" 3016 ///
+						"Imo" 3017 "Jigawa" 3018 "Kaduna" 3019 "Kano" 3020 ///
+						"Katsina" 3021 "Kebbi" 3022 "Kogi" 3023 "Kwara" 3024 ///
+						"Lagos" 3025 "Nasarawa" 3026 "Niger" 3027 "Ogun" 3028 ///
+						"Ondo" 3029 "Osun" 3030 "Oyo" 3031 "Plateau" 3032 ///
+						"Rivers" 3033 "Sokoto" 3034 "Taraba" 3035 "Yobe" 3036 ///
+						"Zamfara" 3037 "FCT" 4012 "Central" 4013 ///
+						"Eastern" 4014 "Kampala" 4015 "Northern" 4016 ///
+						"Western" 4017 "North" 4018 "Central" 4019 "South", replace
 	lab val			Region region
 	drop			region
 	rename			Region region
@@ -985,8 +1044,10 @@
 	rename			Sq02 start_date
 	rename			s2gq01 revised
 
-	drop			BSEQNO Cq08 Cq08_1a Cq08_1b Cq08_1c Cq08_1d start_date ///
-						Sq04 sec0_startime sec0_endtime
+	*drop			BSEQNO Cq08 Cq08_1a Cq08_1b Cq08_1c Cq08_1d start_date ///
+	*					Sq04 sec0_startime sec0_endtime
+						
+	drop			BSEQNO start_date sec0_endtime						
 	
 * rename government contribution to spread
 	rename			s2gq02__1 spread_01
@@ -1073,9 +1134,7 @@
 	rename			s5q09 emp_hh
 	
 	rename			s5aq11 bus_emp
-	rename			s5aq11a_1 bus_stat
-	replace			bus_stat = s5aq11a_2 if bus_stat == .
-	replace			bus_stat = s5aq11a_3 if bus_stat == .
+	rename			s5aq11a bus_stat
 	
 	gen				bus_stat_why = 1 if s5aq11b__1 == 1
 	replace			bus_stat_why = 2 if s5aq11b__2 == 1
@@ -1134,7 +1193,7 @@
 	order			bus_cndct_how, after(bus_cndct)
 
 	drop			s5q03 s5q04a_2 s5q10__0 s5q10__1 s5q10__2 s5q10__3 s5q10__4 ///
-						s5q10__5 s5aq11a_2 business_case_filter s5aq11a_3 ///
+						s5q10__5 business_case_filter ///
 						s5aq11b__1 s5aq11b__2 s5aq11b__3 s5aq11b__4 s5aq11b__5 ///
 						s5aq11b__6 s5aq11b__7 s5aq11b__8 s5aq11b__9 s5aq11b__10 ///
 						s5aq11b__n96 s5aq14_2 s5aq15__1 s5aq15__2 s5aq15__3 ///

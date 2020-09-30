@@ -438,6 +438,10 @@
 	gen				edu_act_04 = edu_act if quint == 4
 	gen				edu_act_05 = edu_act if quint == 5
 
+	mean			sch_child [pweight = shw] if wave == 1
+	mean			edu_none [pweight = shw] if wave == 1
+	mean			edu_cont [pweight = shw] if wave == 1
+	
 	colorpalette edkblue khaki, ipolate(15, power(1)) locals
 
 	graph bar 		(mean) edu_act_01 edu_act_02 edu_act_03 edu_act_04 edu_act_05 ///

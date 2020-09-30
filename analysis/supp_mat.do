@@ -410,13 +410,13 @@ restore
 local tabnum = `tabnum' + 1
 
 * totals by myths
-	forval 					x = 1/5 {
+	forval 					x = 2/5 {
 	    gen 				myth_0`x'y = cond(myth_0`x' == 1,1,cond(myth_01 == 0 | myth_01 == 3, 0,.))
 	    gen 				myth_0`x'n = cond(myth_0`x' == 0,1,cond(myth_01 == 1 | myth_01 == 3, 0,.))
 	    gen 				myth_0`x'k = cond(myth_0`x' == 3,1,cond(myth_01 == 0 | myth_01 == 1, 0,.))
 	}
 
-	forval 					m = 1/5 {
+	forval 					m = 2/5 {
 		total 				myth_0`m'y myth_0`m'n myth_0`m'k [pweight = phw], over(country)
 			local 			ytot_c2m`m' = el(e(b),1,1)
 			local 			ytot_c4m`m' = el(e(b),1,2)
@@ -432,7 +432,7 @@ local tabnum = `tabnum' + 1
 			local			kse_c4m`m' = sqrt(el(e(V),6,6))			
 	}	
 		
-	forval 					m = 1/5 {
+	forval 					m = 2/5 {
 		total 				myth_0`m'y myth_0`m'n myth_0`m'k [pweight = phw] if country == 2
 		local				c2_n_m`m' = e(N)
 		total 				myth_0`m'y myth_0`m'n myth_0`m'k [pweight = phw] if country == 4
@@ -448,13 +448,13 @@ local tabnum = `tabnum' + 1
 			replace 		stat = "Observations" in 7
 			expand 			2
 			gen 			country = cond(_n<8,2,4)
-			forval 			x = 1/5 {
+			forval 			x = 2/5 {
 							gen myth_0`x' = .
 			}
 			
 		* replace values with stored locals
 			foreach 		c in 2 4 {
-				forval 		m = 1/5 {
+				forval 		m = 2/5 {
 					foreach s in tot se {
 						foreach r in y n k {
 							replace myth_0`m' = ``r'`s'_c`c'm`m'' if response == "`r'" & stat == "`s'" & country == `c' 
@@ -463,7 +463,7 @@ local tabnum = `tabnum' + 1
 				}
 			}
 			foreach c in 2 4 {
-				forval 			x = 1/5 {
+				forval 			x = 2/5 {
 					replace 	myth_0`x' = `c`c'_n_m`x'' if stat == "Observations" & country == `c'
 				} 
 			}
@@ -696,6 +696,7 @@ local tabnum = `tabnum' + 1
 preserve
 	drop					if country == 1 & wave == 2
 	drop 					if country == 2 & wave == 1
+	drop 					if country == 4 & wave == 1
 	
 * means of food insecurity status 	
 	foreach 				var in p_mod p_sev {
@@ -773,7 +774,8 @@ preserve
 	
 	drop 					if country == 1 & wave == 2
 	drop 					if country == 2 & wave == 1
-
+	drop 					if country == 4 & wave == 1
+	
 * regression for moderate food insecurity 
 	reg 					p_mod ib(2).country [pweight = wt_18], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
@@ -1009,8 +1011,8 @@ local tabnum = `tabnum' + 1
 
 preserve
 	
-	drop if					country == 2 & wave == 1
-	drop if					country == 4 & wave == 1
+	drop 					if country == 2 & wave == 1
+	drop 					if country == 4 & wave == 1
 	
 * regression for concern 1, by quintile and country 
 	reg 					concern_01 ib(1).quint ib(2).country [pweight = hhw], vce(robust)

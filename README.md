@@ -40,7 +40,7 @@ The code in this repository cleans the raw phone surveys and replicates material
 
 #### Stata reqs
 
-  * The data processing and analysis requires a number of user-written
+The data processing and analysis requires a number of user-written
     Stata programs:
     1. `blindschemes`
     2. `estout`

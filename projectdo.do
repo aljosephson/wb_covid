@@ -58,12 +58,8 @@
 * install packages if global is set to 1
 if $pack == 1 {
 	
-	* temporarily set delimiter to ; so can break the line
-		#delimit ;
 	* for packages/commands, make a local containing any required packages
-		loc userpack "blindschemes mdesc estout reghdfe ftools distinct 
-		 winsor2 palettes catplot grc1leg2 colrspace" ;
-		#delimit cr
+		loc userpack "blindschemes mdesc estout distinct winsor2 palettes catplot grc1leg2 colrspace" 
 	
 	* install packages that are on ssc	
 		foreach package in `userpack' {
@@ -108,10 +104,9 @@ if $pack == 1 {
 * 2 - run analysis .do files
 * **********************************************************************
 
+	do			"$code/analysis/covid_data.do"			//  reads in covid data
 	do			"$code/analysis/pnl_cleaning.do"		//	builds 4 country panel
-
 *	do			"$code/analysis/analysis_graphs.do"		//	produces graphs in paper
-	
 *	do			"$code/analysis/supp_mat.do"			//	produces tables in supplemental material
 
 

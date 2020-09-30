@@ -2,7 +2,7 @@
 * Created on: September 2020 
 * Created by: amf
 * Edited by: jdm, alj 
-* Last edit: 25 September 2020 
+* Last edit: 29 September 2020 
 * Stata v.16.1
 
 * does
@@ -10,13 +10,10 @@
 
 * assumes
 	* cleaned country data
-	* palettes and colrspace installed
-	/*ssc install palettes
-	ssc install colrspace */
-	
+	* palettes and colrspace installed	
 
 * TO DO:
-	* everything
+	* done
 
 
 * **********************************************************************
@@ -28,6 +25,7 @@
 	global					output	=	"$data/analysis/tables"
 	global					logout	=	"$data/analysis/logs"
 	local 					tabnum  =   1
+	
 * open log
 	cap 					log close
 	log 					using "$logout/supp_mat", append
@@ -370,6 +368,7 @@ local tabnum = `tabnum' + 1
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 							append excel dec(3) ctitle(S`tabnum' Uganda Behavior 3) label	
 		
+		
 * **********************************************************************
 * 1d - create tables S6-S7 for Fig. 1D
 * **********************************************************************
@@ -384,11 +383,6 @@ preserve
 *** table S6 ***
 
 local tabnum = `tabnum' + 1
-	
-* lemon and alcohol can be used as sanitizers against coronavirus
-*	reg 					myth_01 i.country [pweight = phw], vce(robust)
-*	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-*							append excel dec(3) ctitle(S`tabnum' Lemon and alcohol) label
 	
 * africans are immune to corona virus
 	reg 					myth_02 i.country [pweight = phw], vce(robust)
@@ -477,6 +471,7 @@ local tabnum = `tabnum' + 1
 							sheetreplace sheet(sumstatsS`tabnum') first(var)
 		restore
 
+		
 * **********************************************************************
 * 2 - create tables for Fig. 2
 * **********************************************************************
@@ -644,6 +639,7 @@ local tabnum = `tabnum' + 1
 							append excel dec(3) ctitle(S`tabnum' `var') 	
 	}
 
+	
 * **********************************************************************
 * 2b - create Table S12 for Fig. 2B
 * **********************************************************************
@@ -835,7 +831,9 @@ local tabnum = `tabnum' + 1
 
 preserve
 	
-	drop if					country == 2 & wave == 1
+	drop if 				country == 1 & wave == 2
+	drop if 				country == 2 & wave == 1
+	drop if 				country == 4 & wave == 1
 
 	reg 					p_mod concern_01 concern_02 ib(2).country [pweight = wt_18], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
@@ -871,8 +869,9 @@ local tabnum = `tabnum' + 1
 
 preserve
 	
-	drop if					country == 2 & wave == 1
-	drop if					country == 4 & wave == 2
+	drop if 				country == 1 & wave == 2
+	drop if 				country == 2 & wave == 1
+	drop if 				country == 4 & wave == 1
 	
 * summary statistics for concerns 
 	foreach 				var in concern_01 concern_02 {
@@ -914,7 +913,9 @@ restore
 
 preserve
 
-	drop if				country == 2 & wave == 1
+	drop if 			country == 1 & wave == 2
+	drop if 			country == 2 & wave == 1
+	drop if 			country == 4 & wave == 1
 
 	gen					p_mod_01 = p_mod if quint == 1
 	gen					p_mod_02 = p_mod if quint == 2
@@ -951,8 +952,7 @@ preserve
 	restore
 
 	grc1leg2 		"$output/fiesq1_modsev.gph" "$output/fiesq2_modsev.gph", ///
-						col(3) iscale(.5) pos(6) commonscheme  ///
-						saving("$output/fiesquintetc1.gph", replace)
+						col(3) iscale(.5) pos(6) commonscheme
 
 	graph export 	"$output/fiesquintetc1.emf", as(emf) replace
 
@@ -960,7 +960,8 @@ preserve
  
 preserve
 
-	drop if			country == 2 & wave == 1
+	drop if 		country == 2 & wave == 1
+	drop if 		country == 4 & wave == 1
 
 	gen				p_sev_01 = p_sev if quint == 1
 	gen				p_sev_02 = p_sev if quint == 2
@@ -997,8 +998,7 @@ preserve
 	restore
 
 	grc1leg2 		"$output/fiesq1_sev.gph" "$output/fiesq2_sev.gph", ///
-						col(3) iscale(.5) pos(6) commonscheme  ///
-						saving("$output/fiesquintetc2.gph", replace)
+						col(3) iscale(.5) pos(6) commonscheme
 
 	graph export 	"$output/fiesquintetc12.emf", as(emf) replace
 
@@ -1009,8 +1009,8 @@ local tabnum = `tabnum' + 1
 
 preserve
 	
-	drop if				country == 2 & wave == 1
-	drop if				country == 4 & wave == 2
+	drop if					country == 2 & wave == 1
+	drop if					country == 4 & wave == 1
 	
 * regression for concern 1, by quintile and country 
 	reg 					concern_01 ib(1).quint ib(2).country [pweight = hhw], vce(robust)
@@ -1067,13 +1067,6 @@ restore
 * 3a - create Table S18-S21 for Fig. 3A
 * **********************************************************************
 
-
-
-
-
-*\======================================================================
-*** NEW TABLE HERE ****
-*\======================================================================
 
 *** table s18 ***
 
@@ -1425,9 +1418,7 @@ restore
 * 3d - create Figure S3 and Table S26-S27 for Fig. 3D
 * **********************************************************************
 
-*** figure s3 ***
-	preserve //Do we need this preserve here?
-	
+*** figure s3 ***	
 	graph bar 			p_mod p_sev [pweight = wt_18], over(edu_act, lab(labs(vlarge))) ///
 							over(country, lab(labs(vlarge))) ylabel(0 "0" .2 "20" .4 "40" .6 "60" ///
 							.8 "80" 1 "100", labs(large)) ytitle("Prevalence of food insecurity", size(large)) ///
@@ -1438,12 +1429,10 @@ restore
 							saving("$output/fies_edu", replace)
 						
 	grc1leg2 			"$output/fies_edu.gph", ///
-							col(3) iscale(.5) pos(6) commonscheme  ///
-							saving("$output/fies_edu1.gph", replace)						
+							col(3) iscale(.5) pos(6) commonscheme						
 						
 	graph export 		"$output/fies_edu1.emf", as(emf) replace
-	
-	restore
+
 	
 *** table s26 ***
 
@@ -1453,6 +1442,7 @@ local tabnum = `tabnum' + 1
 	preserve
 	
 	drop if				country == 2 & wave == 1
+	drop if				country == 4 & wave == 2
 
 	reg					p_mod edu_act ib(2).country [pweight = shw], vce(robust)
 	outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
@@ -1505,3 +1495,13 @@ local tabnum = `tabnum' + 1
 							append excel dec(3) ctitle(S`tabnum' `var' country `c')
 		}
 	}
+
+	
+* **********************************************************************
+* 4 - end matter, clean up to save
+* **********************************************************************
+
+* close the log
+	log	close
+
+/* END */

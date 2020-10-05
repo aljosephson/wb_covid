@@ -171,10 +171,10 @@
 	keep if			wave == 1
 	
 	lab def sex 1 "Male" 2 "Female"
-	label val sexhh sex 	
+	label val sex sex 	
 	
 	graph bar		(mean) farm_dwn bus_dwn wage_dwn remit_dwn other_dwn [pweight = hhw] ///
-						, over(sexhh, lab(labs(large))) ///
+						, over(sex, lab(labs(large))) ///
 						over(country, lab(labs(vlarge)))  ///
 						ytitle("Households reporting decrease in income (%)", size(vlarge) ) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
@@ -313,9 +313,9 @@
 	drop if 		country == 4 & wave == 1
 	
 	lab def sex 1 "Male" 2 "Female"
-	label val sexhh sex 
+	label val sex sex 
 
-	graph bar 		(mean) p_mod p_sev [pweight = wt_18], over(sexhh, lab(labs(vlarge))) ///
+	graph bar 		(mean) p_mod p_sev [pweight = wt_18], over(sex, lab(labs(vlarge))) ///
 						over(country, lab(labs(vlarge))) ylabel(0 "0" ///
 						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
 						ytitle("Prevalence of moderate or severe food insecurity", size(vlarge))  ///
@@ -324,8 +324,8 @@
 						label (2 "Severe food insecurity") order( 1 2) pos(6) col(3) size(medsmall)) ///
 						saving("$output/fies_modsevsex", replace)
 
-	reg				p_mod i.sexhh i.country [pweight = wt_18]
-	reg				p_sev i.sexhh i.country [pweight = wt_18]
+	reg				p_mod i.sex i.country [pweight = wt_18]
+	reg				p_sev i.sex i.country [pweight = wt_18]
 						
 	restore
 
@@ -372,9 +372,9 @@
 	drop if			country == 4 & wave == 1
 	
 	lab def sex 1 "male" 2 "female"
-	label val sexhh sex 
+	label val sex sex 
 	
-	graph hbar		(mean) concern_01 concern_02 [pweight = phw], over(sexhh, lab(labs(vlarge))) ///
+	graph hbar		(mean) concern_01 concern_02 [pweight = phw], over(sex, lab(labs(vlarge))) ///
 						over(country, lab(labs(vlarge))) ylabel(0 "0" .2 "20" .4 "40" .6 "60" ///
 						.8 "80" 1 "100", labs(large)) ytitle("Percent of households reporting concern", size(large)) ///
 						bar(1, color(stone*1.5)) bar(2, color(maroon*1.5)) ///
@@ -384,8 +384,8 @@
 						title("Concerns about COVID-19", size(vlarge)) ///
 						saving("$output/concern_sex", replace)
 		
-	reg				concern_01 i.sexhh i.country [pweight = phw]
-	reg				concern_02 i.sexhh i.country [pweight = phw]
+	reg				concern_01 i.sex i.country [pweight = phw]
+	reg				concern_02 i.sex i.country [pweight = phw]
 	
 	restore
 	
@@ -441,13 +441,13 @@
 	drop if country == 3 & wave == 1
 	
 	lab def sex 1 "male" 2 "female"
-	label val sexhh sex 
+	label val sex sex 
 
 	replace			cope_03 = 1 if cope_03 == 1 | cope_04 == 1
 	replace			cope_05 = 1 if cope_05 == 1 | cope_06 == 1 | cope_07 == 1
 	
 	graph bar		(mean) cope_11 cope_01 cope_09 cope_10 cope_03 asst_any  ///
-						[pweight = hhw], over(sexhh, ///
+						[pweight = hhw], over(sex, ///
 						label (labsize(large))) over(country, label (labsize(vlarge))) ///
 						bar(1, color(maroon*1.5)) bar(2, color(emidblue*1.5)) ///
 						bar(3, color(emerald*1.5)) bar(4, color(brown*1.5)) ///

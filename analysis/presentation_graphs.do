@@ -104,6 +104,29 @@
 						
 	graph export 	"$present/behavior.eps", as(eps) replace
 
+* graph A1 - changes in behavior
+	preserve
+			
+	lab def sex 1 "Male" 2 "Female"
+	label val sex sex 	
+	
+	graph bar 		(mean) bh_01 bh_02 bh_03 if wave == 1 [pweight = phw], ///
+						over(sex, lab(labs(large))) over(country, lab(labs(vlarge)))  ///
+						bar(1, color(maroon*1.5)) ///
+						bar(2, color(navy*1.5)) bar(3, color(stone*1.5)) ///
+						ytitle("Individual's change in behavior to reduce exposure (%)", size(vlarge)) ///
+						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
+						legend(	label (1 "Increased hand washing") ///
+						label (2 "Avoided physical contact") ///
+						label (3 "Avoided crowds") pos(6) col(3) ///
+						size(medsmall)) saving("$output/behavior_sex", replace)
+
+	restore
+	
+	grc1leg2  		 "$output/behavior_sex.gph", col(3) iscale(.5) commonscheme ///
+						imargin(0 0 0 0) legend()	
+						
+	graph export 	"$present/behavior_sex.eps", as(eps) replace
 
 * graph B - false beliefs
 	preserve

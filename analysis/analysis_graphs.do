@@ -59,7 +59,7 @@
 	grc1leg2  		 "$output/restriction.gph", col(3) iscale(.5) commonscheme ///
 						title("A", size(huge)) imargin(0 0 0 0) legend()
 						
-	graph export 	"$output/restriction.emf", as(emf) replace
+	graph export 	"$output/restriction.eps", as(eps) replace
 
 
 * graph B - knowledge of COVID-19
@@ -79,7 +79,7 @@
 	grc1leg2  		 "$output/knowledge.gph", col(3) iscale(.5) commonscheme ///
 						title("B", size(huge)) imargin(0 0 0 0) legend()
 						
-	graph export 	"$output/knowledge.emf", as(emf) replace
+	graph export 	"$output/knowledge.eps", as(eps) replace
 
 
 * **********************************************************************
@@ -99,9 +99,9 @@
 						size(medsmall)) saving("$output/behavior", replace)
 
 	grc1leg2  		 "$output/behavior.gph", col(3) iscale(.5) commonscheme ///
-						title("A", size(huge)) imargin(0 0 0 0) legend()	
+						title("C", size(huge)) imargin(0 0 0 0) legend()	
 						
-	graph export 	"$output/behavior.emf", as(emf) replace
+	graph export 	"$output/behavior.eps", as(eps) replace
 
 
 * graph B - false beliefs
@@ -131,9 +131,9 @@
 	restore
 	
 	grc1leg2  		 "$output/myth.gph", col(3) iscale(.5) commonscheme ///
-						title("B", size(huge)) imargin(0 0 0 0) legend()	
+						title("D", size(huge)) imargin(0 0 0 0) legend()	
 						
-	graph export 	"$output/myth.emf", as(emf) replace
+	graph export 	"$output/myth.eps", as(eps) replace
 
 
 * **********************************************************************
@@ -161,7 +161,7 @@
 	grc1leg2 		"$output/income_all.gph", col(3) iscale(.5) ///
 						commonscheme title("A", size(huge))
 						
-	graph export 	"$output/income_all.emf", as(emf) replace
+	graph export 	"$output/income_all.eps", as(eps) replace
 						
 
 * graph B - income loss by wave
@@ -223,7 +223,7 @@
 						"$output/nga_bus_inc.gph" "$output/uga_bus_inc.gph", ///
 						col(1) iscale(.5) commonscheme imargin(0 0 0 0) title("B", size(huge)) 
 						
-	graph export 	"$output/bus_emp_inc.emf", as(emf) replace
+	graph export 	"$output/bus_emp_inc.eps", as(eps) replace
 
 
 * **********************************************************************
@@ -273,9 +273,9 @@
 	restore
 
 	grc1leg2 		"$output/fies_modsev.gph" "$output/fies_sev.gph", ///
-						col(3) iscale(.5) pos(6) commonscheme title("A", size(huge))
+						col(3) iscale(.5) pos(6) commonscheme title("C", size(huge))
 						
-	graph export 	"$output/fies.emf", as(emf) replace
+	graph export 	"$output/fies.eps", as(eps) replace
 
 
 * graph B - concerns with FIES
@@ -304,9 +304,9 @@
 	restore
 	
 	grc1leg2 		"$output/concern_1.gph" "$output/concern_2.gph", ///
-						col(1) iscale(.5) pos(6) commonscheme title("B", size(huge) span)
+						col(1) iscale(.5) pos(6) commonscheme title("D", size(huge) span)
 						
-	graph export 	"$output/concerns.emf", as(emf) replace
+	graph export 	"$output/concerns.eps", as(eps) replace
 
 
 * **********************************************************************
@@ -343,7 +343,7 @@
 	grc1leg2 		"$output/cope_all.gph", col(4) iscale(.5) commonscheme ///
 						title("A", size(huge))
 						
-	graph export 	"$output/cope.emf", as(emf) replace
+	graph export 	"$output/cope.eps", as(eps) replace
 
 	
 * graph B - access to med, food, soap
@@ -424,7 +424,7 @@
 	grc1leg2		"$output/ac_med.gph" "$output/ac_staple.gph" "$output/ac_soap.gph", ///
 						col(3) iscale(.5) pos(6) commonscheme title("B", size(huge)) 
 						
-	graph export 	"$output/access.emf", as(emf) replace
+	graph export 	"$output/access.eps", as(eps) replace
 
 
 * **********************************************************************
@@ -456,9 +456,9 @@
 						saving("$output/edu_quinta", replace)
 
 	grc1leg2  		 "$output/edu_quinta.gph", col(3) iscale(.5) commonscheme ///
-						imargin(0 0 0 0) legend() title("A", size(huge))
+						imargin(0 0 0 0) legend() title("C", size(huge))
 						
-	graph export "$output/edu_quint.emf", as(emf) replace
+	graph export "$output/edu_quint.eps", as(eps) replace
 						
 
 * graph B - education activities
@@ -498,9 +498,9 @@
 
 	grc1leg2  		 "$output/educont_eth.gph" "$output/educont_mwi.gph" ///
 						"$output/educont_nga.gph" "$output/educont_uga.gph", ///
-						col(4) iscale(.5) commonscheme imargin(0 0 0 0) legend() title("B", size(huge)) 
+						col(4) iscale(.5) commonscheme imargin(0 0 0 0) legend() title("D", size(huge)) 
 						
-	graph export 	"$output/educont.emf", as(emf) replace
+	graph export 	"$output/educont.eps", as(eps) replace
 
 
 * **********************************************************************

@@ -2,7 +2,7 @@
 * Created on: September 2020 
 * Created by: amf
 * Edited by: jdm, alj 
-* Last edit: 29 September 2020 
+* Last edit: 12 October 2020 
 * Stata v.16.1
 
 * does
@@ -23,6 +23,7 @@
 * define
 	global					ans		=	"$data/analysis"
 	global					output	=	"$data/analysis/tables"
+	global					figure	=	"$data/analysis/figures"
 	global					logout	=	"$data/analysis/logs"
 	local 					tabnum  =   1
 	
@@ -183,11 +184,7 @@ local tabnum = `tabnum' + 1
 	
 
 * **********************************************************************
-* 2 - create tables for Fig. 2
-* **********************************************************************	
-	
-* **********************************************************************
-* 2a - create tables S3-S5 for Fig. 2A
+* 1c - create tables S3-S5 for Fig. 1C
 * **********************************************************************
 
 *** table S3 ***
@@ -374,7 +371,7 @@ local tabnum = `tabnum' + 1
 		
 		
 * **********************************************************************
-* 2b - create tables S6-S7 for Fig. 2B
+* 1d - create tables S6-S7 for Fig. 1D
 * **********************************************************************
 
 preserve
@@ -477,11 +474,11 @@ local tabnum = `tabnum' + 1
 
 		
 * **********************************************************************
-* 3 - create tables for Fig. 3
+* 3 - create tables for Fig. 2
 * **********************************************************************
 
 * **********************************************************************
-* 3a - create Table S8-S10 for Fig. 3A
+* 2a - create Table S8-S10 for Fig. 2A
 * **********************************************************************
 
 *** table S8 ***
@@ -641,10 +638,42 @@ local tabnum = `tabnum' + 1
 		outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
 							append excel dec(3) ctitle(S`tabnum' `var') 	
 	}
+						
+*** figure s1a - income loss by gender ***
+	preserve
+	
+	keep if			wave == 1
 
+	graph bar		(mean) farm_dwn bus_dwn wage_dwn remit_dwn other_dwn [pweight = hhw] ///
+						, over(sexhh, lab(labs(large))) ///
+						over(country, lab(labs(vlarge)))  ///
+						ytitle("Households reporting decrease in income (%)", size(vlarge) ) ///
+						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
+						bar(1, color(navy*1.5)) bar(2, color(teal*1.5)) bar(3, color(khaki*1.5)) ///
+						bar(4, color(cranberry*1.5)) bar(5, color(purple*1.5)) ///
+						legend( label (1 "Farm income") label (2 "Business income") ///
+						label (3 "Wage income") label (4 "Remittances") label (5 "All else") ///
+						pos(6) col(3) size(medsmall)) saving("$figure/income_allsex", replace)
+				
+	restore
+	
+	grc1leg2 		"$figure/income_allsex.gph" , col(3) iscale(.5) ///
+						commonscheme title("A", size(huge))
+						
+	graph export 	"$figure/incomesex.eps", as(eps) replace
+
+*****************	
+*** NEW TABLE ***
+*****************
+	
+* regressions of gender and income loss: farm, business, wage, remittances, other
+	foreach 				var in farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
+		reg 				`var' i.sexhh ib(2).country [pweight = hhw] if wave == 1, vce(robust)	
+	}
+	
 	
 * **********************************************************************
-* 3b - create Table S12 for Fig. 3B
+* 2b - create Table S12 for Fig. 2B
 * **********************************************************************
 
 local tabnum = `tabnum' + 1
@@ -685,13 +714,9 @@ preserve
 							sheetreplace sheet(testresultsS`tabnum') first(var)
 restore 
 
-		
-* **********************************************************************
-* 4 - create tables for Fig. 4
-* **********************************************************************
 
 * **********************************************************************
-* 4a - create Table S13-S15 for Fig. 4A
+* 2c - create Table S13-S15 for Fig. 2C
 * **********************************************************************
 
 *** table s13 ***
@@ -827,12 +852,96 @@ preserve
 							sheetreplace sheet(testresultsS`tabnum') first(var)
 restore 
 
+*** figure s1b - FIES score and gender ***
+	preserve
+	drop if 		country == 1 & wave == 2
+	drop if 		country == 2 & wave == 1
+	drop if 		country == 4 & wave == 1
 
+	graph bar 		(mean) p_mod p_sev [pweight = wt_18], over(sexhh, lab(labs(vlarge))) ///
+						over(country, lab(labs(vlarge))) ylabel(0 "0" ///
+						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
+						ytitle("Prevalence of moderate or severe food insecurity", size(vlarge))  ///
+						bar(1, color(stone*1.5)) bar(2, color(ebblue*1.5))  ///
+						legend(label (1 "Moderate or severe food insecurity")  ///
+						label (2 "Severe food insecurity") order( 1 2) pos(6) col(3) size(medsmall)) ///
+						saving("$figure/fies_modsevsex", replace)
+
+	reg				p_mod i.sex i.country [pweight = wt_18]
+	reg				p_sev i.sex i.country [pweight = wt_18]
+						
+	restore
+
+	grc1leg2 		"$figure/fies_modsevsex.gph", col(3) iscale(.5) pos(6) ///
+						commonscheme title("B", size(huge))
+						
+	graph export 	"$figure/fiessex.eps", as(eps) replace
+	
+
+*****************	
+*** NEW TABLE ***
+*****************
+	
+* regressions of gender and fies
+	reg 				p_mod i.sexhh##i.wave ib(2).country [pweight = wt_18], vce(robust)	
+	reg 				p_sev i.sexhh##i.wave ib(2).country [pweight = wt_18], vce(robust)	
+
+
+	
 * **********************************************************************
-* 4b - create Table S15 for Fig. 4B
+* 2d - create Table S15 for Fig. 2D
 * **********************************************************************
 
 *** table s15 ***
+
+**************************************	
+*** CAN YOU ADD MEAN TO THIS TABLE ***
+**************************************
+
+local tabnum = `tabnum' + 1
+
+preserve
+	
+	drop if 				country == 1 & wave == 2
+	drop if 				country == 2 & wave == 1
+	drop if 				country == 4 & wave == 1
+
+* summary statistics for concerns 
+	foreach 				var in concern_01 concern_02 {
+	    total 				`var' [pweight = phw]
+			local			n_`var'_ca = e(N)
+			local 			tot_`var'_ca = el(e(b),1,1)
+			local 			sd_`var'_ca = sqrt(el(e(V),1,1))
+	}
+	foreach 				var in concern_01 concern_02 {
+	    foreach 			c in 1 2 3 4 {
+		    total 			`var' [pweight = phw] if country == `c'
+				local		n_`var'_c`c' = e(N)
+				local 		tot_`var'_c`c' = el(e(b),1,1)
+				local		sd_`var'_c`c' = sqrt(el(e(V),1,1)) 
+		}
+	}
+	
+* create table of stored results
+	clear
+	set 					obs 6
+	gen 					concern = cond(_n<4,"concern_01","concern_02")
+	gen 					stat = cond(_n==1|_n==4,"tot",cond(_n==2|_n==5,"sd","n"))
+	foreach 				c in a 1 2 3 4 {
+		gen 				c`c' = .
+	}
+	foreach 				c in a 1 2 3 4 {
+	    foreach 			stat in tot sd n {
+		    foreach 		con in concern_01 concern_02 {
+				replace 	c`c' = ``stat'_`con'_c`c'' if concern == "`con'" & stat == "`stat'"
+			}
+		}
+	}
+	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
+							sheetreplace sheet(sumstatsS`tabnum') first(var)	
+restore 
+
+*** table s16 ***
 
 local tabnum = `tabnum' + 1
 
@@ -872,53 +981,50 @@ preserve
 							sheetreplace sheet(testresultsS`tabnum') first(var)
 restore 
 
-*** table s16 ***
 
-local tabnum = `tabnum' + 1
+*** figure s1c - concerns with gender ***
+	preserve
+	drop if			country == 2 & wave == 1
+	drop if			country == 4 & wave == 1
+		
+	graph hbar		(mean) concern_01 concern_02 [pweight = phw], over(sexhh, lab(labs(vlarge))) ///
+						over(country, lab(labs(vlarge))) ylabel(0 "0" .2 "20" .4 "40" .6 "60" ///
+						.8 "80" 1 "100", labs(large)) ytitle("Percent of households reporting concern", size(large)) ///
+						bar(1, color(stone*1.5)) bar(2, color(maroon*1.5)) ///
+						legend(label (1 "Concerned that family or self will fall ill with COVID-19")  ///
+						label (2 "Concerned about the financial threat of COVID-19") ///
+						pos(6) col(1) size(medsmall)) ///
+						title("Concerns about COVID-19", size(vlarge)) ///
+						saving("$figure/concern_sex", replace)
+		
+	reg				concern_01 i.sex i.country [pweight = phw]
+	reg				concern_02 i.sex i.country [pweight = phw]
+	
+	restore
+	
+	grc1leg2 		"$figure/concern_sex.gph", col(1) iscale(.5) pos(6) ///
+						commonscheme title("C", size(huge))
+						
+	graph export 	"$figure/concernssex.eps", as(eps) replace
 
+	
+*****************	
+*** NEW TABLE ***
+*****************
+	
+* regressions of gender and fies
 preserve
-	
-	drop if 				country == 1 & wave == 2
-	drop if 				country == 2 & wave == 1
-	drop if 				country == 4 & wave == 1
-	
-* summary statistics for concerns 
-	foreach 				var in concern_01 concern_02 {
-	    total 				`var' [pweight = phw]
-			local			n_`var'_ca = e(N)
-			local 			tot_`var'_ca = el(e(b),1,1)
-			local 			sd_`var'_ca = sqrt(el(e(V),1,1))
-	}
-	foreach 				var in concern_01 concern_02 {
-	    foreach 			c in 1 2 3 4 {
-		    total 			`var' [pweight = phw] if country == `c'
-				local		n_`var'_c`c' = e(N)
-				local 		tot_`var'_c`c' = el(e(b),1,1)
-				local		sd_`var'_c`c' = sqrt(el(e(V),1,1)) 
-		}
-	}
-	
-* create table of stored results
-	clear
-	set 					obs 6
-	gen 					concern = cond(_n<4,"concern_01","concern_02")
-	gen 					stat = cond(_n==1|_n==4,"tot",cond(_n==2|_n==5,"sd","n"))
-	foreach 				c in a 1 2 3 4 {
-		gen 				c`c' = .
-	}
-	foreach 				c in a 1 2 3 4 {
-	    foreach 			stat in tot sd n {
-		    foreach 		con in concern_01 concern_02 {
-				replace 	c`c' = ``stat'_`con'_c`c'' if concern == "`con'" & stat == "`stat'"
-			}
-		}
-	}
-	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
-							sheetreplace sheet(sumstatsS`tabnum') first(var)	
-restore 
 
+	drop if			country == 2 & wave == 1
+	drop if			country == 4 & wave == 1
 
-*** figure s1 ***
+	reg 			concern_01 i.sex i.country [pweight = phw], vce(robust)	
+	reg 			concern_02 i.sex i.country [pweight = phw], vce(robust)	
+	
+restore
+	
+	
+*** figure s2a - concerns and moderate fies ***
 
 preserve
 
@@ -944,7 +1050,7 @@ preserve
 						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
 						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
 						title("Concerned that family/self will fall ill with COVID-19", size(vlarge)) ///
-						saving("$output/fiesq1_modsev", replace)
+						saving("$figure/fiesq1_modsev", replace)
 						
 	graph bar 		(mean) p_mod_01 p_mod_02 p_mod_03 p_mod_04 p_mod_05 ///
 						[pweight = wt_18], over(concern_02, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
@@ -956,21 +1062,23 @@ preserve
 						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
 						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
 						title("Concerned about the financial threat of COVID-19", size(vlarge)) ///
-						saving("$output/fiesq2_modsev", replace)
+						saving("$figure/fiesq2_modsev", replace)
 
 	restore
 
-	grc1leg2 		"$output/fiesq1_modsev.gph" "$output/fiesq2_modsev.gph", ///
-						col(3) iscale(.5) pos(6) commonscheme
+	grc1leg2 		"$figure/fiesq1_modsev.gph" "$figure/fiesq2_modsev.gph", ///
+						col(3) iscale(.5) pos(6) commonscheme title("A", size(huge))
 
-	graph export 	"$output/fiesquintetc1.emf", as(emf) replace
+	graph export 	"$figure/fiesquintetc1.eps", as(eps) replace
 
-* figure s2 ***
+	
+*** figure s2b - concerns and severe fies ***
  
 preserve
 
-	drop if 		country == 2 & wave == 1
-	drop if 		country == 4 & wave == 1
+	drop if 			country == 1 & wave == 2
+	drop if 			country == 2 & wave == 1
+	drop if 			country == 4 & wave == 1
 
 	gen				p_sev_01 = p_sev if quint == 1
 	gen				p_sev_02 = p_sev if quint == 2
@@ -990,7 +1098,7 @@ preserve
 						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
 						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
 						title("Concerned that family/self will fall ill with COVID-19", size(vlarge)) ///
-						saving("$output/fiesq1_sev", replace)
+						saving("$figure/fiesq1_sev", replace)
 						
 	graph bar 		(mean) p_sev_01 p_sev_02 p_sev_03 p_sev_04 p_sev_05 ///
 						[pweight = wt_18], over(concern_02, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
@@ -1002,14 +1110,14 @@ preserve
 						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
 						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
 						title("Concerned about the financial threat of COVID-19", size(vlarge)) ///
-						saving("$output/fiesq2_sev", replace)
+						saving("$figure/fiesq2_sev", replace)
 
 	restore
 
-	grc1leg2 		"$output/fiesq1_sev.gph" "$output/fiesq2_sev.gph", ///
-						col(3) iscale(.5) pos(6) commonscheme
+	grc1leg2 		"$figure/fiesq1_sev.gph" "$figure/fiesq2_sev.gph", ///
+						col(3) iscale(.5) pos(6) commonscheme  title("B", size(huge))
 
-	graph export 	"$output/fiesquintetc12.emf", as(emf) replace
+	graph export 	"$figure/fiesquintetc12.eps", as(eps) replace
 
 
 *** table s17 ***
@@ -1066,14 +1174,13 @@ preserve
 		
 restore 
 
-
 		
 * **********************************************************************
-* 5 - create tables for Fig. 5
+* 3 - create tables for Fig. 3
 * **********************************************************************
 
 * **********************************************************************
-* 5a - create Table S18-S21 for Fig. 5A
+* 3a - create Table S18-S21 for Fig. 3A
 * **********************************************************************
 
 
@@ -1257,8 +1364,63 @@ preserve
 restore
 
 
+*** figure s1d - coping mechanisms, by gender ***
+preserve
+
+	drop if 				country == 1 & wave == 1
+	drop if 				country == 1 & wave == 2
+	drop if					country == 2 & wave == 1
+	drop if					country == 3 & wave == 1
+	drop if					country == 3 & wave == 2
+	drop if					country == 4 & wave == 2
+	
+	replace			cope_03 = 1 if cope_03 == 1 | cope_04 == 1
+	replace			cope_05 = 1 if cope_05 == 1 | cope_06 == 1 | cope_07 == 1
+	
+	graph bar		(mean) cope_11 cope_01 cope_09 cope_10 cope_03 asst_any  ///
+						[pweight = hhw], over(sex, ///
+						label (labsize(large))) over(country, label (labsize(vlarge))) ///
+						bar(1, color(maroon*1.5)) bar(2, color(emidblue*1.5)) ///
+						bar(3, color(emerald*1.5)) bar(4, color(brown*1.5)) ///
+						bar(5, color(erose*1.5)) bar(6, color(ebblue*1.5)) ///
+						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
+						ytitle("Households reporting use of coping strategy (%)", size(vlarge)) ///
+						legend( label (1 "Relied on savings") label (2 "Sale of asset") ///
+						label (3 "Reduced food cons.") label (4 "Reduced non-food cons.") ///
+						label (5 "Help from family") ///
+						label (6 "Recieved assistance") size(medsmall) pos(6) col(3)) ///
+						saving("$figure/cope_allsex.gph", replace)
+
+restore
+
+	grc1leg2 		"$figure/cope_allsex.gph", col(4) iscale(.5) ///
+						commonscheme title("D", size(huge))
+						
+	graph export 	"$figure/copesex.eps", as(eps) replace
+
+
+*****************	
+*** NEW TABLE ***
+*****************
+
+* regressions comparing gender
+preserve
+
+	replace			cope_03 = 1 if cope_03 == 1 | cope_04 == 1
+	replace			cope_05 = 1 if cope_05 == 1 | cope_06 == 1 | cope_07 == 1
+	
+* regressions for relied on savings, sale of assets,reduced food consumption, reduced non_food consumption
+	* received assistance from friends & family, recieved any assistance 
+	foreach 				var in cope_11 cope_01 cope_09 cope_10 cope_03 asst_any {
+	reg 					`var' i.sexhh##i.wave ib(2).country [pweight = hhw], vce(robust)
+	
+	}
+	
+restore
+				
+	
 * **********************************************************************
-* 5b - create Table S22-S23 for Fig. 5B
+* 3b - create Table S22-S23 for Fig. 3B
 * **********************************************************************
 
 *** table s22 ***
@@ -1355,15 +1517,8 @@ preserve
 restore					
 
 
-
-		
 * **********************************************************************
-* 6 - create tables for Fig. 6
-* **********************************************************************
-
-
-* **********************************************************************
-* 6a - create Table S24-S25 for Fig. 6A
+* 3c - create Table S24-S25 for Fig. 3A
 * **********************************************************************
 
 *** table s24 ***
@@ -1433,10 +1588,10 @@ restore
 
 		
 * **********************************************************************
-* 6b - create Figure S3 and Table S26-S27 for Fig. 6B
+* 3d - create Figure S3 and Table S26-S27 for Fig. 3D
 * **********************************************************************
 
-*** figure s3 ***	
+*** figure s3 - fies by education ***	
 	graph bar 			p_mod p_sev [pweight = wt_18], over(edu_act, lab(labs(vlarge))) ///
 							over(country, lab(labs(vlarge))) ylabel(0 "0" .2 "20" .4 "40" .6 "60" ///
 							.8 "80" 1 "100", labs(large)) ytitle("Prevalence of food insecurity", size(large)) ///
@@ -1444,12 +1599,12 @@ restore
 							legend(label (1 "Moderate or severe")  ///
 							label (2 "Severe") pos(6) col(2) size(medsmall)) ///
 							title("Children engaged in learning activities (yes/no)", size(vlarge)) ///
-							saving("$output/fies_edu", replace)
+							saving("$figure/fies_edu", replace)
 						
-	grc1leg2 			"$output/fies_edu.gph", ///
+	grc1leg2 			"$figure/fies_edu.gph", ///
 							col(3) iscale(.5) pos(6) commonscheme						
 						
-	graph export 		"$output/fies_edu1.emf", as(emf) replace
+	graph export 		"$figure/fies_edu.eps", as(eps) replace
 
 	
 *** table s26 ***

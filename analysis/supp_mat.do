@@ -665,16 +665,21 @@ local tabnum = `tabnum' + 1
 *****************	
 *** NEW TABLE ***
 *****************
-	
+*** table s12 ***
+
 * regressions of gender and income loss: farm, business, wage, remittances, other
 	foreach 				var in farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
 		reg 				`var' i.sexhh ib(2).country [pweight = hhw] if wave == 1, vce(robust)	
+		outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
+							append excel dec(3) ctitle(S`tabnum' `var') 
 	}
 	
 	
 * **********************************************************************
-* 2b - create Table S12 for Fig. 2B
+* 2b - create Table S13 for Fig. 2B
 * **********************************************************************
+
+*** table s13 ***
 
 local tabnum = `tabnum' + 1
 
@@ -716,10 +721,10 @@ restore
 
 
 * **********************************************************************
-* 2c - create Table S13-S15 for Fig. 2C
+* 2c - create Table S14-S16 for Fig. 2C
 * **********************************************************************
 
-*** table s13 ***
+*** table s14 ***
 
 local tabnum = `tabnum' + 1
 
@@ -798,7 +803,7 @@ preserve
 							sheetreplace sheet(sumstatsS`tabnum') first(var)
 restore 
 	
-*** table s14 ***
+*** table s15 ***
 
 local tabnum = `tabnum' + 1
 
@@ -881,7 +886,9 @@ restore
 *****************	
 *** NEW TABLE ***
 *****************
-	
+
+*** table s16 ***
+
 * regressions of gender and fies
 	reg 				p_mod i.sexhh##i.wave ib(2).country [pweight = wt_18], vce(robust)	
 	reg 				p_sev i.sexhh##i.wave ib(2).country [pweight = wt_18], vce(robust)	
@@ -889,14 +896,10 @@ restore
 
 	
 * **********************************************************************
-* 2d - create Table S15 for Fig. 2D
+* 2d - create Table S17 for Fig. 2D
 * **********************************************************************
 
-*** table s15 ***
-
-**************************************	
-*** CAN YOU ADD MEAN TO THIS TABLE ***
-**************************************
+*** table s17 ***
 
 local tabnum = `tabnum' + 1
 
@@ -909,31 +912,58 @@ preserve
 * summary statistics for concerns 
 	foreach 				var in concern_01 concern_02 {
 	    total 				`var' [pweight = phw]
-			local			n_`var'_ca = e(N)
-			local 			tot_`var'_ca = el(e(b),1,1)
-			local 			sd_`var'_ca = sqrt(el(e(V),1,1))
+			local			tn_`var'_ca = e(N)
+			local 			ttot_`var'_ca = el(e(b),1,1)
+			local 			tsd_`var'_ca = sqrt(el(e(V),1,1))
 	}
 	foreach 				var in concern_01 concern_02 {
 	    foreach 			c in 1 2 3 4 {
 		    total 			`var' [pweight = phw] if country == `c'
-				local		n_`var'_c`c' = e(N)
-				local 		tot_`var'_c`c' = el(e(b),1,1)
-				local		sd_`var'_c`c' = sqrt(el(e(V),1,1)) 
+				local		tn_`var'_c`c' = e(N)
+				local 		ttot_`var'_c`c' = el(e(b),1,1)
+				local		tsd_`var'_c`c' = sqrt(el(e(V),1,1)) 
 		}
 	}
+		
+	foreach 				var in concern_01 concern_02 {
+		mean				`var' [pweight = phw] 
+			local 			mmean_`var'_ca = el(e(b),1,1)
+			local 			msd_`var'_ca = sqrt(el(e(V),1,1))
+	}
+	foreach 				var in concern_01 concern_02 {
+		forval 				c= 1/4 {
+			mean 			`var' [pweight = phw] if country == `c'
+				local 		mmean_`var'_c`c' = el(e(b),1,1)
+				local		msd_`var'_c`c' = sqrt(el(e(V),1,1))
+		}
+	} 
 	
 * create table of stored results
 	clear
-	set 					obs 6
-	gen 					concern = cond(_n<4,"concern_01","concern_02")
-	gen 					stat = cond(_n==1|_n==4,"tot",cond(_n==2|_n==5,"sd","n"))
+	set 					obs 5
+	gen 					stat = cond(mod(_n,2)!=0,"mean","sd")
+	replace 				stat = "n" if _n == 5 
+	expand 					2
+	replace 				stat = "tot" if _n == 3 | _n == 8 
+	gen 					concern = cond(_n<6,"concern_01","concern_02")
+	gen 					func = substr(stat,1,1)
+	replace 				func = func[_n-1] if func == "s"
+	replace 				func = "t" if func == "n"
+	
 	foreach 				c in a 1 2 3 4 {
 		gen 				c`c' = .
 	}
 	foreach 				c in a 1 2 3 4 {
 	    foreach 			stat in tot sd n {
-		    foreach 		con in concern_01 concern_02 {
-				replace 	c`c' = ``stat'_`con'_c`c'' if concern == "`con'" & stat == "`stat'"
+			foreach 		con in concern_01 concern_02 {
+				replace 	c`c' = `t`stat'_`con'_c`c'' if concern == "`con'" & stat == "`stat'" & func == "t"
+			}
+		}
+	}
+	foreach 				c in a 1 2 3 4 {
+	    foreach 			stat in mean sd {
+			foreach 		con in concern_01 concern_02 {
+				replace 	c`c' = `m`stat'_`con'_c`c'' if concern == "`con'" & stat == "`stat'" & func == "m"
 			}
 		}
 	}
@@ -941,7 +971,7 @@ preserve
 							sheetreplace sheet(sumstatsS`tabnum') first(var)	
 restore 
 
-*** table s16 ***
+*** table s18 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1011,7 +1041,9 @@ restore
 *****************	
 *** NEW TABLE ***
 *****************
-	
+
+*** table s19 ***
+
 * regressions of gender and fies
 preserve
 
@@ -1120,7 +1152,7 @@ preserve
 	graph export 	"$figure/fiesquintetc12.eps", as(eps) replace
 
 
-*** table s17 ***
+*** table s20 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1180,11 +1212,11 @@ restore
 * **********************************************************************
 
 * **********************************************************************
-* 3a - create Table S18-S21 for Fig. 3A
+* 3a - create Table S21-S23 for Fig. 3A
 * **********************************************************************
 
 
-*** table s18 ***
+*** table s21 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1232,7 +1264,7 @@ preserve
 restore							
 							
 							
-*** table s19 ***
+*** table s22 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1275,7 +1307,7 @@ export 						excel using "$output/Supplementary_Materials_Excel_Tables_Test_Resu
 							sheetreplace sheet(sumstatsS`tabnum') first(var)	
 restore
 
-*** table S20 ***
+*** table S23 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1335,7 +1367,7 @@ export 						excel using "$output/Supplementary_Materials_Excel_Tables_Test_Resu
 							sheetreplace sheet(testresultsS`tabnum') first(var)	
 restore
 		
-*** table s21 ***
+*** table s24 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1403,6 +1435,8 @@ restore
 *** NEW TABLE ***
 *****************
 
+*** table s25 ***
+
 * regressions comparing gender
 preserve
 
@@ -1420,10 +1454,10 @@ restore
 				
 	
 * **********************************************************************
-* 3b - create Table S22-S23 for Fig. 3B
+* 3b - create Table S26-S27 for Fig. 3B
 * **********************************************************************
 
-*** table s22 ***
+*** table s26 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1457,7 +1491,7 @@ local tabnum = `tabnum' + 1
 						
 	restore
 
-*** table s23 ***
+*** table s27 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1518,10 +1552,10 @@ restore
 
 
 * **********************************************************************
-* 3c - create Table S24-S25 for Fig. 3A
+* 3c - create Table S28-S29 for Fig. 3A
 * **********************************************************************
 
-*** table s24 ***
+*** table s28 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1554,7 +1588,7 @@ local tabnum = `tabnum' + 1
 								sheetreplace sheet(sumstatsS`tabnum') first(var)	
 	restore
 
-*** table s25 ***
+*** table s29 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1607,7 +1641,7 @@ restore
 	graph export 		"$figure/fies_edu.eps", as(eps) replace
 
 	
-*** table s26 ***
+*** table s30 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1656,7 +1690,7 @@ local tabnum = `tabnum' + 1
 							sheetreplace sheet(testresultsS`tabnum') first(var)
 	restore
 	
-*** table s27 ***
+*** table s31 ***
 
 local tabnum = `tabnum' + 1
 

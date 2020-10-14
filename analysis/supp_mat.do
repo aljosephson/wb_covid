@@ -667,6 +667,8 @@ local tabnum = `tabnum' + 1
 *****************
 *** table s12 ***
 
+local tabnum = `tabnum' + 1
+
 * regressions of gender and income loss: farm, business, wage, remittances, other
 	foreach 				var in farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
 		reg 				`var' i.sexhh ib(2).country [pweight = hhw] if wave == 1, vce(robust)	
@@ -889,11 +891,17 @@ restore
 
 *** table s16 ***
 
+local tabnum = `tabnum' + 1
+
 * regressions of gender and fies
-	reg 				p_mod i.sexhh##i.wave ib(2).country [pweight = wt_18], vce(robust)	
+	reg 				p_mod i.sexhh##i.wave ib(2).country [pweight = wt_18], vce(robust)
+	outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
+						append excel dec(3) ctitle(S`tabnum' mod food insecurity)
+						
 	reg 				p_sev i.sexhh##i.wave ib(2).country [pweight = wt_18], vce(robust)	
-
-
+	outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
+						append excel dec(3) ctitle(S`tabnum' sev food insecurity)
+							
 	
 * **********************************************************************
 * 2d - create Table S17 for Fig. 2D
@@ -1044,14 +1052,21 @@ restore
 
 *** table s19 ***
 
+local tabnum = `tabnum' + 1
+
 * regressions of gender and fies
 preserve
 
-	drop if			country == 2 & wave == 1
-	drop if			country == 4 & wave == 1
+	drop if				country == 2 & wave == 1
+	drop if				country == 4 & wave == 1
 
-	reg 			concern_01 i.sex i.country [pweight = phw], vce(robust)	
-	reg 			concern_02 i.sex i.country [pweight = phw], vce(robust)	
+	reg 				concern_01 i.sex i.country [pweight = phw], vce(robust)	
+	outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
+						append excel dec(3) ctitle(S`tabnum' concern 1)
+							
+	reg 				concern_02 i.sex i.country [pweight = phw], vce(robust)	
+	outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
+						append excel dec(3) ctitle(S`tabnum' concern 2)	
 	
 restore
 	
@@ -1437,6 +1452,8 @@ restore
 
 *** table s25 ***
 
+local tabnum = `tabnum' + 1
+
 * regressions comparing gender
 preserve
 
@@ -1446,9 +1463,10 @@ preserve
 * regressions for relied on savings, sale of assets,reduced food consumption, reduced non_food consumption
 	* received assistance from friends & family, recieved any assistance 
 	foreach 				var in cope_11 cope_01 cope_09 cope_10 cope_03 asst_any {
-	reg 					`var' i.sexhh##i.wave ib(2).country [pweight = hhw], vce(robust)
-	
-	}
+		reg 					`var' i.sexhh##i.wave ib(2).country [pweight = hhw], vce(robust)
+		outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
+								append excel dec(3) ctitle(S`tabnum'_`var')	
+	}	
 	
 restore
 				

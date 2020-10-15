@@ -2,7 +2,7 @@
 * Created on: September 2020 
 * Created by: amf
 * Edited by: jdm, alj 
-* Last edit: 12 October 2020 
+* Last edit: 14 October 2020 
 * Stata v.16.1
 
 * does
@@ -1060,13 +1060,13 @@ preserve
 	drop if				country == 2 & wave == 1
 	drop if				country == 4 & wave == 1
 
-	reg 				concern_01 i.sex i.country [pweight = phw], vce(robust)	
-	outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
-						append excel dec(3) ctitle(S`tabnum' concern 1)
+	reg 				concern_01 i.sex ib(2).country [pweight = phw], vce(robust)	
+	*outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
+	*					append excel dec(3) ctitle(S`tabnum' concern 1)
 							
-	reg 				concern_02 i.sex i.country [pweight = phw], vce(robust)	
-	outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
-						append excel dec(3) ctitle(S`tabnum' concern 2)	
+	reg 				concern_02 i.sex ib(2).country [pweight = phw], vce(robust)	
+	*outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
+	*					append excel dec(3) ctitle(S`tabnum' concern 2)	
 	
 restore
 	

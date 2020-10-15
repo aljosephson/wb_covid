@@ -1060,11 +1060,11 @@ preserve
 	drop if				country == 2 & wave == 1
 	drop if				country == 4 & wave == 1
 
-	reg 				concern_01 i.sex ib(2).country [pweight = phw], vce(robust)	
+	reg 				concern_01 i.sexhh ib(2).country [pweight = phw], vce(robust)	
 	*outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
 	*					append excel dec(3) ctitle(S`tabnum' concern 1)
 							
-	reg 				concern_02 i.sex ib(2).country [pweight = phw], vce(robust)	
+	reg 				concern_02 i.sexhh ib(2).country [pweight = phw], vce(robust)	
 	*outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
 	*					append excel dec(3) ctitle(S`tabnum' concern 2)	
 	

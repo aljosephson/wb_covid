@@ -104,7 +104,15 @@
 	
 	order			phw ahw chw shw, after(hhw)
 	order			hhsize, before(sex)
-						
+	
+	replace			sex = 0 if sex == 1
+	replace			sexhh = 0 if sexhh == 1
+	replace			sex = 1 if sex == 2
+	replace			sexhh = 1 if sexhh == 2
+	
+	lab def 		sex 0 "Male" 1 "Female"
+	lab val 		sex sexhh sex	
+	
 * know 
 	replace			know = 0 if know == 2 
 	replace			know_01 = 0 if know_01 == 2

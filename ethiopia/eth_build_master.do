@@ -22,11 +22,15 @@
 * 0 - setup
 * **********************************************************************
 
+
+	  * define list of waves - WHEN NEW WAVES AVAILABLE UPDATE THIS LIST
+	global 			waves "1" "2" "3" "4" 
+	
 * define 
-	global	root	=	"$data/ethiopia/raw"
-	global	export	=	"$data/ethiopia/refined"
-	global	logout	=	"$data/ethiopia/logs"
-	global  fies 	= 	"$data/analysis/raw/Ethiopia"
+	global			root	=	"$data/ethiopia/raw"
+	global			export	=	"$data/ethiopia/refined"
+	global			logout	=	"$data/ethiopia/logs"
+	global  		fies 	= 	"$data/analysis/raw/Ethiopia"
 
 * Define root folder globals
     if `"`c(username)'"' == "jdmichler" {
@@ -48,20 +52,42 @@
 	cap log 		close
 	log using		"$logout/eth_build", append
 
-* set local to list of available waves - WHEN NEW WAVES AVAILABLE UPDATE LOCAL
-	local 			aws = "1 2 3 4" 
 
 * ***********************************************************************
-* 1 - append round datasets
+* 1 - run do files for each round & generate variable comparison excel
 * ***********************************************************************
 
-* run dofiles for all rounds
-	foreach 		r in `aws' {
+* run do files for all rounds and create crosswalk of variables by wave
+	foreach 		r in "$waves" {
 		do 			"$code/ethiopia/eth_build_0`r'"
+		ds
+		clear
+		set 		obs 1
+		gen 		variables = ""
+		local 		counter = 1
+		foreach 	var in `r(varlist)' {
+			replace variables = "`var'" in `counter'
+			local 	counter = `counter' + 1
+			set 	obs `counter'
+			recast str30 variables
+		}
+		gen 		wave`r' = 1
+		tempfile 	t`r'
+		save 		`t`r''
 	}
+	use 			`t1',clear
+	foreach 		r in 2 3 4  {
+		merge 		1:1 variables using `t`r'', nogen
+	}
+	drop 			if variables == ""
+	//export 			excel using "$export/eth_variable_crosswalk.xlsx", first(var) replace
 	
+* ***********************************************************************
+* 2 - append round datasets & merge with quintiles
+* ***********************************************************************
+
 * append datasets to build master panel
-	foreach 		r in `aws' {
+	foreach 		r in "$waves" {
 	    if 			`r' == 1 {
 			use		"$export/wave_01/r1", clear
 		}
@@ -79,16 +105,16 @@
 	lab val			quints lbqui			
 						
 * ***********************************************************************
-* 2 - clean ethiopia panel
+* 3 - clean ethiopia panel
 * ***********************************************************************
 
 * rationalize variables across waves
-	gen				phw = phw1 if phw1 != . & wave == 1
-	replace			phw = phw2 if phw2 != . & wave == 2
-	replace			phw = phw3 if phw3 != . & wave == 3
+	gen 			phw = .
+	foreach 		r in `aws' {
+		replace 	phw = phw`r' if phw`r' != . & wave == `r'
+		drop 		phw`r'
+	}
 	lab var			phw "sampling weights"
-	order			phw, after(phw1)
-	drop			phw1 phw2 phw3 weight
 	
 * administrative variables 	
 	rename			ii4_resp_id resp_id
@@ -110,8 +136,12 @@
 	rename			ii1_attempt attempt
 	rename			bi_locchange loc_chg
 	rename			bi_same_hhh same_hhh
+	rename			ii4_resp_same same
+	rename			ii4_resp_gender sex
+	rename			ii4_resp_age age	
+	rename			ii4_resp_relhhh relate_hoh
 
-* covid variables
+* covid variables (wave 1 only)
 	rename			kn1_heard know
 	rename			kn2_meas_handwash know_01
 	rename			kn2_meas_handshake know_02
@@ -142,30 +172,72 @@
 	rename 			bh4_cov_fin concern_02 
 	
 * access variables 
-	rename			ac1_atb_med ac_med
-	rename			ac2_atb_med_why ac_med_why
-	rename			ac1_atb_teff ac_teff
-	rename			ac2_atb_teff_why ac_teff_why
-	rename			ac1_atb_wheat ac_wheat
-	rename			ac2_atb_wheat_why ac_wheat_why
-	rename			ac1_atb_maize ac_maize
-	rename			ac2_atb_maize_why  ac_maize_why
-	rename			ac1_atb_oil ac_oil
-	rename			ac2_atb_oil_why ac_oil_why
-	rename			ac3_sch_child sch_child
-	rename			ac4_sch_girls sch_girl
-	rename			ac4_sch_boys sch_boy
-	rename			ac4_2_edu edu_act
-	rename			ac5_edu_type_1 edu_01
-	rename			ac5_edu_type_2 edu_02
-	rename			ac5_edu_type_3 edu_03
-	rename			ac5_edu_type_4 edu_04
-	rename			ac5_edu_type_5 edu_05
-	rename			ac6_med med
-	rename			ac7_med_access med_access
-	rename			ac8_med_access_reas med_access_why
-	rename			ac9_bank bank 
+	* staples & medical care & bank
+		rename			ac1_atb_med ac_med
+		rename			ac2_atb_med_why ac_med_why
+		rename			ac1_atb_teff ac_teff
+		rename			ac2_atb_teff_why ac_teff_why
+		rename			ac1_atb_wheat ac_wheat
+		rename			ac2_atb_wheat_why ac_wheat_why
+		rename			ac1_atb_maize ac_maize
+		rename			ac2_atb_maize_why  ac_maize_why
+		rename			ac1_atb_oil ac_oil
+		rename			ac2_atb_oil_why ac_oil_why
+		rename			ac6_med med
+		rename			ac7_med_access med_access
+		rename			ac8_med_access_reas med_access_why
+		rename			ac9_bank bank
+		
+	* education 
+		rename			ac3_sch_child sch_child
+		rename 		 	ac3a_pri_sch_child sch_child_prim
+		rename 		 	ac3b_sec_sch_child sch_child_sec
+		rename			ac4_sch_girls sch_girl
+		rename			ac4_sch_boys sch_boy
+		rename			ac4_2_edu edu_act
+		rename 			ac4a_pri_child edu_act_prim
+		rename			ac5_edu_type_1 edu_01
+		rename			ac5_edu_type_2 edu_02
+		rename			ac5_edu_type_3 edu_03
+		rename			ac5_edu_type_4 edu_04
+		rename			ac5_edu_type_5 edu_05
 
+		drop 			ac5a_pri_edu_type ac5a_pri_edu_type__98 ac5a_pri_edu_type__99 ac5a_pri_edu_type_other 
+		rename 			ac5a_pri_edu_type_1 edu_01_prim 
+		rename 			ac5a_pri_edu_type_2 edu_02_prim  
+		rename 			ac5a_pri_edu_type_3 edu_03_prim 
+		rename 			ac5a_pri_edu_type_4 edu_04_prim 
+		rename 			ac5a_pri_edu_type_5 edu_05_prim 
+		rename 			ac5a_pri_edu_type__96 edu_other_prim 	
+
+		rename 			ac4b_sec_child edu_act_sec 
+		drop 			ac5b_sec_edu_type ac5b_sec_edu_type__98 ac5b_sec_edu_type__99 ac5b_sec_edu_type_other
+		rename 			ac5b_sec_edu_type_1 edu_01_sec 
+		rename 			ac5b_sec_edu_type_2 edu_02_sec  
+		rename 			ac5b_sec_edu_type_3 edu_03_sec 
+		rename 			ac5b_sec_edu_type_4 edu_04_sec 
+		rename 			ac5b_sec_edu_type_5 edu_05_sec 
+		rename 			ac5b_sec_edu_type__96 edu_other_sec 
+		
+//NOTE: I changed this from 0 to . because sch_child always missing for waves 3&4, this is what you intended, right?		
+		replace 		sch_child = sch_child_prim if sch_child == . & wave >= 3
+		replace 		sch_child = sch_child_sec if sch_child == . & wave >= 3 
+		replace 		edu_act = edu_act_prim if edu_act == . & wave >= 3
+		replace 		edu_act = edu_act_sec if edu_act == . & wave >= 3
+		
+		forval 			ed = 1/5 {
+			foreach i in 0 1 {
+				replace edu_0`ed' = `i' if edu_0`ed'_prim == `i' & wave >= 3
+				replace edu_0`ed' = `i' if edu_0`ed'_sec == `i' & wave >= 3
+			}
+		}
+
+		drop 			ac5_edu_type__98 ac5_edu_type__99 ac5_edu_type__96 ///
+							ac5_edu_type_other edu_01_prim edu_02_prim ///
+							edu_03_prim edu_04_prim edu_05_prim edu_other_prim ///
+							edu_01_sec edu_02_sec edu_03_sec edu_04_sec edu_05_sec ///
+							edu_other_sec
+	
 * employment variables 	
 	rename			em1_work_cur emp
 	rename			em6_work_cur_act emp_act
@@ -182,6 +254,9 @@
 	rename			em13_work_cur_notable_paid emp_unable
 	rename			em14_work_cur_notable_why emp_unable_why
 	rename			em15_bus bus_emp
+	rename			em15a_bus_prev bus_prev
+	rename			em15b_bus_prev_closed bus_prev_close
+	rename			em15c_bus_new bus_new
 	rename			em16_bus_sector bus_sect
 	rename			em17_bus_inc bus_emp_inc
 	rename			em18_bus_inc_low_amt bus_amt
@@ -198,7 +273,7 @@
 	rename			em23_we wage_emp
 	rename			em24_we_layoff wage_off
 	rename			em25_we_layoff_covid wage_off_covid
-	
+
 * income variables 	
 	rename			lc1_farm farm_inc
 	rename			lc2_farm_chg farm_chg
@@ -221,20 +296,6 @@
 	rename			lc1_other oth_inc
 	rename			lc2_other_chg oth_chg
 	rename			lc3_total_chg tot_inc_chg
-	
-* generate any shock variable
-	gen				shock_any = 1 if farm_inc == 1 & farm_chg == 3 | farm_chg == 4
-	replace			shock_any = 1 if bus_inc == 1 & bus_chg == 3 | bus_chg == 4
-	replace			shock_any = 1 if wage_inc == 1 & wage_chg == 3 | wage_chg == 4
-	replace			shock_any = 1 if rem_dom == 1 & rem_dom_chg == 3 | rem_dom_chg == 4
-	replace			shock_any = 1 if rem_for == 1 & rem_for_chg == 3 | rem_for_chg == 4
-	replace			shock_any = 1 if isp_inc == 1 & isp_chg == 3 | isp_chg == 4
-	replace			shock_any = 1 if pen_inc == 1 & pen_chg == 3 | pen_chg == 4
-	replace			shock_any = 1 if gov_inc == 1 & gov_chg == 3 | gov_chg == 4
-	replace			shock_any = 1 if ngo_inc == 1 & ngo_chg == 3 | ngo_chg == 4
-	replace			shock_any = 1 if oth_inc == 1 & oth_chg == 3 | oth_chg == 4
-	replace			shock_any = 0 if shock_any == .
-	lab var			shock_any "Experience some shock"
 	
 * coping variables 	
 	rename			lc4_total_chg_cope_1 cope_01
@@ -302,19 +363,9 @@
 						as4_forwork_source_other as3_cash_value as2_cash_psnp ///
 						as4_cash_source as4_cash_source_other as3_other_value ///
 						as2_other_psnp as4_other_source as4_other_source_other
-	
-	rename			ii4_resp_same resp_same
-	rename			ii4_resp_gender resp_gender
-	rename			ii4_resp_age resp_age
-	rename			ii4_resp_relhhh resp_hhh
-	rename			em15a_bus_prev bus_prev
-	rename			em15b_bus_prev_closed bus_prev_close
-	rename			em15c_bus_new bus_new
-	rename 			resp_age age
-	rename 			resp_hhh relate_hoh
-	rename			resp_gender	sex 
-	rename 			resp_same same 
-	
+
+//WHAT IS THIS DOING? JUST FOR R2 OR ALL ROUNDS?
+
 * replace resp for r1 based on r2
 * only 27 not the same 
 	encode 			household_id, generate (household_id_d)
@@ -342,72 +393,15 @@
 								7 "illness in household" 8 "do not know" 9 "other"
 	label var 		bus_why "reason for family business less than usual"
 	
-* education variables 
 
-	rename 			ac3a_pri_sch_child sch_child_prim
-	rename 			ac4a_pri_child edu_act_prim 
-	drop 			ac5a_pri_edu_type ac5a_pri_edu_type__98 ac5a_pri_edu_type__99 ac5a_pri_edu_type_other 
-	rename 			ac5a_pri_edu_type_1 edu_01_prim 
-	rename 			ac5a_pri_edu_type_2 edu_02_prim  
-	rename 			ac5a_pri_edu_type_3 edu_03_prim 
-	rename 			ac5a_pri_edu_type_4 edu_04_prim 
-	rename 			ac5a_pri_edu_type_5 edu_05_prim 
-	rename 			ac5a_pri_edu_type__96 edu_other_prim 
-		
-	rename 			ac3b_sec_sch_child sch_child_sec
-	rename 			ac4b_sec_child edu_act_sec 
-	drop 			ac5b_sec_edu_type ac5b_sec_edu_type__98 ac5b_sec_edu_type__99 ac5b_sec_edu_type_other
-	rename 			ac5b_sec_edu_type_1 edu_01_sec 
-	rename 			ac5b_sec_edu_type_2 edu_02_sec  
-	rename 			ac5b_sec_edu_type_3 edu_03_sec 
-	rename 			ac5b_sec_edu_type_4 edu_04_sec 
-	rename 			ac5b_sec_edu_type_5 edu_05_sec 
-	rename 			ac5b_sec_edu_type__96 edu_other_sec 
-	
-	replace 		sch_child = sch_child_prim if sch_child == 0 & wave == 3
-	replace 		sch_child = sch_child_sec if sch_child == 0 & wave == 3 
-	replace 		edu_act = edu_act_prim if edu_act == 0 & wave == 3
-	replace 		edu_act = edu_act_sec if edu_act == 0 & wave == 3
-	
-	replace			edu_01 = 0 if edu_01_prim == 0 & wave == 3
-	replace			edu_01 = 0 if edu_01_sec == 0 & wave == 3
-	replace			edu_01 = 1 if edu_01_prim == 1 & wave == 3
-	replace			edu_01 = 1 if edu_01_sec == 1 & wave == 3
-	
-	replace			edu_02 = 0 if edu_02_prim == 0 & wave == 3
-	replace			edu_02 = 0 if edu_02_sec == 0 & wave == 3
-	replace			edu_02 = 1 if edu_02_prim == 1 & wave == 3
-	replace			edu_02 = 1 if edu_02_sec == 1 & wave == 3
-		
-	replace			edu_03 = 0 if edu_03_prim == 0 & wave == 3
-	replace			edu_03 = 0 if edu_03_sec == 0 & wave == 3
-	replace			edu_03 = 1 if edu_03_prim == 1 & wave == 3
-	replace			edu_03 = 1 if edu_03_sec == 1 & wave == 3
-	
-	replace			edu_04 = 0 if edu_04_prim == 0 & wave == 3
-	replace			edu_04 = 0 if edu_04_sec == 0 & wave == 3
-	replace			edu_04 = 1 if edu_04_prim == 1 & wave == 3
-	replace			edu_04 = 1 if edu_04_sec == 1 & wave == 3
-	
-	replace			edu_05 = 0 if edu_05_prim == 0 & wave == 3
-	replace			edu_05 = 0 if edu_05_sec == 0 & wave == 3
-	replace			edu_05 = 1 if edu_05_prim == 1 & wave == 3
-	replace			edu_05 = 1 if edu_05_sec == 1 & wave == 3
-	
-	drop 			ac5_edu_type__98 ac5_edu_type__99 ac5_edu_type__96 ///
-						ac5_edu_type_other edu_01_prim edu_02_prim ///
-						edu_03_prim edu_04_prim edu_05_prim edu_other_prim ///
-						edu_01_sec edu_02_sec edu_03_sec edu_04_sec edu_05_sec ///
-						edu_other_sec
 	
 * perceptions of distribution of aid etc. 
-
 	rename 			as5_assist_fair perc_aidfair
 	rename 			as6_assist_tension perc_aidten 
 	
 * agriculture 
 * first addition in R3 
-
+//OKAY THAT QUESTIONS SLIGHTLY DIF (SINCE 2012 vs PAST 4 WKS) - R3 HAS DATA FOR MORE QUESTIONS THAN IN SURVEY
 	rename			ag1_crops farm_act
 	rename			ag1a_crops_plan ag_prep
 	rename 			ag2_crops_able ag_chg	
@@ -433,7 +427,75 @@
 	rename 			ag7_ext_receive ag_ext
 	rename 			ag8_travel_norm aglabor_normal
 	rename 			ag9_travel_curr aglabor 
-                   
+  
+* locusts
+* first addition in R4
+	rename 			lo1_keb	any_locust_keb
+	rename 			lo2_farm any_locust_farm
+	rename			lo3_impact_1 locust_impact_01
+	rename			lo3_impact_2 locust_impact_02
+	rename			lo3_impact_3 locust_impact_03
+	rename			lo3_impact_4 locust_impact_04
+	drop 			lo3_impact__99 
+	gen 			locust_damage_light = 1 if lo4_destr == 1
+	gen 			locust_damage_mod = 1 if lo4_destr == 2
+	gen 			locust_damage_sev = 1 if lo4_destr == 3
+	gen 			locust_damage_tot = 1 if lo4_destr == 4
+	rename 			lo5_sprayed	locust_sprayed
+
+* generate any shock variable
+//ADD LOCUST - WHAT LEVEL OF DAMAGE TO CONSIDER SHOCK?
+	gen				shock_any = 1 if farm_inc == 1 & farm_chg == 3 | farm_chg == 4
+	replace			shock_any = 1 if bus_inc == 1 & bus_chg == 3 | bus_chg == 4
+	replace			shock_any = 1 if wage_inc == 1 & wage_chg == 3 | wage_chg == 4
+	replace			shock_any = 1 if rem_dom == 1 & rem_dom_chg == 3 | rem_dom_chg == 4
+	replace			shock_any = 1 if rem_for == 1 & rem_for_chg == 3 | rem_for_chg == 4
+	replace			shock_any = 1 if isp_inc == 1 & isp_chg == 3 | isp_chg == 4
+	replace			shock_any = 1 if pen_inc == 1 & pen_chg == 3 | pen_chg == 4
+	replace			shock_any = 1 if gov_inc == 1 & gov_chg == 3 | gov_chg == 4
+	replace			shock_any = 1 if ngo_inc == 1 & ngo_chg == 3 | ngo_chg == 4
+	replace			shock_any = 1 if oth_inc == 1 & oth_chg == 3 | oth_chg == 4
+	replace			shock_any = 0 if shock_any == .
+	lab var			shock_any "Experience some shock"
+
+* wash 
+* first addition in R4
+	rename 			wa1_water_drink enough_water_drink
+	gen 			wat_drink_na = 1 if wa2_water_drink_why == 1
+	gen 			wat_drink_reduced = 1 if wa2_water_drink_why == 2
+	gen 			wat_drink_communal_ac = 1 if wa2_water_drink_why == 3
+	gen 			wat_drink_private_ac = 1 if wa2_water_drink_why == 4
+	gen 			wat_drink_out_of_stock = 1 if wa2_water_drink_why == 5
+	gen 			wat_drink_market_closed = 1 if wa2_water_drink_why == 6
+	gen 			wat_drink_tansport = 1 if wa2_water_drink_why == 7
+	gen 			wat_drink_restriction = 1 if wa2_water_drink_why == 8
+	gen 			wat_drink_price_increase = 1 if wa2_water_drink_why == 9
+	gen 			wat_drink_cannot_afford = 1 if wa2_water_drink_why == 10
+	gen 			wat_drink_afraid_virus = 1 if wa2_water_drink_why == 11
+	gen 			wat_drink_other = 1 if wa2_water_drink_why == -96
+	rename 			wa3_water_wash enough_water_wash
+	gen 			wat_wash_na = 1 if wa4_water_wash_why == 1
+	gen 			wat_wash_reduced = 1 if wa4_water_wash_why == 2
+	gen 			wat_wash_communal_ac = 1 if wa4_water_wash_why == 3
+	gen 			wat_wash_private_ac = 1 if wa4_water_wash_why == 4
+	gen 			wat_wash_out_of_stock = 1 if wa4_water_wash_why == 5
+	gen 			wat_wash_market_closed = 1 if wa4_water_wash_why == 6
+	gen 			wat_wash_tansport = 1 if wa4_water_wash_why == 7
+	gen 			wat_wash_restriction = 1 if wa4_water_wash_why == 8
+	gen 			wat_wash_price_increase = 1 if wa4_water_wash_why == 9
+	gen 			wat_wash_cannot_afford = 1 if wa4_water_wash_why == 10
+	gen 			wat_wash_afraid_virus = 1 if wa4_water_wash_why == 11
+	gen 			wat_wash_other = 1 if wa4_water_wash_why == -96
+	rename 			wa5_soap_wash enough_soap_wash
+	gen 			soap_wash_out_of_stock = 1 if wa6_soap_wash_why == 1
+	gen 			soap_wash_market_closed = 1 if wa6_soap_wash_why == 2
+	gen 			soap_wash_transport = 1 if wa6_soap_wash_why == 3
+	gen 			soap_wash_restriction = 1 if wa6_soap_wash_why == 4
+	gen 			soap_wash_price_increase = 1 if wa6_soap_wash_why == 5
+	gen 			soap_wash_cannot_afford = 1 if wa6_soap_wash_why == 6
+	gen 			soap_wash_afraid_virus = 1 if wa6_soap_wash_why == 7
+	gen 			soap_wash_other = 1 if wa6_soap_wash_why == -96
+	
 * drop unnecessary variables
 	drop			kn3_gov kn3_gov_0 kn3_gov__98 kn3_gov__99 kn3_gov__96 ///
 						kn3_gov_other ac2_atb_med_why_other ac2_atb_teff_why_other ///
@@ -452,14 +514,15 @@
 						ir1_endearly ir1_whyendearly ir1_whyendearly_other ///
 						ir_lang ir_understand ir_confident em15b_bus_prev_closed_other ///
 						key em19_bus_inc_low_why__* em19_bus_inc_low_why hh_id hhh_id ///
-						ag*  
-						
+						ag*  				
 
 * reorder variables
-	order			fies_04 fies_05 fies_06 fies_07 fies_08, after(fies_03)
+	order 			hh* sexhh resp_id phw
+	order			fies_03 fies_04 fies_05 fies_06 fies_07 fies_08, after(fies_02)
 	order 			same sex relate_hoh, after(hhh_age)
 	order			bus_prev bus_prev_close bus_new, after(bus_why)
-	
+
+//MAYBE MOVE THIS TO MASTER BUILD FILE?	
 * create country variables
 	gen				country = 1
 	order			country
@@ -513,8 +576,25 @@
 	lab val			region region
 	
 * **********************************************************************
-* 3 - end matter, clean up to save
+* 4 - end matter, clean up to save
 * **********************************************************************
+
+* check for consistency across waves
+/*
+ keep edu_act wave
+	levelsof(edu_act), local(var) 
+	foreach v in `var' {
+		
+	}
+
+	preserve
+		drop household_id* phw* ea ea_id submission attempt weight wt_*	pcrex 
+		ds
+		foreach var in `r(varlist)' {
+			tab `var' wave 
+		}
+	restore
+*/
 
 	compress	
 	describe

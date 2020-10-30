@@ -89,7 +89,7 @@
 * generate round variable
 	gen				wave = `w'
 	lab var			wave "Wave number"
-
+	
 * save temp file
 	tempfile 		temp_micro
 	save 			`temp_micro'
@@ -108,7 +108,7 @@
 
 * merge household size and microdata
 	use 			`temp_hhsize', clear
-	merge 			1:1 household_id using `temp_micro'
+	merge 			1:1 household_id using `temp_micro', assert(3) nogen
 
 * make variable types match for master append	
 	tostring 		as4_food_source_other, replace

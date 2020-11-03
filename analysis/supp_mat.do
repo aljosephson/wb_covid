@@ -1435,7 +1435,7 @@ preserve
 						legend( label (1 "Relied on savings") label (2 "Sale of asset") ///
 						label (3 "Reduced food cons.") label (4 "Reduced non-food cons.") ///
 						label (5 "Help from family") ///
-						label (6 "Recieved assistance") size(medsmall) pos(6) col(3)) ///
+						label (6 "Received assistance") size(medsmall) pos(6) col(3)) ///
 						saving("$figure/cope_allsex.gph", replace)
 
 restore

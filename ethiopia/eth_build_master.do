@@ -23,7 +23,7 @@
 * **********************************************************************
 
 
-	  * define list of waves - WHEN NEW WAVES AVAILABLE UPDATE THIS LIST
+* define list of waves - WHEN NEW WAVES AVAILABLE UPDATE THIS LIST
 	global 			waves "1" "2" "3" "4" 
 	
 * define 
@@ -80,13 +80,14 @@
 		merge 		1:1 variables using `t`r'', nogen
 	}
 	drop 			if variables == ""
-	//export 			excel using "$export/eth_variable_crosswalk.xlsx", first(var) replace
+	export 			excel using "$export/eth_variable_crosswalk.xlsx", first(var) replace
+	
 	
 * ***********************************************************************
-* 2 - append round datasets & merge with quintiles
+* 2 - create panel 
 * ***********************************************************************
 
-* append datasets to build master panel
+* append round datasets to build master panel
 	foreach 		r in "$waves" {
 	    if 			`r' == 1 {
 			use		"$export/wave_01/r1", clear
@@ -102,7 +103,8 @@
 	lab var			quints "Quintiles based on the national population"
 	lab def			lbqui 1 "Quintile 1" 2 "Quintile 2" 3 "Quintile 3" ///
 						4 "Quintile 4" 5 "Quintile 5"
-	lab val			quints lbqui			
+	lab val			quints lbqui
+	drop 			if cs1_region == . //NOTE added this to drop 3,500 obs from quintile data with no hh data
 						
 * ***********************************************************************
 * 3 - clean ethiopia panel
@@ -110,7 +112,7 @@
 
 * rationalize variables across waves
 	gen 			phw = .
-	foreach 		r in `aws' {
+	foreach 		r in "$waves" {
 		replace 	phw = phw`r' if phw`r' != . & wave == `r'
 		drop 		phw`r'
 	}
@@ -143,33 +145,33 @@
 
 * covid variables (wave 1 only)
 	rename			kn1_heard know
-	rename			kn2_meas_handwash know_01
-	rename			kn2_meas_handshake know_02
-	rename			kn2_meas_maskglove know_03
-	rename			kn2_meas_travel know_04
-	rename			kn2_meas_stayhome know_05
-	rename			kn2_meas_gatherings know_06
-	rename			kn2_meas_distance know_07
-	rename			kn2_meas_facetouch know_08
-	rename			kn3_gov_1 gov_01
-	rename			kn3_gov_2 gov_02
-	rename			kn3_gov_3 gov_03
-	rename			kn3_gov_4 gov_04
-	rename			kn3_gov_5 gov_05
-	rename			kn3_gov_6 gov_06
-	rename			kn3_gov_7 gov_07
-	rename			kn3_gov_8 gov_08
-	rename			kn3_gov_9 gov_09
+	rename			kn2_meas_handwash know_1
+	rename			kn2_meas_handshake know_2
+	rename			kn2_meas_maskglove know_3
+	rename			kn2_meas_travel know_4
+	rename			kn2_meas_stayhome know_5
+	rename			kn2_meas_gatherings know_6
+	rename			kn2_meas_distance know_7
+	rename			kn2_meas_facetouch know_8
+	rename			kn3_gov_1 gov_1
+	rename			kn3_gov_2 gov_2
+	rename			kn3_gov_3 gov_3
+	rename			kn3_gov_4 gov_4
+	rename			kn3_gov_5 gov_5
+	rename			kn3_gov_6 gov_6
+	rename			kn3_gov_7 gov_7
+	rename			kn3_gov_8 gov_8
+	rename			kn3_gov_9 gov_9
 	rename			kn3_gov_10 gov_10
 	rename			kn3_gov_11 gov_11
 	rename			kn3_gov_12 gov_12
-	rename			bh1_handwash bh_01
-	rename			bh2_handshake bh_02
-	rename			bh3_gatherings bh_03
-	rename 			bh1_handwash_freq bh_07
-	rename 			bh2_mask_freq bh_08 
-	rename 			bh3_cov_fear concern_01 
-	rename 			bh4_cov_fin concern_02 
+	rename			bh1_handwash bh_1
+	rename			bh2_handshake bh_2
+	rename			bh3_gatherings bh_3
+	rename 			bh1_handwash_freq bh_7
+	rename 			bh2_mask_freq bh_8 
+	rename 			bh3_cov_fear concern_1 
+	rename 			bh4_cov_fin concern_2 
 	
 * access variables 
 	* staples & medical care & bank
@@ -180,7 +182,7 @@
 		rename			ac1_atb_wheat ac_wheat
 		rename			ac2_atb_wheat_why ac_wheat_why
 		rename			ac1_atb_maize ac_maize
-		rename			ac2_atb_maize_why  ac_maize_why
+		rename			ac2_atb_maize_why ac_maize_why
 		rename			ac1_atb_oil ac_oil
 		rename			ac2_atb_oil_why ac_oil_why
 		rename			ac6_med med
@@ -196,47 +198,62 @@
 		rename			ac4_sch_boys sch_boy
 		rename			ac4_2_edu edu_act
 		rename 			ac4a_pri_child edu_act_prim
-		rename			ac5_edu_type_1 edu_01
-		rename			ac5_edu_type_2 edu_02
-		rename			ac5_edu_type_3 edu_03
-		rename			ac5_edu_type_4 edu_04
-		rename			ac5_edu_type_5 edu_05
+		rename			ac5_edu_type_1 edu_1
+		rename			ac5_edu_type_2 edu_2
+		rename			ac5_edu_type_3 edu_3
+		rename			ac5_edu_type_4 edu_4
+		rename			ac5_edu_type_5 edu_5
 
 		drop 			ac5a_pri_edu_type ac5a_pri_edu_type__98 ac5a_pri_edu_type__99 ac5a_pri_edu_type_other 
-		rename 			ac5a_pri_edu_type_1 edu_01_prim 
-		rename 			ac5a_pri_edu_type_2 edu_02_prim  
-		rename 			ac5a_pri_edu_type_3 edu_03_prim 
-		rename 			ac5a_pri_edu_type_4 edu_04_prim 
-		rename 			ac5a_pri_edu_type_5 edu_05_prim 
+		rename 			ac5a_pri_edu_type_1 edu_1_prim 
+		rename 			ac5a_pri_edu_type_2 edu_2_prim  
+		rename 			ac5a_pri_edu_type_3 edu_3_prim 
+		rename 			ac5a_pri_edu_type_4 edu_4_prim 
+		rename 			ac5a_pri_edu_type_5 edu_5_prim 
 		rename 			ac5a_pri_edu_type__96 edu_other_prim 	
 
 		rename 			ac4b_sec_child edu_act_sec 
 		drop 			ac5b_sec_edu_type ac5b_sec_edu_type__98 ac5b_sec_edu_type__99 ac5b_sec_edu_type_other
-		rename 			ac5b_sec_edu_type_1 edu_01_sec 
-		rename 			ac5b_sec_edu_type_2 edu_02_sec  
-		rename 			ac5b_sec_edu_type_3 edu_03_sec 
-		rename 			ac5b_sec_edu_type_4 edu_04_sec 
-		rename 			ac5b_sec_edu_type_5 edu_05_sec 
+		rename 			ac5b_sec_edu_type_1 edu_1_sec 
+		rename 			ac5b_sec_edu_type_2 edu_2_sec  
+		rename 			ac5b_sec_edu_type_3 edu_3_sec 
+		rename 			ac5b_sec_edu_type_4 edu_4_sec 
+		rename 			ac5b_sec_edu_type_5 edu_5_sec 
 		rename 			ac5b_sec_edu_type__96 edu_other_sec 
-		
-//NOTE: I changed this from 0 to . because sch_child always missing for waves 3&4, this is what you intended, right?		
+				
 		replace 		sch_child = sch_child_prim if sch_child == . & wave >= 3
 		replace 		sch_child = sch_child_sec if sch_child == . & wave >= 3 
 		replace 		edu_act = edu_act_prim if edu_act == . & wave >= 3
 		replace 		edu_act = edu_act_sec if edu_act == . & wave >= 3
 		
 		forval 			ed = 1/5 {
-			foreach i in 0 1 {
-				replace edu_0`ed' = `i' if edu_0`ed'_prim == `i' & wave >= 3
-				replace edu_0`ed' = `i' if edu_0`ed'_sec == `i' & wave >= 3
+			foreach 	i in 0 1 {
+				replace edu_`ed' = `i' if edu_`ed'_prim == `i' & wave >= 3
+				replace edu_`ed' = `i' if edu_`ed'_sec == `i' & wave >= 3
 			}
 		}
 
 		drop 			ac5_edu_type__98 ac5_edu_type__99 ac5_edu_type__96 ///
-							ac5_edu_type_other edu_01_prim edu_02_prim ///
-							edu_03_prim edu_04_prim edu_05_prim edu_other_prim ///
-							edu_01_sec edu_02_sec edu_03_sec edu_04_sec edu_05_sec ///
+							ac5_edu_type_other edu_1_prim edu_2_prim ///
+							edu_3_prim edu_4_prim edu_5_prim edu_other_prim ///
+							edu_1_sec edu_2_sec edu_3_sec edu_4_sec edu_5_sec ///
 							edu_other_sec
+* wash 
+ * first addition in R4
+	rename 			wa1_water_drink ac_drink
+	rename 			wa2_water_drink_why ac_drink_why
+	
+	rename 			wa3_water_wash ac_water
+	rename 			wa4_water_wash_why ac_water_why
+
+	rename 			wa5_soap_wash ac_soap
+	rename 			wa6_soap_wash_why ac_soap_why
+
+//THIS IS WRONG - numbers changed. Need to make consistent with others
+	lab def			ac_soap_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
+								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
+								7 "cannot afford" 8 "afraid to go out" 9 "other"
+	lab var 		ac_soap_why "Reason for unable to purchase soap"
 	
 * employment variables 	
 	rename			em1_work_cur emp
@@ -263,13 +280,13 @@
 	rename			em20_farm farm_emp
 	rename			em21_farm_norm farm_norm
 	rename			em22_farm_norm_why farm_why
-	rename			em22_farm_norm_why_1 farm_why_01
-	rename			em22_farm_norm_why_2 farm_why_02
-	rename			em22_farm_norm_why_3 farm_why_03
-	rename			em22_farm_norm_why_4 farm_why_04
-	rename			em22_farm_norm_why_5 farm_why_05
-	rename			em22_farm_norm_why_6 farm_why_06
-	rename			em22_farm_norm_why_7 farm_why_07
+	rename			em22_farm_norm_why_1 farm_why_1
+	rename			em22_farm_norm_why_2 farm_why_2
+	rename			em22_farm_norm_why_3 farm_why_3
+	rename			em22_farm_norm_why_4 farm_why_4
+	rename			em22_farm_norm_why_5 farm_why_5
+	rename			em22_farm_norm_why_6 farm_why_6
+	rename			em22_farm_norm_why_7 farm_why_7
 	rename			em23_we wage_emp
 	rename			em24_we_layoff wage_off
 	rename			em25_we_layoff_covid wage_off_covid
@@ -298,15 +315,15 @@
 	rename			lc3_total_chg tot_inc_chg
 	
 * coping variables 	
-	rename			lc4_total_chg_cope_1 cope_01
-	rename			lc4_total_chg_cope_2 cope_02
-	rename			lc4_total_chg_cope_3 cope_03
-	rename			lc4_total_chg_cope_4 cope_04
-	rename			lc4_total_chg_cope_5 cope_05
-	rename			lc4_total_chg_cope_6 cope_06
-	rename			lc4_total_chg_cope_7 cope_07
-	rename			lc4_total_chg_cope_8 cope_08
-	rename			lc4_total_chg_cope_9 cope_09
+	rename			lc4_total_chg_cope_1 cope_1
+	rename			lc4_total_chg_cope_2 cope_2
+	rename			lc4_total_chg_cope_3 cope_3
+	rename			lc4_total_chg_cope_4 cope_4
+	rename			lc4_total_chg_cope_5 cope_5
+	rename			lc4_total_chg_cope_6 cope_6
+	rename			lc4_total_chg_cope_7 cope_7
+	rename			lc4_total_chg_cope_8 cope_8
+	rename			lc4_total_chg_cope_9 cope_9
 	rename			lc4_total_chg_cope_10 cope_10
 	rename			lc4_total_chg_cope_11 cope_11
 	rename			lc4_total_chg_cope_12 cope_12
@@ -317,14 +334,14 @@
 	rename			lc4_total_chg_cope__96 cope_17
 	
 * fies variables 	
-	rename			fi7_outoffood fies_01
-	rename			fi8_hungrynoteat fies_02
-	rename			fi6_noteatfullday fies_03
-	rename			fi1_enough fies_04
-	rename			fi2_healthy fies_05
-	rename			fi3_fewkinds fies_06
-	rename			fi4_skipmeal fies_07
-	rename			fi5_ateless fies_08
+	rename			fi7_outoffood fies_1
+	rename			fi8_hungrynoteat fies_2
+	rename			fi6_noteatfullday fies_3
+	rename			fi1_enough fies_4
+	rename			fi2_healthy fies_5
+	rename			fi3_fewkinds fies_6
+	rename			fi4_skipmeal fies_7
+	rename			fi5_ateless fies_8
 	
 * assistance variables - updated via convo with Talip 9/1
 	gen				asst_food = as1_assist_type_1
@@ -364,18 +381,23 @@
 						as4_cash_source as4_cash_source_other as3_other_value ///
 						as2_other_psnp as4_other_source as4_other_source_other
 
-//WHAT IS THIS DOING? JUST FOR R2 OR ALL ROUNDS?
-
-* replace resp for r1 based on r2
-* only 27 not the same 
+* replace missing round 1 values based on respondant id
+* round 1 did not report respondant age, sex, or relation to hhh
+//NOTE: NEW CODE
 	encode 			household_id, generate (household_id_d)
-	xtset 			wave 
-	xfill			same,  i (household_id_d)
-	xfill 			age relate_hoh sex if same == 1, i (household_id_d)
 	
-	replace			age = hhh_age if age == .
-	replace			sex = hhh_gender if sex == .
-	replace			relate_hoh = 1 if relate_hoh == .
+	egen 			unique = group(household_id resp_id)
+	
+	xtset 			wave
+	xfill 			sex, i(unique)
+	
+	bysort 			unique: egen min_age = min(age)
+	replace 		age = min_age if age == .
+	
+	gen 			relate_temp = relate_hoh if wave == 2
+	xfill 			relate_temp, i(unique)
+	replace 		relate_hoh = relate_temp if wave == 1 & relate_hoh == .
+	drop 			min_age unique relate_temp
 
 * reformat bus_why variables
 	gen				bus_why = .
@@ -391,30 +413,29 @@
 	lab def			bus_why 1 "markets closed - covid" 2 "markets closed - other" 3 "seasonal closure" /// 
 								4 "no customers" 5 "unable to get inputs" 6 "unable to sell output" ///
 								7 "illness in household" 8 "do not know" 9 "other"
-	label var 		bus_why "reason for family business less than usual"
-	
-
+	lab val 		bus_why bus_why 
+	lab var 		bus_why "reason for family business less than usual"
 	
 * perceptions of distribution of aid etc. 
 	rename 			as5_assist_fair perc_aidfair
 	rename 			as6_assist_tension perc_aidten 
 	
 * agriculture 
-* first addition in R3 
-//OKAY THAT QUESTIONS SLIGHTLY DIF (SINCE 2012 vs PAST 4 WKS) - R3 HAS DATA FOR MORE QUESTIONS THAN IN SURVEY
+ * first addition in R3 (note: round 3 has data for ag6-9 although the questions do not appear in the survey tool)
+ * assume questions are the same as those in round 4 (same var names and similar proportion answering yes/no)
 	rename			ag1_crops farm_act
 	rename			ag1a_crops_plan ag_prep
 	rename 			ag2_crops_able ag_chg	
-	rename			ag3_crops_reas_1 ag_nocrop_01 
-	rename 			ag3_crops_reas_2 ag_nocrop_02
-	rename 			ag3_crops_reas_3 ag_nocrop_03
+	rename			ag3_crops_reas_1 ag_nocrop_1 
+	rename 			ag3_crops_reas_2 ag_nocrop_2
+	rename 			ag3_crops_reas_3 ag_nocrop_3
 	rename			ag3_crops_reas_4 ag_nocrop_10
-	rename			ag3_crops_reas_5 ag_nocrop_04	 
-	rename 			ag3_crops_reas_6 ag_nocrop_05
-	rename 			ag3_crops_reas_7 ag_nocrop_06
-	rename 			ag3_crops_reas_8 ag_nocrop_07	
-	rename 			ag3_crops_reas_9 ag_nocrop_08
-	rename 			ag3_crops_reas__96 ag_nocrop_09 
+	rename			ag3_crops_reas_5 ag_nocrop_4	 
+	rename 			ag3_crops_reas_6 ag_nocrop_5
+	rename 			ag3_crops_reas_7 ag_nocrop_6
+	rename 			ag3_crops_reas_8 ag_nocrop_7	
+	rename 			ag3_crops_reas_9 ag_nocrop_8
+	rename 			ag3_crops_reas__96 ag_nocrop_9 
 
 	generate		ag_seed_01 = 1 if ag5_crops_reas_seeds == 1
 	generate		ag_seed_02 = 1 if ag5_crops_reas_seeds == 2 
@@ -429,22 +450,18 @@
 	rename 			ag9_travel_curr aglabor 
   
 * locusts
-* first addition in R4
-	rename 			lo1_keb	any_locust_keb
-	rename 			lo2_farm any_locust_farm
-	rename			lo3_impact_1 locust_impact_01
-	rename			lo3_impact_2 locust_impact_02
-	rename			lo3_impact_3 locust_impact_03
-	rename			lo3_impact_4 locust_impact_04
+ * first addition in R4
+	rename 			lo1_keb	any_loc_keb
+	rename 			lo2_farm any_loc_farm
+	rename			lo3_impact_1 loc_imp_1
+	rename			lo3_impact_2 loc_imp_2
+	rename			lo3_impact_3 loc_imp_3
+	rename			lo3_impact_4 loc_imp_4
+	rename 			lo4_destr loc_dam
 	drop 			lo3_impact__99 
-	gen 			locust_damage_light = 1 if lo4_destr == 1
-	gen 			locust_damage_mod = 1 if lo4_destr == 2
-	gen 			locust_damage_sev = 1 if lo4_destr == 3
-	gen 			locust_damage_tot = 1 if lo4_destr == 4
-	rename 			lo5_sprayed	locust_sprayed
-
+	rename 			lo5_sprayed	loc_sprayed
+	
 * generate any shock variable
-//ADD LOCUST - WHAT LEVEL OF DAMAGE TO CONSIDER SHOCK?
 	gen				shock_any = 1 if farm_inc == 1 & farm_chg == 3 | farm_chg == 4
 	replace			shock_any = 1 if bus_inc == 1 & bus_chg == 3 | bus_chg == 4
 	replace			shock_any = 1 if wage_inc == 1 & wage_chg == 3 | wage_chg == 4
@@ -457,44 +474,6 @@
 	replace			shock_any = 1 if oth_inc == 1 & oth_chg == 3 | oth_chg == 4
 	replace			shock_any = 0 if shock_any == .
 	lab var			shock_any "Experience some shock"
-
-* wash 
-* first addition in R4
-	rename 			wa1_water_drink enough_water_drink
-	gen 			wat_drink_na = 1 if wa2_water_drink_why == 1
-	gen 			wat_drink_reduced = 1 if wa2_water_drink_why == 2
-	gen 			wat_drink_communal_ac = 1 if wa2_water_drink_why == 3
-	gen 			wat_drink_private_ac = 1 if wa2_water_drink_why == 4
-	gen 			wat_drink_out_of_stock = 1 if wa2_water_drink_why == 5
-	gen 			wat_drink_market_closed = 1 if wa2_water_drink_why == 6
-	gen 			wat_drink_tansport = 1 if wa2_water_drink_why == 7
-	gen 			wat_drink_restriction = 1 if wa2_water_drink_why == 8
-	gen 			wat_drink_price_increase = 1 if wa2_water_drink_why == 9
-	gen 			wat_drink_cannot_afford = 1 if wa2_water_drink_why == 10
-	gen 			wat_drink_afraid_virus = 1 if wa2_water_drink_why == 11
-	gen 			wat_drink_other = 1 if wa2_water_drink_why == -96
-	rename 			wa3_water_wash enough_water_wash
-	gen 			wat_wash_na = 1 if wa4_water_wash_why == 1
-	gen 			wat_wash_reduced = 1 if wa4_water_wash_why == 2
-	gen 			wat_wash_communal_ac = 1 if wa4_water_wash_why == 3
-	gen 			wat_wash_private_ac = 1 if wa4_water_wash_why == 4
-	gen 			wat_wash_out_of_stock = 1 if wa4_water_wash_why == 5
-	gen 			wat_wash_market_closed = 1 if wa4_water_wash_why == 6
-	gen 			wat_wash_tansport = 1 if wa4_water_wash_why == 7
-	gen 			wat_wash_restriction = 1 if wa4_water_wash_why == 8
-	gen 			wat_wash_price_increase = 1 if wa4_water_wash_why == 9
-	gen 			wat_wash_cannot_afford = 1 if wa4_water_wash_why == 10
-	gen 			wat_wash_afraid_virus = 1 if wa4_water_wash_why == 11
-	gen 			wat_wash_other = 1 if wa4_water_wash_why == -96
-	rename 			wa5_soap_wash enough_soap_wash
-	gen 			soap_wash_out_of_stock = 1 if wa6_soap_wash_why == 1
-	gen 			soap_wash_market_closed = 1 if wa6_soap_wash_why == 2
-	gen 			soap_wash_transport = 1 if wa6_soap_wash_why == 3
-	gen 			soap_wash_restriction = 1 if wa6_soap_wash_why == 4
-	gen 			soap_wash_price_increase = 1 if wa6_soap_wash_why == 5
-	gen 			soap_wash_cannot_afford = 1 if wa6_soap_wash_why == 6
-	gen 			soap_wash_afraid_virus = 1 if wa6_soap_wash_why == 7
-	gen 			soap_wash_other = 1 if wa6_soap_wash_why == -96
 	
 * drop unnecessary variables
 	drop			kn3_gov kn3_gov_0 kn3_gov__98 kn3_gov__99 kn3_gov__96 ///
@@ -518,7 +497,7 @@
 
 * reorder variables
 	order 			hh* sexhh resp_id phw
-	order			fies_03 fies_04 fies_05 fies_06 fies_07 fies_08, after(fies_02)
+	order			fies_3 fies_4 fies_5 fies_6 fies_7 fies_8, after(fies_2)
 	order 			same sex relate_hoh, after(hhh_age)
 	order			bus_prev bus_prev_close bus_new, after(bus_why)
 
@@ -545,7 +524,8 @@
 	replace			region = 1009 if region == 13
 	replace			region = 1010 if region == 14
 	replace			region = 1011 if region == 15
-	
+
+//MOVE OUT BY COUNTRY 	
 	lab def			region 1001 "Tigray" 1002 "Afar" 1003 "Amhara" 1004 ///
 						"Oromia" 1005 "Somali" 1006 "Benishangul-Gumuz" 1007 ///
 						"SNNPR" 1008 "Gambela" 1009 "Harar" 1010 ///

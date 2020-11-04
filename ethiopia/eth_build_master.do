@@ -2,7 +2,7 @@
 * Created on: Oct 2020
 * Created by: jdm
 * Edited by: amf
-* Last edit: October 2020 
+* Last edit: Nov 2020 
 * Stata v.16.1
 
 * does
@@ -15,13 +15,13 @@
 	* xfill.ado
 
 * TO DO:
-	* complete for round 4
+	* finish edits for round 4
+	* complete for round 5
 
 
 * **********************************************************************
 * 0 - setup
 * **********************************************************************
-
 
 * define list of waves - WHEN NEW WAVES AVAILABLE UPDATE THIS LIST
 	global 			waves "1" "2" "3" "4" 
@@ -104,8 +104,12 @@
 	lab def			lbqui 1 "Quintile 1" 2 "Quintile 2" 3 "Quintile 3" ///
 						4 "Quintile 4" 5 "Quintile 5"
 	lab val			quints lbqui
-	drop 			if cs1_region == . //NOTE added this to drop 3,500 obs from quintile data with no hh data
-						
+	drop 			if wave == .
+	
+* create country variable
+	gen				country = 1
+	
+	
 * ***********************************************************************
 * 3 - clean ethiopia panel
 * ***********************************************************************
@@ -238,22 +242,16 @@
 							edu_3_prim edu_4_prim edu_5_prim edu_other_prim ///
 							edu_1_sec edu_2_sec edu_3_sec edu_4_sec edu_5_sec ///
 							edu_other_sec
-* wash 
- * first addition in R4
-	rename 			wa1_water_drink ac_drink
-	rename 			wa2_water_drink_why ac_drink_why
-	
-	rename 			wa3_water_wash ac_water
-	rename 			wa4_water_wash_why ac_water_why
+	* wash (water and soap)
+	 * only in round 4
+		rename 			wa1_water_drink ac_drink
+		rename 			wa2_water_drink_why ac_drink_why
+		
+		rename 			wa3_water_wash ac_water
+		rename 			wa4_water_wash_why ac_water_why
 
-	rename 			wa5_soap_wash ac_soap
-	rename 			wa6_soap_wash_why ac_soap_why
-
-//THIS IS WRONG - numbers changed. Need to make consistent with others
-	lab def			ac_soap_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
-								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
-								7 "cannot afford" 8 "afraid to go out" 9 "other"
-	lab var 		ac_soap_why "Reason for unable to purchase soap"
+		rename 			wa5_soap_wash ac_soap
+		rename 			wa6_soap_wash_why ac_soap_why						
 	
 * employment variables 	
 	rename			em1_work_cur emp
@@ -381,22 +379,16 @@
 						as4_cash_source as4_cash_source_other as3_other_value ///
 						as2_other_psnp as4_other_source as4_other_source_other
 
-* replace missing round 1 values based on respondant id
+* replace missing round 1 values based on respondant id (NEW CODE - J&A TO CHECK)
 * round 1 did not report respondant age, sex, or relation to hhh
-//NOTE: NEW CODE
-	encode 			household_id, generate (household_id_d)
-	
 	egen 			unique = group(household_id resp_id)
-	
 	xtset 			wave
 	xfill 			sex, i(unique)
-	
 	bysort 			unique: egen min_age = min(age)
-	replace 		age = min_age if age == .
-	
+	replace 		age = min_age if age == . & wave == 1
 	gen 			relate_temp = relate_hoh if wave == 2
 	xfill 			relate_temp, i(unique)
-	replace 		relate_hoh = relate_temp if wave == 1 & relate_hoh == .
+	replace 		relate_hoh = relate_temp if relate_hoh == . & wave == 1 
 	drop 			min_age unique relate_temp
 
 * reformat bus_why variables
@@ -493,24 +485,7 @@
 						ir1_endearly ir1_whyendearly ir1_whyendearly_other ///
 						ir_lang ir_understand ir_confident em15b_bus_prev_closed_other ///
 						key em19_bus_inc_low_why__* em19_bus_inc_low_why hh_id hhh_id ///
-						ag*  				
-
-* reorder variables
-	order 			hh* sexhh resp_id phw
-	order			fies_3 fies_4 fies_5 fies_6 fies_7 fies_8, after(fies_2)
-	order 			same sex relate_hoh, after(hhh_age)
-	order			bus_prev bus_prev_close bus_new, after(bus_why)
-
-//MAYBE MOVE THIS TO MASTER BUILD FILE?	
-* create country variables
-	gen				country = 1
-	order			country
-	lab def			country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda"
-	lab val			country country	
-	lab var			country "Country"
-			
-	drop			resp_id start_date hhh_gender hhh_age same loc_chg same_hhh
-	drop if			wave ==  .
+						ag* start_date hhh_gender hhh_age same loc_chg same_hhh			
 
 * rename regions
 	replace 		region = 1001 if region == 1
@@ -524,42 +499,93 @@
 	replace			region = 1009 if region == 13
 	replace			region = 1010 if region == 14
 	replace			region = 1011 if region == 15
-
-//MOVE OUT BY COUNTRY 	
+	
 	lab def			region 1001 "Tigray" 1002 "Afar" 1003 "Amhara" 1004 ///
 						"Oromia" 1005 "Somali" 1006 "Benishangul-Gumuz" 1007 ///
 						"SNNPR" 1008 "Gambela" 1009 "Harar" 1010 ///
-						"Addis Ababa" 1011 "Dire Dawa" 2101 "Chitipa" 2102 ///
-						"Karonga" 2103 "Nkhata Bay" 2104 "Rumphi" 2105 ///
-						"Mzimba" 2106 "Likoma" 2107 "Mzuzu City" 2201 ///
-						"Kasungu" 2202 "Nkhotakota" 2203 "Ntchisi" 2204 ///
-						"Dowa" 2205 "Salima" 2206 "Lilongwe" 2207 ///
-						"Mchinji" 2208 "Dedza" 2209 "Ntcheu" 2210 ///
-						"Lilongwe City" 2301 "Mangochi" 2302 "Machinga" 2303 ///
-						"Zomba" 2304 "Chiradzulu" 2305 "Blantyre" 2306 ///
-						"Mwanza" 2307 "Thyolo" 2308 "Mulanje" 2309 ///
-						"Phalombe" 2310 "Chikwawa" 2311 "Nsanje" 2312 ///
-						"Balaka" 2313 "Neno" 2314 "Zomba City" 2315 ///
-						"Blantyre City" 3001 "Abia" 3002 "Adamawa" 3003 ///
-						"Akwa Ibom" 3004 "Anambra" 3005 "Bauchi" 3006 ///
-						"Bayelsa" 3007 "Benue" 3008 "Borno" 3009 ///
-						"Cross River" 3010 "Delta" 3011 "Ebonyi" 3012 ///
-						"Edo" 3013 "Ekiti" 3014 "Enugu" 3015 "Gombe" 3016 ///
-						"Imo" 3017 "Jigawa" 3018 "Kaduna" 3019 "Kano" 3020 ///
-						"Katsina" 3021 "Kebbi" 3022 "Kogi" 3023 "Kwara" 3024 ///
-						"Lagos" 3025 "Nasarawa" 3026 "Niger" 3027 "Ogun" 3028 ///
-						"Ondo" 3029 "Osun" 3030 "Oyo" 3031 "Plateau" 3032 ///
-						"Rivers" 3033 "Sokoto" 3034 "Taraba" 3035 "Yobe" 3036 ///
-						"Zamfara" 3037 "FCT" 4012 "Central" 4013 ///
-						"Eastern" 4014 "Kampala" 4015 "Northern" 4016 ///
-						"Western" 4017 "North" 4018 "Central" 4019 "South", replace
+						"Addis Ababa" 1011 "Dire Dawa"
 	lab val			region region
 	
+	
 * **********************************************************************
-* 4 - end matter, clean up to save
+* 4 - QC check 
 * **********************************************************************
 
+* compare numerica variables to other rounds
+	tostring wave, replace
+	ds, has(type numeric)
+	foreach var in `r(varlist)' {
+		preserve
+			keep `var' wave
+			destring wave, replace
+			di `var'
+			gen counter = 1
+			collapse (sum) counter, by(`var' wave)
+			reshape wide counter, i(`var') j(wave)
+			forval x = 1/4 {
+				egen tot_`x' = total(counter`x')
+				gen per_`x' = counter`x' / tot_`x'
+			}
+			keep per*
+TRY 20 PERCENTAGE POINTS INSTEAD			
+	* gen flags if round is 15%+ different than comparison & comparison percent is > 10
+		forval x = 1/4 {
+			gen per_comp_1`x' = (per_1 - per_`x')/per_1
+			gen flag_`var'_1`x' = 1 if abs(per_comp_1`x') > .2 & per_comp_1`x' != . & per_1 > .1
+			gen per_comp_2`x' = (per_2 - per_`x')/per_2
+			gen flag_`var'_2`x' = 1 if abs(per_comp_2`x') > .2 & per_comp_2`x' != . & per_2 > .1
+			gen per_comp_3`x' = (per_3 - per_`x')/per_3
+			gen flag_`var'_3`x' = 1 if abs(per_comp_3`x') > .2 & per_comp_3`x' != . & per_3 > .1
+			gen per_comp_4`x' = (per_4 - per_`x')/per_4
+			gen flag_`var'_4`x' = 1 if abs(per_comp_4`x') > .2 & per_comp_4`x' != . & per_4 > .1
+		}
+		keep *flag*
+	
+	* drop comparisons with own round	
+		drop flag_`var'_11
+		drop flag_`var'_22
+		drop flag_`var'_33
+		drop flag_`var'_44
+
+	* drop if all missing	
+		foreach v of varlist _all {
+			capture assert mi(`v')
+			if !_rc {
+				drop `v'
+			}
+		}
+		gen n = _n
+		tempfile temp`var'
+		save `temp`var''
+		restore   
+	}
+		
+	* create dataset of flags
+	//preserve
+	ds, has(type numeric)
+	clear
+	set obs 100
+	gen n = _n
+	foreach var in `r(varlist)' {
+	    merge 1:1 n using `temp`var'', nogen
+	}
+
+
+aslkdjf 
+
+
+
+foreach w in "$waves" {
+	
+}
+
+fdgfd 
 * check for consistency across waves
+
+	    preserve
+			capture numeric variable `var'
+			
+	}
 /*
  keep edu_act wave
 	levelsof(edu_act), local(var) 
@@ -575,6 +601,9 @@
 		}
 	restore
 */
+* **********************************************************************
+* 4 - end matter, clean up to save
+* **********************************************************************
 
 	compress	
 	describe
@@ -582,6 +611,8 @@
 
 	rename 			household_id hhid_eth 
 	label 			var hhid_eth "household id unique - ethiopia (string)"
+	
+	encode 			household_id, generate (household_id_d)
 	rename 			household_id_d hhid_eth_d
 	label 			var hhid_eth_d "household id unique - ethiopia (encoded)"
 

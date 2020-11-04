@@ -41,7 +41,7 @@
 	
 	
 * ***********************************************************************
-* 1 - roster data - get household size and gender of household head 
+*  1 - roster data - get household size and gender of household head 
 * ***********************************************************************
 
 * load roster data

@@ -16,7 +16,7 @@
 * TO DO:
 	* need to revist access for some variables - done?
 	* change new ethiopia access data to match other rounds (yes to no, etc)
-
+	* NOTE make sure add regions and labels  to countries 2-4
 
 * **********************************************************************
 * 0 - setup
@@ -47,6 +47,13 @@
 	append using 	"$nga/nga_panel", force
 
 	append using	"$uga/uga_panel", force
+	
+	order			country
+	lab def			country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda"
+	lab val			country country	
+	lab var			country "Country"
+	
+	
 	
 	
 * **********************************************************************
@@ -244,6 +251,22 @@
 	replace				ac_soap = 0 if ac_soap == 1
 	replace				ac_soap = 1 if ac_soap == 2
 	
+/*added in from ethiopia - numbers dif - check all for consistency
+	* Note - only available round 4 and numbers in data do not match survey instument, corrected below
+	gen ac_soap_why = .
+	replace ac_soap_why = 1 if wa6_soap_wash_why == 5
+	replace ac_soap_why = 2 if wa6_soap_wash_why == 6 
+	replace ac_soap_why = 4 if wa6_soap_wash_why == 8
+	replace ac_soap_why = 5 if wa6_soap_wash_why == 9
+	replace ac_soap_why = 7 if wa6_soap_wash_why == 10
+	replace ac_soap_why = 8 if wa6_soap_wash_why == 11
+	lab def			ac_soap_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
+								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
+								7 "cannot afford" 8 "afraid to go out" 9 "other"
+	lab val			ac_soap_why ac_soap_why	
+*/
+	
+	
 	lab val				ac_soap yesno
 	
 * access oil/teff/wheat in Ethiopia
@@ -359,8 +382,11 @@
 		
 	drop				ac_staple_why ac_sauce_def ac_sauce ac_sauce_why ///
 							ac_drink ac_drink_why *need
-
-	
+* label variables 
+	lab var 		ac_soap_why "Reason for unable to purchase soap"
+	lab var 		ac_water_why "Reason unable to access water for washing hands"		
+	lab var 		ac_water_drink "Reason unable to access water for drinking"
+		
 * **********************************************************************
 * 4 - clean concerns and income changes
 * **********************************************************************

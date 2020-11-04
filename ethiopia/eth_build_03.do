@@ -45,7 +45,8 @@
 * ***********************************************************************
 
 * load roster data
-	use				"$root/wave_0`w'/200`f'_WB_LSMS_HFPM_HH_Survey_Roster-Round`w'_Clean-Public", clear				
+	use				"$root/wave_0`w'/200`f'_WB_LSMS_HFPM_HH_Survey_Roster-Round`w'_Clean-Public", clear		
+	
 * rename other variables 
 	rename 			individual_id ind_id 
 	rename 			bi2_hhm_new new_mem

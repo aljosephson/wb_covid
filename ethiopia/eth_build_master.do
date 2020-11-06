@@ -505,117 +505,79 @@
 						"SNNPR" 1008 "Gambela" 1009 "Harar" 1010 ///
 						"Addis Ababa" 1011 "Dire Dawa"
 	lab val			region region
-	
-	
+	 
+
 * **********************************************************************
 * 4 - QC check 
 * **********************************************************************
 
-* compare numerica variables to other rounds
-	tostring wave, replace
-	ds, has(type numeric)
-	foreach var in `r(varlist)' {
+* compare numerical variables to other rounds & flag if 25+ percentage points different
+	tostring 		wave, replace
+	ds, 			has(type numeric)
+	foreach 		var in `r(varlist)' {
 		preserve
-			keep `var' wave
-			destring wave, replace
-			di `var'
-			gen counter = 1
-			collapse (sum) counter, by(`var' wave)
-			reshape wide counter, i(`var') j(wave)
-			forval x = 1/4 {
-				egen tot_`x' = total(counter`x')
-				gen per_`x' = counter`x' / tot_`x'
-			}
-			keep per*
-TRY 20 PERCENTAGE POINTS INSTEAD			
-	* gen flags if round is 15%+ different than comparison & comparison percent is > 10
-		forval x = 1/4 {
-			gen per_comp_1`x' = (per_1 - per_`x')/per_1
-			gen flag_`var'_1`x' = 1 if abs(per_comp_1`x') > .2 & per_comp_1`x' != . & per_1 > .1
-			gen per_comp_2`x' = (per_2 - per_`x')/per_2
-			gen flag_`var'_2`x' = 1 if abs(per_comp_2`x') > .2 & per_comp_2`x' != . & per_2 > .1
-			gen per_comp_3`x' = (per_3 - per_`x')/per_3
-			gen flag_`var'_3`x' = 1 if abs(per_comp_3`x') > .2 & per_comp_3`x' != . & per_3 > .1
-			gen per_comp_4`x' = (per_4 - per_`x')/per_4
-			gen flag_`var'_4`x' = 1 if abs(per_comp_4`x') > .2 & per_comp_4`x' != . & per_4 > .1
+		keep 		`var' wave
+		destring 	wave, replace
+		gen 		counter = 1
+		collapse 	(sum) counter, by(`var' wave)
+		reshape 	wide counter, i(`var') j(wave)
+		drop 		if `var' == .
+		foreach 	x in "$waves" {
+			egen 	tot_`x' = total(counter`x')
+			gen 	per_`x' = counter`x' / tot_`x'
 		}
+		keep 		per*
+		foreach 	x in "$waves"  {
+			foreach q in "$waves"  {
+				gen flag_`var'_`q'`x' = 1 if per_`q' - per_`x' > .25 & per_`q' != . & per_`x' != .
+			}
+		}	
 		keep *flag*
-	
-	* drop comparisons with own round	
-		drop flag_`var'_11
-		drop flag_`var'_22
-		drop flag_`var'_33
-		drop flag_`var'_44
 
 	* drop if all missing	
-		foreach v of varlist _all {
+		foreach 	v of varlist _all {
 			capture assert mi(`v')
-			if !_rc {
+			if 		!_rc {
 				drop `v'
 			}
 		}
-		gen n = _n
-		tempfile temp`var'
-		save `temp`var''
+		gen 		n = _n
+		tempfile 	temp`var'
+		save 		`temp`var''
 		restore   
 	}
 		
-	* create dataset of flags
-	//preserve
-	ds, has(type numeric)
-	clear
-	set obs 100
-	gen n = _n
-	foreach var in `r(varlist)' {
-	    merge 1:1 n using `temp`var'', nogen
-	}
-
-
-aslkdjf 
-
-
-
-foreach w in "$waves" {
-	
-}
-
-fdgfd 
-* check for consistency across waves
-
-	    preserve
-			capture numeric variable `var'
-			
-	}
-/*
- keep edu_act wave
-	levelsof(edu_act), local(var) 
-	foreach v in `var' {
-		
-	}
-
+* create dataset of flags
 	preserve
-		drop household_id* phw* ea ea_id submission attempt weight wt_*	pcrex 
-		ds
-		foreach var in `r(varlist)' {
-			tab `var' wave 
-		}
+	ds, 		has(type numeric)
+	clear
+	set 		obs 15
+	gen 		n = _n
+	foreach 	var in `r(varlist)' {
+		merge 	1:1 n using `temp`var'', nogen
+	}
+	reshape long flag_, i(n) j(variables) string 
+	drop if flag_ == .
+	drop n
+	export 		excel using "$export/eth_qc_flags.xlsx", first(var) replace
 	restore
-*/
+	destring wave, replace
+
+
 * **********************************************************************
 * 4 - end matter, clean up to save
 * **********************************************************************
 
+* final clean 
 	compress	
 	describe
 	summarize 
-
-	rename 			household_id hhid_eth 
-	label 			var hhid_eth "household id unique - ethiopia (string)"
-	
 	encode 			household_id, generate (household_id_d)
 	rename 			household_id_d hhid_eth_d
 	label 			var hhid_eth_d "household id unique - ethiopia (encoded)"
-
+	rename 			household_id hhid_eth 
+	label 			var hhid_eth "household id unique - ethiopia (string)"
+	
 * save file
 		customsave , idvar(hhid_eth) filename("eth_panel.dta") ///
 			path("$export") dofile(eth_build) user($user)

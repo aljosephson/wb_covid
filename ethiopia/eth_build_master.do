@@ -15,8 +15,7 @@
 	* xfill.ado
 
 * TO DO:
-	* finish edits for round 4
-	* complete for round 5
+	* complete
 
 
 * **********************************************************************
@@ -24,7 +23,7 @@
 * **********************************************************************
 
 * define list of waves - WHEN NEW WAVES AVAILABLE UPDATE THIS LIST
-	global 			waves "1" "2" "3" "4" 
+	global 			waves "1" "2" "3" "4" "5"
 	
 * define 
 	global			root	=	"$data/ethiopia/raw"
@@ -76,7 +75,7 @@
 		save 		`t`r''
 	}
 	use 			`t1',clear
-	foreach 		r in 2 3 4  {
+	foreach 		r in "$waves" {
 		merge 		1:1 variables using `t`r'', nogen
 	}
 	drop 			if variables == ""
@@ -278,13 +277,9 @@
 	rename			em20_farm farm_emp
 	rename			em21_farm_norm farm_norm
 	rename			em22_farm_norm_why farm_why
-	rename			em22_farm_norm_why_1 farm_why_1
-	rename			em22_farm_norm_why_2 farm_why_2
-	rename			em22_farm_norm_why_3 farm_why_3
-	rename			em22_farm_norm_why_4 farm_why_4
-	rename			em22_farm_norm_why_5 farm_why_5
-	rename			em22_farm_norm_why_6 farm_why_6
-	rename			em22_farm_norm_why_7 farm_why_7
+	forval 			x = 1/7 {
+	    rename 		em22_farm_norm_why_`x' farm_why_`x'
+	}
 	rename			em23_we wage_emp
 	rename			em24_we_layoff wage_off
 	rename			em25_we_layoff_covid wage_off_covid
@@ -313,21 +308,9 @@
 	rename			lc3_total_chg tot_inc_chg
 	
 * coping variables 	
-	rename			lc4_total_chg_cope_1 cope_1
-	rename			lc4_total_chg_cope_2 cope_2
-	rename			lc4_total_chg_cope_3 cope_3
-	rename			lc4_total_chg_cope_4 cope_4
-	rename			lc4_total_chg_cope_5 cope_5
-	rename			lc4_total_chg_cope_6 cope_6
-	rename			lc4_total_chg_cope_7 cope_7
-	rename			lc4_total_chg_cope_8 cope_8
-	rename			lc4_total_chg_cope_9 cope_9
-	rename			lc4_total_chg_cope_10 cope_10
-	rename			lc4_total_chg_cope_11 cope_11
-	rename			lc4_total_chg_cope_12 cope_12
-	rename			lc4_total_chg_cope_13 cope_13
-	rename			lc4_total_chg_cope_14 cope_14
-	rename			lc4_total_chg_cope_15 cope_15
+	forval 			x = 1/15 {
+	    rename 		lc4_total_chg_cope_`x' cope_`x'
+	}
 	rename			lc4_total_chg_cope_0 cope_16
 	rename			lc4_total_chg_cope__96 cope_17
 	
@@ -442,7 +425,7 @@
 	rename 			ag9_travel_curr aglabor 
   
 * locusts
- * first addition in R4
+ * first addition in R4 (only in r4)
 	rename 			lo1_keb	any_loc_keb
 	rename 			lo2_farm any_loc_farm
 	rename			lo3_impact_1 loc_imp_1
@@ -452,7 +435,31 @@
 	rename 			lo4_destr loc_dam
 	drop 			lo3_impact__99 
 	rename 			lo5_sprayed	loc_sprayed
-	
+
+*credit 
+ * first addition in R5
+	rename 			cr1_since_loan cr_loan 
+	forval 			x = 1/11 {
+	    rename 		cr2_since_lender_`x' cr_lend_`x'
+	}
+	forval 			x = 1/11 {
+	    rename 		cr3_since_reas_`x' cr_why_`x'
+	}
+	forval    		x = 1/12 {
+		rename 		cr4_since_who_`x' cr_who_`x'
+	}
+	rename 			cr5_since_duedate cr_due
+	rename 			cr6_before_loan cr_bef
+	forval 			x = 1/11 {
+		rename 		cr7_before_reas_`x' cr_bef_why_`x'
+	}
+	forval 			x = 1/12 {
+	    rename		cr8_before_who_`x' cr_bef_who_`x'
+	}
+	rename 			cr9_worry cr_worry
+	rename 			cr10_missed_pay cr_miss_pay
+	rename 			cr11_delay_chg cr_delay_pay
+		
 * generate any shock variable
 	gen				shock_any = 1 if farm_inc == 1 & farm_chg == 3 | farm_chg == 4
 	replace			shock_any = 1 if bus_inc == 1 & bus_chg == 3 | bus_chg == 4
@@ -485,8 +492,13 @@
 						ir1_endearly ir1_whyendearly ir1_whyendearly_other ///
 						ir_lang ir_understand ir_confident em15b_bus_prev_closed_other ///
 						key em19_bus_inc_low_why__* em19_bus_inc_low_why hh_id hhh_id ///
-						ag* start_date hhh_gender hhh_age same loc_chg same_hhh			
-
+						ag* start_date hhh_gender hhh_age same loc_chg same_hhh ///			
+						cr2_since_lender cr2_since_lender__96 cr2_since_lender_other ///
+						cr3_since_reas cr3_since_reas__96 cr3_since_reas_other ///
+						cr4_since_who cr4_since_who__96 cr4_since_who_other ///
+						cr7_before_reas cr7_before_reas__96 cr7_before_reas_other ///
+						cr8_before_who cr8_before_who__96 cr8_before_who_other
+						
 * rename regions
 	replace 		region = 1001 if region == 1
 	replace 		region = 1002 if region == 2
@@ -532,7 +544,7 @@
 				gen flag_`var'_`q'`x' = 1 if per_`q' - per_`x' > .25 & per_`q' != . & per_`x' != .
 			}
 		}	
-		keep *flag*
+		keep 		*flag*
 
 	* drop if all missing	
 		foreach 	v of varlist _all {
@@ -549,19 +561,20 @@
 		
 * create dataset of flags
 	preserve
-	ds, 		has(type numeric)
+	ds, 			has(type numeric)
 	clear
-	set 		obs 15
-	gen 		n = _n
-	foreach 	var in `r(varlist)' {
-		merge 	1:1 n using `temp`var'', nogen
+	set 			obs 15
+	gen 			n = _n
+	foreach 		var in `r(varlist)' {
+		merge 		1:1 n using `temp`var'', nogen
 	}
-	reshape long flag_, i(n) j(variables) string 
-	drop if flag_ == .
-	drop n
-	export 		excel using "$export/eth_qc_flags.xlsx", first(var) replace
+	reshape 		long flag_, i(n) j(variables) string 
+	drop 			if flag_ == .
+	drop 			n
+	sort 			variable	
+	export 			excel using "$export/eth_qc_flags.xlsx", first(var) sheetreplace sheet(flags)
 	restore
-	destring wave, replace
+	destring 		wave, replace
 
 
 * **********************************************************************
@@ -579,8 +592,8 @@
 	label 			var hhid_eth "household id unique - ethiopia (string)"
 	
 * save file
-		customsave , idvar(hhid_eth) filename("eth_panel.dta") ///
-			path("$export") dofile(eth_build) user($user)
+	customsave, 	idvar(hhid_eth) filename("eth_panel.dta") ///
+					path("$export") dofile(eth_build) user($user)
 
 * close the log
 	log	close

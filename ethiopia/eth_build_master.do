@@ -16,13 +16,18 @@
 
 * TO DO:
 	* complete
-
+	* when new waves available:
+		* create build for new wave based on previous ones
+		* update global list of waves below
+		* check variable crosswalk for differences/new variables & update code if needed
+		* check QC flags for issues/discrepancies
+		
 
 * **********************************************************************
 * 0 - setup
 * **********************************************************************
 
-* define list of waves - WHEN NEW WAVES AVAILABLE UPDATE THIS LIST
+* define list of waves
 	global 			waves "1" "2" "3" "4" "5"
 	
 * define 
@@ -68,7 +73,7 @@
 			replace variables = "`var'" in `counter'
 			local 	counter = `counter' + 1
 			set 	obs `counter'
-			recast str30 variables
+			recast 	str30 variables
 		}
 		gen 		wave`r' = 1
 		tempfile 	t`r'
@@ -92,7 +97,7 @@
 			use		"$export/wave_01/r1", clear
 		}
 		else {
-			append using "$export/wave_0`r'/r`r'"
+			append 	using "$export/wave_0`r'/r`r'"
 		}
 	}
 	
@@ -223,24 +228,13 @@
 		rename 			ac5b_sec_edu_type_4 edu_4_sec 
 		rename 			ac5b_sec_edu_type_5 edu_5_sec 
 		rename 			ac5b_sec_edu_type__96 edu_other_sec 
-				
-		replace 		sch_child = sch_child_prim if sch_child == . & wave >= 3
-		replace 		sch_child = sch_child_sec if sch_child == . & wave >= 3 
-		replace 		edu_act = edu_act_prim if edu_act == . & wave >= 3
-		replace 		edu_act = edu_act_sec if edu_act == . & wave >= 3
-		
-		forval 			ed = 1/5 {
-			foreach 	i in 0 1 {
-				replace edu_`ed' = `i' if edu_`ed'_prim == `i' & wave >= 3
-				replace edu_`ed' = `i' if edu_`ed'_sec == `i' & wave >= 3
-			}
-		}
 
 		drop 			ac5_edu_type__98 ac5_edu_type__99 ac5_edu_type__96 ///
 							ac5_edu_type_other edu_1_prim edu_2_prim ///
 							edu_3_prim edu_4_prim edu_5_prim edu_other_prim ///
 							edu_1_sec edu_2_sec edu_3_sec edu_4_sec edu_5_sec ///
 							edu_other_sec
+							
 	* wash (water and soap)
 	 * only in round 4
 		rename 			wa1_water_drink ac_drink
@@ -578,7 +572,7 @@
 
 
 * **********************************************************************
-* 4 - end matter, clean up to save
+* 5 - end matter, clean up to save
 * **********************************************************************
 
 * final clean 

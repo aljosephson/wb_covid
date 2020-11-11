@@ -239,13 +239,19 @@
 	 * only in round 4
 		rename 			wa1_water_drink ac_drink
 		rename 			wa2_water_drink_why ac_drink_why
+		lab var 		ac_drink "Had Enough Drinking Water in Last 7 Days"
+		lab var 		ac_drink_why "Main Reason Not Enough Drinking Water in Last 7 Days"
 		
 		rename 			wa3_water_wash ac_water
 		rename 			wa4_water_wash_why ac_water_why
+		lab var 		ac_water "Had Enough Handwashing Water in Last 7 Days"
+		lab var 		ac_water_why "Main Reason Not Enough Handwashing Water in Last 7 Days"
 
 		rename 			wa5_soap_wash ac_soap
-		rename 			wa6_soap_wash_why ac_soap_why						
-	
+		rename 			wa6_soap_wash_why ac_soap_why
+		lab var 		ac_soap "Had Enough Handwashing Soap in Last 7 Day"
+		lab var 		ac_soap_why "Main Reason Not Enough Handwashing Soap in Last 7 Days"
+		
 * employment variables 	
 	rename			em1_work_cur emp
 	rename			em6_work_cur_act emp_act

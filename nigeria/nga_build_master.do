@@ -12,7 +12,9 @@
 	* raw Nigeria data
 
 * TO DO:
-	* need to revist access variables in round 2
+	* check QC excel for errors
+	* figure out log close error
+	* add new waves
 
 
 * **********************************************************************
@@ -105,7 +107,9 @@
 	lab def			lbqui 1 "Quintile 1" 2 "Quintile 2" 3 "Quintile 3" ///
 						4 "Quintile 4" 5 "Quintile 5"
 	lab val			quints lbqui	
-	
+
+* create country variable
+	gen				country = 3		
 
 * ***********************************************************************
 * 3 - clean nigeria panel
@@ -155,31 +159,31 @@
 	
  * gov
 	rename 			s3q3__1 gov_1
-	label var 		gov_1 "government taken steps to advise citizens to stay home"
+	lab var 		gov_1 "government taken steps to advise citizens to stay home"
 	rename 			s3q3__2 gov_10
-	label var 		gov_10 "government taken steps to advise to avoid social gatherings"
+	lab var 		gov_10 "government taken steps to advise to avoid social gatherings"
 	rename 			s3q3__3 gov_2
-	label var 		gov_2 "government restricted travel within country"
+	lab var 		gov_2 "government restricted travel within country"
 	rename 			s3q3__4 gov_3
-	label var 		gov_3 "government restricted international travel"
+	lab var 		gov_3 "government restricted international travel"
 	rename 			s3q3__5 gov_4
-	label var 		gov_4 "government closure of schools and universities"
+	lab var 		gov_4 "government closure of schools and universities"
 	rename 			s3q3__6 gov_5
-	label var		gov_5 "government institute government / lockdown"
+	lab var			gov_5 "government institute government / lockdown"
 	rename 			s3q3__7 gov_6
-	label var 		gov_6 "government closure of non-essential businesses"
+	lab var 		gov_6 "government closure of non-essential businesses"
 	rename 			s3q3__8 gov_11
-	label var 		gov_11 "government steps of sensitization / public awareness"
+	lab var 		gov_11 "government steps of sensitization / public awareness"
 	rename			s3q3__9 gov_14
-	label var		gov_14 "government establish isolation centers"
+	lab var			gov_14 "government establish isolation centers"
 	rename 			s3q3__10 gov_15
-	label var 		gov_15 "government disinfect public spaces"
+	lab var 		gov_15 "government disinfect public spaces"
 	rename 			s3q3__96 gov_16
-	label var		gov_16 "government take other steps"
+	lab var			gov_16 "government take other steps"
 	rename 			s3q3__11 gov_none 
-	label var 		gov_none "government has taken no steps"
+	lab var 		gov_none "government has taken no steps"
 	rename 			s3q3__98 gov_dnk
-	label var 		gov_dnk "do not know steps government has taken"
+	lab var 		gov_dnk "do not know steps government has taken"
 	
 * satisfaction + government perspectives 
 	rename 			s3q4 satis 
@@ -198,17 +202,65 @@
 	rename			s4q4 bh_4
 
 * access variables
+ * define labels
+	lab def 		ac_why 1 "shops out" 2 "markets closed" 3 "no transportation" /// 
+						4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
+						7 "cannot afford" 8 "afraid to get virus" 
+						
+ * split out overlapping question numbers (but different questions) across waves
+	gen 			num_gath = .
+	lab var			num_gath "In the last 7 days, how many religious or social gatherings have you attended?"
+	lab def			num_gath 1 "1" 2 "2" 3 "3" 4 "4" 5 "5 or more"
+	lab val			num_gath num_gath
+	replace 		num_gath = s5q1e if wave == 3
+	replace 		s5q1e = . if wave == 3
+	gen 			ac_drink = cond(s5q1e == 2, 1, cond(s5q1e == 1, 2,.))
+	lab var 		ac_drink "Had Enough Drinking Water in Last 7 Days"
+	lab def			yesno 1 "Yes" 2 "No"
+	lab val 		ac_drink yesno
+	rename 			s5q1f ac_drink_why
+	lab var 		ac_drink_why "Main Reason Not Enough Drinking Water in Last 7 Days"
+	drop 			s5q1e
+		
+	rename 			s5q1a ac_soap
+	lab var 		ac_soap "Had Enough Handwashing Soap in Last 7 Day"
+	gen 			ac_soap_why = cond(wave == 2, s5q1a1, . )
+	lab var 		ac_soap_why "Main Reason Not Enough Handwashing Soap in Last 7 Days"
+	lab val 		ac_soap_why ac_why
+	replace 		s5q1a1 = . if wave == 2
+		
+	rename 			s5q1b ac_water
+	lab var 		ac_water "Had Enough Handwashing Water in Last 7 Days"
+	gen 			ac_water_why = cond(wave == 2, s5q1b1, . )
+	lab var 		ac_water_why "Main Reason Not Enough Handwashing Water in Last 7 Days"
+	replace 		s5q1b1 = . if wave == 2
+	
+ * format access variables
+	rename 			s5q1c freq_wash_soap 
+	rename 			s5q1d freq_mask
+
+	rename 			s5q1a1 ac_med_need
+	rename 			s5q1b1 ac_med
+	gen 			ac_med_why = . 
+	replace			ac_med_why = 1 if s5q1c1__1 == 1 
+	replace 		ac_med_why = 2 if s5q1c1__2 == 1 
+	replace 		ac_med_why = 3 if s5q1c1__3 == 1 
+	replace 		ac_med_why = 4 if s5q1c1__4 == 1 
+	replace 		ac_med_why = 5 if s5q1c1__5 == 1 
+	replace 		ac_med_why = 6 if s5q1c1__6 == 1 
+	lab val			ac_med_why ac_why 
+	label var 		ac_med_why "reason for unable to purchase medicine"
+
 	rename 			s5q1a2 ac_soap_need
-	rename 			s5q1b2 ac_soap 
-	generate		ac_soap_why = . 
+	replace 		ac_soap = s5q1b2 if wave == 1
+	drop 			s5q1b2
 	replace			ac_soap_why = 1 if s5q1c2__1 == 1 
 	replace 		ac_soap_why = 2 if s5q1c2__2 == 1
 	replace 		ac_soap_why = 3 if s5q1c2__3 == 1
 	replace 		ac_soap_why = 4 if s5q1c2__4 == 1
 	replace 		ac_soap_why = 5 if s5q1c2__5 == 1
 	replace 		ac_soap_why = 6 if s5q1c2__6 == 1
-	lab def			ac_soap_why 1 "shops out" 2 "markets closed" 3 "no transportation" /// 
-								4 "restrictions to go out" 5 "increase in price" 6 "no money"
+	lab val			ac_soap_why ac_why
 	label var 		ac_soap_why "reason for unable to purchase soap"
 								
 	rename 			s5q1a3 ac_clean_need 
@@ -220,8 +272,7 @@
 	replace 		ac_clean_why = 4 if s5q1c3__4 == 1
 	replace 		ac_clean_why = 5 if s5q1c3__5 == 1
 	replace 		ac_clean_why = 6 if s5q1c3__6 == 1
-	lab def			ac_clean_why 1 "shops out" 2 "markets closed" 3 "no transportation" /// 
-								4 "restrictions to go out" 5 "increase in price" 6 "no money"
+	lab val			ac_clean_why ac_why
 	label var 		ac_clean_why "reason for unable to purchase cleaning supplies" 			
 
 	rename 			s5q1a4 ac_rice_need
@@ -233,8 +284,7 @@
 	replace 		ac_rice_why = 4 if s5q1c4__4 == 1 
 	replace 		ac_rice_why = 5 if s5q1c4__5 == 1 
 	replace 		ac_rice_why = 6 if s5q1c4__6 == 1 
-	lab def			ac_rice_why 1 "shops out" 2 "markets closed" 3 "no transportation" /// 
-								4 "restrictions to go out" 5 "increase in price" 6 "no money" 
+	lab val			ac_rice_why ac_why 
 	label var 		ac_rice_why "reason for unable to purchase rice"
 	
 	rename 			s5q1a5 ac_beans_need
@@ -246,8 +296,7 @@
 	replace 		ac_beans_why = 4 if s5q1c5__4 == 1 
 	replace 		ac_beans_why = 5 if s5q1c5__5 == 1 
 	replace 		ac_beans_why = 6 if s5q1c5__6 == 1 
-	lab def			ac_beans_why 1 "shops out" 2 "markets closed" 3 "no transportation" /// 
-								4 "restrictions to go out" 5 "increase in price" 6 "no money" 
+	lab val			ac_beans_why ac_why 
 	label var 		ac_beans_why "reason for unable to purchase beans"
 		
 	rename 			s5q1a6 ac_cass_need
@@ -259,8 +308,7 @@
 	replace 		ac_cass_why = 4 if s5q1c6__4 == 1 
 	replace 		ac_cass_why = 5 if s5q1c6__5 == 1 
 	replace 		ac_cass_why = 6 if s5q1c6__6 == 1 
-	lab def			ac_cass_why 1 "shops out" 2 "markets closed" 3 "no transportation" /// 
-								4 "restrictions to go out" 5 "increase in price" 6 "no money" 
+	lab val			ac_cass_why ac_why
 	label var 		ac_cass_why "reason for unable to purchase cassava"
 	
 	rename 			s5q1a7 ac_yam_need
@@ -272,8 +320,7 @@
 	replace 		ac_yam_why = 4 if s5q1c7__4 == 1 
 	replace 		ac_yam_why = 5 if s5q1c7__5 == 1 
 	replace 		ac_yam_why = 6 if s5q1c7__6 == 1 
-	lab def			ac_yam_why 1 "shops out" 2 "markets closed" 3 "no transportation" /// 
-								4 "restrictions to go out" 5 "increase in price" 6 "no money" 
+	lab val			ac_yam_why ac_why
 	label var 		ac_yam_why "reason for unable to purchase yam"
 	
 	rename 			s5q1a8 ac_sorg_need
@@ -285,24 +332,9 @@
 	replace 		ac_sorg_why = 4 if s5q1c8__4 == 1 
 	replace 		ac_sorg_why = 5 if s5q1c8__5 == 1 
 	replace 		ac_sorg_why = 6 if s5q1c8__6 == 1 
-	lab def			ac_sorg_why 1 "shops out" 2 "markets closed" 3 "no transportation" /// 
-								4 "restrictions to go out" 5 "increase in price" 6 "no money" 
+	lab val			ac_sorg_why ac_why 
 	label var 		ac_sorg_why "reason for unable to purchase sorghum"
 	
-	rename 			s5q1a1 ac_med_need
-	rename 			s5q1b1 ac_med
-	gen 			ac_med_why = . 
-	replace			ac_med_why = 1 if s5q1c1__1 == 1 
-	replace 		ac_med_why = 2 if s5q1c1__2 == 1 
-	replace 		ac_med_why = 3 if s5q1c1__3 == 1 
-	replace 		ac_med_why = 4 if s5q1c1__4 == 1 
-	replace 		ac_med_why = 5 if s5q1c1__5 == 1 
-	replace 		ac_med_why = 6 if s5q1c1__6 == 1 
-	lab def			ac_med_why 1 "shops out" 2 "markets closed" 3 "no transportation" /// 
-								4 "restrictions to go out" 5 "increase in price" 6 "no money" 
-	label var 		ac_med_why "reason for unable to purchase medicine"
-
-
 	rename 			s5q2 ac_medserv_need
 	rename 			s5q3 ac_medserv
 	rename 			s5q4 ac_medserv_why 
@@ -311,7 +343,7 @@
 	lab def			ac_medserv_why 1 "no money" 2 "no med personnel" 3 "facility full" /// 
 								4 "other" 5 "no transportation" 6 "restrictions to go out" /// 
 								7 "afraid of virus" 
-	label var 		ac_med_why "reason for unable to access medical services"
+	lab var 		ac_med_why "reason for unable to access medical services"
 	
 	rename 			filter1 children520
 	rename 			s5q4a sch_child
@@ -337,16 +369,6 @@
 	rename 			s5q8 bank
 	rename 			s5q9 ac_bank 
 	rename 			s5q10 ac_bank_why 
-	
-/* round 2 access differs from round 1 access 
-	
-	rename 			s5q1e suff_waterdrink
-	rename 			s5q1f suff_waterdrink_why 
-	rename 			s5q1a suff_soap_ac
-	rename 			s5q1b suff_waterwash 
-	rename 			s5q1c freq_washsoap 
-	rename 			s5q1d freq_mask
-*/	
 
 * employment variables 
 	rename			s6q1 emp
@@ -373,8 +395,7 @@
 	rename			s6q17__6 farm_why_6
 	rename			s6q17__96 farm_why_7
 	
-* round 2 access differs from round 1 employment 
-
+* round 2 differs from round 1 employment 
 	rename 			s6q1a emp_7
 	rename 			s6q1b emp_7ret 
 	rename 			s6q1c emp_7why
@@ -477,12 +498,6 @@
 						s12q10a s5*  
 	drop if			wave ==  .
 	
-* create country variables
-	gen				country = 3
-	order			country
-	lab def			country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda"
-	lab val			country country	
-	
 * reorder variables
 	order			fies_2 fies_3 fies_4 fies_5 fies_6 fies_7 fies_8, after(fies_1)
 
@@ -500,39 +515,39 @@
 	rename			s7q23 wage_chg
 	lab var			wage_chg "Change in income from wage employment since covid"	
 	rename 			s7q14 rem_for
-	label 			var rem_for "Income from remittances abroad in last 12 months"
+	lab var 		rem_for "Income from remittances abroad in last 12 months"
 	rename			s7q24 rem_for_chg
-	label 			var rem_for_chg "Change in income from remittances abroad since covid"	
+	lab var 		rem_for_chg "Change in income from remittances abroad since covid"	
 	rename 			s7q15 rem_dom
-	label 			var rem_dom "Income from remittances domestic in last 12 months"
+	lab var 		rem_dom "Income from remittances domestic in last 12 months"
 	rename			s7q25 rem_dom_chg
-	label 			var rem_dom_chg "Change in income from remittances domestic since covid"	
+	lab	var 		rem_dom_chg "Change in income from remittances domestic since covid"	
 	rename 			s7q16 asst_inc
-	label 			var asst_inc "Income from assistance from non-family in last 12 months"
+	lab var			asst_inc "Income from assistance from non-family in last 12 months"
 	rename			s7q26 asst_chg
-	label 			var asst_chg "Change in income from assistance from non-family since covid"
+	lab var 		asst_chg "Change in income from assistance from non-family since covid"
 	rename 			s7q17 isp_inc
-	label 			var isp_inc "Income from properties, investment in last 12 months"
+	lab var 		isp_inc "Income from properties, investment in last 12 months"
 	rename			s7q27 isp_chg
-	label 			var isp_chg "Change in income from properties, investment since covid"
+	lab var 		isp_chg "Change in income from properties, investment since covid"
 	rename 			s7q18 pen_inc
-	label 			var pen_inc "Income from pension in last 12 months"
+	lab var 		pen_inc "Income from pension in last 12 months"
 	rename			s7q28 pen_chg
-	label 			var pen_chg "Change in income from pension since covid"
+	lab var 		pen_chg "Change in income from pension since covid"
 	rename 			s7q19 gov_inc
-	label 			var gov_inc "Income from government assistance in last 12 months"
+	lab	var 		gov_inc "Income from government assistance in last 12 months"
 	rename			s7q29 gov_chg
-	label 			var gov_chg "Change in income from government assistance since covid"	
+	lab var 		gov_chg "Change in income from government assistance since covid"	
 	rename 			s7q110 ngo_inc
-	label 			var ngo_inc "Income from NGO assistance in last 12 months"
+	lab var 		ngo_inc "Income from NGO assistance in last 12 months"
 	rename			s7q210 ngo_chg
-	label 			var ngo_chg "Change in income from NGO assistance since covid"
+	lab var 		ngo_chg "Change in income from NGO assistance since covid"
 	rename 			s7q196 oth_inc
-	label 			var oth_inc "Income from other source in last 12 months"
+	lab var 		oth_inc "Income from other source in last 12 months"
 	rename			s7q296 oth_chg
-	label 			var oth_chg "Change in income from other source since covid"	
+	lab var 		oth_chg "Change in income from other source since covid"	
 	rename			s7q299 tot_inc_chg
-	label 			var tot_inc_chg "Change in income from other source since covid"	
+	lab var 		tot_inc_chg "Change in income from other source since covid"	
 
 	drop			s7q199
 

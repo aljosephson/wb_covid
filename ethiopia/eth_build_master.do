@@ -283,6 +283,11 @@
 	rename			em23_we wage_emp
 	rename			em24_we_layoff wage_off
 	rename			em25_we_layoff_covid wage_off_covid
+	
+ /* Change pre-COVID employment to "yes" if the respondent is currently employed - interviewers in rounds 4 and 5 
+ asked every respondent question 2 from the employment section (em2_work_pre), regardless of their answer to question 1 
+ (em1_work_cur), whereas in rounds 1-3, respondents were only asked question 2 if they responded "no" to question 1 */
+	replace emp_pre = 1 if emp == 1 & emp_pre == .
 
 * income variables 	
 	rename			lc1_farm farm_inc

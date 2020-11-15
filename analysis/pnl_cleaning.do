@@ -17,6 +17,7 @@
 	* need to revist access for some variables - done?
 	* change new ethiopia access data to match other rounds (yes to no, etc)
 	* NOTE make sure add regions and labels  to countries 2-4
+	* make sure credit variables match
 
 * **********************************************************************
 * 0 - setup

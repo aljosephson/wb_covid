@@ -31,6 +31,13 @@
 	cap log 		close
 	log using		"$logout/nga_reshape", append
 
+* set local wave number & file number
+	local			w = 3
+	
+* make wave folder within refined folder if it does not already exist 
+	capture mkdir "$export/wave_0`w'" 
+		
+		
 * ***********************************************************************
 * 1 - format secitons and save tempfiles
 * ***********************************************************************
@@ -41,7 +48,7 @@
 * ***********************************************************************
 	
 * load data
-	use				"$root/wave_03/r3_sect_2.dta", clear
+	use				"$root/wave_0`w'/r`w'_sect_2.dta", clear
 
 * rename other variables 
 	rename 			indiv ind_id 
@@ -79,7 +86,7 @@
 * ***********************************************************************
 
 * load data
-	use				"$root/wave_03/r3_sect_a_2_5_5a_6_12", clear
+	use				"$root/wave_0`w'/r`w'_sect_a_2_5_5a_6_12", clear
 	
 * drop all but household respondant
 	keep			hhid s12q9
@@ -87,7 +94,7 @@
 	isid			hhid
 	
 * merge in household roster
-	merge 			1:1	hhid indiv using "$root/wave_03/r3_sect_2.dta"
+	merge 			1:1	hhid indiv using "$root/wave_0`w'/r`w'_sect_2.dta"
 	keep 			if _merge == 3
 	drop 			_merge
 	
@@ -111,7 +118,7 @@
 * ***********************************************************************
 
 * load data
-	use				"$root/wave_03/r3_sect_7", clear
+	use				"$root/wave_0`w'/r`w'_sect_7", clear
 
 * reformat HHID
 	format 			%5.0f hhid
@@ -127,13 +134,37 @@
 	tempfile		tempc
 	save			`tempc'	
 	
-	
+
 * ***********************************************************************
-* 1d - section 10: shocks
+* 1d - section 11: assistance
+* ***********************************************************************
+
+* load data  - updated via convo with Talip 9/1
+	use				"$root/wave_0`w'/r`w'_sect_11", clear
+
+* reformat HHID
+	format 			%5.0f hhid
+	
+* drop other 
+	drop 			zone state lga sector ea s11q2 s11q3__1 s11q3__2 ///
+						s11q3__3 s11q3__4 s11q3__5 s11q3__6 s11q3__7 ///
+						s11q3__96 s11q3_os s11q5 s11q6__1 s11q6__2 ///
+						s11q6__3 s11q6__4 s11q6__6 s11q6__7 s11q6__96 s11q6_os
+
+* reshape 
+	reshape 		wide s11q1, i(hhid) j(assistance_cd)
+
+* save temp file
+	tempfile		tempd
+	save			`tempd'					
+		
+		
+* ***********************************************************************
+* 1e - section 10: shocks
 * ***********************************************************************
 
 * load data
-	use				"$root/wave_03/r3_sect_10", clear
+	use				"$root/wave_0`w'/r`w'_sect_10", clear
 
 * reformat HHID
 	format 			%5.0f hhid
@@ -153,39 +184,15 @@
 	collapse 		(max) s10q3__1- shock_9, by(hhid)
 	
 * save temp file
-	tempfile		tempd
-	save			`tempd'
-	
-	
-* ***********************************************************************
-* 1e - section 11: assistance
-* ***********************************************************************
-
-* load data  - updated via convo with Talip 9/1
-	use				"$root/wave_03/r3_sect_11", clear
-
-* reformat HHID
-	format 			%5.0f hhid
-	
-* drop other 
-	drop 			zone state lga sector ea s11q2 s11q3__1 s11q3__2 ///
-						s11q3__3 s11q3__4 s11q3__5 s11q3__6 s11q3__7 ///
-						s11q3__96 s11q3_os s11q5 s11q6__1 s11q6__2 ///
-						s11q6__3 s11q6__4 s11q6__6 s11q6__7 s11q6__96 s11q6_os
-
-* reshape 
-	reshape 		wide s11q1, i(hhid) j(assistance_cd)
-
-* save temp file
 	tempfile		tempe
-	save			`tempe'					
-		
-
+	save			`tempe'
+	
+	
 * ***********************************************************************
 * 2 - FIES score
 * ***********************************************************************
 
-* not available for round 3
+* not available for round
 
 		
 * ***********************************************************************
@@ -193,17 +200,17 @@
 * ***********************************************************************
 
 * merge sections based on hhid
-	use				"$root/wave_03/r3_sect_a_2_5_5a_6_12", clear
+	use				"$root/wave_0`w'/r`w'_sect_a_2_5_5a_6_12", clear
 	foreach 		s in a b c d e {
 	    merge		1:1 hhid using `temp`s'', nogen
 	}
 	
 * generate round variable
-	gen				wave = 3
+	gen				wave = `w'
 	lab var			wave "Wave number"	
 	
 * save round file
-	save			"$export/wave_03/r3", replace
+	save			"$export/wave_0`w'/r`w'", replace
 
 * close the log
 	log	close

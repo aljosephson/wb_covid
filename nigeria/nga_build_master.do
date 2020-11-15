@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: jdm
-* Edited by: jdm
-* Last edited: 16 September 2020 
+* Edited by: amf
+* Last edited: Nov 2020 
 * Stata v.16.1
 
 * does
@@ -12,9 +12,8 @@
 	* raw Nigeria data
 
 * TO DO:
-	* check QC excel for errors
+	* investigate inconsistencies flagged in QC 
 	* figure out log close error
-	* add new waves
 
 
 * **********************************************************************
@@ -22,7 +21,7 @@
 * **********************************************************************
 
 * define list of waves
-	global 			waves "1" "2" "3"
+	global 			waves "1" "2" "3" "4" "5"
 	
 * define 
 	global	root	=	"$data/nigeria/raw"
@@ -47,7 +46,7 @@
 	
 * open log
 	cap log 		close
-	log using		"$logout/nga_build", append
+	log using 		"$logout/nga_build", append
 
 	
 * **********************************************************************
@@ -116,12 +115,14 @@
 * ***********************************************************************	
 	
 * rationalize variables across waves
-	gen				phw = wt_baseline if wt_baseline != . & wave == 1
-	replace			phw = wt_round2 if wt_round2 != . & wave == 2
-	replace			phw = wt_round3 if wt_round3 != . & wave == 3
+	gen				phw = .
+	rename 			wt_baseline wt_round1
+	foreach r in "$waves" {
+		replace		phw = wt_round`r' if wt_round`r' != . & wave == `r'
+	}	
 	lab var			phw "sampling weights"
-	order			phw, after(wt_baseline)
-	drop			wt_baseline wt_round2 wt_round3 weight	
+	order			phw, after(wt_round1)
+	drop			wt_round* weight	
 	
 * administrative variables 	
 	rename			sector urb_rural 
@@ -212,8 +213,8 @@
 	lab var			num_gath "In the last 7 days, how many religious or social gatherings have you attended?"
 	lab def			num_gath 1 "1" 2 "2" 3 "3" 4 "4" 5 "5 or more"
 	lab val			num_gath num_gath
-	replace 		num_gath = s5q1e if wave == 3
-	replace 		s5q1e = . if wave == 3
+	replace 		num_gath = s5q1e if wave == 3 | wave == 4
+	replace 		s5q1e = . if wave == 3 | wave == 4
 	gen 			ac_drink = cond(s5q1e == 2, 1, cond(s5q1e == 1, 2,.))
 	lab var 		ac_drink "Had Enough Drinking Water in Last 7 Days"
 	lab def			yesno 1 "Yes" 2 "No"
@@ -236,9 +237,10 @@
 	replace 		s5q1b1 = . if wave == 2
 	
  * format access variables
+  * frequnecy wash and mask
 	rename 			s5q1c freq_wash_soap 
 	rename 			s5q1d freq_mask
-
+  * medicine
 	rename 			s5q1a1 ac_med_need
 	rename 			s5q1b1 ac_med
 	gen 			ac_med_why = . 
@@ -250,7 +252,7 @@
 	replace 		ac_med_why = 6 if s5q1c1__6 == 1 
 	lab val			ac_med_why ac_why 
 	label var 		ac_med_why "reason for unable to purchase medicine"
-
+  * soap 
 	rename 			s5q1a2 ac_soap_need
 	replace 		ac_soap = s5q1b2 if wave == 1
 	drop 			s5q1b2
@@ -262,7 +264,7 @@
 	replace 		ac_soap_why = 6 if s5q1c2__6 == 1
 	lab val			ac_soap_why ac_why
 	label var 		ac_soap_why "reason for unable to purchase soap"
-								
+  * cleaning supplies								
 	rename 			s5q1a3 ac_clean_need 
 	rename 			s5q1b3 ac_clean
 	gen 			ac_clean_why = . 
@@ -274,7 +276,7 @@
 	replace 		ac_clean_why = 6 if s5q1c3__6 == 1
 	lab val			ac_clean_why ac_why
 	label var 		ac_clean_why "reason for unable to purchase cleaning supplies" 			
-
+  * rice
 	rename 			s5q1a4 ac_rice_need
 	rename 			s5q1b4 ac_rice
 	gen 			ac_rice_why = . 
@@ -286,7 +288,7 @@
 	replace 		ac_rice_why = 6 if s5q1c4__6 == 1 
 	lab val			ac_rice_why ac_why 
 	label var 		ac_rice_why "reason for unable to purchase rice"
-	
+  * beans 	
 	rename 			s5q1a5 ac_beans_need
 	rename 			s5q1b5 ac_beans
 	gen 			ac_beans_why = . 
@@ -298,7 +300,7 @@
 	replace 		ac_beans_why = 6 if s5q1c5__6 == 1 
 	lab val			ac_beans_why ac_why 
 	label var 		ac_beans_why "reason for unable to purchase beans"
-		
+  * cassava 		
 	rename 			s5q1a6 ac_cass_need
 	rename 			s5q1b6 ac_cass
 	gen 			ac_cass_why = . 
@@ -310,7 +312,7 @@
 	replace 		ac_cass_why = 6 if s5q1c6__6 == 1 
 	lab val			ac_cass_why ac_why
 	label var 		ac_cass_why "reason for unable to purchase cassava"
-	
+  * yam	
 	rename 			s5q1a7 ac_yam_need
 	rename 			s5q1b7 ac_yam
 	gen 			ac_yam_why = . 
@@ -322,7 +324,7 @@
 	replace 		ac_yam_why = 6 if s5q1c7__6 == 1 
 	lab val			ac_yam_why ac_why
 	label var 		ac_yam_why "reason for unable to purchase yam"
-	
+  * sorghum 	
 	rename 			s5q1a8 ac_sorg_need
 	rename 			s5q1b8 ac_sorg
 	gen 			ac_sorg_why = . 
@@ -334,7 +336,7 @@
 	replace 		ac_sorg_why = 6 if s5q1c8__6 == 1 
 	lab val			ac_sorg_why ac_why 
 	label var 		ac_sorg_why "reason for unable to purchase sorghum"
-	
+  * medical service	
 	rename 			s5q2 ac_medserv_need
 	rename 			s5q3 ac_medserv
 	rename 			s5q4 ac_medserv_why 
@@ -344,19 +346,24 @@
 								4 "other" 5 "no transportation" 6 "restrictions to go out" /// 
 								7 "afraid of virus" 
 	lab var 		ac_med_why "reason for unable to access medical services"
-	
+  * education
 	rename 			filter1 children520
+	rename 			s5q5b sch_curr
+	rename 			s5q5c sch_open
 	rename 			s5q4a sch_child
-	rename 			s5q4b edu_act 
+	rename 			s5q4b edu_act
+	replace 		edu_act = s5cq6 if wave == 5
 	rename 			s5q5__1 edu_1 
 	rename 			s5q5__2 edu_2  
 	rename 			s5q5__3 edu_3 
 	rename 			s5q5__4 edu_4 
 	rename 			s5q5__7 edu_5 
-	rename 			s5q5__96 edu_other 
 	rename 			s5q5__5 edu_6 
-	rename 			s5q5__6 edu_7 
-	
+	rename 			s5q5__6 edu_7 	
+	rename 			s5q5__96 edu_other 
+	forval 			x = 1/7 {
+	    replace 	edu_`x' = s5cq7__`x' if wave == 5
+	}
 	rename 			s5q6 edu_cont
 	rename			s5q7__1 edu_cont_1
 	rename 			s5q7__2 edu_cont_2 
@@ -365,11 +372,64 @@
 	rename 			s5q7__5 edu_cont_6 
 	rename 			s5q7__6 edu_cont_7 
 	rename 			s5q7__7	educ_cont_8 
-	
+	rename 			s5cq1 sch_att
+	forval 			x = 1/14 {
+	    rename 		s5cq2__`x' sch_att_why_`x'
+	}
+	rename 			s5cq3 sch_prec
+	forval 			x = 1/11 {
+	    rename 		s5cq4__`x' sch_prec_`x'
+	}
+	rename 			s5cq4__99 sch_prec_15
+	rename 			s5cq5 sch_prec_sat
+	rename 			s5cq8 sch_contact
+	forval 			x = 1/7 {
+	    rename 		s5cq9__`x' sch_contact_`x'
+	}
+  * credit	
 	rename 			s5q8 bank
 	rename 			s5q9 ac_bank 
 	rename 			s5q10 ac_bank_why 
-
+ 
+	rename 			s5bq1 ac_cr_loan
+	forval 			x = 1/9 {
+		rename 		s5bq2__`x' cr_lend_`x'
+	}
+	drop 			s5bq2__96
+	forval 			x = 1/13 {
+		rename 		s5bq3__`x' ac_cr_why_`x'
+	}
+	drop 			s5bq3__96
+	forval 			x = 1/4 {
+	    rename 		s5bq4_`x' ac_cr_who_`x'
+	}
+	rename 			s5bq5 ac_cr_due
+	rename 			s5bq6 ac_cr_bef
+	forval 			x = 1/13 {
+	    rename 		s5bq7__`x' ac_cr_bef_why_`x'
+	}
+	drop 			s5bq7__96 s5bq7_os
+	forval 			x = 1/3 {
+	    rename 		s5bq8_`x' ac_cr_bef_who_`x'
+	}
+	rename 			s5bq9 ac_cr_worry
+	rename 			s5bq10 ac_cr_miss
+	rename 			s5bq11 ac_cr_delay
+  * pre-post natal care
+	rename 			filter3 ac_nat_filter
+	rename 			s5q2a ac_nat_need
+	rename 			s5q2b ac_nat
+	forval 			x = 1/6 {
+		rename 			s5q2c__`x' ac_nat_why_`x' 
+	}
+	drop 			s5q2c*
+  * preventative care
+	rename 			s5q2d ac_prev_app
+	rename 			s5q2e ac_prev_canc
+	forval 			x = 1/9 {
+	    rename 		s5q2f__`x' ac_prev_why_`x'
+	}
+	 
 * employment variables 
 	rename			s6q1 emp
 	rename			s6q2 emp_pre
@@ -377,6 +437,8 @@
 	rename			s6q4 emp_pre_act
 	rename			s6q5 emp_act
 	rename			s6q6 emp_stat
+	rename 			s6q6a emp_purp
+	replace 		emp_purp = s6bq6a if wave == 5
 	rename			s6q7 emp_able
 	rename			s6q8 emp_unable	
 	rename			s6q8a emp_unable_why	
@@ -393,9 +455,7 @@
 	rename			s6q17__4 farm_why_4
 	rename			s6q17__5 farm_why_5
 	rename			s6q17__6 farm_why_6
-	rename			s6q17__96 farm_why_7
-	
-* round 2 differs from round 1 employment 
+	rename			s6q17__96 farm_why_7	 
 	rename 			s6q1a emp_7
 	rename 			s6q1b emp_7ret 
 	rename 			s6q1c emp_7why
@@ -403,7 +463,9 @@
 	rename 			s6q3b emp_search 
 	rename			s6q4a emp_same
 	rename			s6q4b emp_chg_why 
-	rename 			s6q8b emp_hours7
+	rename 			s6q8b emp_hrs
+	replace 		emp_hrs = s6q8b1 if wave == 5
+	rename 			s6q8c1 emp_hrs_typ
 	rename 			s6q8c emp_hoursmarch 
 	rename			s6q8d__1 emp_cont_1
 	rename			s6q8d__2 emp_cont_2
@@ -412,6 +474,7 @@
 	rename			s6q8e contrct
 	rename 			s6q11a bus_status 
 	rename 			s6q11b bus_closed 
+	rename 			s6q11b1 bus_other
 	rename 			s6q15__1 bus_chal_1	
 	rename 			s6q15__2 bus_chal_2 
 	rename 			s6q15__3 bus_chal_3 
@@ -427,7 +490,7 @@
 	rename 			s6q15b__5 bus_beh_5 
 	rename 			s6q15b__6 bus_beh_6 
 	rename 			s6q15b__96 bus_beh_7 
-	
+
 * agriculture
 	rename			s6q17 ag_prep
 	rename			s6q18_1 ag_crop_1
@@ -468,6 +531,47 @@
 	rename			s6q22__6 ag_seed_6
 	rename 			s6q22__96 ag_seed_7 
 	rename 			s6q23 ag_live_lost 
+	rename 			s6aq9 ag_harv_exp
+	rename 			s6aq10 ag_sell_harv
+	rename 			s6aq11 ag_sell_harv_chg
+	rename 			s6aq12 ag_sell_harv_plan
+	rename 			s6aq1 ag_landprep
+	rename 			s6aq1b ag_landprep_who
+	rename 			s6q2a ag_use_infert
+	rename 			s6q2b ag_use_orfert
+	rename 			s6q2c ag_use_pest
+	rename 			s6q2d ag_use_lab
+	rename 			s6q2e ag_use_anim
+	rename 			s6aq3a ag_ac_infert
+	rename 			s6aq3b ag_ac_orfert
+	rename 			s6aq3c ag_ac_pest
+	rename 			s6aq3d ag_ac_lab
+	rename 			s6aq3e ag_ac_anim
+	forval 			x = 1/6 {
+	    rename 		s6aq4__`x' ag_infert_why_`x'
+		rename 		s6aq5__`x' ag_orfert_why_`x'
+		rename 		s6aq6__`x' ag_pest_why_`x'		
+	}
+	forval 			x = 1/5 {
+	    rename 		s6aq7__`x' ag_lab_why_`x'
+		rename 		s6aq8__`x' ag_anim_why_`x'
+	}
+	rename 			s6bq1 ag_live
+	forval 			x = 1/5 {
+	    rename 		s6bq2__`x' ag_live_`x'
+	}
+	rename 			s6bq3 ag_live_cov
+	foreach 		x in 1 3 4 7 {
+	    rename 		s6bq4__`x' ag_live_chg_`x'
+	}
+	rename 			s6bq6 ag_sell_live
+	rename 			s6bq7 ag_sell_live_chg
+	rename 			s6bq8 ag_sell_live_want
+	rename 			s6bq9 ag_sell_live_why
+	rename 			s6bq10 ag_sell_live_able
+	rename 			s6bq11 ag_sell_live_cond
+	rename 			s6bq12 ag_sell_live_pri
+	rename			s6bq13 ag_sell_live_nowhy
 	
 * fies
 	rename			s8q4 fies_7
@@ -490,6 +594,9 @@
 
 * concerns
 	rename			s9q1 concern_1
+	forval 			x = 1/8 {
+	    rename 		s9q3__`x' concern_1_`x'
+	}
 	rename			s9q2 concern_2
 
 * drop unnecessary variables
@@ -548,7 +655,6 @@
 	lab var 		oth_chg "Change in income from other source since covid"	
 	rename			s7q299 tot_inc_chg
 	lab var 		tot_inc_chg "Change in income from other source since covid"	
-
 	drop			s7q199
 
 *shocks
@@ -597,14 +703,14 @@
 	
 	foreach 		var of varlist shock_1-shock_14 {
 		lab val		`var' shock 
-		}
+	}
 		
-* generate any shock variable
+* generate any shock variable (only avaiable waves 1 and 3)
 	gen				shock_any = 1 if shock_1 == 1 | shock_5 == 1 | ///
 						shock_6 == 1 | shock_7 == 1 | shock_8 == 1 | ///
 						shock_10 == 1 | shock_11 == 1 | shock_12 == 1 | ///
 						shock_14 == 1
-	replace			shock_any = 0 if shock_any == .
+	replace			shock_any = 0 if shock_any == . & (wave == 1 | wave == 3)
 	lab var			shock_any "Experience some shock"
 	
 	lab var			cope_1 "Sale of assets (Agricultural and Non_agricultural)"
@@ -678,7 +784,7 @@
 	
 
 * **********************************************************************
-* 4 - QC check 
+* 4 - QC check (SEE NOTES IN OUTPUT EXCEL)
 * **********************************************************************
 
 * compare numerical variables to other rounds & flag if 25+ percentage points different
@@ -750,6 +856,6 @@
 			path("$export") dofile(nga_build) user($user)
 
 * close the log
-	log	close
+	log	close 
 
 /* END */

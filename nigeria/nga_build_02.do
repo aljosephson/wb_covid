@@ -31,7 +31,13 @@
 	cap log 		close
 	log using		"$logout/nga_reshape", append
 
+* set local wave number & file number
+	local			w = 2
 	
+* make wave folder within refined folder if it does not already exist 
+	capture mkdir "$export/wave_0`w'" 
+		
+			
 * ***********************************************************************
 * 1 - format secitons and save tempfiles
 * ***********************************************************************
@@ -42,7 +48,7 @@
 * ***********************************************************************
 	
 * load data
-	use				"$root/wave_02/r2_sect_2.dta", clear
+	use				"$root/wave_0`w'/r`w'_sect_2.dta", clear
 
 * rename other variables 
 	rename 			indiv ind_id 
@@ -80,7 +86,7 @@
 * ***********************************************************************
 
 * load data
-	use				"$root/wave_02/r2_sect_a_2_5_6_8_12", clear
+	use				"$root/wave_0`w'/r`w'_sect_a_2_5_6_8_12", clear
 	
 * drop all but household respondant
 	keep			hhid s12q9
@@ -88,7 +94,7 @@
 	isid			hhid
 	
 * merge in household roster
-	merge 1:1		hhid indiv using "$root/wave_02/r2_sect_2.dta"
+	merge 1:1		hhid indiv using "$root/wave_0`w'/r`w'_sect_2.dta"
 	keep if			_merge == 3
 	drop	 		_merge
 	
@@ -112,7 +118,7 @@
 * ***********************************************************************
 
 * load data
-	use				"$root/wave_02/r2_sect_7", clear
+	use				"$root/wave_0`w'/r`w'_sect_7", clear
 
 * reformat HHID
 	format 			%5.0f hhid
@@ -133,7 +139,7 @@
 * ***********************************************************************
 
 * load data - updated via convo with Talip 9/1
-	use				"$root/wave_02/r2_sect_11", clear
+	use				"$root/wave_0`w'/r`w'_sect_11", clear
 
 * reformat HHID
 	format 			%5.0f hhid
@@ -154,11 +160,18 @@
 	
 	
 * ***********************************************************************
+* 1e - section 10: shocks
+* ***********************************************************************
+
+* not avaiable for round
+
+	
+* ***********************************************************************
 * 2 - FIES score
 * ***********************************************************************
 
 * load and format data
-	use				"$fies/NG_FIES_round2.dta", clear
+	use				"$fies/NG_FIES_round`w'.dta", clear
 	drop 			country round
 	rename 			HHID hhid 
 	destring 		hhid, replace
@@ -173,17 +186,17 @@
 * ***********************************************************************
 
 * merge sections based on hhid
-	use				"$root/wave_02/r2_sect_a_2_5_6_8_12", clear
+	use				"$root/wave_0`w'/r`w'_sect_a_2_5_6_8_12", clear
 	foreach 		s in a b c d e {
 	    merge		1:1 hhid using `temp`s'', nogen
 	}
 	
 * generate round variable
-	gen				wave = 2
+	gen				wave = `w'
 	lab var			wave "Wave number"	
 	
 * save round file
-	save			"$export/wave_02/r2", replace
+	save			"$export/wave_0`w'/r`w'", replace
 
 * close the log
 	log	close

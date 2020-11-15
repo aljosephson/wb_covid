@@ -251,6 +251,29 @@
 		rename 			wa6_soap_wash_why ac_soap_why
 		lab var 		ac_soap "Had Enough Handwashing Soap in Last 7 Day"
 		lab var 		ac_soap_why "Main Reason Not Enough Handwashing Soap in Last 7 Days"
+	*credit 
+	 * first addition in R5
+		rename 			cr1_since_loan ac_cr_loan 
+		forval 			x = 1/11 {
+			rename 		cr2_since_lender_`x' ac_cr_lend_`x'
+		}
+		forval 			x = 1/11 {
+			rename 		cr3_since_reas_`x' ac_cr_why_`x'
+		}
+		forval    		x = 1/12 {
+			rename 		cr4_since_who_`x' ac_cr_who_`x'
+		}
+		rename 			cr5_since_duedate ac_cr_due
+		rename 			cr6_before_loan ac_cr_bef
+		forval 			x = 1/11 {
+			rename 		cr7_before_reas_`x' ac_cr_bef_why_`x'
+		}
+		forval 			x = 1/12 {
+			rename		cr8_before_who_`x' ac_cr_bef_who_`x'
+		}
+		rename 			cr9_worry ac_cr_worry
+		rename 			cr10_missed_pay ac_cr_miss
+		rename 			cr11_delay_chg ac_cr_delay	
 		
 * employment variables 	
 	rename			em1_work_cur emp
@@ -440,30 +463,6 @@
 	rename 			lo4_destr loc_dam
 	drop 			lo3_impact__99 
 	rename 			lo5_sprayed	loc_sprayed
-
-*credit 
- * first addition in R5
-	rename 			cr1_since_loan cr_loan 
-	forval 			x = 1/11 {
-	    rename 		cr2_since_lender_`x' cr_lend_`x'
-	}
-	forval 			x = 1/11 {
-	    rename 		cr3_since_reas_`x' cr_why_`x'
-	}
-	forval    		x = 1/12 {
-		rename 		cr4_since_who_`x' cr_who_`x'
-	}
-	rename 			cr5_since_duedate cr_due
-	rename 			cr6_before_loan cr_bef
-	forval 			x = 1/11 {
-		rename 		cr7_before_reas_`x' cr_bef_why_`x'
-	}
-	forval 			x = 1/12 {
-	    rename		cr8_before_who_`x' cr_bef_who_`x'
-	}
-	rename 			cr9_worry cr_worry
-	rename 			cr10_missed_pay cr_miss_pay
-	rename 			cr11_delay_chg cr_delay_pay
 		
 * generate any shock variable
 	gen				shock_any = 1 if farm_inc == 1 & farm_chg == 3 | farm_chg == 4

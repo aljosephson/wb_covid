@@ -63,7 +63,7 @@
 
 * run do files for all rounds and create crosswalk of variables by wave
 	foreach 		r in "$waves" {
-		do 			"$code/ethiopia/eth_build_0`r'"
+		do 			"$code/ethiopia/eth_build_`r'"
 		ds
 		clear
 		set 		obs 1
@@ -88,7 +88,7 @@
 	
 	
 * ***********************************************************************
-* 2 - create panel 
+* 2 - create ethiopia panel 
 * ***********************************************************************
 
 * append round datasets to build master panel

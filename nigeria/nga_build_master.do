@@ -14,7 +14,11 @@
 * TO DO:
 	* investigate inconsistencies flagged in QC 
 	* figure out log close error
-
+	* when new waves available:
+		* create build for new wave based on previous ones
+		* update global list of waves below
+		* check variable crosswalk for differences/new variables & update code if needed
+		* check QC flags for issues/discrepancies
 
 * **********************************************************************
 * 0 - setup
@@ -55,7 +59,7 @@
 
 * run do files for all rounds and create crosswalk of variables by wave
 	foreach 		r in "$waves" {
-		do 			"$code/nigeria/nga_build_0`r'"
+		do 			"$code/nigeria/nga_build_`r'"
 		ds
 		clear
 		set 		obs 1
@@ -80,7 +84,7 @@
 	
 
 * ***********************************************************************
-* 2 - create panel 
+* 2 - create nigeria panel 
 * ***********************************************************************
 
 * append round datasets to build master panel
@@ -208,7 +212,7 @@
 						4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
 						7 "cannot afford" 8 "afraid to get virus" 
 						
- * split out overlapping question numbers (but different questions) across waves
+ * split out overlapping question numbers (but different questions) across waves - CHECK THAT OTHER WAVES DO NOT OVERLAP
 	gen 			num_gath = .
 	lab var			num_gath "In the last 7 days, how many religious or social gatherings have you attended?"
 	lab def			num_gath 1 "1" 2 "2" 3 "3" 4 "4" 5 "5 or more"
@@ -352,7 +356,7 @@
 	rename 			s5q5c sch_open
 	rename 			s5q4a sch_child
 	rename 			s5q4b edu_act
-	replace 		edu_act = s5cq6 if wave == 5
+	replace 		edu_act = s5cq6 if edu_act == . & s5cq6 != .
 	rename 			s5q5__1 edu_1 
 	rename 			s5q5__2 edu_2  
 	rename 			s5q5__3 edu_3 
@@ -362,7 +366,7 @@
 	rename 			s5q5__6 edu_7 	
 	rename 			s5q5__96 edu_other 
 	forval 			x = 1/7 {
-	    replace 	edu_`x' = s5cq7__`x' if wave == 5
+	    replace 	edu_`x' = s5cq7__`x' if edu_`x' == . & s5cq7__`x' != .
 	}
 	rename 			s5q6 edu_cont
 	rename			s5q7__1 edu_cont_1
@@ -438,7 +442,7 @@
 	rename			s6q5 emp_act
 	rename			s6q6 emp_stat
 	rename 			s6q6a emp_purp
-	replace 		emp_purp = s6bq6a if wave == 5
+	replace 		emp_purp = s6bq6a if emp_purp == . & s6bq6a != .
 	rename			s6q7 emp_able
 	rename			s6q8 emp_unable	
 	rename			s6q8a emp_unable_why	
@@ -464,7 +468,7 @@
 	rename			s6q4a emp_same
 	rename			s6q4b emp_chg_why 
 	rename 			s6q8b emp_hrs
-	replace 		emp_hrs = s6q8b1 if wave == 5
+	replace 		emp_hrs = s6q8b1 if emp_hrs == . & s6q8b1 != .
 	rename 			s6q8c1 emp_hrs_typ
 	rename 			s6q8c emp_hoursmarch 
 	rename			s6q8d__1 emp_cont_1
@@ -705,7 +709,7 @@
 		lab val		`var' shock 
 	}
 		
-* generate any shock variable (only avaiable waves 1 and 3)
+* generate any shock variable (only avaiable waves 1 and 3 - ADD OTHER WAVES HERE IF SHOCK DATA AVAILABLE)
 	gen				shock_any = 1 if shock_1 == 1 | shock_5 == 1 | ///
 						shock_6 == 1 | shock_7 == 1 | shock_8 == 1 | ///
 						shock_10 == 1 | shock_11 == 1 | shock_12 == 1 | ///

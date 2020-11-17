@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: jdm
-* Edited by: jdm
-* Last edit: 5 October 2020
+* Edited by: alj
+* Last edit: 17 November 2020
 * Stata v.16.1
 
 * does
@@ -26,7 +26,7 @@
 * define
 	global	ans		=	"$data/analysis"
 	global	output	=	"$data/analysis/figures"
-	global	present =	"G:/My Drive/wb_covid/presentation"
+	global	present =	"$output/presentation"
 	global	logout	=	"$data/analysis/logs"
 
 * open log
@@ -416,6 +416,102 @@
 						commonscheme 
 						
 	graph export 	"$present/concernssex.eps", as(eps) replace
+
+	
+*** figure s2a - concerns and moderate fies ***
+
+preserve
+
+	drop if 			country == 1 & wave == 2
+	drop if 			country == 2 & wave == 1
+	drop if 			country == 4 & wave == 1
+
+	gen					p_mod_01 = p_mod if quint == 1
+	gen					p_mod_02 = p_mod if quint == 2
+	gen					p_mod_03 = p_mod if quint == 3
+	gen					p_mod_04 = p_mod if quint == 4
+	gen					p_mod_05 = p_mod if quint == 5
+
+	colorpalette edkblue khaki, ipolate(15, power(1)) locals
+
+	graph bar 		(mean) p_mod_01 p_mod_02 p_mod_03 p_mod_04 p_mod_05 ///
+						[pweight = wt_18], over(concern_01, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
+						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
+						ytitle("Prevalence of moderate or severe food insecurity", size(vlarge))  ///
+						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
+						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
+						bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First Quintile")  ///
+						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
+						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
+						title("Concerned that family/self will fall ill with COVID-19", size(vlarge)) ///
+						saving("$output/fiesq1_modsev", replace)
+						
+	graph bar 		(mean) p_mod_01 p_mod_02 p_mod_03 p_mod_04 p_mod_05 ///
+						[pweight = wt_18], over(concern_02, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
+						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
+						ytitle("Prevalence of moderate or severe food insecurity", size(vlarge))  ///
+						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
+						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
+						bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First Quintile")  ///
+						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
+						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
+						title("Concerned about the financial threat of COVID-19", size(vlarge)) ///
+						saving("$output/fiesq2_modsev", replace)
+
+	restore
+
+	grc1leg2 		"$output/fiesq1_modsev.gph" "$figure/fiesq2_modsev.gph", ///
+						col(3) iscale(.5) pos(6) commonscheme
+
+	graph export 	"$present/fiesquintetc1.eps", as(eps) replace
+
+	
+*** figure s2b - concerns and severe fies ***
+ 
+preserve
+
+	drop if 			country == 1 & wave == 2
+	drop if 			country == 2 & wave == 1
+	drop if 			country == 4 & wave == 1
+
+	gen				p_sev_01 = p_sev if quint == 1
+	gen				p_sev_02 = p_sev if quint == 2
+	gen				p_sev_03 = p_sev if quint == 3
+	gen				p_sev_04 = p_sev if quint == 4
+	gen				p_sev_05 = p_sev if quint == 5
+
+	colorpalette edkblue khaki, ipolate(15, power(1)) locals
+
+	graph bar 		(mean) p_sev_01 p_sev_02 p_sev_03 p_sev_04 p_sev_05 ///
+						[pweight = wt_18], over(concern_01, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
+						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
+						ytitle("Prevalence of severe food insecurity", size(vlarge))  ///
+						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
+						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
+						bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First Quintile")  ///
+						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
+						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
+						title("Concerned that family/self will fall ill with COVID-19", size(vlarge)) ///
+						saving("$output/fiesq1_sev", replace)
+						
+	graph bar 		(mean) p_sev_01 p_sev_02 p_sev_03 p_sev_04 p_sev_05 ///
+						[pweight = wt_18], over(concern_02, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
+						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
+						ytitle("Prevalence of severe food insecurity", size(vlarge))  ///
+						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
+						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
+						bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First Quintile")  ///
+						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
+						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
+						title("Concerned about the financial threat of COVID-19", size(vlarge)) ///
+						saving("$output/fiesq2_sev", replace)
+
+	restore
+
+	grc1leg2 		"$output/fiesq1_sev.gph" "$figure/fiesq2_sev.gph", ///
+						col(3) iscale(.5) pos(6) commonscheme 
+
+	graph export 	"$present/fiesquintetc12.eps", as(eps) replace
 	
 	
 * **********************************************************************

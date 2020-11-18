@@ -7,16 +7,14 @@
 
 * does
 	* merges together each section of malawi data
-	* renames variables
-	* outputs panel data
+	* builds round 1
+	* outputs round 1
 
 * assumes
 	* raw malawi data 
 
 * TO DO:
-	* update this section
-	* split out waves 
-	* add wave 3
+	* complete
 
 
 * **********************************************************************
@@ -143,7 +141,7 @@
 * ***********************************************************************
 
 * load data
-	use				"$fies/MW_FIES_round1.dta", clear
+	use				"$fies/MW_FIES_round`w'.dta", clear
 	drop 			country round
 
 * save temp file
@@ -164,14 +162,14 @@
 	}
 	
 * merge in other sections
-	merge 1:1 		HHID using "$root/wave_01/sect3_Knowledge_r1.dta",nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect4_Behavior_r1.dta", nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect5_Access_r1.dta", nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect6_Employment_r1.dta", nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect8_food_security_r1.dta", nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect9_Concerns_r1.dta", nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect12_Interview_Result_r1.dta", nogenerate
-	merge 1:1 		HHID using "$root/wave_01/sect13_Agriculture_r1.dta", nogenerate
+	merge 1:1 		HHID using "$root/wave_0`w'/sect3_Knowledge_r`w'.dta",nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/sect4_Behavior_r`w'.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/sect5_Access_r`w'.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/sect6_Employment_r`w'.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/sect8_food_security_r`w'.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/sect9_Concerns_r`w'.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/sect12_Interview_Result_r`w'.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/sect13_Agriculture_r`w'.dta", nogen
 
 *rename variables inconsistent with other waves
 	rename			s6q2 emp_pre
@@ -185,10 +183,10 @@
 	rename			s6q7 emp_able
 	rename			s6q8 emp_unable
 	rename			s6q8a emp_unable_why
-	rename			s6q8b__1 emp_cont_01
-	rename			s6q8b__2 emp_cont_02
-	rename			s6q8b__3 emp_cont_03
-	rename			s6q8b__4 emp_cont_04
+	rename			s6q8b__1 emp_cont_1
+	rename			s6q8b__2 emp_cont_2
+	rename			s6q8b__3 emp_cont_3
+	rename			s6q8b__4 emp_cont_4
 	rename			s6q8c__1 contrct
 	rename			s6q9 emp_hh
 	rename			s6q11 bus_emp
@@ -197,13 +195,13 @@
 	rename			s6q14 bus_why
 	rename			s6q15 farm_emp
 	rename			s6q16 farm_norm
-	rename			s6q17__1 farm_why_01
-	rename			s6q17__2 farm_why_02
-	rename			s6q17__3 farm_why_03
-	rename			s6q17__4 farm_why_04
-	rename			s6q17__5 farm_why_05
-	rename			s6q17__6 farm_why_06
-	rename			s6q17__7 farm_why_07
+	rename			s6q17__1 farm_why_1
+	rename			s6q17__2 farm_why_2
+	rename			s6q17__3 farm_why_3
+	rename			s6q17__4 farm_why_4
+	rename			s6q17__5 farm_why_5
+	rename			s6q17__6 farm_why_6
+	rename			s6q17__7 farm_why_7
 	
 * generate round variables
 	gen				wave = `w'

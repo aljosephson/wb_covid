@@ -12,6 +12,7 @@
 	* raw Nigeria data
 
 * TO DO:
+	* add round 6
 	* investigate inconsistencies flagged in QC 
 	* figure out log close error
 	* when new waves available:
@@ -433,7 +434,8 @@
 	forval 			x = 1/9 {
 	    rename 		s5q2f__`x' ac_prev_why_`x'
 	}
-	 
+	drop 			s5q2f*
+	
 * employment variables 
 	rename			s6q1 emp
 	rename			s6q2 emp_pre

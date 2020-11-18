@@ -7,8 +7,8 @@
 
 * does
 	* reads in third round of Ethiopia data
-	* builds panel
-	* outputs panel data
+	* builds round 3
+	* outputs round 3
 
 * assumes
 	* raw Ethiopia data

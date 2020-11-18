@@ -1,34 +1,33 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: alj
-* Edited by: jdm
-* Last edited: 25 September 2020
+* Edited by: jdm, amf
+* Last edited: November 2020
 * Stata v.16.1
 
 * does
-	* merges together each section of malawi data
-	* renames variables
+	* merges together each round
+	* cleans data
 	* outputs panel data
 
 * assumes
 	* raw malawi data 
 
 * TO DO:
-	* update this section
-	* split out waves 
-	* add wave 3
+	* check round 4 variable crosswalk and QC's 
 	* when new waves available:
 		* create build for new wave based on previous ones
 		* update global list of waves below
 		* check variable crosswalk for differences/new variables & update code if needed
 		* check QC flags for issues/discrepancies
 
+		
 * **********************************************************************
 * 0 - setup
 * **********************************************************************
 
 * define list of waves
-	global 			waves "1" "2"
+	global 			waves "1" "2" "3" "4"
 	
 * define
 	global	root	=	"$data/malawi/raw"
@@ -186,22 +185,23 @@
 	*** omit, but keep overall change
 	rename			s7q299 tot_inc_chg
 	label 			var tot_inc_chg "change in total income since covid"	
-
+ 
 * assistance
-	gen				asst_food = 1 if s11q11 == 1
-	replace			asst_food = 0 if s11q11 == 2
+	rename 			s11q11 asst_food
+	replace			asst_food = 0 if asst_food == 2
 	replace			asst_food = 0 if asst_food == .
 	lab var			asst_food "Recieved food assistance"
 	lab def			assist 0 "No" 1 "Yes"
 	lab val			asst_food assist
 	
-	gen				asst_cash = 1 if s11q12 == 1 | s11q14 == 1 | s11q15 == 1
+	rename 			s11q12 asst_cash
+	replace 		asst_cash = 0 if asst_cash == 2
 	replace			asst_cash = 0 if asst_cash == .
 	lab var			asst_cash "Recieved cash assistance"
 	lab val			asst_cash assist
 	
-	gen				asst_kind = 1 if s11q13 == 1
-	replace			asst_kind = 0 if s11q13 == 2
+	rename 			s11q13 asst_kind 
+	replace			asst_kind = 0 if asst_kind == 2
 	replace			asst_kind = 0 if asst_kind == .
 	lab var			asst_kind "Recieved in-kind assistance"
 	lab val			asst_kind assist
@@ -211,7 +211,7 @@
 	replace			asst_any = 0 if asst_any == .
 	lab var			asst_any "Recieved any assistance"
 	lab val			asst_any assist	
-	
+
 * rename variables and fill in missing values
 	rename			s2q5 sex
 	rename			s2q6 age
@@ -242,7 +242,7 @@
 					shock_7 == 1 | shock_16 == 1 | shock_10 == 1 | ///
 					shock_11 == 1 | shock_12 == 1 | shock_3 == 1 | ///
 					shock_14 == 1
-	replace			shock_any = 0 if shock_any == . & wave == 2
+	replace			shock_any = 0 if shock_any == . & (wave == 2 | wave == 3)
 	lab var			shock_any "Experience some shock"
 	
 * cope variables
@@ -419,12 +419,17 @@
 	rename			s4q2a bh_2
 	rename			s4q3a bh_6
 	rename 			s4q3b bh_6a
+	rename 			s4q3c bh_6b
 	rename 			s4q4 bh_3
 	rename			s4q5 bh_4
 	rename			s4q6 bh_5
 	rename			s4q7 bh_7
 	rename			s4q8 bh_8
-
+	rename 			s4q9 bh_comply_1
+	rename 			s4q10 bh_comply_2
+	rename 			s4q11 bh_comply_3
+	rename 			s4q12 bh_comply_4
+	 
 * access
  * soap
 	rename 			s5q1a1 ac_soap_need
@@ -550,6 +555,24 @@
 	lab val 		ac_medserv_why ac_medserv_why
 	lab var 		ac_medserv_why "reason unable to access medical services"
 
+ * post/pre natal care
+	rename 			filter1_sec5 ac_nat_filter
+	rename 			s5q2_2a ac_nat_need
+	rename 			s5q2_2b ac_nat
+	forval 			x = 1/6 {
+		rename 		s5q2_2c__`x' ac_nat_why_`x'
+	}
+ * preventative care
+	rename 			s5q2_2d ac_prev_app
+	rename 			s5q2_2e ac_prev_canc
+	forval 			x = 1/9 {
+	    rename 		s5q2_2f__`x' ac_prev_why_`x'
+	}
+ * vaccines
+	rename 			s5q2_2j ac_vac_need
+	rename 			s5q2_2k ac_vac
+	rename 			s5q2_2l ac_vac_why
+	
  * order access variables	
 	order			ac_soap_need ac_soap ac_soap_why ac_water ac_water_why ///
 					ac_clean_need ac_clean ac_clean_why ac_staple_def ///
@@ -559,7 +582,9 @@
 
 * education
 	rename 			filter1 children618
+	replace 		children618 = filter2_sec5 if children618 == .
 	rename 			s5q6a sch_child
+
 	rename 			s5q6b sch_child_meal
 	rename 			s5q6c sch_child_mealskip
 	rename 			s5q6d edu_act
@@ -585,7 +610,11 @@
 	rename 			s5q11 ac_bank_why
 	rename 			s5q12 internet7
 	rename 			s5q13 internet7_diff	
-
+	rename 			s5q17 sch_open
+	rename 			s5q17a sch_open_why	
+	rename 			s5q18 edu_meas
+	rename 			s5q19 edu_meas_sat
+	
 * employment
 	rename			s6q1 emp	
 	rename			s6q1a edu
@@ -595,7 +624,8 @@
 	rename			s6q3a_1a find_job
 	rename			s6q3a_2a find_job_do
 	rename			s6q4_1 find_job_act
-		
+	rename 			working_last emp_last
+	
  * same respondant employment
  	rename			s6q1b rtrn_when
 	replace			emp_same = s6q4a_1b if s6q4a_1b != .
@@ -607,10 +637,10 @@
 	replace			emp_unable_why = s6q8a if s6q8a != .
 	replace			emp_hrs = s6q8b if s6q8b != .
 	replace			emp_hrs_chg = s6q8c if s6q8c != .
-	replace			emp_cont_01 = s6q8d__1 if s6q8d__1 != .
-	replace			emp_cont_02 = s6q8d__2 if s6q8d__2 != .
-	replace			emp_cont_03 = s6q8d__3 if s6q8d__3 != .
-	replace			emp_cont_04 = s6q8d__4 if s6q8d__4 != .
+	replace			emp_cont_1 = s6q8d__1 if s6q8d__1 != .
+	replace			emp_cont_2 = s6q8d__2 if s6q8d__2 != .
+	replace			emp_cont_3 = s6q8d__3 if s6q8d__3 != .
+	replace			emp_cont_4 = s6q8d__4 if s6q8d__4 != .
 	replace			contrct = s6q8e__1 if s6q8e__1 != .
 	replace			emp_hh = s6q9 if s6q9 != .
 	replace			find_job = s6q3a if s6q3a != .
@@ -697,19 +727,19 @@
 	lab val			bus_cndct_how bus_cndct_how
 	lab var			bus_cndct_how "Changed the way you conduct business due to the corona virus?"
 	order			bus_cndct_how, after(bus_cndct)
-
 	drop			s6bq15b__1 s6bq15b__2 s6bq15b__3 s6bq15b__4 s6bq15b__5 ///
 						s6bq15b__6 s6bq15b__96
-
-	rename			s6cq1 oth_inc_01
-	rename			s6cq2 oth_inc_02
-	rename			s6cq3 oth_inc_03
-	rename			s6cq4 oth_inc_04
-	rename			s6cq5 oth_inc_05
+	rename 			s6bq15c bus_oth_curr
+	rename 			s6bq15d bus_num_curr
+	rename			s6cq1 oth_inc_1
+	rename			s6cq2 oth_inc_2
+	rename			s6cq3 oth_inc_3
+	rename			s6cq4 oth_inc_4
+	rename			s6cq5 oth_inc_5
 
 * concern 
-	rename			s9q1 concern_01
-	rename			s9q2 concern_02
+	rename			s9q1 concern_1
+	rename			s9q2 concern_2
 	rename			s9q3 have_symp
 	replace 		have_symp = cond(s9q3__1 == 1 | s9q3__2 == 1 | s9q3__3 == 1 | ///
 						s9q3__4 == 1 | s9q3__5 == 1 | s9q3__6 == 1 | ///
@@ -720,81 +750,82 @@
 		lab var			have_symp "Has anyone in your hh experienced covid symptoms?:cough/shortness of breath etc."
 	drop			s9q3__1 s9q3__2 s9q3__3 s9q3__4 s9q3__5 s9q3__6 s9q3__7 s9q3__8
 	rename 			s9q4 have_test
-	rename 			s9q5 concern_03
-	rename			s9q6 concern_04
-	lab var			concern_04 "Response to the COVID-19 emergency will limit my rights and freedoms"
-	rename			s9q7 concern_05
-	lab var			concern_05 "Money and supplies allocated for the COVID-19 response will be misused and captured by powerful people in the country"
-	rename			s9q8 concern_06
-	lab var			concern_06 "Corruption in the government has lowered the quality of medical supplies and care"
-		
+	rename 			s9q5 concern_3
+	rename			s9q6 concern_4
+	lab var			concern_4 "Response to the COVID-19 emergency will limit my rights and freedoms"
+	rename			s9q7 concern_5
+	lab var			concern_5 "Money and supplies allocated for the COVID-19 response will be misused and captured by powerful people in the country"
+	rename			s9q8 concern_6
+	lab var			concern_6 "Corruption in the government has lowered the quality of medical supplies and care"
+	rename 			s9q9 symp_call
+	
 * agriculture
 	rename			s13q1 ag_prep
-	rename			s13q2a ag_crop_01
-	rename			s13q2b ag_crop_02
-	rename			s13q2c ag_crop_03
+	rename			s13q2a ag_crop_1
+	rename			s13q2b ag_crop_2
+	rename			s13q2c ag_crop_3
 	rename			s13q3 ag_prog
 	rename 			s13q4 ag_chg
-	rename			s13q5__1 ag_chg_08
-	label var 		ag_chg_08 "activities affected - covid measures"
-	rename			s13q5__2 ag_chg_09
-	label var 		ag_chg_09 "activities affected - could not hire"
+	rename			s13q5__1 ag_chg_8
+	lab var 		ag_chg_8 "activities affected - covid measures"
+	rename			s13q5__2 ag_chg_9
+	lab var 		ag_chg_9 "activities affected - could not hire"
 	rename			s13q5__3 ag_chg_10
-	label var   	ag_chg_10 "activities affected - hired fewer workers"
+	lab var   		ag_chg_10 "activities affected - hired fewer workers"
 	rename			s13q5__4 ag_chg_11
-	label var 		ag_chg_11 "activities affected - abandoned crops"
-	rename			s13q5__5 ag_chg_07
-	label var 		ag_chg_07 "activities affected - delayed harvest"
+	lab var 		ag_chg_11 "activities affected - abandoned crops"
+	rename			s13q5__5 ag_chg_7
+	lab var 		ag_chg_7 "activities affected - delayed harvest"
 	rename			s13q5__7 ag_chg_12
-	label var 		ag_chg_12 "activities affected - early harvest"
-	rename			s13q6__1 agcovid_chg_why_01
-	rename 			s13q6__2 agcovid_chg_why_02
-	rename 			s13q6__3 agcovid_chg_why_03
-	rename			s13q6__4 agcovid_chg_why_04
-	rename			s13q6__5 agcovid_chg_why_05
-	rename 			s13q6__6 agcovid_chg_why_06
-	rename 			s13q6__7 agcovid_chg_why_07
-	rename 			s13q6__8 agcovid_chg_why_08
+	lab var 		ag_chg_12 "activities affected - early harvest"
+	rename			s13q6__1 agcovid_chg_why_1
+	rename 			s13q6__2 agcovid_chg_why_2
+	rename 			s13q6__3 agcovid_chg_why_3
+	rename			s13q6__4 agcovid_chg_why_4
+	rename			s13q6__5 agcovid_chg_why_5
+	rename 			s13q6__6 agcovid_chg_why_6
+	rename 			s13q6__7 agcovid_chg_why_7
+	rename 			s13q6__8 agcovid_chg_why_8
 	rename 			s13q7 aghire_chg_why
 	rename 			s13q8 ag_ext_need
 	rename 			s13q9 ag_ext
 	rename			s13q10 ag_live_lost
 	rename			s13q11 ag_live_chg
-	rename			s13q12__1 ag_live_chg_01
-	rename			s13q12__2 ag_live_chg_02
-	rename			s13q12__3 ag_live_chg_03
-	rename			s13q12__4 ag_live_chg_04
-	rename			s13q12__5 ag_live_chg_05
-	rename			s13q12__6 ag_live_chg_06
-	rename			s13q12__7 ag_live_chg_07
+	rename			s13q12__1 ag_live_chg_1
+	rename			s13q12__2 ag_live_chg_2
+	rename			s13q12__3 ag_live_chg_3
+	rename			s13q12__4 ag_live_chg_4
+	rename			s13q12__5 ag_live_chg_5
+	rename			s13q12__6 ag_live_chg_6
+	rename			s13q12__7 ag_live_chg_7
 	rename			s13q13 ag_sold
 	rename			s13q14 ag_sell
 	rename 			s13q15 ag_price	
 	
 * fies
-	rename			s8q1 fies_04
-	lab var			fies_04 "Worried about not having enough food to eat"
-	rename			s8q2 fies_05
-	lab var			fies_05 "Unable to eat healthy and nutritious/preferred foods"
-	rename			s8q3 fies_06
-	lab var			fies_06 "Ate only a few kinds of food"
-	rename			s8q4 fies_07
-	lab var			fies_07 "Skipped a meal"
-	rename			s8q5 fies_08
-	lab var			fies_08 "Ate less than you thought you should"
-	rename			s8q6 fies_01
-	lab var			fies_01 "Ran out of food"
-	rename			s8q7 fies_02
-	lab var			fies_02 "Hungry but did not eat"
-	rename			s8q8 fies_03
-	lab var			fies_03 "Went without eating for a whole day"	
+	rename			s8q1 fies_4
+	lab var			fies_4 "Worried about not having enough food to eat"
+	rename			s8q2 fies_5
+	lab var			fies_5 "Unable to eat healthy and nutritious/preferred foods"
+	rename			s8q3 fies_6
+	lab var			fies_6 "Ate only a few kinds of food"
+	rename			s8q4 fies_7
+	lab var			fies_7 "Skipped a meal"
+	rename			s8q5 fies_8
+	lab var			fies_8 "Ate less than you thought you should"
+	rename			s8q6 fies_1
+	lab var			fies_1 "Ran out of food"
+	rename			s8q7 fies_2
+	lab var			fies_2 "Hungry but did not eat"
+	rename			s8q8 fies_3
+	lab var			fies_3 "Went without eating for a whole day"	
 	
 * drop unnecessary variables
  	drop			s5q1c3__1 s5q1c3__2 s5q1c3__3 s5q1c3__4 s5q1c3__5 s5q1c3__6 ///
 						s5q11_os s5q2c__1 s5q2c__2 s5q2c__3 s5q2c__4 s5q2c__5 s5q2c__6 ///
-						s5q2c__7 s5q2c__99 s11q11 s11q12 s11q13 s11q14 s11q15 ///
-						s5q1b2__1 s5q1b2__1 s5q1b2__3 s5q1b2__5 s5q1b2__99 s5q1b2__4 ///
-						s5q1b2__2 s6q1_1 s6q3_os_1 s6q4_ot_1 s6q4b_os_1 s6q4c_os_1 ///
+						s5q2c__7 s5q2c__99 s5q1b2__1 s5q1b2__1 s5q1b2__3 s5q1b2__5 ///
+						s5q1b2__99 s5q1b2__4 s5q1b2__2 s6q1_1 s6q3_os_1 ///
+						s6q4_ot_1 s6q4b_os_1 s6q4c_os_1 filter2_sec5 ///
 						s6q5_os_1 s6q8a_os_1 s6q8c_1__2 s6q8c_1__99 s6q10_1__0 ///
 						s6q10_1__1 s6q10_1__2 s6q10_1__3 s6q17_1_ot s6q4a_1b  ///
 						s6q4a_2b s6q4b s6q5 s6q6 s6q7 s6q8 s6q8a s6q8a_os ///
@@ -807,7 +838,11 @@
 						s6q3__8 s6q3__9 s6q3__10 s6q3__11 s6q3__12 s6q3__13 ///
 						s6q3__96 s6q3_os hh_a16 hh_a17 result s5q1c1__* ///
 						s5q1c4__* s5q2c__* s5q1c3__* s5q5__*  *_os ///
-						s13q5_* s13q6_* *details  s6q8c__2 s6q8c__99 s6q10__* 
+						s13q5_* s13q6_* *details  s6q8c__2 s6q8c__99 s6q10__* ///
+						s5q17a_ot s5q1a2_2_oth s5q1b2_oth s5q2_2c__95 s5q2_2c_ot ///
+						s5q2_2f__95 s5q2_2f_ot s6q3a_2a_os s6q3b_os ///
+						s6qb12_os s6qb15__95 s6qb15_os
+
 
 * regional and sector information
 	gen				sector = 2 if urb_rural == 1

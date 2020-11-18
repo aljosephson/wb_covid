@@ -7,14 +7,15 @@
 
 * does
 	* merges together each section of malawi data
-	* builds round 1
-	* outputs round 1
+	* builds round 3
+	* outputs round 3
 
 * assumes
 	* raw malawi data 
 
 * TO DO:
 	* complete
+
 
 * **********************************************************************
 * 0 - setup
@@ -31,12 +32,11 @@
 	log using		"$logout/mal_build", append
 	
 * set local wave number & file number
-	local			w = 2
+	local			w = 4
 	
 * make wave folder within refined folder if it does not already exist 
-	capture mkdir "$export/wave_0`w'" 
+	capture mkdir "$export/wave_0`w'" 	
 	
-		
 * ***********************************************************************
 * 1a - reshape section on income loss wide data
 * ***********************************************************************
@@ -54,37 +54,13 @@
 	tempfile		tempa
 	save			`tempa'
 
-
+	
 * ***********************************************************************
 * 1b - reshape section on safety nets wide data
 * ***********************************************************************
 
-* load safety_net data - updated via convo with Talip 9/1
-	use				"$root/wave_0`w'/sect11_Safety_Nets_r`w'", clear
-
-* reorganize difficulties variable to comport with section
-	replace			s11q1 = 2 if s11q1 == .
-	replace			s11q1 = 1 if s11q1 == .a
-
-* drop other
-	drop 			s11q2 s11q3 s11q3_os s11q4a s11q4b s11q5 s11q6__1 ///
-						s11q6__2 s11q6__3 s11q6__4 s11q6__5 s11q6__6 ///
-						s11q6__7 s11q7__1 s11q7__2 s11q7__3 s11q7__4 ///
-						s11q7__5 s11q7__6 s11q7__7
-
-* reshape
-	reshape 		wide s11q1, i(y4_hhid HHID) j(social_safety)
-
-* collapse cash options into 1 to match round 1 
-	rename 			s11q12 temp
-	gen 			s11q12 = 1 if temp == 1 | s11q14 == 1 | s11q15 == 1
-	replace 		s11q12 = 2 if s11q12 == .
-	drop 			s11q14 s11q15  temp	
+* not available for round
 	
-* save temp file
-	tempfile		tempb
-	save			`tempb'
-
 
 * ***********************************************************************
 * 1c - get respondant gender
@@ -95,9 +71,7 @@
 
 * drop all but household respondant
 	keep			HHID s12q9
-
 	rename			s12q9 PID
-
 	isid			HHID
 
 * merge in household roster
@@ -106,7 +80,7 @@
 	drop			_merge
 
 * drop all but gender and relation to HoH
-	keep			HHID PID  s2q5 s2q6 s2q7 s2q9
+	keep			HHID PID s2q5 s2q6 s2q7 s2q9
 
 * save temp file
 	tempfile		tempc
@@ -155,37 +129,15 @@
 * 1e - FIES score
 * ***********************************************************************
 
-* load data
-	use				"$fies/MW_FIES_round`w'.dta", clear
-	drop 			country round 
-	
-* save temp file
-	tempfile		tempe
-	save			`tempe'
-	
-	
+* not available for round
+
+
 * ***********************************************************************
 * 1f - reshape section on coping wide data
 * ***********************************************************************
 
-* load data
-	use				"$root/wave_0`w'/sect10_Coping_r`w'", clear
-	
-* drop other shock
-	drop			shock_id_os s10q3_os
+* not available for round
 
-* generate shock variables
-	forval i = 1/9 {
-		gen				shock_`i' = 1 if s10q1 == 1 & shock_id == `i'
-	}
-
-* collapse to household level	
-	collapse (max) s10q2__1- shock_9, by(HHID y4_hhid)
-	
-* save temp file
-	tempfile		tempf
-	save			`tempf'
-	
 	
 * ***********************************************************************
 * 2 - merge to build complete dataset for the round 
@@ -193,28 +145,27 @@
 
 * load cover data
 	use				"$root/wave_0`w'/secta_Cover_Page_r`w'", clear
-
+	
 * merge formatted sections
-	foreach 		x in a b c d e f {
+	foreach 		x in a c d {
 	    merge 		1:1 HHID using `temp`x'', nogen
 	}
 	
 * merge in other sections
-	merge 1:1 		HHID using "$root/wave_0`w'/sect3_Knowledge_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect4_Behavior_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect5_Access_r`w'.dta", nogen
-	merge 1:1 		HHID using "$root/wave_0`w'/sect6_Employment_r`w'.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/sect6a_Employment1_r`w'.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/sect6a_Employment2_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect6b_NFE_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect6c_OtherIncome_r`w'.dta", nogen
-	merge 1:1 		HHID using "$root/wave_0`w'/sect8_food_security_r`w'.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/sect6d_Credit_r`w'.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/sect6e_Agriculture_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect9_Concerns_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect12_Interview_Result_r`w'.dta", nogen
-	
+
+
+
 *rename variables inconsistent with  wave 1
-	rename			s3q9 sup_rcvd
-	rename			s3q10 sup_cmpln
-	rename			s3q11 sup_cmpln_who
-	rename			s3q12 sup_cmpln_done
 	rename			s6q1a rtrn_emp
 	rename 	 		s6q2_1 emp_pre
 	rename			s6q3a_1 emp_pre_why
@@ -231,7 +182,8 @@
 	rename			s6q8b_1__2 emp_cont_2
 	rename			s6q8b_1__3 emp_cont_3
 	rename			s6q8b_1__4 emp_cont_4
-	rename			s6q8c_1__1 contrct
+	rename			s6q8c_1 contrct
+	replace 		contrct = 0 if contrct == 2
 	rename			s6bq11 bus_emp
 	rename			s6qb12 bus_sect
 	rename			s6qb13 bus_emp_inc
@@ -247,14 +199,14 @@
 	rename			s6q17_1__6 farm_why_6
 	rename			s6q17_1__96 farm_why_7
 	rename			s6q17_1__7 farm_why_8
-	
+
 * generate round variables
 	gen				wave = `w'
 	lab var			wave "Wave number"
-	rename			wt_round`w' phw
+	rename 			wt_round`w' phw
 	label var		phw "sampling weights"
 	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace
 
-/* END */	
+/* END */		

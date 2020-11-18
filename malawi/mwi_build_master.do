@@ -105,15 +105,15 @@
 	merge m:1		y4_hhid using "$root/wave_00/Malawi IHPS 2019 Quintiles.dta"
 	keep if			_merge == 3
 	drop			_merge
-	
-* define labels
 	rename			quintile quints
 	lab var			quints "Quintiles based on the national population"
 	lab def			lbqui 1 "Quintile 1" 2 "Quintile 2" 3 "Quintile 3" ///
 						4 "Quintile 4" 5 "Quintile 5"
 	lab val			quints lbqui
 	
- 
+* create country variables
+	gen				country = 2
+	
 * ***********************************************************************
 * 3 - clean malawi panel
 * ***********************************************************************	
@@ -242,7 +242,7 @@
 					shock_7 == 1 | shock_16 == 1 | shock_10 == 1 | ///
 					shock_11 == 1 | shock_12 == 1 | shock_3 == 1 | ///
 					shock_14 == 1
-	replace			shock_any = 0 if shock_any == .
+	replace			shock_any = 0 if shock_any == . & wave == 2
 	lab var			shock_any "Experience some shock"
 	
 * cope variables
@@ -347,7 +347,31 @@
 	label var 		gov_none "government has taken no steps"
 	rename 			s3q3__98 gov_dnk
 	label var 		gov_dnk "do not know steps government has taken"	
-
+ 
+* govt perseption
+ * note: r1 has 5 step scale, r2 only 3 options, adjust here
+	forval x = 8/12 {
+		replace 		s3q`x' = . if s3q`x' == .a
+		replace 		s3q`x' = 1 if s3q`x' < 3
+		replace 		s3q`x' = 2 if s3q`x' == 3
+		replace 		s3q`x' = 3 if s3q`x' > 3 & s3q`x' != .
+	}
+	rename 			s3q8_1 gov_pers_1
+	rename 			s3q8_2 gov_pers_2
+	rename 			s3q8_3 gov_pers_3
+	rename 			s3q8_4 gov_pers_4
+	rename 			s3q8_5 gov_pers_5
+	rename 			s3q8_6 gov_pers_6
+	rename 			s3q8_8 gov_pers_7
+	replace 		gov_pers_1 = s3q8 if s3q8 != .
+	replace 		gov_pers_2 = s3q9 if s3q9 != .
+	replace 		gov_pers_3 = s3q10 if s3q10 != .
+	replace 		gov_pers_4 = s3q11 if s3q11 != .
+	replace 		gov_pers_5 = s3q12 if s3q12 != .
+	forval 			x = 8/12 {
+		drop 		s3q`x'
+	}
+ 
 * information
 	rename			s3q4 info
 	rename 			s3q5__1 info_1
@@ -436,12 +460,12 @@
 	replace 		ac_clean_why = 6 if s5q1c4__6 == 1
 	lab def			ac_clean_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
 								4 "restrictions to go out" 5 "increase in price" 6 "no money"
+	lab val 		ac_clean_why ac_clean_why
 	lab var 		ac_clean_why "reason for unable to purchase cleaning supplies"
 		
  * water
 	rename 			s5q1a2 ac_water
 	rename 			s5q1b2 ac_water_why		
-	generate		ac_water_why = .
 	replace			ac_water_why = 1 if s5q1b2__1 == 1
 	replace 		ac_water_why = 2 if s5q1b2__2 == 1
 	replace 		ac_water_why = 3 if s5q1b2__3 == 1
@@ -450,6 +474,7 @@
 	lab def			ac_water_why 1 "Water source too far " 2 "Too many people at the water source " ///
 								 3 "Large household size" 4 "Restriction to go out" ///
 								 5 "No money"
+	lab val 		ac_water_why ac_water_why 
 	lab var 		ac_water_why "reason unable to access water for washing hands"
 	rename			s5q1a2_1 ac_drink
 	rename			s5q1a2_2 ac_drink_why
@@ -469,6 +494,7 @@
 	lab def			ac_staple_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
 								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
 								7 "other"
+	lab val 		ac_staple_why ac_staple_why
 	lab var 		ac_staple_why "reason for unable to purchase staple food"
 	
  * maize	
@@ -485,6 +511,7 @@
 	lab def			ac_maize_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
 								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
 								7 "other"
+	lab val 		ac_maize_why ac_maize_why
 	lab var 		ac_maize_why "reason unable to purchase maize"
 	lab var			ac_maize_need "Since 20th March, did you or anyone in your household need to buy maize?"
 	lab var			ac_maize "Were you or someone in your household able to buy maize"
@@ -501,6 +528,7 @@
 	replace 		ac_med_why = 6 if s5q1c3__6 == 1
 	lab def			ac_med_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
 								4 "restrictions to go out" 5 "increase in price" 6 "no money"
+	lab val 		ac_med_why ac_med_why 
 	lab var 		ac_med_why "reason unable to purchase medicine"
 
  * medical services
@@ -508,7 +536,6 @@
 	rename 			s5q4 ac_medserv
 	rename 			s5q5 ac_medserv_why
 	lab var 		ac_med_why "reason unable to access medical services"
-	gen 			ac_medserv_why = .
 	replace			ac_medserv_why = 1 if s5q5__1 == 1
 	replace 		ac_medserv_why = 2 if s5q5__2 == 1
 	replace 		ac_medserv_why = 3 if s5q5__3 == 1
@@ -520,6 +547,7 @@
 	lab def			ac_medserv_why 1 "no money" 2 "no med personnel" 3 "facility full" ///
 								4 "other" 5 "no transportation" 6 "restrictions to go out" ///
 								7 "afraid of virus"
+	lab val 		ac_medserv_why ac_medserv_why
 	lab var 		ac_medserv_why "reason unable to access medical services"
 
  * order access variables	
@@ -527,7 +555,7 @@
 					ac_clean_need ac_clean ac_clean_why ac_staple_def ///
 					ac_staple_need ac_staple ac_staple_why ac_maize_need ///
 					ac_maize ac_maize_why ac_med_need ac_med ac_med_why ///
-					ac_medserv_need ac_medserv ac_medserv_why, after(bh_05)
+					ac_medserv_need ac_medserv ac_medserv_why, after(bh_5)
 
 * education
 	rename 			filter1 children618
@@ -558,16 +586,18 @@
 	rename 			s5q12 internet7
 	rename 			s5q13 internet7_diff	
 
-
 * employment
+	rename			s6q1 emp	
+	rename			s6q1a edu
+	replace			emp = s6q1_1 if emp == .
 	rename			s6q8d_1 emp_hrs
 	rename			s6q8e_1 emp_hrs_chg
 	rename			s6q3a_1a find_job
 	rename			s6q3a_2a find_job_do
 	rename			s6q4_1 find_job_act
+		
  * same respondant employment
-	rename			s6q1a rtrn_emp
-	rename			s6q1b rtrn_when
+ 	rename			s6q1b rtrn_when
 	replace			emp_same = s6q4a_1b if s6q4a_1b != .
 	replace			emp_chg_why = s6q4b if s6q4b != .
 	replace			emp_act = s6q5 if s6q5 != .
@@ -575,8 +605,8 @@
 	replace			emp_able = s6q7 if s6q7 != .
 	replace			emp_unable = s6q8 if s6q8 != .
 	replace			emp_unable_why = s6q8a if s6q8a != .
-	replace			emp_hours = s6q8b if s6q8b != .
-	replace			emp_hours_chg = s6q8c if s6q8c != .
+	replace			emp_hrs = s6q8b if s6q8b != .
+	replace			emp_hrs_chg = s6q8c if s6q8c != .
 	replace			emp_cont_01 = s6q8d__1 if s6q8d__1 != .
 	replace			emp_cont_02 = s6q8d__2 if s6q8d__2 != .
 	replace			emp_cont_03 = s6q8d__3 if s6q8d__3 != .
@@ -624,14 +654,11 @@
 	lab val			rtrn_emp_why rtrn_emp_why
 	lab var 		rtrn_emp_why "Why did you not work last week"
 	order			rtrn_emp_why, after(rtrn_when)
-	rename			s6bq11 bus_emp
+
 	rename			s6bq11a_1 bus_stat
 	replace			bus_stat = s6bq11a_2 if bus_stat == .
 	replace			bus_stat = s6bq11a_3 if bus_stat == .
 	rename			s6bq11b bus_stat_why
-	rename			s6qb12 bus_sect
-	rename			s6qb13 bus_emp_inc
-	rename			s6qb14 bus_why
 	gen				bus_chlng_fce = 1 if s6qb15__1 == 1
 	replace			bus_chlng_fce = 2 if s6qb15__2 == 1
 	replace			bus_chlng_fce = 3 if s6qb15__3 == 1
@@ -679,6 +706,70 @@
 	rename			s6cq3 oth_inc_03
 	rename			s6cq4 oth_inc_04
 	rename			s6cq5 oth_inc_05
+
+* concern 
+	rename			s9q1 concern_01
+	rename			s9q2 concern_02
+	rename			s9q3 have_symp
+	replace 		have_symp = cond(s9q3__1 == 1 | s9q3__2 == 1 | s9q3__3 == 1 | ///
+						s9q3__4 == 1 | s9q3__5 == 1 | s9q3__6 == 1 | ///
+						s9q3__7 == 1 | s9q3__8 == 1, 1, cond( ///
+						s9q3__1 == 0 & s9q3__2 == 0 & s9q3__3 == 0 & ///
+						s9q3__4 == 0 & s9q3__5 == 0 & s9q3__6 == 0 & ///
+						s9q3__7 == 0 & s9q3__8 == 0, 2, .)) if have_symp !=.
+		lab var			have_symp "Has anyone in your hh experienced covid symptoms?:cough/shortness of breath etc."
+	drop			s9q3__1 s9q3__2 s9q3__3 s9q3__4 s9q3__5 s9q3__6 s9q3__7 s9q3__8
+	rename 			s9q4 have_test
+	rename 			s9q5 concern_03
+	rename			s9q6 concern_04
+	lab var			concern_04 "Response to the COVID-19 emergency will limit my rights and freedoms"
+	rename			s9q7 concern_05
+	lab var			concern_05 "Money and supplies allocated for the COVID-19 response will be misused and captured by powerful people in the country"
+	rename			s9q8 concern_06
+	lab var			concern_06 "Corruption in the government has lowered the quality of medical supplies and care"
+		
+* agriculture
+	rename			s13q1 ag_prep
+	rename			s13q2a ag_crop_01
+	rename			s13q2b ag_crop_02
+	rename			s13q2c ag_crop_03
+	rename			s13q3 ag_prog
+	rename 			s13q4 ag_chg
+	rename			s13q5__1 ag_chg_08
+	label var 		ag_chg_08 "activities affected - covid measures"
+	rename			s13q5__2 ag_chg_09
+	label var 		ag_chg_09 "activities affected - could not hire"
+	rename			s13q5__3 ag_chg_10
+	label var   	ag_chg_10 "activities affected - hired fewer workers"
+	rename			s13q5__4 ag_chg_11
+	label var 		ag_chg_11 "activities affected - abandoned crops"
+	rename			s13q5__5 ag_chg_07
+	label var 		ag_chg_07 "activities affected - delayed harvest"
+	rename			s13q5__7 ag_chg_12
+	label var 		ag_chg_12 "activities affected - early harvest"
+	rename			s13q6__1 agcovid_chg_why_01
+	rename 			s13q6__2 agcovid_chg_why_02
+	rename 			s13q6__3 agcovid_chg_why_03
+	rename			s13q6__4 agcovid_chg_why_04
+	rename			s13q6__5 agcovid_chg_why_05
+	rename 			s13q6__6 agcovid_chg_why_06
+	rename 			s13q6__7 agcovid_chg_why_07
+	rename 			s13q6__8 agcovid_chg_why_08
+	rename 			s13q7 aghire_chg_why
+	rename 			s13q8 ag_ext_need
+	rename 			s13q9 ag_ext
+	rename			s13q10 ag_live_lost
+	rename			s13q11 ag_live_chg
+	rename			s13q12__1 ag_live_chg_01
+	rename			s13q12__2 ag_live_chg_02
+	rename			s13q12__3 ag_live_chg_03
+	rename			s13q12__4 ag_live_chg_04
+	rename			s13q12__5 ag_live_chg_05
+	rename			s13q12__6 ag_live_chg_06
+	rename			s13q12__7 ag_live_chg_07
+	rename			s13q13 ag_sold
+	rename			s13q14 ag_sell
+	rename 			s13q15 ag_price	
 	
 * fies
 	rename			s8q1 fies_04
@@ -701,9 +792,9 @@
 * drop unnecessary variables
  	drop			s5q1c3__1 s5q1c3__2 s5q1c3__3 s5q1c3__4 s5q1c3__5 s5q1c3__6 ///
 						s5q11_os s5q2c__1 s5q2c__2 s5q2c__3 s5q2c__4 s5q2c__5 s5q2c__6 ///
-						s5q2c__7 s5q2c__99 shock_id s10q1 s11q11 s11q12 s11q13 s11q14 s11q15 ///
+						s5q2c__7 s5q2c__99 s11q11 s11q12 s11q13 s11q14 s11q15 ///
 						s5q1b2__1 s5q1b2__1 s5q1b2__3 s5q1b2__5 s5q1b2__99 s5q1b2__4 ///
-						s5q1b2__2 s6q1_1 s6q2_1 s6q3_os_1 s6q4_ot_1 s6q4b_os_1 s6q4c_os_1 ///
+						s5q1b2__2 s6q1_1 s6q3_os_1 s6q4_ot_1 s6q4b_os_1 s6q4c_os_1 ///
 						s6q5_os_1 s6q8a_os_1 s6q8c_1__2 s6q8c_1__99 s6q10_1__0 ///
 						s6q10_1__1 s6q10_1__2 s6q10_1__3 s6q17_1_ot s6q4a_1b  ///
 						s6q4a_2b s6q4b s6q5 s6q6 s6q7 s6q8 s6q8a s6q8a_os ///
@@ -714,7 +805,9 @@
 						s6q1c__10 s6q1c__11 s6q1c__12 s6q1c__13 s6q1c__96 s6q1c_os ///
 						s6q3__1 s6q3__2 s6q3__3 s6q3__4 s6q3__5 s6q3__6 s6q3__7 ///
 						s6q3__8 s6q3__9 s6q3__10 s6q3__11 s6q3__12 s6q3__13 ///
-						s6q3__96 s6q3_os
+						s6q3__96 s6q3_os hh_a16 hh_a17 result s5q1c1__* ///
+						s5q1c4__* s5q2c__* s5q1c3__* s5q5__*  *_os ///
+						s13q5_* s13q6_* *details  s6q8c__2 s6q8c__99 s6q10__* 
 
 * regional and sector information
 	gen				sector = 2 if urb_rural == 1
@@ -747,6 +840,64 @@
 	order			region, after(sector)
 	lab var			region "Region"
 	
+
+* **********************************************************************
+* 4 - QC check 
+* **********************************************************************
+
+* compare numerical variables to other rounds & flag if 25+ percentage points different
+	tostring 		wave, replace
+	ds, 			has(type numeric)
+	foreach 		var in `r(varlist)' {
+		preserve
+		keep 		`var' wave
+		destring 	wave, replace
+		gen 		counter = 1
+		collapse 	(sum) counter, by(`var' wave)
+		reshape 	wide counter, i(`var') j(wave)
+		drop 		if `var' == .
+		foreach 	x in "$waves" {
+			egen 	tot_`x' = total(counter`x')
+			gen 	per_`x' = counter`x' / tot_`x'
+		}
+		keep 		per*
+		foreach 	x in "$waves"  {
+			foreach q in "$waves"  {
+				gen flag_`var'_`q'`x' = 1 if per_`q' - per_`x' > .25 & per_`q' != . & per_`x' != .
+			}
+		}	
+		keep 		*flag*
+
+	* drop if all missing	
+		foreach 	v of varlist _all {
+			capture assert mi(`v')
+			if 		!_rc {
+				drop `v'
+			}
+		}
+		gen 		n = _n
+		tempfile 	temp`var'
+		save 		`temp`var''
+		restore   
+	}
+		
+* create dataset of flags
+	preserve
+	ds, 			has(type numeric)
+	clear
+	set 			obs 15
+	gen 			n = _n
+	foreach 		var in `r(varlist)' {
+		merge 		1:1 n using `temp`var'', nogen
+	}
+	reshape 		long flag_, i(n) j(variables) string 
+	drop 			if flag_ == .
+	drop 			n
+	sort 			variable	
+	export 			excel using "$export/mwi_qc_flags.xlsx", first(var) sheetreplace sheet(flags)
+	restore
+	destring 		wave, replace
+
 	
 * **********************************************************************
 * 5 - end matter, clean up to save

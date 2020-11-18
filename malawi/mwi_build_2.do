@@ -105,7 +105,7 @@
 	drop			_merge
 
 * drop all but gender and relation to HoH
-	keep			HHID PID  s2q5 s2q6 s2q7
+	keep			HHID PID  s2q5 s2q6 s2q7 s2q9
 
 * save temp file
 	tempfile		tempc
@@ -208,22 +208,14 @@
 	merge 1:1 		HHID using "$root/wave_02/sect8_food_security_r2.dta", nogen
 	merge 1:1 		HHID using "$root/wave_02/sect9_Concerns_r2.dta", nogen
 	merge 1:1 		HHID using "$root/wave_02/sect12_Interview_Result_r2.dta", nogen
-
-*rename variables inconsistent with other waves
-	rename 			s3q8_1 gov_pers_1
-	rename 			s3q8_2 gov_pers_2
-	rename 			s3q8_3 gov_pers_3
-	rename 			s3q8_4 gov_pers_4
-	rename 			s3q8_5 gov_pers_5
-	rename 			s3q8_6 gov_pers_6
-	rename 			s3q8_8 gov_pers_7
+	
+*rename variables inconsistent with  wave 1
 	rename			s3q9 sup_rcvd
 	rename			s3q10 sup_cmpln
 	rename			s3q11 sup_cmpln_who
 	rename			s3q12 sup_cmpln_done
-	rename			s6q1 emp
-	replace			emp = s6q1_1 if emp == .
-	gen				emp_pre = s6q2_1 if s6q2_1 != .
+	rename			s6q1a rtrn_emp
+	rename 	 		s6q2_1 emp_pre
 	rename			s6q3a_1 emp_pre_why
 	rename			s6q3b_1 emp_pre_act
 	rename			s6q4a_1 emp_same
@@ -239,6 +231,10 @@
 	rename			s6q8b_1__3 emp_cont_03
 	rename			s6q8b_1__4 emp_cont_04
 	rename			s6q8c_1__1 contrct
+	rename			s6bq11 bus_emp
+	rename			s6qb12 bus_sect
+	rename			s6qb13 bus_emp_inc
+	rename			s6qb14 bus_why
 	rename			s6q9_1 emp_hh
 	rename			s6q15_1 farm_emp
 	rename			s6q16_1 farm_norm
@@ -261,86 +257,3 @@
 	save			"$export/wave_0`w'/r`w'", replace
 
 /* END */	
-	
-	
-
-
-
-/*
-
-
-
-asdf 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	drop			
-
-	
-
-	drop			
-
-
-
-	drop			
-
-
-
-
-
-* SEC 9: concerns
-	rename			s9q1 concern_01
-	rename			s9q2 concern_02
-	gen				have_symp = 1 if s9q3__1 == 1 | s9q3__2 == 1 | s9q3__3 == 1 | ///
-						s9q3__4 == 1 | s9q3__5 == 1 | s9q3__6 == 1 | ///
-						s9q3__7 == 1 | s9q3__8 == 1
-	replace			have_symp = 2 if have_symp == .
-	lab var			have_symp "Has anyone in your hh experienced covid symptoms?:cough/shortness of breath etc."
-	order			have_symp, after(concern_02)
-
-	drop			s9q3__1 s9q3__2 s9q3__3 s9q3__4 s9q3__5 s9q3__6 s9q3__7 s9q3__8
-
-	rename 			s9q4 have_test
-	rename 			s9q5 concern_03
-	rename			s9q6 concern_04
-	lab var			concern_04 "Response to the COVID-19 emergency will limit my rights and freedoms"
-	rename			s9q7 concern_05
-	lab var			concern_05 "Money and supplies allocated for the COVID-19 response will be misused and captured by powerful people in the country"
-	rename			s9q8 concern_06
-	lab var			concern_06 "Corruption in the government has lowered the quality of medical supplies and care"
-
-* create country variables
-	gen				country = 2
-	order			country
-	lab def			country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda"
-	lab val			country country
-	lab var			country "Country"
-
-* save temp file
-	save			"$root/wave_02/r2_sect_all", replace	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	

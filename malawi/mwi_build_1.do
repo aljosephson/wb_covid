@@ -93,7 +93,7 @@
 	drop			_merge
 
 * drop all but gender and relation to HoH
-	keep			HHID PID s2q5 s2q6 s2q7
+	keep			HHID PID s2q5 s2q6 s2q7 s2q9
 
 * save temp file
 	tempfile		tempc
@@ -173,14 +173,7 @@
 	merge 1:1 		HHID using "$root/wave_01/sect12_Interview_Result_r1.dta", nogenerate
 	merge 1:1 		HHID using "$root/wave_01/sect13_Agriculture_r1.dta", nogenerate
 
-*rename variables inconsistent with other waves	
-	rename 			s3q8 gov_pers_1
-	rename 			s3q9 gov_pers_2
-	rename 			s3q10 gov_pers_3
-	rename 			s3q11 gov_pers_4
-	rename 			s3q12 gov_pers_5
-	rename			s6q1a edu
-	rename			s6q1 emp
+*rename variables inconsistent with other waves
 	rename			s6q2 emp_pre
 	rename			s6q3a emp_pre_why
 	rename			s6q3b emp_pre_act
@@ -221,111 +214,4 @@
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace
 
-/* END */	
-	
-	
-
-
-
-/*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-* SEC 6A: employment
-
-
-
-
-* SEC 9: concerns
-	rename			s9q1 concern_01
-	rename			s9q2 concern_02
-	rename			s9q3 have_symp
-	rename 			s9q4 have_test
-	rename 			s9q5 concern_03
-
-* SEC 6B: agriculture
-	rename			s13q1 ag_prep
-	rename			s13q2a ag_crop_01
-	rename			s13q2b ag_crop_02
-	rename			s13q2c ag_crop_03
-
-	rename			s13q3 ag_prog
-	rename 			s13q4 ag_chg
-
-	rename			s13q5__1 ag_chg_08
-	label var 		ag_chg_08 "activities affected - covid measures"
-	rename			s13q5__2 ag_chg_09
-	label var 		ag_chg_09 "activities affected - could not hire"
-	rename			s13q5__3 ag_chg_10
-	label var   	ag_chg_10 "activities affected - hired fewer workers"
-	rename			s13q5__4 ag_chg_11
-	label var 		ag_chg_11 "activities affected - abandoned crops"
-	rename			s13q5__5 ag_chg_07
-	label var 		ag_chg_07 "activities affected - delayed harvest"
-	rename			s13q5__7 ag_chg_12
-	label var 		ag_chg_12 "activities affected - early harvest"
-
-	rename			s13q6__1 agcovid_chg_why_01
-	rename 			s13q6__2 agcovid_chg_why_02
-	rename 			s13q6__3 agcovid_chg_why_03
-	rename			s13q6__4 agcovid_chg_why_04
-	rename			s13q6__5 agcovid_chg_why_05
-	rename 			s13q6__6 agcovid_chg_why_06
-	rename 			s13q6__7 agcovid_chg_why_07
-	rename 			s13q6__8 agcovid_chg_why_08
-	rename 			s13q7 aghire_chg_why
-
-	rename 			s13q8 ag_ext_need
-	rename 			s13q9 ag_ext
-	rename			s13q10 ag_live_lost
-	rename			s13q11 ag_live_chg
-	rename			s13q12__1 ag_live_chg_01
-	rename			s13q12__2 ag_live_chg_02
-	rename			s13q12__3 ag_live_chg_03
-	rename			s13q12__4 ag_live_chg_04
-	rename			s13q12__5 ag_live_chg_05
-	rename			s13q12__6 ag_live_chg_06
-	rename			s13q12__7 ag_live_chg_07
-
-	rename			s13q13 ag_sold
-	rename			s13q14 ag_sell
-	rename 			s13q15 ag_price
-
-* create country variables
-	gen				country = 2
-	order			country
-	lab def			country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda"
-	lab val			country country
-	lab var			country "Country"
-
-* drop unneeded variables
-	drop 			hh_a16 hh_a17 result s5q1c1__* s5q1c4__* s5q2c__* s5q1c3__* ///
-					s5q5__*  *_os s13q5_* s13q6_* *details  s6q8c__2 s6q8c__99 ///
-					s6q10__*  interview__key nbrbst s12q2 s12q3__0 s12q3__* ///
-					 s12q4__* s12q5 s12q6 s12q7 s12q8 s12q9 s12q10 s12q11 ///
-					 s12q12 s12q13 s12q14
-
-* save temp file
-	save			"$root/wave_01/r1_sect_all", replace
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+/* END */		

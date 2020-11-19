@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: September 2020 
 * Created by: amf
-* Edited by: jdm, alj 
-* Last edit: 14 October 2020 
+* Edited by: jdm 
+* Last edit: 19 November 2020 
 * Stata v.16.1
 
 * does
@@ -13,7 +13,7 @@
 	* palettes and colrspace installed	
 
 * TO DO:
-	* done
+	* complete
 
 
 * **********************************************************************
@@ -491,7 +491,7 @@ local tabnum = `tabnum' + 1
 			local 			n_`var' = e(N)
 			local 			mean_`var' = el(e(b),1,1)
 			local 			msd_`var' = sqrt(el(e(V),1,1))
-		total 				`var' [pweight = phw]
+		total 				`var' [pweight = phw] if wave == 1 
 			local 			tot_`var' = el(e(b),1,1)
 			local 			tsd_`var' = sqrt(el(e(V),1,1))
 	}	
@@ -638,7 +638,7 @@ local tabnum = `tabnum' + 1
 		outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
 							append excel dec(3) ctitle(S`tabnum' `var') 	
 	}
-						
+/*						
 *** figure s1a - income loss by gender ***
 	preserve
 	
@@ -662,9 +662,7 @@ local tabnum = `tabnum' + 1
 						
 	graph export 	"$figure/incomesex.eps", as(eps) replace
 
-*****************	
-*** NEW TABLE ***
-*****************
+
 *** table s12 ***
 
 local tabnum = `tabnum' + 1
@@ -675,7 +673,7 @@ local tabnum = `tabnum' + 1
 		outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
 							append excel dec(3) ctitle(S`tabnum' `var') 
 	}
-	
+*/	
 	
 * **********************************************************************
 * 2b - create Table S13 for Fig. 2B
@@ -858,7 +856,7 @@ preserve
 	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
 							sheetreplace sheet(testresultsS`tabnum') first(var)
 restore 
-
+/*
 *** figure s1b - FIES score and gender ***
 	preserve
 	drop if 		country == 1 & wave == 2
@@ -885,10 +883,6 @@ restore
 	graph export 	"$figure/fiessex.eps", as(eps) replace
 	
 
-*****************	
-*** NEW TABLE ***
-*****************
-
 *** table s16 ***
 
 local tabnum = `tabnum' + 1
@@ -901,7 +895,7 @@ local tabnum = `tabnum' + 1
 	reg 				p_sev i.sexhh##i.wave ib(2).country [pweight = wt_18], vce(robust)	
 	outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
 						append excel dec(3) ctitle(S`tabnum' sev food insecurity)
-							
+*/							
 	
 * **********************************************************************
 * 2d - create Table S17 for Fig. 2D
@@ -1019,7 +1013,7 @@ preserve
 							sheetreplace sheet(testresultsS`tabnum') first(var)
 restore 
 
-
+/*
 *** figure s1c - concerns with gender ***
 	preserve
 	drop if			country == 2 & wave == 1
@@ -1045,10 +1039,6 @@ restore
 						
 	graph export 	"$figure/concernssex.eps", as(eps) replace
 
-	
-*****************	
-*** NEW TABLE ***
-*****************
 
 *** table s19 ***
 
@@ -1165,7 +1155,7 @@ preserve
 						col(3) iscale(.5) pos(6) commonscheme  title("B", size(huge))
 
 	graph export 	"$figure/fiesquintetc12.eps", as(eps) replace
-
+*/
 
 *** table s20 ***
 
@@ -1410,7 +1400,7 @@ preserve
 				
 restore
 
-
+/*
 *** figure s1d - coping mechanisms, by gender ***
 preserve
 
@@ -1446,10 +1436,6 @@ restore
 	graph export 	"$figure/copesex.eps", as(eps) replace
 
 
-*****************	
-*** NEW TABLE ***
-*****************
-
 *** table s25 ***
 
 local tabnum = `tabnum' + 1
@@ -1469,7 +1455,7 @@ preserve
 	}	
 	
 restore
-				
+*/				
 	
 * **********************************************************************
 * 3b - create Table S26-S27 for Fig. 3B
@@ -1642,7 +1628,7 @@ restore
 * **********************************************************************
 * 3d - create Figure S3 and Table S26-S27 for Fig. 3D
 * **********************************************************************
-
+/*
 *** figure s3 - fies by education ***	
 	graph bar 			p_mod p_sev [pweight = wt_18], over(edu_act, lab(labs(vlarge))) ///
 							over(country, lab(labs(vlarge))) ylabel(0 "0" .2 "20" .4 "40" .6 "60" ///
@@ -1707,7 +1693,7 @@ local tabnum = `tabnum' + 1
 	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
 							sheetreplace sheet(testresultsS`tabnum') first(var)
 	restore
-	
+*/	
 *** table s31 ***
 
 local tabnum = `tabnum' + 1

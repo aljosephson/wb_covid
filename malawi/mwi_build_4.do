@@ -163,8 +163,6 @@
 	merge 1:1 		HHID using "$root/wave_0`w'/sect9_Concerns_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect12_Interview_Result_r`w'.dta", nogen
 
-
-
 *rename variables inconsistent with  wave 1
 	rename			s6q1a rtrn_emp
 	rename 	 		s6q2_1 emp_pre
@@ -200,6 +198,30 @@
 	rename			s6q17_1__96 farm_why_7
 	rename			s6q17_1__7 farm_why_8
 
+* rename access credit variables inconsistent with wave 3
+	rename 			s6dq1 ac_cr_loan
+	rename 			s6dq2 ac_cr_lend
+	rename 			s6dq3 ac_cr_lend_att
+	forval 			x = 1/12 {
+		rename 		s6dq4__`x' ac_cr_why_`x'
+	}
+	rename 			s6dq5 ac_cr_why_main
+	rename 			s6dq6__0 ac_cr_who_1
+	rename 			s6dq6__1 ac_cr_who_2
+	rename 			s6dq6__2 ac_cr_who_3
+	rename 			s6dq7__0 ac_cr_att_who_1
+	rename 			s6dq7__1 ac_cr_att_who_2
+	rename 			s6dq8 ac_cr_due
+	rename 			s6dq9 ac_cr_worry
+	rename 			s6dq10 ac_cr_bef
+	rename 			s6dq10a ac_cr_prev_repay
+	rename 			s6dq11 ac_cr_bef_why
+	rename 			s6dq12__0 ac_cr_bef_who_1
+	rename 			s6dq12__1 ac_cr_bef_who_2
+	rename 			s6dq13 ac_cr_bef_worry
+	rename 			s6dq14 ac_cr_miss
+	rename 			s6dq15 ac_cr_delay	
+	
 * generate round variables
 	gen				wave = `w'
 	lab var			wave "Wave number"

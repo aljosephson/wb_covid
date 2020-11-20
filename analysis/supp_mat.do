@@ -47,7 +47,7 @@
 	local 					counter = 1
 		reg 				gov_01 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 		outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-							replace excel dec(3) ctitle(S`tabnum' gov_01) label
+							replace excel dec(3) ctitle(S`tabnum' gov_01) label alpha(0.001, 0.01, 0.05)
 						
 	* Wald test for differences between other countries
 		test				1.country = 3.country

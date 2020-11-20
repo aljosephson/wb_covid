@@ -14,7 +14,7 @@
 	* raw malawi data 
 
 * TO DO:
-	* check round 4 variable crosswalk and QC's 
+	* complete
 	* when new waves available:
 		* create build for new wave based on previous ones
 		* update global list of waves below
@@ -610,7 +610,12 @@
 	rename 			s5q11 ac_bank_why
 	rename 			s5q12 internet7
 	rename 			s5q13 internet7_diff	
-	rename 			s5q17 sch_open
+	rename 			s5q17 sch_open 
+	gen 			sch_open_act = sch_open if wave > 3
+	lab def 		sch_open_act 1 "yes, they returned" 2 "no, they will return next phase" ///
+					3 "no, they will not return" 4 "not sure" 5 "children do not attend school"
+	lab val 		sch_open_act sch_open_act
+	replace 		sch_open = . if wave > 3
 	rename 			s5q17a sch_open_why	
 	rename 			s5q18 edu_meas
 	rename 			s5q19 edu_meas_sat
@@ -641,7 +646,7 @@
 	replace			emp_cont_2 = s6q8d__2 if s6q8d__2 != .
 	replace			emp_cont_3 = s6q8d__3 if s6q8d__3 != .
 	replace			emp_cont_4 = s6q8d__4 if s6q8d__4 != .
-	replace			contrct = s6q8e__1 if s6q8e__1 != .
+	replace			contrct = s6q8e__1 if s6q8e__1 != . & contrct == .
 	replace			emp_hh = s6q9 if s6q9 != .
 	replace			find_job = s6q3a if s6q3a != .
 	replace			find_job_do = s6q3b if s6q3b != .
@@ -789,8 +794,13 @@
 	rename 			s13q7 aghire_chg_why
 	rename 			s13q8 ag_ext_need
 	rename 			s13q9 ag_ext
-	rename			s13q10 ag_live_lost
+	rename			s13q10 ag_live
+	replace 		ag_live = s6qf1 if ag_live == . & s6qf1 != .
+	forval 			x = 1/10 {
+		rename 		s6qf2__`x' ag_live_`x'
+	}
 	rename			s13q11 ag_live_chg
+	replace 		ag_live_chg = s6qf3 if ag_live_chg == . & s6qf3 != . 
 	rename			s13q12__1 ag_live_chg_1
 	rename			s13q12__2 ag_live_chg_2
 	rename			s13q12__3 ag_live_chg_3
@@ -799,8 +809,39 @@
 	rename			s13q12__6 ag_live_chg_6
 	rename			s13q12__7 ag_live_chg_7
 	rename			s13q13 ag_sold
-	rename			s13q14 ag_sell
+	rename			s13q14 ag_sell_wk
 	rename 			s13q15 ag_price	
+	rename			s6qe1 ag_sell_seas
+	forval 			x = 1/12 {
+		rename 		s6qe2__`x' ag_sold_`x'
+	}
+	rename 			s6qe3 ag_sold_why
+	forval 			x = 1/4 {
+		rename 		s6qe4__`x' ag_sold_where_`x'
+	}
+	rename 			s6qe5 ag_dimba
+	forval 			x = 1/12 {
+		rename 		s6qe6__`x' ag_crop_pl_`x'
+	}
+	rename 			s6qe7 ag_sell_rev
+	forval 			x = 1/6 {
+		rename 		s6qf4__`x' ag_live_chg2_`x'
+	}
+	forval 			x = 1/3 {
+		rename 			s6qf5__`x' ag_live_chg2_1_cope`x'
+	}
+	forval 			x = 1/3 {
+		rename 			s6qf6__`x' ag_live_chg2_2_cope`x'
+	}
+	forval 			x = 1/3 {
+		rename 			s6qf7__`x' ag_live_chg2_3_cope`x'
+	}
+	rename 			s6qf8 ag_sell_live_want
+	rename 			s6qf9 ag_sell_live_able
+	forval 			x = 1/5 {
+		rename 			s6qf10__`x' ag_sell_live_nowhy`x'
+	}
+	rename 			s6qf11 ag_sell_live_rev
 	
 * fies
 	rename			s8q1 fies_4
@@ -841,8 +882,12 @@
 						s13q5_* s13q6_* *details  s6q8c__2 s6q8c__99 s6q10__* ///
 						s5q17a_ot s5q1a2_2_oth s5q1b2_oth s5q2_2c__95 s5q2_2c_ot ///
 						s5q2_2f__95 s5q2_2f_ot s6q3a_2a_os s6q3b_os ///
-						s6qb12_os s6qb15__95 s6qb15_os
-
+						s6qb12_os s6qb15__95 s6qb15_os s6dq2_Ot s6dq3_Ot ///
+						s6dq4_Ot s6dq5_Ot s6dq11_ot s6q5a s6dq4__95 s6qe2__95 ///
+						s6qe6__95 s6qe6_ot s6qe2_ot s6qe3_ot s6qe4__95 s6qe4_ot ///
+						s6qf1 s6qf2__95 s6qf2_ot s6qf3 s6qf6__95 s6qf6_ot s6qf7__95 ///
+						s6qf7_ot s6qf10__95 s6qf10_ot s6qf4__95 s6qf4_ot s6qf5__95 ///
+						s6qf5_ot s6dq10_ot
 
 * regional and sector information
 	gen				sector = 2 if urb_rural == 1

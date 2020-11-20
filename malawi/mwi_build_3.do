@@ -195,6 +195,7 @@
 	merge 1:1 		HHID using "$root/wave_0`w'/sect6a_Employment2_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect6b_NFE_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect6c_OtherIncome_r`w'.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/sect6d_Credit_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect8_food_security_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect9_Concerns_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect12_Interview_Result_r`w'.dta", nogen
@@ -233,6 +234,24 @@
 	rename			s6q17_1__6 farm_why_6
 	rename			s6q17_1__96 farm_why_7
 	rename			s6q17_1__7 farm_why_8
+
+* rename access credit variables inconsistent with wave 4	
+	rename 			s6dq1 ac_cr_need
+	rename 			s6dq2 ac_cr_att
+	rename 			s6dq3 ac_cr_loan
+	forval 			x = 1/8 {
+	    rename 		s6dq4__`x' ac_lend_`x'
+	}
+	rename 			s6dq5 ac_cr_why_main
+	rename 			s6dq6__0 ac_cr_who_1
+	rename 			s6dq6__1 ac_cr_who_2
+	rename 			s6dq7 ac_cr_due
+	rename 			s6dq8 ac_cr_worry
+	rename 			s6dq9 ac_cr_bef
+	rename 			s6dq10 ac_cr_bef_why
+	rename 			s6dq11 ac_cr_bef_worry
+	rename 			s6dq12 ac_cr_miss
+	rename 			s6dq13 ac_cr_delay	
 	
 * generate round variables
 	gen				wave = `w'

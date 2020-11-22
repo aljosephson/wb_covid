@@ -2,7 +2,7 @@
 * Created on: November 2020
 * Created by: alj
 * Edited by: alj
-* Last edit: 17 November 2020
+* Last edit: 22 November 2020
 * Stata v.16.1
 
 * does
@@ -26,7 +26,6 @@
 * define
 	global	ans		=	"$data/analysis"
 	global	output	=	"$data/analysis/figures"
-	global	present =	"$output/presentation"
 	global	logout	=	"$data/analysis/logs"
 
 * open log
@@ -130,24 +129,8 @@ save `precovid'
 	grc1leg2 		"$output/fies_time.gph", col(3) iscale(.5) pos(6) ///
 						commonscheme
 						
-	graph export 	"$present/fies_time.eps", as(eps) replace
+	graph export 	"$output/fies_time.eps", as(eps) replace
 	
-* determine statistical differences - regressions 
-	
-xtset hhid time
-
-*national level 
-*	xtreg 			p_mod i.time [pweight=popweight_adult], fe
-*	xtreg			p_sev i.time [pweight=popweight_adult], fe
-
-* urban 
-*	xtreg 			p_mod i.time [pweight=popweight_adult] if urban==1, fe
-*	xtreg 			p_sev i.time [pweight=popweight_adult] if urban==1, fe
-
-* rural 
-*	xtreg 			p_mod i.time [pweight=popweight_adult] if urban==0, fe
-*	xtreg 			p_sev i.time [pweight=popweight_adult] if urban==0, fe
-
 * **********************************************************************
 * 4 - end matter, clean up to save
 * **********************************************************************

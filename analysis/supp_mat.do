@@ -961,41 +961,76 @@ preserve
 	drop 					if country == 4 & wave == 1
 	
 * regression for concern 1, by quintile and country 
-	reg 					concern_01 ib(1).quint ib(2).country [pweight = hhw], vce(robust)
+	reg 					concern_01 ib(1).quint [pweight = hhw], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
 							append excel dec(3) ctitle(S`tabnum' concern 1 by quintile) alpha(0.001, 0.01, 0.05)
 					
-* Wald test for differences between other countries
-		test				1.country = 3.country
+* Wald test for differences between other quintiles
+		test				1.quint = 2.quint
 		local 				c1_t1 = r(p)
-		test				1.country = 4.country
+		test				1.quint = 3.quint
 		local 				c1_t2 = r(p)
-		test				3.country = 4.country
+		test				1.quint = 4.quint
 		local 				c1_t3 = r(p)
-	
+		test				1.quint = 5.quint
+		local 				c1_t4 = r(p)
+		test				2.quint = 3.quint
+		local 				c1_t5 = r(p)
+		test				2.quint = 4.quint
+		local 				c1_t6 = r(p)
+		test				2.quint = 5.quint
+		local 				c1_t7 = r(p)
+		test				3.quint = 4.quint
+		local 				c1_t8 = r(p)
+		test				3.quint =5.quint
+		local 				c1_t9 = r(p)
+		test				4.quint = 5.quint
+		local 				c1_t10 = r(p)
+						
 		
 * regression for concern 2, by quintile and country 	
-	reg 					concern_02 ib(1).quint ib(2).country [pweight = hhw], vce(robust)
+	reg 					concern_02 ib(1).quint [pweight = hhw], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
 							append excel dec(3) ctitle(S`tabnum' concern 2 by quintile) alpha(0.001, 0.01, 0.05)
 	
-* Wald test for differences between other countries
-		test				1.country = 3.country
+* Wald test for differences between other quintiles
+		test				1.quint = 2.quint
 		local 				c2_t1 = r(p)
-		test				1.country = 4.country
+		test				1.quint = 3.quint
 		local 				c2_t2 = r(p)
-		test				3.country = 4.country
+		test				1.quint = 4.quint
 		local 				c2_t3 = r(p)
+		test				1.quint = 5.quint
+		local 				c2_t4 = r(p)
+		test				2.quint = 3.quint
+		local 				c2_t5 = r(p)
+		test				2.quint = 4.quint
+		local 				c2_t6 = r(p)
+		test				2.quint = 5.quint
+		local 				c2_t7 = r(p)
+		test				3.quint = 4.quint
+		local 				c2_t8 = r(p)
+		test				3.quint =5.quint
+		local 				c2_t9 = r(p)
+		test				4.quint = 5.quint
+		local 				c2_t10 = r(p)
 				
 * create table of stored results
 	clear
-	set 					obs 3
-	gen 					testcountries =  cond(_n==1,"Ethiopia-Nigeria","")
-	replace 				testcountries = "Ethiopia-Uganda" in 2
-	replace 				testcountries = "Nigeria-Uganda" in 3
+	set 					obs 10
+	gen 					testcountries =  cond(_n==1,"Quintiles 1-2","")
+	replace 				testcountries = "Quintiles 1-3" in 2
+	replace 				testcountries = "Quintiles 1-4" in 3
+	replace 				testcountries = "Quintiles 1-5" in 4
+	replace 				testcountries = "Quintiles 2-3" in 5
+	replace 				testcountries = "Quintiles 2-4" in 6
+	replace 				testcountries = "Quintiles 2-5" in 7
+	replace 				testcountries = "Quintiles 3-4" in 8
+	replace 				testcountries = "Quintiles 3-5" in 9
+	replace 				testcountries = "Quintiles 4-5" in 10
 	forval 					c = 1/2 {
 		gen 				result_concern_`c' = .
-		forval 				t = 1/3 {
+		forval 				t = 1/10 {
 		    replace 		result_concern_`c' = `c`c'_t`t'' if _n == `t'
 		}
 	}
@@ -1242,54 +1277,107 @@ local tabnum = `tabnum' + 1
 * regressions across quintiles
 
 * regression on access to medicine
-	reg						ac_med i.quint ib(2).country [pweight = phw] if wave == 1, vce(robust)
+	reg						ac_med i.quint [pweight = phw] if wave == 1, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
 							append excel dec(3) ctitle(S`tabnum' access to medicine) alpha(0.001, 0.01, 0.05)
 	
-	* Wald test for differences between other countries
-		test				1.country = 3.country
+	* Wald test for differences between other quintiles
+		test				1.quint = 2.quint
 		local 				med_t1 = r(p)
-		test				1.country = 4.country
+		test				1.quint = 3.quint
 		local 				med_t2 = r(p)
-		test				3.country = 4.country
-		local 				med_t3 = r(p)		
+		test				1.quint = 4.quint
+		local 				med_t3 = r(p)
+		test				1.quint = 5.quint
+		local 				med_t4 = r(p)
+		test				2.quint = 3.quint
+		local 				med_t5 = r(p)
+		test				2.quint = 4.quint
+		local 				med_t6 = r(p)
+		test				2.quint = 5.quint
+		local 				med_t7 = r(p)
+		test				3.quint = 4.quint
+		local 				med_t8 = r(p)
+		test				3.quint =5.quint
+		local 				med_t9 = r(p)
+		test				4.quint = 5.quint
+		local 				med_t10 = r(p)		
 		
 * regression on access to staple
-	reg						ac_staple i.quint ib(2).country [pweight = phw] if wave == 1, vce(robust)
+	reg						ac_staple i.quint [pweight = phw] if wave == 1, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
 							append excel dec(3) ctitle(S`tabnum' access to staple) alpha(0.001, 0.01, 0.05)
 	
-	* Wald test for differences between other countries
-		test				1.country = 3.country
+	* Wald test for differences between other quintiles
+		test				1.quint = 2.quint
 		local 				stap_t1 = r(p)
-		test				1.country = 4.country
+		test				1.quint = 3.quint
 		local 				stap_t2 = r(p)
-		test				3.country = 4.country
-		local 				stap_t3 = r(p)	
+		test				1.quint = 4.quint
+		local 				stap_t3 = r(p)
+		test				1.quint = 5.quint
+		local 				stap_t4 = r(p)
+		test				2.quint = 3.quint
+		local 				stap_t5 = r(p)
+		test				2.quint = 4.quint
+		local 				stap_t6 = r(p)
+		test				2.quint = 5.quint
+		local 				stap_t7 = r(p)
+		test				3.quint = 4.quint
+		local 				stap_t8 = r(p)
+		test				3.quint =5.quint
+		local 				stap_t9 = r(p)
+		test				4.quint = 5.quint
+		local 				stap_t10 = r(p)	
 		
 * regression on access to soap
-	reg						ac_soap i.quint ib(2).country [pweight = phw] if wave == 1, vce(robust)
+	reg						ac_soap i.quint [pweight = phw] if wave == 1, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
 							append excel dec(3) ctitle(S`tabnum' access to soap) alpha(0.001, 0.01, 0.05)
 	
-	* Wald test for differences between other countries
-		test				3.country = 4.country
-		local 				soap_t3 = r(p)		
+	* Wald test for differences between other quintiles
+		test				1.quint = 2.quint
+		local 				soap_t1 = r(p)
+		test				1.quint = 3.quint
+		local 				soap_t2 = r(p)
+		test				1.quint = 4.quint
+		local 				soap_t3 = r(p)
+		test				1.quint = 5.quint
+		local 				soap_t4 = r(p)
+		test				2.quint = 3.quint
+		local 				soap_t5 = r(p)
+		test				2.quint = 4.quint
+		local 				soap_t6 = r(p)
+		test				2.quint = 5.quint
+		local 				soap_t7 = r(p)
+		test				3.quint = 4.quint
+		local 				soap_t8 = r(p)
+		test				3.quint =5.quint
+		local 				soap_t9 = r(p)
+		test				4.quint = 5.quint
+		local 				soap_t10 = r(p)	
 		
 * create table of stored results
 preserve
 	clear
-	set 					obs 3
-	gen 					testcountries =  "Ethiopia-Nigeria"
-	replace 				testcountries = "Ethiopia-Uganda" in 2
-	replace 				testcountries = "Nigeria-Uganda" in 3
-	foreach					var in med stap {
+	set 					obs 10
+	gen 					testcountries =  cond(_n==1,"Quintiles 1-2","")
+	replace 				testcountries = "Quintiles 1-3" in 2
+	replace 				testcountries = "Quintiles 1-4" in 3
+	replace 				testcountries = "Quintiles 1-5" in 4
+	replace 				testcountries = "Quintiles 2-3" in 5
+	replace 				testcountries = "Quintiles 2-4" in 6
+	replace 				testcountries = "Quintiles 2-5" in 7
+	replace 				testcountries = "Quintiles 3-4" in 8
+	replace 				testcountries = "Quintiles 3-5" in 9
+	replace 				testcountries = "Quintiles 4-5" in 10
+	foreach					var in med stap soap {
 	    gen 				`var' = .
-		forval 				t = 1/3 {
+		forval 				t = 1/10 {
 		    replace 		`var' = ``var'_t`t'' in `t'
 		}
 	}
-	gen 					soap = `soap_t3' in 3
+	
 	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
 							sheetreplace sheet(testresultsS`tabnum') first(var)	
 restore					
@@ -1337,27 +1425,48 @@ local tabnum = `tabnum' + 1
 local tabnum = `tabnum' + 1
 
 * regression of educational activity on quintile
-	reg						edu_act i.quint ib(2).country [pweight = phw] if wave == 1, vce(robust)
+	reg						edu_act i.quint [pweight = phw] if wave == 1, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
 							append excel dec(3) ctitle(S`tabnum' edu act on quint) alpha(0.001, 0.01, 0.05)
 		
-	* Wald test for differences between other countries
-		test				1.country = 3.country
+	* Wald test for differences between other quintiles
+		test				1.quint = 2.quint
 		local 				t1 = r(p)
-		test				1.country = 4.country
+		test				1.quint = 3.quint
 		local 				t2 = r(p)
-		test				3.country = 4.country
-		local 				t3 = r(p)		
+		test				1.quint = 4.quint
+		local 				t3 = r(p)
+		test				1.quint = 5.quint
+		local 				t4 = r(p)
+		test				2.quint = 3.quint
+		local 				t5 = r(p)
+		test				2.quint = 4.quint
+		local 				t6 = r(p)
+		test				2.quint = 5.quint
+		local 				t7 = r(p)
+		test				3.quint = 4.quint
+		local 				t8 = r(p)
+		test				3.quint =5.quint
+		local 				t9 = r(p)
+		test				4.quint = 5.quint
+		local 				t10 = r(p)		
 		
 * create table of stored results
 preserve
 	clear
-	set 					obs 3
-	gen 					testcountries =  "Ethiopia-Nigeria"
-	replace 				testcountries = "Ethiopia-Uganda" in 2
-	replace 				testcountries = "Nigeria-Uganda" in 3
+	set 					obs 10
+	gen 					testcountries =  cond(_n==1,"Quintiles 1-2","")
+	replace 				testcountries = "Quintiles 1-3" in 2
+	replace 				testcountries = "Quintiles 1-4" in 3
+	replace 				testcountries = "Quintiles 1-5" in 4
+	replace 				testcountries = "Quintiles 2-3" in 5
+	replace 				testcountries = "Quintiles 2-4" in 6
+	replace 				testcountries = "Quintiles 2-5" in 7
+	replace 				testcountries = "Quintiles 3-4" in 8
+	replace 				testcountries = "Quintiles 3-5" in 9
+	replace 				testcountries = "Quintiles 4-5" in 10
 	gen 					pval = .
-	forval 					t = 1/3 {
+	forval 					t = 1/10 {
 		replace 			pval = `t`t'' in `t'
 	}
 	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///

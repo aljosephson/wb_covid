@@ -106,7 +106,7 @@ if $pack == 1 {
 
 	do			"$code/analysis/covid_data.do"			//  reads in covid data
 	do			"$code/analysis/pnl_cleaning.do"		//	builds 4 country panel
-	do			"$code/analysis/analysis_graphs.do"		//	produces graphs in paper
+*	do			"$code/analysis/analysis_graphs.do"		//	produces graphs in paper
 *	do			"$code/analysis/supp_mat.do"			//	produces tables in supplemental material
 
 

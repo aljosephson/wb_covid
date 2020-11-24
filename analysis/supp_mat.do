@@ -293,7 +293,7 @@ local tabnum = `tabnum' + 1
 	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
 							sheetreplace sheet(testresultsS`tabnum') first(var)
 	restore
-
+/* CUT
 *** table S4 ***
 
 local tabnum = `tabnum' + 1
@@ -340,7 +340,7 @@ local tabnum = `tabnum' + 1
 			export 			excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
 							sheetreplace sheet(sumstatsS`tabnum') first(var)
 		restore	
-		
+*/		
 *** table S5 ***
 
 local tabnum = `tabnum' + 1
@@ -488,6 +488,8 @@ local tabnum = `tabnum' + 1
 * **********************************************************************
 * 2a - create Table S8-S10 for Fig. 2A
 * **********************************************************************
+
+/* SWAP POSITION FOR TABLES S8 AND S9 */
 
 *** table S8 ***
 
@@ -950,7 +952,7 @@ preserve
 							sheetreplace sheet(testresultsS`tabnum') first(var)
 restore 
 
-
+/* CUT
 *** table s17 ***
 
 local tabnum = `tabnum' + 1
@@ -1039,7 +1041,7 @@ preserve
 							sheetreplace sheet(testresultsS`tabnum') first(var)	
 		
 restore 
-
+*/
 		
 * **********************************************************************
 * 3 - create tables for Fig. 3

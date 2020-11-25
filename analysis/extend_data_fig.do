@@ -134,6 +134,14 @@ save `precovid'
 						
 	graph export 	"$output/fies_time.eps", as(eps) replace
 	
+* determine statistical differences - regressions 
+	
+xtset hhid time
+
+*national level 
+	xtreg 			p_mod i.time [pweight=popweight_adult], fe
+	xtreg			p_sev i.time [pweight=popweight_adult], fe
+
 * **********************************************************************
 * 4 - end matter, clean up to save
 * **********************************************************************

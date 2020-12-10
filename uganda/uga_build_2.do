@@ -14,8 +14,7 @@
 	* raw Uganda data
 
 * TO DO:
-	* everything
-	* clean agriculture and livestock??
+	* complete
 
 
 * **********************************************************************
@@ -32,18 +31,19 @@
 	cap log 		close
 	log using		"$logout/uga_build", append
 	
+* set local wave number & file number
+	local			w = 2
+	
+* make wave folder within refined folder if it does not already exist 
+	capture mkdir "$export/wave_0`w'" 	
+	
 
 * ***********************************************************************
-* 2 - reshape wide data - R2
-* ***********************************************************************
-
-
-* ***********************************************************************
-* 2a - reshape section 6 wide data - R2
+* 1 - reshape section 6 wide data
 * ***********************************************************************
 
 * load income data
-	use				"$root/wave_02/SEC6", clear
+	use				"$root/wave_0`w'/SEC6", clear
 
 * reformat HHID
 	format 			%12.0f HHID
@@ -58,15 +58,16 @@
 	reshape 		wide s6q01 s6q02, i(HHID) j(income_loss__id)
 
 * save temp file
-	save			"$root/wave_02/SEC6w", replace
+	tempfile		temp1
+	save			`temp1'
 
 
 * ***********************************************************************
-* 2b - reshape section 10 wide data - R2
+* 2 - reshape section 10 wide data 
 * ***********************************************************************
 
 * load safety net data - updated via convo with Talip 9/1
-	use				"$root/wave_02/SEC10", clear
+	use				"$root/wave_0`w'/SEC10", clear
 
 * reformat HHID
 	format 			%12.0f HHID
@@ -111,15 +112,16 @@
 	drop			s10q01101 s10q01102 s10q01103
 	
 * save temp file
-	save			"$root/wave_02/SEC10w", replace
+	tempfile		temp2
+	save			`temp2'
 
 
 * ***********************************************************************
-* 2d - get respondant gender - R2
+* 3 - get respondant gender
 * ***********************************************************************
 
 * load data
-	use				"$root/wave_02/interview_result", clear
+	use				"$root/wave_0`w'/interview_result", clear
 
 * drop all but household respondant
 	keep			HHID Rq09
@@ -144,15 +146,16 @@
 	keep			HHID PID sex age relate_hoh
 
 * save temp file
-	save			"$export/wave_02/respond_r2", replace
+	tempfile		temp3
+	save			`temp3'
 
 	
 * ***********************************************************************
-* 2e - get household size and gender of HOH - R2
+* 4 - get household size and gender of HOH
 * ***********************************************************************
 
 * load data
-	use				"$root/wave_02/SEC1.dta", clear
+	use				"$root/wave_0`w'/SEC1.dta", clear
 
 * rename other variables 
 	rename 			hh_roster__id ind_id 
@@ -163,10 +166,10 @@
 	rename 			s1q07 relat_mem
 	
 * generate counting variables
-	gen			hhsize = 1
-	gen 		hhsize_adult = 1 if age_mem > 18 & age_mem < .
-	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
-	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
+	gen				hhsize = 1
+	gen 			hhsize_adult = 1 if age_mem > 18 & age_mem < .
+	gen				hhsize_child = 1 if age_mem < 19 & age_mem != . 
+	gen 			hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
 * create hh head gender
 	gen 			sexhh = . 
@@ -174,253 +177,181 @@
 	label var 		sexhh "Sex of household head"
 	
 * collapse data
-	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(HHID)
-	lab var		hhsize "Household size"
-	lab var 	hhsize_adult "Household size - only adults"
-	lab var 	hhsize_child "Household size - children 0 - 18"
-	lab var 	hhsize_schchild "Household size - school-age children 5 - 18"
+	collapse		(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(HHID)
+	lab var			hhsize "Household size"
+	lab var 		hhsize_adult "Household size - only adults"
+	lab var 		hhsize_child "Household size - children 0 - 18"
+	lab var 		hhsize_schchild "Household size - school-age children 5 - 18"
 
 * save temp file
-	save			"$export/wave_02/hhsize_r2", replace
+	tempfile		temp4
+	save			`temp4'
 
 	
 * ***********************************************************************
-* 2f - FIES - R2
+* 5 - livestock
+* ***********************************************************************
+
+* load data		
+	use 			"$root/wave_02/SEC5C_1.dta", clear
+	
+* drop missing data
+	drop 			if livestock == 4
+	
+* reshape wide
+	gen 			product = cond(livestock == -96, "other", cond(livestock == 1, ///
+					"milk",cond(livestock == 2, "eggs","meat")))
+	drop 			livestock
+	reshape 		wide s5cq*, i(HHID BSEQNO) j(product) string
+	
+* save temp file
+	tempfile		temp5
+	save			`temp5'
+	
+	
+* ***********************************************************************
+* 5 - FIES
 * ***********************************************************************
 
 * load data
-	use				"$fies/UG_FIES_round2.dta", clear
+	use				"$fies/UG_FIES_round`w'.dta", clear
 
 	drop 			country round
 	destring 		HHID, replace
 
 * save temp file
-	save			"$export/wave_02/fies_r2", replace
+	tempfile		temp6
+	save			`temp6'
 
 	
 * ***********************************************************************
-* 4 - build uganda R2 cross section
+* 6 - build uganda cross section
 * ***********************************************************************
 
 * load cover data
-	use				"$root/wave_02/Cover", clear
+	use				"$root/wave_0`w'/Cover", clear
 
-* merge in other sections
-	merge 1:1 		HHID using "$export/wave_02/respond_r2.dta", nogenerate
-	merge 1:1 		HHID using "$export/wave_02/hhsize_r2.dta", nogenerate
-	merge 1:1 		HHID using "$root/wave_02/SEC2.dta", nogenerate
-	merge 1:1 		HHID using "$root/wave_02/SEC3.dta", nogenerate
-	merge 1:1 		HHID using "$root/wave_02/SEC4.dta", nogenerate
-	merge 1:1 		HHID using "$root/wave_02/SEC5.dta", nogenerate
-	merge 1:1 		HHID using "$root/wave_02/SEC5A.dta", nogenerate
-*	merge 1:1 		HHID using "$root/wave_02/SEC5B.dta", nogenerate *** harvest
-*	merge 1:1 		HHID using "$root/wave_02/SEC5C.dta", nogenerate *** livestock
-*	merge 1:1 		HHID using "$root/wave_02/SEC5C_1.dta", nogenerate *** livestock
-	merge 1:1 		HHID using "$root/wave_02/SEC6w.dta", nogenerate
-	merge 1:1 		HHID using "$root/wave_02/SEC7.dta", nogenerate
-	merge 1:1 		HHID using "$root/wave_02/SEC9.dta", nogenerate
-	merge 1:1 		HHID using "$root/wave_02/SEC10w.dta", nogenerate
-	merge 1:1 		HHID using "$export/wave_02/fies_r2.dta", nogenerate	
 
+* merge in other sections	
+	forval x = 1/6 {
+	    merge 1:1 HHID using `temp`x'', nogen
+	}
+	merge 1:1 		HHID using "$root/wave_02/SEC2.dta", nogen
+	merge 1:1 		HHID using "$root/wave_02/SEC3.dta", nogen
+	merge 1:1 		HHID using "$root/wave_02/SEC4.dta", nogen
+	merge 1:1 		HHID using "$root/wave_02/SEC5.dta", nogen
+	merge 1:1 		HHID using "$root/wave_02/SEC5A.dta", nogen
+	merge 1:1 		HHID using "$root/wave_02/SEC5B.dta", nogen 
+	merge 1:1 		HHID using "$root/wave_02/SEC5C.dta", nogen 
+	merge 1:1 		HHID using "$root/wave_02/SEC7.dta", nogen
+	merge 1:1 		HHID using "$root/wave_02/SEC9.dta", nogen	
+	
 * reformat HHID
 	format 			%12.0f HHID
 
+* rename variables inconsistent with other waves
+	* rename behavioral changes
+		rename			s3q01 bh_1
+		rename			s3q02 bh_2
+		rename			s3q03 bh_3
+		rename			s3q04 bh_4
+		rename			s3q05 bh_5
+		rename			s3q06 bh_7
+		rename			s3q07 bh_8
+	* rename employment
+		rename			s5q01 emp
+		rename			s5q01a rtrn_emp
+		rename			s5q01b rtrn_when
+		rename			s5q01c rtrn_emp_why
+		replace			rtrn_emp_why = s5q03 if rtrn_emp_why == .
+		rename			s5q03a find_job
+		rename			s5q03b find_job_do
+		rename			s5q04a_1 emp_same
+		replace			emp_same = s5q04a_2 if emp_same == .
+		rename			s5q04b emp_chg_why
+		rename			s5q05 emp_act
+		rename			s5q06 emp_stat
+		rename			s5q07 emp_able
+		rename			s5q08 emp_unable
+		rename			s5q08a emp_unable_why
+		rename			s5q08b emp_hours
+		rename			s5q08c emp_hours_chg
+		rename			s5q08d__1 emp_cont_1
+		rename			s5q08d__2 emp_cont_2
+		rename			s5q08d__3 emp_cont_3
+		rename			s5q08d__4 emp_cont_4
+		rename			s5q08e contrct
+		rename			s5q09 emp_hh
+		rename			s5aq11 bus_emp
+		rename			s5aq11a bus_stat
+		rename			s5aq12 bus_sect
+		rename			s5aq13 bus_emp_inc
+		rename			s5aq14_1 bus_why
+	* rename credit
+		rename			s7q01 credit
+		rename			s7q02 credit_cvd
+		rename			s7q03 credit_cvd_how	
+		gen				credit_source = 1 if s7q04__1
+		replace			credit_source = 2 if s7q04__2
+		replace			credit_source = 3 if s7q04__3
+		replace			credit_source = 4 if s7q04__4
+		replace			credit_source = 5 if s7q04__5
+		replace			credit_source = 6 if s7q04__6
+		replace			credit_source = 7 if s7q04__7
+		replace			credit_source = 8 if s7q04__8
+		replace			credit_source = 9 if s7q04__9
+		replace			credit_source = 10 if s7q04__10
+		replace			credit_source = 11 if s7q04__11
+		replace			credit_source = 12 if s7q04__12
+		replace			credit_source = 13 if s7q04__13
+		replace			credit_source = 14 if s7q04__14
+		replace			credit_source = 15 if s7q04__15
+		replace			credit_source = 16 if s7q04__16
+		replace			credit_source = 17 if s7q04__n96
+		lab def			credit 1 "Commercial bank" 2 "Savings club" ///
+									  3 "Credit Institution" 4 "ROSCAs" ///
+									  5 "MDI" 6 "Welfare fund" ///
+									  7 "SACCOs" 8 "Investment club" ///
+									  9 "NGOs" 10 "Burial societies" ///
+									  11 "ASCAs" 12 "MFIs" 13 "VSLAs" ///
+									  14 "MOKASH" 15 "WEWOLE" ///
+									  16 "Neighbour/friend" 17 "Other"
+		lab val			credit_source credit
+		lab var			credit_source "From whom did you borrow money?"
+		rename			s7q05 credit_purp
+		rename			s7q06 credit_wry
+	* rename concerns
+		rename			s9q01 concern_1
+		rename			s9q02 concern_2
+		gen				have_symp = 1 if s9q03__1 == 1 | s9q03__2 == 1 | s9q03__3 == 1 | ///
+							s9q03__4 == 1 | s9q03__5 == 1 | s9q03__6 == 1 | ///
+							s9q03__7 == 1 | s9q03__8 == 1
+		replace			have_symp = 2 if have_symp == .
+		lab var			have_symp "Has anyone in your hh experienced covid symptoms?:cough/shortness of breath etc."
+		order			have_symp, after(concern_2)
+		rename 			s9q04 have_test
+		rename 			s9q05 concern_3
+		rename			s9q06 concern_4
+		lab var			concern_4 "Response to the COVID-19 emergency will limit my rights and freedoms"
+		rename			s9q07 concern_5
+		lab var			concern_5 "Money and supplies allocated for the COVID-19 response will be misused and captured by powerful people in the country"
+		rename			s9q08 concern_6
+		lab var			concern_6 "Corruption in the government has lowered the quality of medical supplies and care"
+		rename			s9q09__1 curb_1 
+		rename			s9q09__2 curb_2
+		rename			s9q09__3 curb_3
+		rename			s9q09__4 curb_4
+		rename			s9q09__5 curb_5
+		
+* save panel
+	* gen wave data
+		rename			wfinal phw
+		lab var			phw "sampling weights"	
+		gen				wave = 2
+		lab var			wave "Wave number"
+		order			baseline_hhid wave phw, after(HHID)
 
-* ***********************************************************************
-* 4a - rationalize variable names - R2
-* ***********************************************************************
+	* save file
+		save			"$export/wave_0`w'/r`w'", replace
 
-* rename behavioral changes
-	rename			s3q01 bh_1
-	rename			s3q02 bh_2
-	rename			s3q03 bh_3
-	rename			s3q04 bh_4
-	rename			s3q05 bh_5
-	rename			s3q06 bh_7
-	rename			s3q07 bh_8
-
-* rename employment
-	rename			s5q01 emp
-	rename			s5q01a rtrn_emp
-	rename			s5q01b rtrn_when
-	
-	rename			s5q01c rtrn_emp_why
-	replace			rtrn_emp_why = s5q03 if rtrn_emp_why == .
-	
-	rename			s5q03a find_job
-	rename			s5q03b find_job_do
-
-	rename			s5q04a_1 emp_same
-	replace			emp_same = s5q04a_2 if emp_same == .
-	rename			s5q04b emp_chg_why
-
-	rename			s5q05 emp_act
-	rename			s5q06 emp_stat
-	rename			s5q07 emp_able
-	rename			s5q08 emp_unable
-	rename			s5q08a emp_unable_why
-	rename			s5q08b emp_hours
-	rename			s5q08c emp_hours_chg
-	rename			s5q08d__1 emp_cont_1
-	rename			s5q08d__2 emp_cont_2
-	rename			s5q08d__3 emp_cont_3
-	rename			s5q08d__4 emp_cont_4
-	rename			s5q08e contrct
-	rename			s5q09 emp_hh
-	
-	rename			s5aq11 bus_emp
-	rename			s5aq11a bus_stat
-	
-	gen				bus_stat_why = 1 if s5aq11b__1 == 1
-	replace			bus_stat_why = 2 if s5aq11b__2 == 1
-	replace			bus_stat_why = 3 if s5aq11b__3 == 1
-	replace			bus_stat_why = 4 if s5aq11b__4 == 1
-	replace			bus_stat_why = 5 if s5aq11b__5 == 1
-	replace			bus_stat_why = 6 if s5aq11b__6 == 1
-	replace			bus_stat_why = 7 if s5aq11b__7 == 1
-	replace			bus_stat_why = 8 if s5aq11b__8 == 1
-	replace			bus_stat_why = 9 if s5aq11b__9 == 1
-	replace			bus_stat_why = 10 if s5aq11b__10 == 1
-	replace			bus_stat_why = 11 if s5aq11b__n96 == 1
-	lab var			bus_stat_why "Why is your family business closed?"
-	order			bus_stat_why, after(bus_stat)
-	
-	rename			s5aq12 bus_sect
-	rename			s5aq13 bus_emp_inc
-	rename			s5aq14_1 bus_why
-	replace			bus_why = s5aq14_2 if bus_why == .
-	
-	gen				bus_chlng_fce = 1 if s5aq15__1 == 1
-	replace			bus_chlng_fce = 2 if s5aq15__2 == 1
-	replace			bus_chlng_fce = 3 if s5aq15__3 == 1
-	replace			bus_chlng_fce = 4 if s5aq15__4 == 1
-	replace			bus_chlng_fce = 5 if s5aq15__5 == 1
-	replace			bus_chlng_fce = 6 if s5aq15__6 == 1
-	replace			bus_chlng_fce = 7 if s5aq15__n96 == 1
-	lab def			bus_chlng_fce 1 "Difficulty buying and receiving supplies and inputs" ///
-								  2 "Difficulty raising money for the business" ///
-								  3 "Difficulty repaying loans or other debt obligations" ///
-								  4 "Difficulty paying rent for business location" ///
-								  5 "Difficulty paying workers" ///
-								  6 "Difficulty selling goods or services to customers" ///
-								  7 "Other"
-	lab val			bus_chlng_fce bus_chlng_fce
-	lab var			bus_chlng_fce "Business challanges faced"
-	order			bus_chlng_fce, after(bus_why)
-	
-	rename			s5aq15a bus_cndct
-	gen				bus_cndct_how = 1 if s5aq15b__1 == 1
-	replace			bus_cndct_how = 1 if s5aq15b__2 == 1
-	replace			bus_cndct_how = 1 if s5aq15b__3 == 1
-	replace			bus_cndct_how = 1 if s5aq15b__4 == 1
-	replace			bus_cndct_how = 1 if s5aq15b__5 == 1
-	replace			bus_cndct_how = 1 if s5aq15b__6 == 1
-	replace			bus_cndct_how = 1 if s5aq15b__n96 == 1
-	lab def			bus_cndct_how 1 "Requiring customers to wear masks" ///
-								  2 "Keeping distance between customers" ///
-								  3 "Allowing a reduced number of customers" ///
-								  4 "Use of phone and or social media to market" ///
-								  5 "Switched to delivery services only" ///
-								  6 "Switched product/service offering" ///
-								  7 "Other"
-	lab val			bus_cndct_how bus_cndct_how
-	lab var			bus_cndct_how "Changed the way you conduct business due to the corona virus?"
-	order			bus_cndct_how, after(bus_cndct)
-
-	drop			s5q03 s5q04a_2 s5q10__0 s5q10__1 s5q10__2 s5q10__3 s5q10__4 ///
-						s5q10__5 business_case_filter ///
-						s5aq11b__1 s5aq11b__2 s5aq11b__3 s5aq11b__4 s5aq11b__5 ///
-						s5aq11b__6 s5aq11b__7 s5aq11b__8 s5aq11b__9 s5aq11b__10 ///
-						s5aq11b__n96 s5aq14_2 s5aq15__1 s5aq15__2 s5aq15__3 ///
-						s5aq15__4 s5aq15__5 s5aq15__6 s5aq15__n96 s5aq15b__1 ///
-						s5aq15b__2 s5aq15b__3 s5aq15b__4 s5aq15b__5 s5aq15b__6 ///
-						s5aq15b__n96
-
-* rename credit
-	rename			s7q01 credit
-	rename			s7q02 credit_cvd
-	rename			s7q03 credit_cvd_how
-	
-	gen				credit_source = 1 if s7q04__1
-	replace			credit_source = 2 if s7q04__2
-	replace			credit_source = 3 if s7q04__3
-	replace			credit_source = 4 if s7q04__4
-	replace			credit_source = 5 if s7q04__5
-	replace			credit_source = 6 if s7q04__6
-	replace			credit_source = 7 if s7q04__7
-	replace			credit_source = 8 if s7q04__8
-	replace			credit_source = 9 if s7q04__9
-	replace			credit_source = 10 if s7q04__10
-	replace			credit_source = 11 if s7q04__11
-	replace			credit_source = 12 if s7q04__12
-	replace			credit_source = 13 if s7q04__13
-	replace			credit_source = 14 if s7q04__14
-	replace			credit_source = 15 if s7q04__15
-	replace			credit_source = 16 if s7q04__16
-	replace			credit_source = 17 if s7q04__n96
-	lab def			credit 1 "Commercial bank" 2 "Savings club" ///
-								  3 "Credit Institution" 4 "ROSCAs" ///
-								  5 "MDI" 6 "Welfare fund" ///
-								  7 "SACCOs" 8 "Investment club" ///
-								  9 "NGOs" 10 "Burial societies" ///
-								  11 "ASCAs" 12 "MFIs" 13 "VSLAs" ///
-								  14 "MOKASH" 15 "WEWOLE" ///
-								  16 "Neighbour/friend" 17 "Other"
-	lab val			credit_source credit
-	lab var			credit_source "From whom did you borrow money?"
-	order			credit_source, after(credit_cvd_how)
-	
-	rename			s7q05 credit_purp
-	rename			s7q06 credit_wry
-	
-	drop			s6q0112 s6q0212 s7q04__1 s7q04__2 s7q04__3 s7q04__4 ///
-						s7q04__5 s7q04__6 s7q04__7 s7q04__8 s7q04__9 ///
-						s7q04__10 s7q04__11 s7q04__12 s7q04__13 s7q04__14 ///
-						s7q04__15 s7q04__16 s7q04__n96 s7q04_Other s7q05_Other
-	
-* SEC 9: concerns
-	rename			s9q01 concern_1
-	rename			s9q02 concern_2
-	gen				have_symp = 1 if s9q03__1 == 1 | s9q03__2 == 1 | s9q03__3 == 1 | ///
-						s9q03__4 == 1 | s9q03__5 == 1 | s9q03__6 == 1 | ///
-						s9q03__7 == 1 | s9q03__8 == 1
-	replace			have_symp = 2 if have_symp == .
-	lab var			have_symp "Has anyone in your hh experienced covid symptoms?:cough/shortness of breath etc."
-	order			have_symp, after(concern_02)
-
-	drop			s9q03__1 s9q03__2 s9q03__3 s9q03__4 s9q03__5 s9q03__6 s9q03__7 s9q03__8
-
-	rename 			s9q04 have_test
-	rename 			s9q05 concern_3
-	rename			s9q06 concern_4
-	lab var			concern_4 "Response to the COVID-19 emergency will limit my rights and freedoms"
-	rename			s9q07 concern_5
-	lab var			concern_5 "Money and supplies allocated for the COVID-19 response will be misused and captured by powerful people in the country"
-	rename			s9q08 concern_6
-	lab var			concern_6 "Corruption in the government has lowered the quality of medical supplies and care"
-
-	rename			s9q09__1 curb_1 
-	rename			s9q09__2 curb_2
-	rename			s9q09__3 curb_3
-	rename			s9q09__4 curb_4
-	rename			s9q09__5 curb_5
-
-* create country variables
-	gen				country = 4
-	order			country
-	lab def			country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda"
-	lab val			country country
-	lab var			country "Country"
-
-* delete temp files
-	erase			"$root/wave_02/SEC6w.dta"
-	erase			"$root/wave_02/SEC10w.dta"
-	
-	gen				wave = 2
-	lab var			wave "Wave number"
-	order			baseline_hhid wave phw, after(HHID)
-
-* save temp file
-	save			"$root/wave_02/r2_sect_all", replace
-
-	
+/* END */	

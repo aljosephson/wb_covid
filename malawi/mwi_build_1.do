@@ -171,7 +171,7 @@
 	merge 1:1 		HHID using "$root/wave_0`w'/sect12_Interview_Result_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect13_Agriculture_r`w'.dta", nogen
 
-*rename variables inconsistent with other waves
+* rename variables inconsistent with other waves
 	rename			s6q2 emp_pre
 	rename			s6q3a emp_pre_why
 	rename			s6q3b emp_pre_act

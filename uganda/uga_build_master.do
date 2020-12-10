@@ -14,45 +14,117 @@
 	* raw Uganda data
 
 * TO DO:
-	* clean agriculture and livestock
-
+	* add wave 3
+	* when new waves available:
+		* create build for new wave based on previous ones
+		* update global list of waves below
+		* check variable crosswalk for differences/new variables & update code if needed
+		* check QC flags for issues/discrepancies
+		
 
 * **********************************************************************
 * 0 - setup
 * **********************************************************************
 
+* define list of waves
+	global 			waves "1" "2" 
+	
 * define
 	global	root	=	"$data/uganda/raw"
 	global	fies	=	"$data/analysis/raw/Uganda"
 	global	export	=	"$data/uganda/refined"
 	global	logout	=	"$data/uganda/logs"
 
+* Define root folder globals
+    if `"`c(username)'"' == "jdmichler" {
+        global 		code  	"C:/Users/jdmichler/git/wb_covid"
+		global 		data	"G:/My Drive/wb_covid/data"
+    }
+
+    if `"`c(username)'"' == "aljosephson" {
+        global 		code  	"C:/Users/aljosephson/git/wb_covid"
+		global 		data	"G:/My Drive/wb_covid/data"
+    }
+
+	if `"`c(username)'"' == "annfu" {
+		global 		code  	"C:/Users/annfu/git/wb_covid"
+		global 		data	"G:/My Drive/wb_covid/data"
+	}	
+	
 * open log
 	cap log 		close
 	log using		"$logout/uga_build", append
 
+	
+* ***********************************************************************
+* 1 - run do files for each round & generate variable comparison excel
+* ***********************************************************************
 
+* run do files for all rounds and create crosswalk of variables by wave
+	foreach 		r in "$waves" {
+		do 			"$code/uganda/uga_build_`r'"
+		ds
+		clear
+		set 		obs 1
+		gen 		variables = ""
+		local 		counter = 1
+		foreach 	var in `r(varlist)' {
+			replace variables = "`var'" in `counter'
+			local 	counter = `counter' + 1
+			set 	obs `counter'
+			recast 	str30 variables
+		}
+		gen 		wave`r' = 1
+		tempfile 	t`r'
+		save 		`t`r''
+	}
+	use 			`t1',clear
+	foreach 		r in "$waves" {
+		merge 		1:1 variables using `t`r'', nogen
+	}
+	drop 			if variables == ""
+	export 			excel using "$export/uga_variable_crosswalk.xlsx", first(var) replace
+	
+	
 * **********************************************************************
-* 5 - build uganda panel
+* 2 - create uganda panel
 * **********************************************************************
 
-* load round 1 of the data
-	use				"$root/wave_01/r1_sect_all.dta", ///
-						clear
-
-* append round 2 of the data
-	append 			using "$root/wave_02/r2_sect_all", ///
-						force
+* append round datasets to build master panel
+	foreach 		r in "$waves" {
+	    if 			`r' == 1 {
+			use		"$export/wave_01/r1", clear
+		}
+		else {
+			append 	using "$export/wave_0`r'/r`r'"
+		}
+	}
 
 * merge in consumption aggregate
-	merge m:1		baseline_hhid using "$export/wave_01/pov_r0.dta", nogenerate
+	preserve
+	* load data
+		use				"$root/wave_00/Uganda UNPS 2019-20 Quintiles.dta", clear
+		rename			hhid baseline_hhid
+		rename 			quintile quints
+		lab var			quints "Quintiles based on the national population"
+		lab def			lbqui 1 "Quintile 1" 2 "Quintile 2" 3 "Quintile 3" ///
+							4 "Quintile 4" 5 "Quintile 5"
+		lab val			quints lbqui	
+		
+	* save temp file
+		tempfile 		pov_r0
+		save			`pov_r0'
+	restore
 	
+	*merge 
+		merge m:1		baseline_hhid using `pov_r0', nogen
+		drop 			if wave == .
+		
 
-	
-	
-	
-	
-	
+* ***********************************************************************
+* 3 - clean uganda panel
+* ***********************************************************************	
+
 * rename income variables
 	rename 			s6q011 farm_inc
 	lab	var			farm_inc "Income from farming, fishing, livestock in last 12 months"
@@ -103,47 +175,16 @@
 	rename			s6q0296 oth_chg
 	label 			var oth_chg "Change in income from other source since covid"	
 	
-	
-* shock variables
-	lab var			shock_01 "Death of disability of an adult working member of the household"
-	lab var			shock_02 "Death of someone who sends remittances to the household"
-	lab var			shock_03 "Illness of income earning member of the household"
-	lab var			shock_04 "Loss of an important contact"
-	lab var			shock_05 "Job loss"
-	lab var			shock_06 "Non-farm business failure"
-	lab var			shock_07 "Theft of crops, cash, livestock or other property"
-	lab var			shock_08 "Destruction of harvest by insufficient labor"
-	lab var			shock_09 "Disease/Pest invasion that caused harvest failure or storage loss"
-	lab var			shock_10 "Increase in price of inputs"
-	lab var			shock_11 "Fall in the price of output"
-	lab var			shock_12 "Increase in price of major food items c"
-	lab var			shock_13 "Floods"
-	lab var			shock_14 "Other shock"
-
-	lab def			shock 0 "None" 1 "Severe" 2 "More Severe" 3 "Most Severe"
-
-	foreach var of varlist shock_01-shock_14 {
-		lab val		`var' shock
-		}
-
-* generate any shock variable
-	gen				shock_any = 1 if shock_01 == 1 | shock_02 == 1 | ///
-						shock_03 == 1 | shock_04 == 1 | shock_05 == 1 | ///
-						shock_06 == 1 | shock_07 == 1 | shock_08 == 1 | ///
-						shock_09 == 1 | shock_10 == 1 | shock_11 == 1 | ///
-						shock_12 == 1 | shock_13 == 1 | shock_14== 1
-	replace			shock_any = 0 if shock_any == .
-	lab var			shock_any "Experience some shock"
-	
-	lab var			cope_01 "Sale of assets (Agricultural and Non_agricultural)"
-	lab var			cope_02 "Engaged in additional income generating activities"
-	lab var			cope_03 "Received assistance from friends & family"
-	lab var			cope_04 "Borrowed from friends & family"
-	lab var			cope_05 "Took a loan from a financial institution"
-	lab var			cope_06 "Credited purchases"
-	lab var			cope_07 "Delayed payment obligations"
-	lab var			cope_08 "Sold harvest in advance"
-	lab var			cope_09 "Reduced food consumption"
+* label cope variabels	
+	lab var			cope_1 "Sale of assets (Agricultural and Non_agricultural)"
+	lab var			cope_2 "Engaged in additional income generating activities"
+	lab var			cope_3 "Received assistance from friends & family"
+	lab var			cope_4 "Borrowed from friends & family"
+	lab var			cope_5 "Took a loan from a financial institution"
+	lab var			cope_6 "Credited purchases"
+	lab var			cope_7 "Delayed payment obligations"
+	lab var			cope_8 "Sold harvest in advance"
+	lab var			cope_9 "Reduced food consumption"
 	lab var			cope_10 "Reduced non_food consumption"
 	lab var			cope_11 "Relied on savings"
 	lab var			cope_12 "Received assistance from NGO"
@@ -151,18 +192,111 @@
 	lab var			cope_14 "Received assistance from government"
 	lab var			cope_15 "Was covered by insurance policy"
 	lab var			cope_16 "Did nothing"
-	lab var			cope_17 "Other"
-	
-drop			BSEQNO start_date sec0_endtime						
+	lab var			cope_17 "Other"				
 	
 * rename government contribution to spread
-	rename			s2gq02__1 spread_01
-	rename			s2gq02__2 spread_02
-	rename			s2gq02__3 spread_03
-	rename			s2gq02__4 spread_04
-	rename			s2gq02__5 spread_05
-	rename			s2gq02__6 spread_06
+	rename			s2gq02__1 spread_1
+	rename			s2gq02__2 spread_2
+	rename			s2gq02__3 spread_3
+	rename			s2gq02__4 spread_4
+	rename			s2gq02__5 spread_5
+	rename			s2gq02__6 spread_6
+
+* rename government actions
+	rename			s2q03__1 gov_1
+	lab var			gov_1 "Advised citizens to stay at home"
+	rename			s2q03__2 gov_2
+	lab var			gov_2 "Restricted travel within country/area"
+	rename			s2q03__3 gov_3
+	lab var			gov_3 "Restricted international travel"
+	rename			s2q03__4 gov_4
+	lab var			gov_4 "Closure of schools and universities"
+	rename			s2q03__5 gov_5
+	lab var			gov_5 "Curfew/lockdown"
+	rename			s2q03__6 gov_6
+	lab var			gov_6 "Closure of non essential businesses"
+	rename			s2q03__7 gov_7
+	lab var			gov_7 "Building more hospitals or renting hotels to accomodate patients"
+	rename			s2q03__8 gov_8
+	lab var			gov_8 "Provide food to needed"
+	rename			s2q03__9 gov_9
+	lab var			gov_9 "Open clinics and testing locations"
+	rename			s2q03__10 gov_11
+	lab var			gov_11 "Disseminate knowledge about the virus"
+	rename			s2q03__11 gov_13
+	lab var			gov_13 "Compulsary putting on masks in public"
+	rename			s2q03__12 gov_10
+	lab var			gov_10 "Stopping or limiting social gatherings / social distancing"
 	
+* rename education
+	rename 			s4q012 children318
+	rename 			s4q013 sch_child
+	rename 			s4q014 edu_act
+	rename 			s4q15__1 edu_1
+	rename 			s4q15__2 edu_2
+	rename 			s4q15__3 edu_3
+	rename 			s4q15__4 edu_4
+	rename 			s4q15__5 edu_5
+	rename 			s4q15__6 edu_6
+	rename 			s4q15__n96 edu_other
+	rename 			s4q16 edu_cont
+	rename			s4q17__1 edu_cont_1
+	rename 			s4q17__2 edu_cont_2
+	rename 			s4q17__3 edu_cont_3
+	rename 			s4q17__4 edu_cont_4
+	rename 			s4q17__5 edu_cont_5
+	rename 			s4q17__6 edu_cont_6
+	rename 			s4q17__7 edu_cont_7
+	rename 			s4q17__8 edu_cont_8
+	rename 			s4q18 bank
+	rename 			s4q19 ac_bank
+	rename 			s4q20 ac_bank_why
+	
+* rename agriculture
+	rename			s5aq16 ag_prep
+	rename			s5aq17 ag_plan
+	rename			s5qaq17_1 ag_plan_why
+	rename			s5aq18__0 ag_crop_1
+	rename			s5aq18__1 ag_crop_2
+	rename			s5aq18__2 ag_crop_3
+	rename			s5aq19 ag_chg
+	rename			s5aq20__1 ag_chg_1
+	rename			s5aq20__2 ag_chg_2
+	rename			s5aq20__3 ag_chg_3
+	rename			s5aq20__4 ag_chg_4
+	rename			s5aq20__5 ag_chg_5
+	rename			s5aq20__6 ag_chg_6
+	rename			s5aq20__7 ag_chg_7
+	rename			s5aq21__1 ag_covid_1
+	rename			s5aq21__2 ag_covid_2
+	rename			s5aq21__3 ag_covid_3
+	rename			s5aq21__4 ag_covid_4
+	rename			s5aq21__5 ag_covid_5
+	rename			s5aq21__6 ag_covid_6
+	rename			s5aq21__7 ag_covid_7
+	rename			s5aq21__8 ag_covid_8
+	rename			s5aq21__9 ag_covid_9
+	rename			s5aq22__1 ag_seed_1
+	rename			s5aq22__2 ag_seed_2
+	rename			s5aq22__3 ag_seed_3
+	rename			s5aq22__4 ag_seed_4
+	rename			s5aq22__5 ag_seed_5
+	rename			s5aq22__6 ag_seed_6
+	rename			s5aq23 ag_fert
+	rename			s5aq24 ag_input
+	rename			s5aq25 ag_crop_lost
+	rename			s5aq26 ag_live_lost
+	rename			s5aq27 ag_live_chg
+	rename			s5aq28__1 ag_live_chg_1
+	rename			s5aq28__2 ag_live_chg_2
+	rename			s5aq28__3 ag_live_chg_3
+	rename			s5aq28__4 ag_live_chg_4
+	rename			s5aq28__5 ag_live_chg_5
+	rename			s5aq28__6 ag_live_chg_6
+	rename			s5aq28__7 ag_live_chg_7
+	rename			s5aq29 ag_graze
+	rename			s5aq30 ag_sold
+	rename			s5aq31 ag_sell	
 
 * rename access
 	rename			s4q01e ac_drink
@@ -218,8 +352,6 @@ drop			BSEQNO start_date sec0_endtime
 	rename			s4q12__3 asset_3
 	rename			s4q12__4 asset_4
 	rename			s4q12__5 asset_5
-
-	drop			s4q01f_Other s4q02_Other s4q04_Other s4q11_Other case_filter	
 	
 * rename symptoms
 	rename			s2q01b__1 symp_1
@@ -268,39 +400,93 @@ drop			BSEQNO start_date sec0_endtime
 	rename			s2q02a_5 myth_5
 	rename			s2q02a_6 myth_6
 	rename			s2q02a_7 myth_7	
+
+* rename business variables
+	lab def			bus_emp_inc 1 "Higher" 2 "The same" 3 "Less" 4 "No Revenue"
+	lab val			bus_emp_inc bus_emp_inc 
+	gen				bus_stat_why = 1 if s5aq11b__1 == 1
+	replace			bus_stat_why = 2 if s5aq11b__2 == 1
+	replace			bus_stat_why = 3 if s5aq11b__3 == 1
+	replace			bus_stat_why = 4 if s5aq11b__4 == 1
+	replace			bus_stat_why = 5 if s5aq11b__5 == 1
+	replace			bus_stat_why = 6 if s5aq11b__6 == 1
+	replace			bus_stat_why = 7 if s5aq11b__7 == 1
+	replace			bus_stat_why = 8 if s5aq11b__8 == 1
+	replace			bus_stat_why = 9 if s5aq11b__9 == 1
+	replace			bus_stat_why = 10 if s5aq11b__10 == 1
+	replace			bus_stat_why = 11 if s5aq11b__n96 == 1
+	lab var			bus_stat_why "Why is your family business closed?"
+	order			bus_stat_why, after(bus_stat)
 	
+	replace			bus_why = s5aq14_2 if bus_why == .
 	
+	gen				bus_chlng_fce = 1 if s5aq15__1 == 1
+	replace			bus_chlng_fce = 2 if s5aq15__2 == 1
+	replace			bus_chlng_fce = 3 if s5aq15__3 == 1
+	replace			bus_chlng_fce = 4 if s5aq15__4 == 1
+	replace			bus_chlng_fce = 5 if s5aq15__5 == 1
+	replace			bus_chlng_fce = 6 if s5aq15__6 == 1
+	replace			bus_chlng_fce = 7 if s5aq15__n96 == 1
+	lab def			bus_chlng_fce 1 "Difficulty buying and receiving supplies and inputs" ///
+								  2 "Difficulty raising money for the business" ///
+								  3 "Difficulty repaying loans or other debt obligations" ///
+								  4 "Difficulty paying rent for business location" ///
+								  5 "Difficulty paying workers" ///
+								  6 "Difficulty selling goods or services to customers" ///
+								  7 "Other"
+	lab val			bus_chlng_fce bus_chlng_fce
+	lab var			bus_chlng_fce "Business challanges faced"
+	order			bus_chlng_fce, after(bus_why)
 	
+	rename			s5aq15a bus_cndct
+	gen				bus_cndct_how = 1 if s5aq15b__1 == 1
+	replace			bus_cndct_how = 1 if s5aq15b__2 == 1
+	replace			bus_cndct_how = 1 if s5aq15b__3 == 1
+	replace			bus_cndct_how = 1 if s5aq15b__4 == 1
+	replace			bus_cndct_how = 1 if s5aq15b__5 == 1
+	replace			bus_cndct_how = 1 if s5aq15b__6 == 1
+	replace			bus_cndct_how = 1 if s5aq15b__n96 == 1
+	lab def			bus_cndct_how 1 "Requiring customers to wear masks" ///
+								  2 "Keeping distance between customers" ///
+								  3 "Allowing a reduced number of customers" ///
+								  4 "Use of phone and or social media to market" ///
+								  5 "Switched to delivery services only" ///
+								  6 "Switched product/service offering" ///
+								  7 "Other"
+	lab val			bus_cndct_how bus_cndct_how
+	lab var			bus_cndct_how "Changed the way you conduct business due to the corona virus?"
+	order			bus_cndct_how, after(bus_cndct)
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+* drop unnecessary variables
+	drop			 BSEQNO DistrictName sec0_endtime	///
+						CountyName SubcountyName ParishName ///
+						subreg s2q01b__n96 s2q01b_Other s5qaq17_1_Other ///
+						s5aq20__n96 s5aq20_Other s5aq21__n96 s5aq21_Other ///
+						s5aq22__n96 s5aq22_Other s5aq23_Other s5aq24_Other ///
+						s5q10__0 s5q10__1 s5q10__2 s5q10__3 s5q10__4 s5q10__5 ///
+						s5q10__6 s5q10__7 s5q10__8 s5q10__9 *_Other	 ///
+						s4* s6q0112 s6q0212 s7q04__1 s7q04__2 s7q04__3 s7q04__4 ///
+						s7q04__5 s7q04__6 s7q04__7 s7q04__8 s7q04__9 ///
+						s7q04__10 s7q04__11 s7q04__12 s7q04__13 s7q04__14 ///
+						s7q04__15 s7q04__16 s7q04__n96 s7q04_Other s7q05_Other	///
+						s9q03__1 s9q03__2 s9q03__3 s9q03__4 s9q03__5 s9q03__6 ///
+						s9q03__7 s9q03__8 s5q03 s5q04a_2 s5q10__0 s5q10__1 ///
+						s5q10__2 s5q10__3 s5q10__4 s5q10__5 business_case_filter ///
+						s5aq11b__1 s5aq11b__2 s5aq11b__3 s5aq11b__4 s5aq11b__5 ///
+						s5aq11b__6 s5aq11b__7 s5aq11b__8 s5aq11b__9 s5aq11b__10 ///
+						s5aq11b__n96 s5aq14_2 s5aq15__1 s5aq15__2 s5aq15__3 ///
+						s5aq15__4 s5aq15__5 s5aq15__6 s5aq15__n96 s5aq15b__1 ///
+						s5aq15b__2 s5aq15b__3 s5aq15b__4 s5aq15b__5 s5aq15b__6 ///
+						s5aq15b__n96 s4q01f_Other s4q02_Other s4q04_Other ///
+						s4q11_Other case_filter
 	
 * rename basic information
-	rename			wfinal phw
-	lab var			phw "sampling weights"
-	
 	gen				sector = 2 if urban == 1
 	replace			sector = 1 if sector == .
 	lab var			sector "Sector"
 	lab def			sector 1 "Rural" 2 "Urban"
 	lab val			sector sector
 	drop			urban
-	order			sector, after(phw)
 
 	gen				Region = 4012 if region == "Central"
 	replace			Region = 4013 if region == "Eastern"
@@ -349,14 +535,79 @@ drop			BSEQNO start_date sec0_endtime
 	rename			s2q01 know
 	rename			s2gq01 revised
 	
+	* create country variables
+	gen				country = 4
+	order			country
+	lab def			country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda"
+	lab val			country country
+	lab var			country "Country"
+	
+
 * **********************************************************************
-* 6 - end matter, clean up to save
+* 4 - QC check 
+* **********************************************************************
+* compare numerical variables to other rounds & flag if 25+ percentage points different
+	tostring 		wave, replace
+	ds, 			has(type numeric)
+	foreach 		var in `r(varlist)' {
+		preserve
+		keep 		`var' wave
+		destring 	wave, replace
+		gen 		counter = 1
+		collapse 	(sum) counter, by(`var' wave)
+		reshape 	wide counter, i(`var') j(wave)
+		drop 		if `var' == .
+		foreach 	x in "$waves" {
+			egen 	tot_`x' = total(counter`x')
+			gen 	per_`x' = counter`x' / tot_`x'
+		}
+		keep 		per*
+		foreach 	x in "$waves"  {
+			foreach q in "$waves"  {
+				gen flag_`var'_`q'`x' = 1 if per_`q' - per_`x' > .25 & per_`q' != . & per_`x' != .
+			}
+		}	
+		keep 		*flag*
+
+	* drop if all missing	
+		foreach 	v of varlist _all {
+			capture assert mi(`v')
+			if 		!_rc {
+				drop `v'
+			}
+		}
+		gen 		n = _n
+		tempfile 	temp`var'
+		save 		`temp`var''
+		restore   
+	}
+		
+* create dataset of flags
+	preserve
+	ds, 			has(type numeric)
+	clear
+	set 			obs 15
+	gen 			n = _n
+	foreach 		var in `r(varlist)' {
+		merge 		1:1 n using `temp`var'', nogen
+	}
+	reshape 		long flag_, i(n) j(variables) string 
+	drop 			if flag_ == .
+	drop 			n
+	sort 			variable	
+	export 			excel using "$export/uga_qc_flags.xlsx", first(var) sheetreplace sheet(flags)
+	restore
+	destring 		wave, replace
+	
+	
+* **********************************************************************
+* 5 - end matter, clean up to save
 * **********************************************************************
 
+* final clean 
 	compress
 	describe
 	summarize
-
 	rename HHID hhid_uga
 	drop if hhid_uga == .
 

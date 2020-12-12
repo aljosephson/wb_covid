@@ -297,15 +297,15 @@
 	forval x = 1/6 {
 	    merge 1:1 HHID using `temp`x'', nogen
 	}
-	merge 1:1 		HHID using "$root/wave_01/SEC2.dta", nogen
-	merge 1:1 		HHID using "$root/wave_01/SEC3.dta", nogen
-	merge 1:1 		HHID using "$root/wave_01/SEC4.dta", nogen
-	merge 1:1 		HHID using "$root/wave_01/SEC5.dta", nogen
-	merge 1:1 		HHID using "$root/wave_01/SEC5A.dta", nogen
-	merge 1:1 		HHID using "$root/wave_01/SEC7.dta", nogen
-	merge 1:1 		HHID using "$root/wave_01/SEC8.dta", nogen
-	merge 1:1 		HHID using "$root/wave_01/SEC9A.dta", nogen
-	merge 1:1 		HHID using "$export/wave_01/fies_r1.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/SEC2.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/SEC3.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/SEC4.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/SEC5.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/SEC5A.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/SEC7.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/SEC8.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/SEC9A.dta", nogen
+	merge 1:1 		HHID using "$export/wave_0`w'/fies_r1.dta", nogen
 
 * rename variables inconsistent with other waves
 	* rename behavioral changes
@@ -366,7 +366,7 @@
 	* gen wave data
 		rename			wfinal phw
 		lab var			phw "sampling weights"
-		gen				wave = 1
+		gen				wave = `w'
 		lab var			wave "Wave number"
 		order			baseline_hhid wave phw, after(HHID)	
 	

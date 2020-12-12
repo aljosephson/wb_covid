@@ -14,7 +14,8 @@
 	* raw Uganda data
 
 * TO DO:
-	* add wave 3
+	* QC wave 3 (waiting for FIES)
+	* make sure all vars renamed (clean livestock) (change "not selected" -> "No")
 	* when new waves available:
 		* create build for new wave based on previous ones
 		* update global list of waves below
@@ -27,7 +28,7 @@
 * **********************************************************************
 
 * define list of waves
-	global 			waves "1" "2" 
+	global 			waves "1" "2" "3"
 	
 * define
 	global	root	=	"$data/uganda/raw"
@@ -456,7 +457,55 @@
 	lab val			bus_cndct_how bus_cndct_how
 	lab var			bus_cndct_how "Changed the way you conduct business due to the corona virus?"
 	order			bus_cndct_how, after(bus_cndct)
+
+* credit
+ * since last call (slc)
+	rename s7aq01 ac_cr_slc
+	rename s7aq02* ac_cr_slc_lend*
+	forval x = 1/13 {
+		rename s7aq03__`x'_* ac_cr_slc_why_*_`x'
+	}	
+	forval x = 1/2 {
+	    forval l = 1/2 {
+			rename s7aq04_`x'_l`l' ac_cr_slc_who_l`l'_`x'
+		}
+	}
+	rename s7aq05* ac_cr_slc_due*
+	rename s7aq06* ac_cr_slc_worry*
+	rename s7aq07* ac_cr_slc_miss*
+	rename s7aq08* ac_cr_slc_delay*
+ * since march
+	rename s7bq01 ac_cr_loan
+	rename s7bq02* ac_cr_lend*
+	forval x = 1/13 {
+		rename s7bq03__`x'_* ac_cr_why_*_`x'
+	}	
+	forval x = 1/2 {
+	    forval l = 1/2 {
+			rename s7bq04_`x'_l`l' ac_cr_who_l`l'_`x'
+		}
+	}
+	rename s7bq05* ac_cr_due*
+	rename s7bq06* ac_cr_worry*
+	rename s7bq07* ac_cr_miss*
+	rename s7bq08* ac_cr_delay*
+ * before march
+	rename s7cq01 ac_cr_bef
+	rename s7cq02* ac_cr_bef_lend*
+	forval x = 1/13 {
+		rename s7cq03__`x'_* ac_cr_bef_why_*_`x'
+	}	
+	forval x = 1/2 {
+	    forval l = 1/2 {
+			rename s7cq04_`x'_l`l' ac_cr_bef_who_l`l'_`x'
+		}
+	}
+	rename s7cq05* ac_cr_bef_due*
+	rename s7cq06* ac_cr_bef_worry*
+	rename s7cq07* ac_cr_bef_miss*
+	rename s7cq08* ac_cr_bef_delay*
 	
+
 * drop unnecessary variables
 	drop			 BSEQNO DistrictName sec0_endtime	///
 						CountyName SubcountyName ParishName ///

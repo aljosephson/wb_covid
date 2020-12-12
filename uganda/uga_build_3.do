@@ -6,9 +6,9 @@
 * Stata v.16.1
 
 * does
-	* reads in second round of Uganda data
-	* builds round 2
-	* outputs round 2
+	* reads in third round of Uganda data
+	* builds round 3
+	* outputs round 3
 
 * assumes
 	* raw Uganda data
@@ -32,7 +32,7 @@
 	log using		"$logout/uga_build", append
 	
 * set local wave number & file number
-	local			w = 2
+	local			w = 3
 	
 * make wave folder within refined folder if it does not already exist 
 	capture mkdir "$export/wave_0`w'" 	
@@ -49,7 +49,7 @@
 	format 			%12.0f HHID
 
 * drop other source
-	drop			s6q01_Other BSEQNO Round1_interview_ID baseline_hhid
+	drop			s6q01_Other 
 
 * replace value for "other"
 	replace			income_loss__id = 96 if income_loss__id == -96
@@ -73,11 +73,11 @@
 	format 			%12.0f HHID
 
 * drop other safety nets and missing values
-	drop			BSEQNO s10q02 s10q03__1 s10q03__2 s10q03__3 s10q03__4 ///
+	drop			s10q02 s10q03__1 s10q03__2 s10q03__3 s10q03__4 ///
 						s10q03__5 s10q03__6 s10q03__n96 s10q05 s10q06__1 ///
 						s10q06__2 s10q06__3 s10q06__4 s10q06__6 s10q06__7 ///
-						s10q06__8 s10q06__n96
- 
+						s10q06__8 s10q06__n96 other_nets *_Other
+
 * reshape data
 	reshape 		wide s10q01, i(HHID) j(safety_net__id)
 	*** note that cash = 102, food = 101, in-kind = 103 (unlike wave 1)
@@ -193,16 +193,19 @@
 * ***********************************************************************
 
 * load data		
-	use 			"$root/wave_0`w'/SEC5C_1.dta", clear
+	use 			"$root/wave_0`w'/SEC5D.dta", clear
 	
-* drop missing data
-	drop 			if livestock == 4
+* rename vars to match r2
+	forval 			x = 1/6 {
+		rename 		s5cq14__`x' s5cq14_1__`x'
+		rename 		s5cq14a__`x' s5cq14_2__`x'
+	}
 	
 * reshape wide
 	gen 			product = cond(livestock == -96, "other", cond(livestock == 1, ///
 					"milk",cond(livestock == 2, "eggs","meat")))
 	drop 			livestock
-	reshape 		wide s5cq*, i(HHID BSEQNO) j(product) string
+	reshape 		wide s5cq*, i(HHID) j(product) string
 	
 * save temp file
 	tempfile		temp5
@@ -212,7 +215,7 @@
 * ***********************************************************************
 * 6 - FIES
 * ***********************************************************************
-
+/*
 * load data
 	use				"$fies/UG_FIES_round`w'.dta", clear
 
@@ -223,27 +226,74 @@
 	tempfile		temp6
 	save			`temp6'
 
+*/	
+* ***********************************************************************
+* 7 - credit
+* ***********************************************************************	
+
+* load data since last interview
+	use 			"$root/wave_0`w'/SEC7A_2.dta", clear	
+
+* reshape wide
+	reshape 		wide s7aq*, i(HHID) j(loan_roster)
+	rename 			*101 *_l1
+	rename 			*102 *_l2
+	drop 			*Other* *96*
+ 
+* save temp file
+	tempfile		temp7
+	save			`temp7'
+	
+	
+* load data since march	
+	use 			"$root/wave_0`w'/SEC7B_2.dta", clear
+	
+* reshape wide
+	reshape 		wide s7bq*, i(HHID) j(loan_roster)
+	rename 			*201 *_l1
+	rename 			*202 *_l2
+	drop 			*Other* *96*
+	
+* save temp file
+	tempfile		temp8
+	save			`temp8'
+	
+* load data before march	
+	use 			"$root/wave_0`w'/SEC7C_2.dta", clear
+	
+* reshape wide
+	reshape 		wide s7cq*, i(HHID) j(loan_roster)
+	rename 			*301 *_l1
+	rename 			*302 *_l2
+	drop 			*Other* *96*
+	
+* save temp file
+	tempfile		temp9
+	save			`temp9'
+	
 	
 * ***********************************************************************
-* 7 - build uganda cross section
+* 8 - build uganda cross section
 * ***********************************************************************
 
 * load cover data
 	use				"$root/wave_0`w'/Cover", clear
 
-
 * merge in other sections	
-	forval x = 1/6 {
-	    merge 1:1 HHID using `temp`x'', nogen
+	forval 			x = 1/5 {
+	    merge 		1:1 HHID using `temp`x'', nogen
 	}
-	merge 1:1 		HHID using "$root/wave_0`w'/SEC2.dta", nogen
+	forval 			x = 7/9 {
+	    merge 		1:1 HHID using `temp`x'', nogen
+	}
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC3.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC4.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC5.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC5A.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC5B.dta", nogen 
-	merge 1:1 		HHID using "$root/wave_0`w'/SEC5C.dta", nogen 
-	merge 1:1 		HHID using "$root/wave_0`w'/SEC7.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/SEC7A_1.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/SEC7B_1.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/SEC7C_1.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC9.dta", nogen	
 	
 * reformat HHID
@@ -258,6 +308,7 @@
 		rename			s3q05 bh_5
 		rename			s3q06 bh_7
 		rename			s3q07 bh_8
+		rename			s3q07_1 bh_8a
 	* rename employment
 		rename			s5q01 emp
 		rename			s5q01a rtrn_emp
@@ -267,7 +318,6 @@
 		rename			s5q03a find_job
 		rename			s5q03b find_job_do
 		rename			s5q04a_1 emp_same
-		replace			emp_same = s5q04a_2 if emp_same == .
 		rename			s5q04b emp_chg_why
 		rename			s5q05 emp_act
 		rename			s5q06 emp_stat
@@ -276,50 +326,15 @@
 		rename			s5q08a emp_unable_why
 		rename			s5q08b emp_hours
 		rename			s5q08c emp_hours_chg
-		rename			s5q08d__1 emp_cont_1
-		rename			s5q08d__2 emp_cont_2
-		rename			s5q08d__3 emp_cont_3
-		rename			s5q08d__4 emp_cont_4
-		rename			s5q08e contrct
+		rename			s5q08f_* emp_saf*
+		rename 			s5q08g emp_saf_fol
+		rename 			s5q08g emp_saf_fol_per
 		rename			s5q09 emp_hh
 		rename			s5aq11 bus_emp
 		rename			s5aq11a bus_stat
 		rename			s5aq12 bus_sect
 		rename			s5aq13 bus_emp_inc
 		rename			s5aq14_1 bus_why
-	* rename credit
-		rename			s7q01 credit
-		rename			s7q02 credit_cvd
-		rename			s7q03 credit_cvd_how	
-		gen				credit_source = 1 if s7q04__1
-		replace			credit_source = 2 if s7q04__2
-		replace			credit_source = 3 if s7q04__3
-		replace			credit_source = 4 if s7q04__4
-		replace			credit_source = 5 if s7q04__5
-		replace			credit_source = 6 if s7q04__6
-		replace			credit_source = 7 if s7q04__7
-		replace			credit_source = 8 if s7q04__8
-		replace			credit_source = 9 if s7q04__9
-		replace			credit_source = 10 if s7q04__10
-		replace			credit_source = 11 if s7q04__11
-		replace			credit_source = 12 if s7q04__12
-		replace			credit_source = 13 if s7q04__13
-		replace			credit_source = 14 if s7q04__14
-		replace			credit_source = 15 if s7q04__15
-		replace			credit_source = 16 if s7q04__16
-		replace			credit_source = 17 if s7q04__n96
-		lab def			credit 1 "Commercial bank" 2 "Savings club" ///
-									  3 "Credit Institution" 4 "ROSCAs" ///
-									  5 "MDI" 6 "Welfare fund" ///
-									  7 "SACCOs" 8 "Investment club" ///
-									  9 "NGOs" 10 "Burial societies" ///
-									  11 "ASCAs" 12 "MFIs" 13 "VSLAs" ///
-									  14 "MOKASH" 15 "WEWOLE" ///
-									  16 "Neighbour/friend" 17 "Other"
-		lab val			credit_source credit
-		lab var			credit_source "From whom did you borrow money?"
-		rename			s7q05 credit_purp
-		rename			s7q06 credit_wry
 	* rename concerns
 		rename			s9q01 concern_1
 		rename			s9q02 concern_2
@@ -337,11 +352,7 @@
 		lab var			concern_5 "Money and supplies allocated for the COVID-19 response will be misused and captured by powerful people in the country"
 		rename			s9q08 concern_6
 		lab var			concern_6 "Corruption in the government has lowered the quality of medical supplies and care"
-		rename			s9q09__1 curb_1 
-		rename			s9q09__2 curb_2
-		rename			s9q09__3 curb_3
-		rename			s9q09__4 curb_4
-		rename			s9q09__5 curb_5
+		rename			s9q09 concern_7
 		
 * save panel
 	* gen wave data

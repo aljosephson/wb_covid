@@ -14,7 +14,7 @@
 	* raw Uganda data
 
 * TO DO:
-	* complete
+	* add FIES (wating for data)
 
 
 * **********************************************************************
@@ -194,7 +194,7 @@
 
 * load data		
 	use 			"$root/wave_0`w'/SEC5D.dta", clear
-	
+ 
 * rename vars to match r2
 	forval 			x = 1/6 {
 		rename 		s5cq14__`x' s5cq14_1__`x'
@@ -206,7 +206,7 @@
 					"milk",cond(livestock == 2, "eggs","meat")))
 	drop 			livestock
 	reshape 		wide s5cq*, i(HHID) j(product) string
-	
+
 * save temp file
 	tempfile		temp5
 	save			`temp5'
@@ -309,6 +309,7 @@
 		rename			s3q06 bh_7
 		rename			s3q07 bh_8
 		rename			s3q07_1 bh_8a
+		rename 			s3q08 bh_9
 	* rename employment
 		rename			s5q01 emp
 		rename			s5q01a rtrn_emp
@@ -331,10 +332,19 @@
 		rename 			s5q08g emp_saf_fol_per
 		rename			s5q09 emp_hh
 		rename			s5aq11 bus_emp
+		* reshape reason bus closed to match other rounds 
+			gen 			temp = s5aq11b
+			replace 		s5aq11b = 1 if s5aq11b != .
+			lab def			yes 1 "Yes" 
+			lab val			s5aq11b yes
+			replace 		temp = 0 if temp == . | temp == -96
+			reshape 		wide s5aq11b, i(HHID) j(temp)
+			rename 			s5aq11b* s5aq11b_* 
 		rename			s5aq11a bus_stat
+		rename 			s5aq11b_* s5aq11b__* // to match other round, guessing the coding is the same but cannot confirm
 		rename			s5aq12 bus_sect
 		rename			s5aq13 bus_emp_inc
-		rename			s5aq14_1 bus_why
+		rename			s5aq14_1 bus_why		
 	* rename concerns
 		rename			s9q01 concern_1
 		rename			s9q02 concern_2

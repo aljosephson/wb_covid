@@ -536,7 +536,7 @@
 	rename			s6q22__5 ag_seed_5
 	rename			s6q22__6 ag_seed_6
 	rename 			s6q22__96 ag_seed_7 
-	rename 			s6q23 ag_live_lost 
+	rename 			s6q23 live_lost 
 	rename 			s6aq9 ag_harv_exp
 	rename 			s6aq10 ag_sell_harv
 	rename 			s6aq11 ag_sell_harv_chg
@@ -562,22 +562,28 @@
 	    rename 		s6aq7__`x' ag_lab_why_`x'
 		rename 		s6aq8__`x' ag_anim_why_`x'
 	}
-	rename 			s6bq1 ag_live
+	rename 			s6bq1 live
 	forval 			x = 1/5 {
-	    rename 		s6bq2__`x' ag_live_`x'
+	    rename 		s6bq2__`x' live_`x'
 	}
-	rename 			s6bq3 ag_live_cov
-	foreach 		x in 1 3 4 7 {
-	    rename 		s6bq4__`x' ag_live_chg_`x'
+	rename 			s6bq3 live_cov
+	foreach 		x in 1 3 4 {
+	    rename 		s6bq4__`x' live_chg_`x'
 	}
-	rename 			s6bq6 ag_sell_live
-	rename 			s6bq7 ag_sell_live_chg
-	rename 			s6bq8 ag_sell_live_want
-	rename 			s6bq9 ag_sell_live_why
-	rename 			s6bq10 ag_sell_live_able
-	rename 			s6bq11 ag_sell_live_cond
-	rename 			s6bq12 ag_sell_live_pri
-	rename			s6bq13 ag_sell_live_nowhy
+	rename 			s6bq4__7 live_chg_5 // to match uga
+	rename 			s6bq6 live_sell
+	rename 			s6bq7 live_sell_chg
+	rename 			s6bq8 live_sell_want
+	rename 			s6bq9 live_sell_why
+	rename 			s6bq10 live_sell_able
+	rename 			s6bq11 live_sell_cond
+	rename 			s6bq12 live_sell_pri
+	rename			s6bq13 live_sell_nowhy_ 
+	gen 			temp = live_sell_nowhy_
+	replace 		live_sell_nowhy_ = 1 if live_sell_nowhy_ != .
+	replace 		temp = 0 if temp == .
+	reshape 		wide live_sell_nowhy_, i(hhid wave) j(temp)
+	drop 			live_sell_nowhy_0
 	
 * fies
 	rename			s8q4 fies_7
@@ -788,7 +794,7 @@
 	rename 			s2q0a hhleft
 	rename 			s2q0b hhjoin 
 	
-
+st
 * **********************************************************************
 * 4 - QC check (SEE NOTES IN OUTPUT EXCEL)
 * **********************************************************************

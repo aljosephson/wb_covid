@@ -2,11 +2,11 @@
 * Created on: August 2020
 * Created by: jdm
 * Edited by: amf
-* Last edited: Nov 2020 
+* Last edited: Dec 2020 
 * Stata v.16.1
 
 * does
-	* reads in fourth round of Nigeria data
+	* reads in sixth round of Nigeria data
 	* reshapes and builds panel
 	* outputs panel data 
 
@@ -14,9 +14,9 @@
 	* raw Nigeria data
 
 * TO DO:
-	* complete
+	* add sections, pull together, waiting on questionaire 
 
-
+	
 * **********************************************************************
 * 0 - setup
 * **********************************************************************
@@ -30,9 +30,9 @@
 * open log
 	cap log 		close
 	log using		"$logout/nga_reshape", append
-	
+
 * set local wave number & file number
-	local			w = 4
+	local			w = 6
 	
 * make wave folder within refined folder if it does not already exist 
 	capture mkdir "$export/wave_0`w'" 
@@ -40,7 +40,7 @@
 	
 * ***********************************************************************
 * 1 - format secitons and save tempfiles
-* ***********************************************************************
+* ***********************************************************************	
 
 
 * ***********************************************************************
@@ -79,14 +79,14 @@
 * save temp file
 	tempfile		tempa
 	save			`tempa'
-
 	
+
 * ***********************************************************************
-* 1b - sections 3-6, 8-9, 12: respondant gender
+* 1b - respondant gender
 * ***********************************************************************
 
 * load data
-	use				"$root/wave_0`w'/r`w'_sect_a_2_5_5b_6_8_9_12", clear
+	use				"$root/wave_0`w'/r`w'_sect_a_2_3a_6_9a_12", clear
 	
 * drop all but household respondant
 	keep			hhid s12q9
@@ -124,40 +124,23 @@
 	format 			%5.0f hhid
 	
 * drop other source
-	drop			source_cd_os zone state lga sector ea
+	drop			zone state lga sector ea
 	
 * reshape data	
-	reshape 		wide s7q1 s7q2, i(hhid) j(source_cd)
+	reshape 		wide s7q1, i(hhid) j(source_cd)
 
 * save temp file
 	tempfile		tempc
-	save			`tempc'
-
+	save			`tempc'	
+	
 	
 * ***********************************************************************
 * 1d - section 11: assistance
-* ***********************************************************************
-
-* load data - updated via convo with Talip 9/1
-	use				"$root/wave_0`w'/r`w'_sect_11", clear
-
-* reformat HHID
-	format 			%5.0f hhid
+* ***********************************************************************	
 	
-* drop other 
-	drop 			zone state lga sector ea s11q2 s11q3__1 s11q3__2 ///
-						s11q3__3 s11q3__4 s11q3__5 s11q3__6 s11q3__7 s11q3__8 ///
-						s11q3__96 s11q3_os s11q5 s11q6__1 s11q6__2 ///
-						s11q6__3 s11q6__4 s11q6__6 s11q6__7 s11q6__96 s11q6_os
-
-* reshape 
-	reshape 		wide s11q1, i(hhid) j(assistance_cd)
+* not avaiable for round 
 	
-* save temp file
-	tempfile		tempd
-	save			`tempd'
-
-	
+		
 * ***********************************************************************
 * 1e - section 10: shocks
 * ***********************************************************************
@@ -165,6 +148,17 @@
 * not avaiable for round
 
 
+
+* ***********************************************************************
+* 1e - section 5c: education
+* ***********************************************************************
+
+* load data
+	use				"$root/wave_0`w'/r`w'_sect_5c.dta", clear	
+	
+	
+	
+	
 * ***********************************************************************
 * 2 - FIES score
 * ***********************************************************************
@@ -172,13 +166,14 @@
 * not available for round 
 
 	
+
 * ***********************************************************************
 * 3 - merge sections into panel and save
 * ***********************************************************************
 
 * merge sections based on hhid
-	use				"$root/wave_0`w'/r`w'_sect_a_2_5_5b_6_8_9_12", clear
-	foreach 		s in a b c d {
+	use				"$root/wave_0`w'/r`w'_sect_a_2_3a_6_9a_12", clear
+	foreach 		s in a b c {
 	    merge		1:1 hhid using `temp`s'', nogen
 	}
 	
@@ -193,4 +188,21 @@
 	log	close
 	
 	
-/* END */	
+/* END */		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

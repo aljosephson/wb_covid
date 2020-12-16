@@ -14,8 +14,7 @@
 	* raw Uganda data
 
 * TO DO:
-	* QC wave 3 (waiting for FIES)
-	* make sure all vars renamed (clean livestock) (change "not selected" -> "No")
+	* add round 3 FIES (waiting for data)
 	* when new waves available:
 		* create build for new wave based on previous ones
 		* update global list of waves below
@@ -253,13 +252,17 @@
 	rename 			s4q19 ac_bank
 	rename 			s4q20 ac_bank_why
 	
-* rename agriculture
+* rename agriculture (R1&3)
 	rename			s5aq16 ag_prep
+	replace 		ag_prep = s5bq16 if ag_prep == . & s5bq16 != . & s5bq16 != .a
 	rename			s5aq17 ag_plan
 	rename			s5qaq17_1 ag_plan_why
 	rename			s5aq18__0 ag_crop_1
+	replace 		ag_crop_1 = s5bq18_1 if ag_crop_1 == . & s5bq18_1 != . & s5bq18_1 != .a
 	rename			s5aq18__1 ag_crop_2
+	replace 		ag_crop_2 = s5bq18_2 if ag_crop_2 == . & s5bq18_2 != . & s5bq18_2 != .a
 	rename			s5aq18__2 ag_crop_3
+	replace 		ag_crop_3 = s5bq18_3 if ag_crop_3 == . & s5bq18_3 != . & s5bq18_3 != .a	 
 	rename			s5aq19 ag_chg
 	rename			s5aq20__1 ag_chg_1
 	rename			s5aq20__2 ag_chg_2
@@ -287,22 +290,94 @@
 	rename			s5aq24 ag_input
 	rename			s5aq25 ag_crop_lost
 	rename			s5aq26 ag_live_lost
-	rename			s5aq27 ag_live_chg
-	rename			s5aq28__1 ag_live_chg_1
-	rename			s5aq28__2 ag_live_chg_2
-	rename			s5aq28__3 ag_live_chg_3
-	rename			s5aq28__4 ag_live_chg_4
-	rename			s5aq28__5 ag_live_chg_5
-	rename			s5aq28__6 ag_live_chg_6
-	rename			s5aq28__7 ag_live_chg_7
-	rename			s5aq29 ag_graze
-	rename			s5aq30 ag_sold
+	rename			s5aq27 live_chg
+	rename			s5aq28__1 live_chg_3
+	rename			s5aq28__2 live_chg_3a
+	rename			s5aq28__3 live_chg_3b
+	rename			s5aq28__4 live_chg_2
+	rename			s5aq28__5 live_chg_1
+	rename			s5aq28__6 live_chg_8
+	rename			s5aq28__7 live_chg_9
+	rename			s5aq29 ag_locust
+	rename			s5aq30 ag_sell_need
+	replace 		ag_sell_need = s5bq25 if ag_sell_need == .
 	rename			s5aq31 ag_sell	
+	replace			ag_sell = s5bq26 if ag_sell == .
+	rename 			s5bq27_* ag_sell_where*
+	rename 			s5bq19 ag_expect
+	rename 			s5bq20 ag_quant
+	rename 			s5bq20b ag_quant_unit
+	rename 			s5bq20c ag_quant_kgcon
+	rename 			s5bq21_1 ag_pr_ban_s
+	rename 			s5bq21_2 ag_pr_ban_m
+	rename 			s5bq21_3 ag_pr_ban_l
+	rename 			s5bq21_4 ag_pr_cass_bag
+	rename 			s5bq21_5 ag_pr_cass_chip
+	rename 			s5bq21_6 ag_pr_cass_flr
+	rename 			s5bq21_7 ag_pr_bean_dry
+	rename 			s5bq21_9 ag_pr_bean_fr
+	rename 			s5bq21_8 ag_pr_maize
+	rename 			s5bq23 ag_sell_typ
+	rename 			s5bq24 ag_sell_expect
+	
+* rename crop harvest (R2)
+	rename 			s5bq01 harv_grew
+	rename 			s5bq02* harv_crop*
+	rename 			s5bq03 harv_stat
+	rename 			s5bq04 harv_cov
+	rename 			s5bq05_* harv_cov_why*
+	rename 			s5bq06_* harv_saf*
+	rename 			s5bq07 harv_nohire_why
+	rename 			s5bq08 harv_sell_need
+	rename 			s5bq09 harv_sell
+	
+* rename livestock 
+	rename 			s5cq01 live
+	* rename livestock type to match Nigeria
+	rename 			s5cq02__1 live_1
+	rename 			s5cq02__2 live_1a
+	rename 			s5cq02__3 live_2
+	rename 			s5cq02__4 live_2a
+	rename 			s5cq02__5 live_3
+	rename 			s5cq02__6 live_3a
+	rename 			s5cq02__7 live_5
+	rename 			s5cq02__8 live_4
+	rename 			s5cq03 live_cov
+	replace 		live_chg_1 = s5cq04__1 if live_chg_1 == .
+	replace 		live_chg_2 = s5cq04__2 if live_chg_2 == .
+	replace 		live_chg_3 = s5cq04__3 if live_chg_3 == .
+	drop 			s5cq04__1 s5cq04__2 s5cq04__3
+	rename 			s5cq04_* live_chg* // cannot tell what live_chg_7 is, not in survey
+	rename 			s5cq08 live_sell_want
+	rename 			s5cq09 live_sell_able
+	rename 			s5cq11_* live_sell_nowhy*
+	rename 			s5cq13* live_*_sales
+	lab var			live_eggs_sales "Since March have sales of eggs"
+	lab var			live_meat_sales "Since March have sales of meat"
+	lab var			live_milk_sales "Since March have sales of milk"
+	lab var			live_other_sales "Since March have sales of other"
+	forval 			x = 1/6 {
+		foreach 	p in eggs meat milk other {
+			rename 	s5cq14_1__`x'`p' live_`p'_dec_why_`x'
+			lab var live_`p'_dec_why_`x' "Why have the sales of [LIVESTOCK PRODUCT] declined?"
+		}
+	}
+	forval 			x = 1/6 {
+		foreach 	p in eggs meat milk other {
+			rename 	s5cq14_2__`x'`p' live_`p'_no_why_`x'
+			lab var live_`p'_no_why_`x' "Why there were no sales of [LIVESTOCK PRODUCT]?"
+		}
+	}
+	foreach 		p in eggs meat milk other {
+		rename 		s5cq15`p' live_pr_`p'
+		lab var 	live_pr_`p' "Since March 20, 2020 has the price of [LIVESTOCK PRODUCT]…"
+	}
 
 * rename access
+ * drinking water 
 	rename			s4q01e ac_drink
 	rename			s4q01f ac_drink_why
-
+ * soap
 	rename 			s4q01 ac_soap
 	rename			s4q02 ac_soap_why
 	replace			ac_soap_why = 9 if ac_soap_why == -96
@@ -311,10 +386,10 @@
 								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
 								7 "cannot afford it" 8 "afraid to go out" 9 "other"
 	lab var 		ac_soap_why "reason for unable to purchase soap"
-
+ * water wash
 	rename 			s4q03 ac_water
 	rename 			s4q04 ac_water_why
-	
+ * staple	
 	rename 			s4q05 ac_staple_def
 	rename 			s4q06 ac_staple
 	rename			s4q07 ac_staple_why
@@ -323,7 +398,7 @@
 								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
 								7 "other"
 	lab var 		ac_staple_why "reason for unable to purchase staple food"
-	
+ * sauce
 	rename 			s4q07a ac_sauce_def
 	rename 			s4q07b ac_sauce
 	rename			s4q07c ac_sauce_why
@@ -332,9 +407,9 @@
 								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
 								7 "other"
 	lab var 		ac_sauce_why "reason for unable to purchase staple food"
-	
+ * medicine
 	rename 			s4q08 ac_med
-
+ * medical services
 	rename 			s4q09 ac_medserv_need
 	rename 			s4q10 ac_medserv
 	rename 			s4q11 ac_medserv_why
@@ -346,7 +421,10 @@
 								4 "other" 5 "no transportation" 6 "restrictions to go out" ///
 								7 "afraid of virus" 8 "facility closed "
 	lab var 		ac_medserv_why "reason for unable to access medical services"
-
+ * masks
+	rename 			s4q12 ac_mask
+	rename 			s4q13 ac_mask_why
+	rename 			s4q14_* ac_mask_srce*
 * rename assets 
 	rename			s4q12__1 asset_1
 	rename			s4q12__2 asset_2
@@ -370,7 +448,7 @@
 	rename			s2q01b__13 symp_13
 	rename			s2q01b__14 symp_14
 	rename			s2q01b__n98 symp_15	
-	
+
 * rename knowledge
 	rename			s2q02__1 know_1
 	lab var			know_1 "Handwashing with Soap Reduces Risk of Coronavirus Contraction"
@@ -419,6 +497,7 @@
 	lab var			bus_stat_why "Why is your family business closed?"
 	order			bus_stat_why, after(bus_stat)
 	
+	rename 			s5a11c bus_act
 	replace			bus_why = s5aq14_2 if bus_why == .
 	
 	gen				bus_chlng_fce = 1 if s5aq15__1 == 1
@@ -457,7 +536,9 @@
 	lab val			bus_cndct_how bus_cndct_how
 	lab var			bus_cndct_how "Changed the way you conduct business due to the corona virus?"
 	order			bus_cndct_how, after(bus_cndct)
-
+	rename 			s5q15a bus_other
+	rename 			s5q15b bus_num
+	
 * credit
  * since last call (slc)
 	rename s7aq01 ac_cr_slc
@@ -505,7 +586,6 @@
 	rename s7cq07* ac_cr_bef_miss*
 	rename s7cq08* ac_cr_bef_delay*
 	
-
 * drop unnecessary variables
 	drop			 BSEQNO DistrictName sec0_endtime	///
 						CountyName SubcountyName ParishName ///
@@ -527,8 +607,13 @@
 						s5aq15__4 s5aq15__5 s5aq15__6 s5aq15__n96 s5aq15b__1 ///
 						s5aq15b__2 s5aq15b__3 s5aq15b__4 s5aq15b__5 s5aq15b__6 ///
 						s5aq15b__n96 s4q01f_Other s4q02_Other s4q04_Other ///
-						s4q11_Other case_filter
-	
+						s4q11_Other case_filter Commment CountyCode2 CountyName2 ///
+						DistrictCode2 DistrictName2 ParishCode2 ParishName2 ///
+						SubcountyCode2 SubcountyName2 VillageCode2 VillageName2 ///
+						s4q13_Other ac_mask_srceOther ac_mask_srce_n96 harv_cov_why_n96 ///
+						s5bq16 s5bq25 s5bq26 ag_sell_where_n96 Sq01 s5aq11b__0 ///
+						s5bq18_1 s5bq18_2 s5bq18_3
+						
 * rename basic information
 	gen				sector = 2 if urban == 1
 	replace			sector = 1 if sector == .

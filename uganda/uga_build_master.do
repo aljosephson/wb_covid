@@ -195,6 +195,7 @@
 	lab var			cope_17 "Other"				
 	
 * rename government contribution to spread
+	rename			s2gq01 revised
 	rename			s2gq02__1 spread_1
 	rename			s2gq02__2 spread_2
 	rename			s2gq02__3 spread_3
@@ -228,6 +229,24 @@
 	rename			s2q03__12 gov_10
 	lab var			gov_10 "Stopping or limiting social gatherings / social distancing"
 	
+* rename symptoms
+	rename			s2q01 know
+	rename			s2q01b__1 symp_1
+	rename			s2q01b__2 symp_2
+	rename			s2q01b__3 symp_3
+	rename			s2q01b__4 symp_4
+	rename			s2q01b__5 symp_5
+	rename			s2q01b__6 symp_6
+	rename			s2q01b__7 symp_7
+	rename			s2q01b__8 symp_8
+	rename			s2q01b__9 symp_9
+	rename			s2q01b__10 symp_10
+	rename			s2q01b__11 symp_11
+	rename			s2q01b__12 symp_12
+	rename			s2q01b__13 symp_13
+	rename			s2q01b__14 symp_14
+	rename			s2q01b__n98 symp_15	
+
 * rename education
 	rename 			s4q012 children318
 	rename 			s4q013 sch_child
@@ -289,7 +308,7 @@
 	rename			s5aq23 ag_fert
 	rename			s5aq24 ag_input
 	rename			s5aq25 ag_crop_lost
-	rename			s5aq26 ag_live_lost
+	rename			s5aq26 live_lost
 	rename			s5aq27 live_chg
 	rename			s5aq28__1 live_chg_3
 	rename			s5aq28__2 live_chg_3a
@@ -431,23 +450,6 @@
 	rename			s4q12__3 asset_3
 	rename			s4q12__4 asset_4
 	rename			s4q12__5 asset_5
-	
-* rename symptoms
-	rename			s2q01b__1 symp_1
-	rename			s2q01b__2 symp_2
-	rename			s2q01b__3 symp_3
-	rename			s2q01b__4 symp_4
-	rename			s2q01b__5 symp_5
-	rename			s2q01b__6 symp_6
-	rename			s2q01b__7 symp_7
-	rename			s2q01b__8 symp_8
-	rename			s2q01b__9 symp_9
-	rename			s2q01b__10 symp_10
-	rename			s2q01b__11 symp_11
-	rename			s2q01b__12 symp_12
-	rename			s2q01b__13 symp_13
-	rename			s2q01b__14 symp_14
-	rename			s2q01b__n98 symp_15	
 
 * rename knowledge
 	rename			s2q02__1 know_1
@@ -517,7 +519,7 @@
 	lab val			bus_chlng_fce bus_chlng_fce
 	lab var			bus_chlng_fce "Business challanges faced"
 	order			bus_chlng_fce, after(bus_why)
-	
+ 	
 	rename			s5aq15a bus_cndct
 	gen				bus_cndct_how = 1 if s5aq15b__1 == 1
 	replace			bus_cndct_how = 1 if s5aq15b__2 == 1
@@ -612,7 +614,8 @@
 						SubcountyCode2 SubcountyName2 VillageCode2 VillageName2 ///
 						s4q13_Other ac_mask_srceOther ac_mask_srce_n96 harv_cov_why_n96 ///
 						s5bq16 s5bq25 s5bq26 ag_sell_where_n96 Sq01 s5aq11b__0 ///
-						s5bq18_1 s5bq18_2 s5bq18_3
+						s5bq18_1 s5bq18_2 s5bq18_3 *_interview_ID *_hh_weight weight ///
+						Sq02 PID baseline_hhid
 						
 * rename basic information
 	gen				sector = 2 if urban == 1
@@ -664,10 +667,6 @@
 	rename			CountyCode county_id
 	rename			SubcountyCode city_id
 	rename			ParishCode subcity_id
-
-	rename			Sq02 start_date
-	rename			s2q01 know
-	rename			s2gq01 revised
 	
 	* create country variables
 	gen				country = 4
@@ -675,8 +674,8 @@
 	lab def			country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda"
 	lab val			country country
 	lab var			country "Country"
-	
 
+/*
 * **********************************************************************
 * 4 - QC check 
 * **********************************************************************
@@ -733,7 +732,7 @@
 	restore
 	destring 		wave, replace
 	
-	
+*/	
 * **********************************************************************
 * 5 - end matter, clean up to save
 * **********************************************************************

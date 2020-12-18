@@ -376,7 +376,7 @@
 	rename 			s5q7__4 edu_cont_5 
 	rename 			s5q7__5 edu_cont_6 
 	rename 			s5q7__6 edu_cont_7 
-	rename 			s5q7__7	educ_cont_8 
+	rename 			s5q7__7	edu_cont_8 
 	rename 			s5cq1 sch_att
 	forval 			x = 1/14 {
 	    rename 		s5cq2__`x' sch_att_why_`x'
@@ -447,7 +447,7 @@
 	replace 		emp_purp = s6bq6a if emp_purp == . & s6bq6a != .
 	rename			s6q7 emp_able
 	rename			s6q8 emp_unable	
-	rename			s6q8a emp_unable_why	
+	rename			s6q8a emp_unable_why
 	rename			s6q9 emp_hh
 	rename			s6q11 bus_emp
 	rename			s6q12 bus_sect
@@ -472,12 +472,14 @@
 	rename 			s6q8b emp_hrs
 	replace 		emp_hrs = s6q8b1 if emp_hrs == . & s6q8b1 != .
 	rename 			s6q8c1 emp_hrs_typ
-	rename 			s6q8c emp_hoursmarch 
+	rename 			s6q8c emp_hrs_chg 
 	rename			s6q8d__1 emp_cont_1
 	rename			s6q8d__2 emp_cont_2
 	rename			s6q8d__3 emp_cont_3
 	rename			s6q8d__4 emp_cont_4
 	rename			s6q8e contrct
+	rename 			s6q8f_* emp_saf*
+	rename 			s6q8g emp_saf_fol
 	rename 			s6q11a bus_status 
 	rename 			s6q11b bus_closed 
 	rename 			s6q11b1 bus_other
@@ -489,6 +491,7 @@
 	rename 			s6q15__6 bus_chal_6 
 	rename 			s6q15__96 bus_chal_7 
 	rename 			s6q15a bus_beh
+	rename 			s6q15b bus_num
 	rename 			s6q15b__1 bus_beh_1 
 	rename 			s6q15b__2 bus_beh_2 
 	rename 			s6q15b__3 bus_beh_3 
@@ -577,13 +580,17 @@
 	rename 			s6bq9 live_sell_why
 	rename 			s6bq10 live_sell_able
 	rename 			s6bq11 live_sell_cond
-	rename 			s6bq12 live_sell_pri
+	rename 			s6bq12 live_sell_pr
 	rename			s6bq13 live_sell_nowhy_ 
 	gen 			temp = live_sell_nowhy_
 	replace 		live_sell_nowhy_ = 1 if live_sell_nowhy_ != .
 	replace 		temp = 0 if temp == .
 	reshape 		wide live_sell_nowhy_, i(hhid wave) j(temp)
 	drop 			live_sell_nowhy_0
+	foreach 		x in 2 4 5 {
+	    local 		z = `x' - 1
+		rename 		live_sell_nowhy_`x' live_sell_nowhy_`z'
+	}
 	
 * fies
 	rename			s8q4 fies_7
@@ -614,7 +621,9 @@
 * drop unnecessary variables
 	drop			interviewer_id *_os  s6q10_* s12q3__* s12q4__* /// 
 						s12q5 s12q9 s12q10 s12q10_os s12q11 s12q14 baseline_date ///
-						s12q10a s5*  
+						s12q10a s5* s6q11c s6bq4__96 s6aq8__96 s6aq7__96 s6aq6__96 ///
+						s6aq5__96 s6aq4__96 s6q8b1 s6bq6a lga filter ///
+						PID s2q0a s2q0b 
 	drop if			wave ==  .
 	
 * reorder variables
@@ -770,7 +779,7 @@
 	lab val			asst_any assist
 
 * drop variables
-	drop			s11q11 s11q12 s11q13
+	drop			s11q11 s11q12 s11q13 s6q16a
 	
 	gen 			region = 3000 + state
 
@@ -791,10 +800,8 @@
 	order			region, after(sector)
 	lab var			region "Region"	
 	
-	rename 			s2q0a hhleft
-	rename 			s2q0b hhjoin 
 	
-st
+/*
 * **********************************************************************
 * 4 - QC check (SEE NOTES IN OUTPUT EXCEL)
 * **********************************************************************
@@ -851,7 +858,7 @@ st
 	export 			excel using "$export/nga_qc_flags.xlsx", first(var) sheetreplace sheet(flags)
 	restore
 	destring 		wave, replace
-
+*/
 
 * **********************************************************************
 * 5 - end matter, clean up to save
@@ -868,6 +875,6 @@ st
 			path("$export") dofile(nga_build) user($user)
 
 * close the log
-	log	close 
+	//log	close
 
 /* END */

@@ -213,6 +213,8 @@
 *rename variables inconsistent with  wave 1
 	rename			s3q9 sup_rcvd
 	rename			s3q10 sup_cmpln
+	lab def 		yesno 1 "Yes" 2 "No"
+	lab val			sup_cmpln sup_rcvd yesno
 	rename			s3q11 sup_cmpln_who
 	rename			s3q12 sup_cmpln_done
 	rename			s6q1a rtrn_emp

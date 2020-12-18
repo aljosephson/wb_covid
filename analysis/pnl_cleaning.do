@@ -31,131 +31,140 @@
 	global	export	=	"$data/analysis"
 	global	logout	=	"$data/analysis/logs"
 
+* Define root folder globals
+    if `"`c(username)'"' == "jdmichler" {
+        global 		code  	"C:/Users/jdmichler/git/wb_covid"
+		global 		data	"G:/My Drive/wb_covid/data"
+    }
+
+    if `"`c(username)'"' == "aljosephson" {
+        global 		code  	"C:/Users/aljosephson/git/wb_covid"
+		global 		data	"G:/My Drive/wb_covid/data"
+    }
+
+	if `"`c(username)'"' == "annfu" {
+		global 		code  	"C:/Users/annfu/git/wb_covid"
+		global 		data	"G:/My Drive/wb_covid/data"
+		
 * open log
 	cap log 		close
 	log using		"$logout/analysis", append
-
+	}
 
 * **********************************************************************
 * 1 - build data set
 * **********************************************************************
-
+/*
+* run do files for each country (takes a little while to run)
+	run				"$code/ethiopia/eth_build_master"
+	run 			"$code/malawi/mwi_build_master"
+	run				"$code/nigeria/nga_build_master"
+	run 			"$code/uganda/uga_build_master"
+*/
 * read in data
-	use				"$eth/eth_panel", clear
-	
-	append using 	"$mwi/mwi_panel", force
-	
-	append using 	"$nga/nga_panel", force
-
-	append using	"$uga/uga_panel", force
+	use				"$eth/eth_panel", clear	
+	append using 	"$mwi/mwi_panel"	
+	append using 	"$nga/nga_panel"
+	append using	"$uga/uga_panel"
 	
 	order			country
-	lab def			country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda"
+	lab def			country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda", replace
 	lab val			country country	
 	lab var			country "Country"
-	
-	
 	
 	
 * **********************************************************************
 * 2 - revise ID variables as needed 
 * **********************************************************************
 
-* order variables
-	order			country hhid_eth hhid_mwi hhid_nga hhid_uga wave
-	drop			submission_date round attempt
-	
+* drop variables with open responses
+	drop dis_gov* sup_cmpln_done sup_cmpln_who emp_safos
+
+* drop if variable contains all missing values
+	foreach var of varlist _all {
+		 capture assert mi(`var')
+		 if !_rc {
+			drop `var'
+		 }
+	 }
+
 * define yes/no label
-	lab	def				yesno 0 "No" 1 "Yes"
+	lab	def				yesno 0 "No" 1 "Yes", replace
 
 * generate household id
 	replace 		hhid_eth = "e" + hhid_eth if hhid_eth != ""
-	
-	replace 		hhid_mwi = "m" + hhid_mwi if hhid_mwi != ""
-	
+	replace 		hhid_mwi = "m" + hhid_mwi if hhid_mwi != ""	
 	tostring		hhid_nga, replace
 	replace 		hhid_nga = "n" + hhid_nga if hhid_nga != "."
-	replace			hhid_nga = "" if hhid_nga == "."
-	
+	replace			hhid_nga = "" if hhid_nga == "."	
 	tostring		hhid_uga, replace u force
 	replace 		hhid_uga = "u" + hhid_uga if hhid_uga != "."
-	replace			hhid_uga = "" if hhid_uga == "."
-
+	replace			hhid_uga = "" if hhid_uga == "."	
 	gen				HHID = hhid_eth if hhid_eth != ""
 	replace			HHID = hhid_mwi if hhid_mwi != ""
 	replace			HHID = hhid_nga if hhid_nga != ""
-	replace			HHID = hhid_uga if hhid_uga != ""
-	
+	replace			HHID = hhid_uga if hhid_uga != ""	
 	sort			HHID
 	egen			hhid = group(HHID)
-	
 	drop			HHID hhid_eth hhid_mwi hhid_nga hhid_uga
-	order			hhid, after(country)
 	lab var			hhid "Unique household ID"
 
-	drop 			start_date hh_a16 hh_a17 result shock_16 hhleft hhjoin PID ///
-						baseline_hhid
-
+* generate weights
 	rename			phw hhw
 	lab var			hhw "Household sampling weight"
-	
 	gen				phw = hhw * hhsize
 	lab var			phw "Population weight"
-	
 	gen 			ahw = hhw * hhsize_adult
 	lab var 		ahw "Household adult sampling weight"
-	
 	gen 			chw = hhw * hhsize_child 
 	lab var 		chw "Household child sampling weight"
-	
 	gen 			shw = hhw * hhsize_schchild
-	lab var 		shw "Household school child sampling weight"
-	
+	lab var 		shw "Household school child sampling weight"	
 	order			phw ahw chw shw, after(hhw)
 	order			hhsize, before(sex)
 						
 * know 
 	replace			know = 0 if know == 2 
-	replace			know_01 = 0 if know_01 == 2
-	replace			know_02 = 0 if know_02 == 2
-	replace 		know_03 = 0 if know_03 == 2
-	replace 		know_04 = 0 if know_04 == 2
-	replace 		know_05 = 0 if know_05 == 2
-	replace 		know_06 = 0 if know_06 == 2
-	replace			know_07 = 0 if know_07 == 2
-	replace 		know_08 = 0 if know_08 == 2 
-	order			know_09 know_11 know_10, after(know_08)
+	replace			know_1 = 0 if know_1 == 2
+	replace			know_2 = 0 if know_2 == 2
+	replace 		know_3 = 0 if know_3 == 2
+	replace 		know_4 = 0 if know_4 == 2
+	replace 		know_5 = 0 if know_5 == 2
+	replace 		know_6 = 0 if know_6 == 2
+	replace			know_7 = 0 if know_7 == 2
+	replace 		know_8 = 0 if know_8 == 2 
+	order			know_9 know_11 know_10, after(know_8)
 	
 * behavior 
-	replace 		bh_01 = 1 if bh_01 == 4 & country == 2
-	replace			bh_01 = 0 if bh_01 >= 2 & bh_01 < . 	
-	replace 		bh_02 = 1 if bh_02 == 4 & country == 2
-	replace			bh_02 = 0 if bh_02 >= 2 & bh_02 < . 	
-	replace 		bh_03 = 1 if bh_03 == 4 & country == 2
-	replace			bh_03 = 0 if bh_03 >= 2 & bh_03 < . 	
-	replace			bh_03 = . if bh_03 == -97
-	replace 		bh_04 = 1 if bh_04 == 4 & country == 2
-	replace			bh_04 = 0 if bh_04 >= 2 & bh_04 < . 	
-	replace 		bh_05 = 1 if bh_05 == 4 & country == 2
-	replace			bh_05 = 0 if bh_05 >= 2 & bh_05 < . 	
-	replace 		bh_06 = 1 if bh_06 == 4 & country == 2
-	replace			bh_06 = 0 if bh_06 >= 2 & bh_06 < . 	
-	replace 		bh_06a = 1 if bh_06a == 4 & country == 2
-	replace			bh_06a = 0 if bh_06a >= 2 & bh_06a < . 	
-	replace 		bh_07 = 1 if bh_07 == 4 & country == 2
-	replace			bh_07 = 0 if bh_07 >= 2 & bh_07 < . 	
-	replace 		bh_08 = 1 if bh_08 == 4 & country == 2
-	replace			bh_08 = 0 if bh_08 >= 2 & bh_08 < . 
-	order 			bh_02 bh_03 bh_04 bh_05 bh_06 bh_07 bh_08, after(bh_01)
+	replace 		bh_1 = 1 if bh_1 == 4 & country == 2
+	replace			bh_1 = 0 if bh_1 >= 2 & bh_1 < . 	
+	replace 		bh_2 = 1 if bh_2 == 4 & country == 2
+	replace			bh_2 = 0 if bh_2 >= 2 & bh_2 < . 	
+	replace 		bh_3 = 1 if bh_3 == 4 & country == 2
+	replace			bh_3 = 0 if bh_3 >= 2 & bh_3 < . 	
+	replace			bh_3 = . if bh_3 == -97
+	replace 		bh_4 = 1 if bh_4 == 4 & country == 2
+	replace			bh_4 = 0 if bh_4 >= 2 & bh_4 < . 	
+	replace 		bh_5 = 1 if bh_5 == 4 & country == 2
+	replace			bh_5 = 0 if bh_5 >= 2 & bh_5 < . 	
+	replace 		bh_6 = 1 if bh_6 == 4 & country == 2
+	replace			bh_6 = 0 if bh_6 >= 2 & bh_6 < . 	
+	replace 		bh_6a = 1 if bh_6a == 4 & country == 2
+	replace			bh_6a = 0 if bh_6a >= 2 & bh_6a < . 	
+	replace 		bh_7 = 1 if bh_7 == 4 & country == 2
+	replace			bh_7 = 0 if bh_7 >= 2 & bh_7 < . 	
+	replace 		bh_8 = 1 if bh_8 == 4 & country == 2
+	replace			bh_8 = 0 if bh_8 >= 2 & bh_8 < . 
+	order 			bh_2 bh_3 bh_4 bh_5 bh_6 bh_7 bh_8, after(bh_1)
 	
-	drop			bh_06a
+	drop			bh_6a
 	
 	order			gov_13 gov_14 gov_15 gov_16 gov_none gov_dnk, after(gov_12)
 	order			edu hhsize, after(relate_hoh)
 
-	gen				cope_any = 1 if cope_01 == 1 | cope_02 == 1 | cope_03 == 1 | ///
-						cope_04 == 1 | cope_05 == 1 | cope_06 == 1 | ///
-						cope_07 == 1 | cope_08 == 1 | cope_09 == 1 | ///
+	gen				cope_any = 1 if cope_1 == 1 | cope_2 == 1 | cope_3 == 1 | ///
+						cope_4 == 1 | cope_5 == 1 | cope_6 == 1 | ///
+						cope_7 == 1 | cope_8 == 1 | cope_9 == 1 | ///
 						cope_10 == 1 | cope_11 == 1 | cope_12 == 1 | ///
 						cope_13 == 1 | cope_14 == 1 | cope_15 == 1
 	replace			cope_any = 0 if cope_any == . & country == 1
@@ -170,14 +179,14 @@
 	
 	lab def			myth 0 "No" 1 "Yes" 3 "Don't Know"
 	
-	local myth		 myth_01 myth_02 myth_03 myth_04 myth_05
+	local myth		 myth_1 myth_2 myth_3 myth_4 myth_5
 	foreach v in `myth' {
 	    replace `v' = 3 if `v' == -98
 		replace `v' = 0 if `v' == 2
 		lab val	`v' myth
 	}	
 	
-	
+adsf 	
 * **********************************************************************
 * 3- revise access variables as needed 
 * **********************************************************************
@@ -202,7 +211,7 @@
 						ac_sorg_need ac_sorg ac_sorg_why ///
 						ac_clean_need ac_clean ac_clean_why ///
 						ac_water ac_water_why ///
-						ac_bank ac_bank_why, after(bh_08)		
+						ac_bank ac_bank_why, after(bh_8)		
 
 * access to medicine
 	lab val				ac_med .
@@ -314,8 +323,6 @@
 	replace				ac_clean = 0 if ac_clean == 1 & country == 2
 	replace				ac_clean = 1 if ac_clean == 2 & country == 2
 	lab val				ac_clean yesno
-	
-	drop				ac_water ac_water_why ac_staple_def
 
 * access to staples in Nigeria
 	replace				ac_rice = 0 if ac_rice == 1 & country == 3
@@ -381,25 +388,23 @@
 							ac_sorg == 0 & ac_staple == . & ac_staple_need == 1 & ///
 							country == 3
 		
-	drop				ac_staple_why ac_sauce_def ac_sauce ac_sauce_why ///
-							ac_drink ac_drink_why *need
 * label variables 
 	lab var 		ac_soap_why "Reason for unable to purchase soap"
 	lab var 		ac_water_why "Reason unable to access water for washing hands"		
-	lab var 		ac_water_drink "Reason unable to access water for drinking"
+	lab var 		ac_drink_why "Reason unable to access water for drinking"
 		
 * **********************************************************************
 * 4 - clean concerns and income changes
 * **********************************************************************
 	
 * turn concern into binary
-	replace				concern_01 = 0 if concern_01 == 3 | concern_01 == 4
-	replace				concern_01 = 1 if concern_01 == 2
-	lab val				concern_01 yesno
+	replace				concern_1 = 0 if concern_1 == 3 | concern_1 == 4
+	replace				concern_1 = 1 if concern_1 == 2
+	lab val				concern_1 yesno
 	
-	replace				concern_02 = 0 if concern_02 == 3 | concern_02 == 4
-	replace				concern_02 = 1 if concern_02 == 2
-	lab val				concern_02 yesno
+	replace				concern_2 = 0 if concern_2 == 3 | concern_2 == 4
+	replace				concern_2 = 1 if concern_2 == 2
+	lab val				concern_2 yesno
 
 
 	replace				oth_inc = other_inc if other_inc != . & oth_inc == .
@@ -534,59 +539,59 @@
 * 5 - revise access variables as needed 
 * **********************************************************************
 
-	order			myth_01 myth_02 myth_03 myth_04 myth_05 myth_06 myth_07, ///
+	order			myth_1 myth_2 myth_3 myth_4 myth_5 myth_6 myth_7, ///
 						after(ac_clean_why)
-	order			shock_01 shock_02 shock_03 shock_04 shock_05 shock_06 ///
-						shock_07 shock_08 shock_09 shock_10 shock_11 ///
+	order			shock_1 shock_2 shock_3 shock_4 shock_5 shock_6 ///
+						shock_7 shock_8 shock_9 shock_10 shock_11 ///
 						shock_12 shock_13 shock_14, after(ac_clean_why)
-	order			cope_01 cope_02 cope_03 cope_04 cope_05 cope_06 cope_07 ///
+	order			cope_1 cope_2 cope_3 cope_4 cope_5 cope_6 cope_7 ///
 						cope_08 cope_09 cope_10 cope_11 cope_12 cope_13 ///
-						cope_14 cope_15 cope_16 cope_17 fies_01 fies_02 ///
-						fies_03 fies_04 fies_05 fies_06 fies_07 fies_08, ///
-						after(myth_07)
+						cope_14 cope_15 cope_16 cope_17 fies_1 fies_2 ///
+						fies_3 fies_4 fies_5 fies_6 fies_7 fies_8, ///
+						after(myth_7)
 		
 	rename			satisf_06 satis_06
 	
 	order			children318 children618, before(sch_child)
 	order			sch_child_meal sch_child_mealskip, after(sch_child)
-	order			edu_06 edu_07, after(edu_05)
-	order			edu_other edu_cont edu_cont_01 edu_cont_02 edu_cont_03 ///
-						edu_cont_04 edu_cont_05 edu_cont_06 edu_cont_07 edu_cont_08, ///
-						after(edu_05)
+	order			edu_6 edu_7, after(edu_5)
+	order			edu_other edu_cont edu_cont_1 edu_cont_2 edu_cont_3 ///
+						edu_cont_4 edu_cont_5 edu_cont_6 edu_cont_7 edu_cont_8, ///
+						after(edu_5)
 	
-	replace			edu_cont_08 = educ_cont_08 if edu_cont_08 == .
-	drop			educ_cont_08
+	replace			edu_cont_8 = educ_cont_8 if edu_cont_8 == .
+	drop			educ_cont_8
 		
 	order			asst_food asst_cash asst_kind asst_any, after(tot_inc_chg)
 	
-	order			ag_prep- ag_price ag_chg_01- ag_seed_07 ag_plan- ag_graze, ///
-						after(concern_03)
+	order			ag_prep- ag_price ag_chg_1- ag_seed_7 ag_plan- ag_graze, ///
+						after(concern_3)
 						
-	order			concern_01 concern_02 concern_03 concern_04 concern_05 ///
-						concern_06, after(myth_07)
+	order			concern_1 concern_2 concern_3 concern_4 concern_5 ///
+						concern_6, after(myth_7)
 	
 	
 * **********************************************************************
 * 6 - clean food security information 
 * **********************************************************************
 
-	loc fies				fies_01 fies_02 fies_03 fies_04 fies_05 fies_06 fies_07 fies_08
+	loc fies				fies_1 fies_2 fies_3 fies_4 fies_5 fies_6 fies_7 fies_8
 
 	foreach var of varlist `fies' {
-		replace				`var' = 0 if `var' == 2
+		replace 			`var' = 2 if `var' == 0
 		replace				`var' = . if `var' == -99
 		replace				`var' = . if `var' == -98
 
 		}				
 
-	egen 					fies_count = rsum (fies_01 fies_02 fies_03 fies_04 fies_05 fies_06 fies_07 fies_08)				
+	egen 					fies_count = rsum(fies_1 fies_2 fies_3 fies_4 fies_5 fies_6 fies_07 fies_8)				
 	gen 					fies_percent = fies_count / 8 
 	
 * **********************************************************************
 * 7 - clean myth questions
 * **********************************************************************
 
-	loc myth				myth_01 myth_02 myth_03 myth_04 myth_05
+	loc myth				myth_1 myth_2 myth_3 myth_4 myth_5
 
 	foreach var of varlist `myth' {
 		replace				`var' = 3 if `var' == -98
@@ -644,3 +649,44 @@ summarize
 
 * close the log
 	log	close	
+	
+/* END */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* VARIABLE CROSSWALK
+
+
+gen country_s = cond(country == 1, "eth", cond(country == 2, "mwi", cond(country == 3, "nga", "uga")))
+drop country
+levelsof country_s, local(countries)
+levelsof wave, local(waves)
+
+ds
+foreach var in `r(varlist)' {
+    foreach c in `countries' {
+	    foreach w in `waves' {
+		    collapse (sum) `var', by(country wave)
+			capture confirm numeric variable `var' 
+			gen `c'_w`w'_`var' = 1 if `var' != .
+			if !_rc {
+				 gen `c'_w`w'_`var' = 1 if `var' != ""
+			}
+		}
+
+	}
+}

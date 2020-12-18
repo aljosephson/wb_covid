@@ -193,9 +193,9 @@
 		rename			ac2_atb_maize_why ac_maize_why
 		rename			ac1_atb_oil ac_oil
 		rename			ac2_atb_oil_why ac_oil_why
-		rename			ac6_med med
-		rename			ac7_med_access med_access
-		rename			ac8_med_access_reas med_access_why
+		rename			ac6_med ac_medserv_need
+		rename			ac7_med_access ac_medserv
+		rename			ac8_med_access_reas ac_medserv_why
 		rename			ac9_bank bank
 		
 	* education 
@@ -235,7 +235,7 @@
 							edu_1_sec edu_2_sec edu_3_sec edu_4_sec edu_5_sec ///
 							edu_other_sec
 							
-	* wash (water and soap)
+	* water and soap
 	 * only in round 4
 		rename 			wa1_water_drink ac_drink
 		rename 			wa2_water_drink_why ac_drink_why
@@ -344,13 +344,18 @@
 	
 * fies variables 	
 	rename			fi7_outoffood fies_1
+	replace 		fies_1 = fi1_outoffood if fies_1 ==. & fi1_outoffood != . 
 	rename			fi8_hungrynoteat fies_2
+	replace 		fies_2 = fi2_hungrynoteat if fies_2 ==. & fi2_hungrynoteat != .
 	rename			fi6_noteatfullday fies_3
+	replace 		fies_3 = fi3_noteatfullday if fies_3 == . & fi3_noteatfullday != .
 	rename			fi1_enough fies_4
 	rename			fi2_healthy fies_5
 	rename			fi3_fewkinds fies_6
 	rename			fi4_skipmeal fies_7
 	rename			fi5_ateless fies_8
+	lab def 		yn 1 "Yes" 2 "No"
+	lab val			fies* yn
 	
 * assistance variables - updated via convo with Talip 9/1
 	gen				asst_food = as1_assist_type_1
@@ -452,6 +457,26 @@
 	rename 			ag8_travel_norm aglabor_normal
 	rename 			ag9_travel_curr aglabor 
   
+* livestock 
+	drop 			ls2_type ls4_covid_impact ls4_covid_impact__96 ls4_covid_impact_other ///
+					ls12_sell_notable ls12_sell_notable__96 ls12_sell_notable_other 
+	rename 			ls1_livestock live
+	rename 			ls2_type_5 ls2_type_7
+	rename 			ls2_type* live*
+	rename 			ls3_covid live_cov
+	rename 			ls4_covid_impact_1 live_chg_1
+	rename 			ls4_covid_impact_2 live_chg_3
+	rename 			ls4_covid_impact_3 live_chg_4
+	rename 			ls4_covid_impact_4 live_chg_5
+	rename 			ls5_usual live_sell
+	rename 			ls6_revenue_chg live_sell_chg
+	rename 			ls7_since_covid live_sell_want
+	rename 			ls8_because_covid live_sell_why
+	rename 			ls9_sell_able live_sell_able
+	rename 			ls10* live* 
+	rename 			ls11_ live_sell_pr
+	rename 			ls12_sell_notable* live_sell_nowhy*
+	 
 * locusts
  * first addition in R4 (only in r4)
 	rename 			lo1_keb	any_loc_keb
@@ -501,7 +526,10 @@
 						cr3_since_reas cr3_since_reas__96 cr3_since_reas_other ///
 						cr4_since_who cr4_since_who__96 cr4_since_who_other ///
 						cr7_before_reas cr7_before_reas__96 cr7_before_reas_other ///
-						cr8_before_who cr8_before_who__96 cr8_before_who_other
+						cr8_before_who cr8_before_who__96 cr8_before_who_other ///
+						fi1_outoffood fi2_hungrynoteat fi3_noteatfullday lo3_impact ///
+						weight *why_other ea_id ac5_edu_type emp_act_other emp_stat_other ///
+						farm_why live_other submission_date round attempt 
 						
 * rename regions
 	replace 		region = 1001 if region == 1
@@ -522,7 +550,7 @@
 						"Addis Ababa" 1011 "Dire Dawa"
 	lab val			region region
 	 
-
+/*
 * **********************************************************************
 * 4 - QC check 
 * **********************************************************************
@@ -580,7 +608,7 @@
 	restore
 	destring 		wave, replace
 
-
+*/
 * **********************************************************************
 * 5 - end matter, clean up to save
 * **********************************************************************
@@ -589,11 +617,8 @@
 	compress	
 	describe
 	summarize 
-	encode 			household_id, generate (household_id_d)
-	rename 			household_id_d hhid_eth_d
-	label 			var hhid_eth_d "household id unique - ethiopia (encoded)"
 	rename 			household_id hhid_eth 
-	label 			var hhid_eth "household id unique - ethiopia (string)"
+	label 			var hhid_eth "household id unique - ethiopia"
 	
 * save file
 	customsave, 	idvar(hhid_eth) filename("eth_panel.dta") ///

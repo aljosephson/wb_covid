@@ -117,18 +117,6 @@
 * 3 - clean malawi panel
 * ***********************************************************************	
 
-* reformat HHID
-	rename			HHID household_id_an
-	label 			var household_id_an "32 character alphanumeric - str32"
-	encode 			household_id_an, generate(HHID)
-	label           var HHID "unique identifier of the interview"
-	format 			%12.0f HHID
-	order 			y4_hhid HHID household_id_an	
-	rename			interviewDate start_date
-	rename			Above_18 above18
-	rename 			s3q1  know
-	rename			s3q1a internet
-
 * drop meta data
 	drop			interview__key nbrbst s12q2 s12q3__0 s12q3__1 s12q3__2 ///
 						s12q3__3 s12q3__4 s12q3__5 s12q3__6 s12q3__7 s12q4__0 ///
@@ -294,6 +282,8 @@
 	lab var			elseaff_5 "several villages affected by shock"
 	
 * knowledge
+	rename 			s3q1  know
+	rename			s3q1a internet
 	rename			s3q2__1 know_1
 	lab var			know_1 "Handwashing with Soap Reduces Risk of Coronavirus Contraction"
 	rename			s3q2__2 know_9
@@ -887,7 +877,7 @@
 						s6qe6__95 s6qe6_ot s6qe2_ot s6qe3_ot s6qe4__95 s6qe4_ot ///
 						s6qf1 s6qf2__95 s6qf2_ot s6qf3 s6qf6__95 s6qf6_ot s6qf7__95 ///
 						s6qf7_ot s6qf10__95 s6qf10_ot s6qf4__95 s6qf4_ot s6qf5__95 ///
-						s6qf5_ot s6dq10_ot
+						s6qf5_ot s6dq10_ot weight s2q9
 
 * regional and sector information
 	gen				sector = 2 if urb_rural == 1
@@ -919,8 +909,8 @@
 	drop			hh_a00 hh_a01
 	order			region, after(sector)
 	lab var			region "Region"
-	
 
+/*
 * **********************************************************************
 * 4 - QC check 
 * **********************************************************************
@@ -977,18 +967,19 @@
 	export 			excel using "$export/mwi_qc_flags.xlsx", first(var) sheetreplace sheet(flags)
 	restore
 	destring 		wave, replace
+*/
 
-	
 * **********************************************************************
 * 5 - end matter, clean up to save
 * **********************************************************************
 
-	drop 			household_id household_id_an start_date PID above18
+	drop 			interviewDate PID Above_18 y4_hhid
 	compress
 	describe
 	summarize
 
-	rename 			y4_hhid hhid_mwi
+	rename 			HHID hhid_mwi
+	lab var			hhid_mwi "household ID malawi"
 
 * save file
 		customsave , idvar(hhid_mwi) filename("mwi_panel.dta") ///

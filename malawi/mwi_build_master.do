@@ -460,19 +460,38 @@
 		
  * water
 	rename 			s5q1a2 ac_water
-	rename 			s5q1b2 ac_water_why		
+	replace 		ac_water = ac_water - 1
+	lab var 		ac_water "was your household able to access water"
+	rename 			s5q1b2 ac_water_why	
 	replace			ac_water_why = 1 if s5q1b2__1 == 1
 	replace 		ac_water_why = 2 if s5q1b2__2 == 1
 	replace 		ac_water_why = 3 if s5q1b2__3 == 1
 	replace 		ac_water_why = 4 if s5q1b2__4 == 1
 	replace 		ac_water_why = 5 if s5q1b2__5 == 1
-	lab def			ac_water_why 1 "Water source too far " 2 "Too many people at the water source " ///
-								 3 "Large household size" 4 "Restriction to go out" ///
-								 5 "No money"
+	replace 		ac_water_why = 12 if ac_water_why == 1
+	replace 		ac_water_why = 13 if ac_water_why == 2
+	replace 		ac_water_why = 14 if ac_water_why == 3
+	replace 		ac_water_why = 8 if ac_water_why == 4
+	replace 		ac_water_why = 15 if ac_water_why == 5
+	lab def 		ac_water_why 1 "water supply not available" 2 "water supply reduced" ///
+					3 "unable to access communal supply" 4 "unable to access water tanks" ///
+					5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
+					8 "restriction to go out" 9 "increase in price" 10 "cannot afford" ///
+					11 "afraid to get viurs" 12 "water source too far" ///
+					13 "too many people at water source" 14 "large household size" ///
+					15 "lack of money", replace
 	lab val 		ac_water_why ac_water_why 
 	lab var 		ac_water_why "reason unable to access water for washing hands"
 	rename			s5q1a2_1 ac_drink
 	rename			s5q1a2_2 ac_drink_why
+	replace 		ac_drink_why = 95 if ac_drink_why == 6
+	replace 		ac_drink_why = 10 if ac_drink_why == 4
+	lab def 		ac_drink_why 1 "water supply not available" 2 "water supply reduced" ///
+					3 "unable to access communal supply" 4 "unable to access water tanks" ///
+					5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
+					8 "restriction to go out" 9 "increase in price" 10 "cannot afford"
+	lab val 		ac_drink_why ac_drink_why
+	lab val 		ac_drink_why ac_drink_why
 	
  * staple
 	rename 			s5q2 ac_staple_def
@@ -530,18 +549,20 @@
 	rename 			s5q3 ac_medserv_need
 	rename 			s5q4 ac_medserv
 	rename 			s5q5 ac_medserv_why
-	lab var 		ac_med_why "reason unable to access medical services"
+	replace 		ac_medserv_why = . if ac_medserv_why == 4 | ac_medserv_why == 8
+	replace 		ac_medserv_why = 8 if ac_medserv_why == 7
+	replace 		ac_medserv_why = 7 if ac_medserv_why == 6
+	replace 		ac_medserv_why = 6 if ac_medserv_why == 5
 	replace			ac_medserv_why = 1 if s5q5__1 == 1
 	replace 		ac_medserv_why = 2 if s5q5__2 == 1
 	replace 		ac_medserv_why = 3 if s5q5__3 == 1
-	replace 		ac_medserv_why = 4 if s5q5__4 == 1
-	replace 		ac_medserv_why = 5 if s5q5__5 == 1
-	replace 		ac_medserv_why = 6 if s5q5__6 == 1
-	replace 		ac_medserv_why = 5 if s5q5__7 == 1
-	replace 		ac_medserv_why = 4 if s5q5__8 == 1
-	lab def			ac_medserv_why 1 "no money" 2 "no med personnel" 3 "facility full" ///
-								4 "other" 5 "no transportation" 6 "restrictions to go out" ///
-								7 "afraid of virus"
+	replace 		ac_medserv_why = 6 if s5q5__5 == 1
+	replace 		ac_medserv_why = 7 if s5q5__6 == 1
+	replace 		ac_medserv_why = 8 if s5q5__7 == 1
+	lab def			ac_medserv_why 1 "lack of money" 2 "no med personnel" 3 "facility full" ///
+								4 "facility closed" 5 "not enough supplies" ///
+								6 "lack of transportation" 7 "restriction to go out" ///
+								8 "afraid to get virus"
 	lab val 		ac_medserv_why ac_medserv_why
 	lab var 		ac_medserv_why "reason unable to access medical services"
 
@@ -552,9 +573,14 @@
 	forval 			x = 1/6 {
 		rename 		s5q2_2c__`x' ac_nat_why_`x'
 	}
+	lab var 		ac_nat_why_6 "..not able to access pre/post-natal care: REFUSED TREATMENT BY FACILITY"
  * preventative care
 	rename 			s5q2_2d ac_prev_app
 	rename 			s5q2_2e ac_prev_canc
+	replace 		ac_prev_canc = 0 if ac_prev_canc == 3
+	lab def 		ac_prev_canc 0 "NO" 1 " YES, HAD APPOINTMENT THAT WAS CANCELED" ///
+					2 "YES, WAS PLANNING TO GO BUT DID NOT"
+	lab val 		ac_prev_canc ac_prev_canc
 	forval 			x = 1/9 {
 	    rename 		s5q2_2f__`x' ac_prev_why_`x'
 	}
@@ -562,6 +588,16 @@
 	rename 			s5q2_2j ac_vac_need
 	rename 			s5q2_2k ac_vac
 	rename 			s5q2_2l ac_vac_why
+	
+ * credit 
+	rename 			ac_cr_lend_1 ac_cr_lend_11
+	rename 			ac_cr_lend_2 ac_cr_lend_12
+	rename 			ac_cr_lend_7 ac_cr_lend_13
+	rename 			ac_cr_lend_8 ac_cr_lend_14
+	rename 			ac_cr_lend_3 ac_cr_lend_7
+	rename 			ac_cr_lend_4 ac_cr_lend_8
+	rename 			ac_cr_lend_5 ac_cr_lend_1
+	rename 			ac_cr_lend_6 ac_cr_lend_4
 	
  * order access variables	
 	order			ac_soap_need ac_soap ac_soap_why ac_water ac_water_why ///

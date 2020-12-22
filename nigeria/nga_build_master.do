@@ -225,6 +225,14 @@
 	lab def			yesno 1 "Yes" 2 "No"
 	lab val 		ac_drink yesno
 	rename 			s5q1f ac_drink_why
+	lab def 		ac_drink_why 1 "water supply not available" 2 "water supply reduced" ///
+					3 "unable to access communal supply" 4 "unable to access water tanks" ///
+					5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
+					8 "restriction to go out" 9 "increase in price" 10 "cannot afford"
+	lab val 		ac_drink_why ac_drink_why
+	replace 		ac_drink_why = 5 if ac_drink_why == 4
+	replace 		ac_drink_why = ac_drink_why + 1 if (ac_drink_why > 5 & ac_drink_why < 10)
+	
 	lab var 		ac_drink_why "Main Reason Not Enough Drinking Water in Last 7 Days"
 	drop 			s5q1e
 		
@@ -239,6 +247,15 @@
 	lab var 		ac_water "Had Enough Handwashing Water in Last 7 Days"
 	gen 			ac_water_why = cond(wave == 2, s5q1b1, . )
 	lab var 		ac_water_why "Main Reason Not Enough Handwashing Water in Last 7 Days"
+	replace 		ac_water_why = ac_water_why + 1 if (ac_water_why > 3 & ac_water_why < 10)
+	lab def 		ac_water_why 1 "water supply not available" 2 "water supply reduced" ///
+					3 "unable to access communal supply" 4 "unable to access water tanks" ///
+					5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
+					8 "restriction to go out" 9 "increase in price" 10 "cannot afford" ///
+					11 "afraid to get viurs" 12 "water source too far" ///
+					13 "too many people at water source" 14 "large household size" ///
+					15 "lack of money", replace
+	lab val 		ac_water_why ac_water_why
 	replace 		s5q1b1 = . if wave == 2
 	
  * format access variables
@@ -345,12 +362,16 @@
 	rename 			s5q2 ac_medserv_need
 	rename 			s5q3 ac_medserv
 	rename 			s5q4 ac_medserv_why 
-	replace 		ac_medserv_why = 6 if ac_medserv_why == 4
-	replace 		ac_medserv_why = 4 if ac_medserv_why == 96 
-	lab def			ac_medserv_why 1 "no money" 2 "no med personnel" 3 "facility full" /// 
-								4 "other" 5 "no transportation" 6 "restrictions to go out" /// 
-								7 "afraid of virus" 
-	lab var 		ac_med_why "reason for unable to access medical services"
+	replace 		ac_medserv_why = 7 if ac_medserv_why == 4
+	replace 		ac_medserv_why = 8 if ac_medserv_why == 5
+	replace 		ac_medserv_why = 4 if ac_medserv_why == 6
+	replace 		ac_medserv_why = . if ac_medserv_why == 96 
+	lab def			ac_medserv_why 1 "lack of money" 2 "no med personnel" 3 "facility full" ///
+								4 "facility closed" 5 "not enough supplies" ///
+								6 "lack of transportation" 7 "restriction to go out" ///
+								8 "afraid to get virus"
+	lab val 		ac_medserv_why ac_medserv_why
+	lab var 		ac_med_why "reason for unable to access medical services" 
   * education
 	rename 			filter1 children520
 	rename 			s5q5b sch_curr
@@ -431,6 +452,10 @@
   * preventative care
 	rename 			s5q2d ac_prev_app
 	rename 			s5q2e ac_prev_canc
+	replace 		ac_prev_canc = 0 if ac_prev_canc == 3
+	lab def 		ac_prev_canc 0 "NO" 1 " YES, HAD APPOINTMENT THAT WAS CANCELED" ///
+					2 "YES, WAS PLANNING TO GO BUT DID NOT"
+	lab val 		ac_prev_canc ac_prev_canc
 	forval 			x = 1/9 {
 	    rename 		s5q2f__`x' ac_prev_why_`x'
 	}

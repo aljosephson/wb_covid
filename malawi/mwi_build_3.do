@@ -240,7 +240,7 @@
 	rename 			s6dq2 ac_cr_att
 	rename 			s6dq3 ac_cr_loan
 	forval 			x = 1/8 {
-	    rename 		s6dq4__`x' ac_lend_`x'
+	    rename 		s6dq4__`x' ac_cr_lend_`x'
 	}
 	rename 			s6dq5 ac_cr_why_main
 	rename 			s6dq6__0 ac_cr_who_1

@@ -200,7 +200,14 @@
 
 * rename access credit variables inconsistent with wave 3
 	rename 			s6dq1 ac_cr_loan
+	replace 		ac_cr_loan = 2 if ac_cr_loan == 3
+	lab def 		ac_cr_loan 1 "Yes" 2 "Unable or did not try" 
+	lab val 		ac_cr_loan ac_cr_loan 
 	rename 			s6dq2 ac_cr_lend
+	forval 			x = 1/8 {
+	    gen 		ac_cr_lend_`x' = 1 if ac_cr_lend == `x'
+	}
+	drop 			ac_cr_lend
 	rename 			s6dq3 ac_cr_lend_att
 	forval 			x = 1/12 {
 		rename 		s6dq4__`x' ac_cr_why_`x'

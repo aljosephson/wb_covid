@@ -108,7 +108,8 @@
 	egen			hhid = group(HHID)
 	drop			HHID hhid_eth hhid_mwi hhid_nga hhid_uga
 	lab var			hhid "Unique household ID"
-
+	order 			hhid resp_id hhid*, after(country)
+	
 * generate weights
 	rename			phw hhw
 	lab var			hhw "Household sampling weight"
@@ -121,7 +122,6 @@
 	gen 			shw = hhw * hhsize_schchild
 	lab var 		shw "Household school child sampling weight"	
 	order			phw ahw chw shw, after(hhw)
-	order			hhsize, before(sex)
 						
 * know 
 	replace			know = 0 if know == 2 
@@ -134,7 +134,7 @@
 	replace			know_7 = 0 if know_7 == 2
 	replace 		know_8 = 0 if know_8 == 2 
 	order			know_9 know_11 know_10, after(know_8)
-	
+
 * behavior 
 	replace 		bh_1 = 1 if bh_1 == 4 & country == 2
 	replace			bh_1 = 0 if bh_1 >= 2 & bh_1 < . 	
@@ -172,10 +172,7 @@
 	replace			cope_any = 0 if cope_any == . & country == 3 & wave != 2
 	replace			cope_any = 0 if cope_any == . & country == 4 & wave == 1
 	lab var			cope_any "Adopted any coping strategy"
-	
-	gen				cope_none = 1 if cope_any == 0
-	replace			cope_none = 0 if cope_any == 1
-	lab var			cope_none "Did nothing"
+	lab val 		cope_any yesno
 	
 	lab def			myth 0 "No" 1 "Yes" 3 "Don't Know"
 	
@@ -186,17 +183,12 @@
 		lab val	`v' myth
 	}	
 	
-adsf 	
+ 
 * **********************************************************************
 * 3- revise access variables as needed 
 * **********************************************************************
 	
-* access
-	replace			ac_medserv = med_access if ac_medserv == .
-	replace			ac_medserv_need = med if med == .
-	replace			ac_medserv_why = med_access_why if med_access_why == .
-	drop			med_access med med_access_why
-	
+* access variables 
 	order			ac_med_need ac_med ac_med_why ///
 						ac_medserv_need ac_medserv ac_medserv_why ///
 						ac_soap_need ac_soap ac_soap_why ///
@@ -211,188 +203,202 @@ adsf
 						ac_sorg_need ac_sorg ac_sorg_why ///
 						ac_clean_need ac_clean ac_clean_why ///
 						ac_water ac_water_why ///
-						ac_bank ac_bank_why, after(bh_8)		
+						ac_bank ac_bank_why, after(bh_8)	
+	
+ * access to medicine 
+	replace				ac_med = . if ac_med < 0 & country == 1	
+	replace				ac_med = 0 if ac_med == 2 
+	replace				ac_med = . if ac_med == 3
+	replace 			ac_med_why = . if ac_med_why < 0
+	* note "decrease in reg income" and "no money" both coded as 6
+ 	
+ * access to medical services
+	replace				ac_medserv_need = . if ac_medserv_need < 0 | ac_medserv_need == 99
+	replace 			ac_medserv_need = 0 if ac_medserv_need == 2
+	
+	replace				ac_medserv = . if ac_medserv == 99
+	replace 			ac_medserv = 0 if ac_medserv == 2
+	
+	replace 			ac_medserv_why = . if ac_medserv_why < 0
+	lab def				ac_medserv_why 1 "lack of money" 2 "no med personnel" ///
+								3 "facility full" 4 "facility closed" ///
+								5 "not enough supplies" 6 "lack of transportation" ///
+								7 "restriction to go out" 8 "afraid to get virus", replace
+	lab val 			ac_medserv_why ac_medserv_why
+	
+ * access to pre-natal care
+	replace 			ac_nat_filter = 0 if ac_nat_filter == 2
+	replace 			ac_nat_need = 0 if ac_nat_need == 2
+	replace 			ac_nat_need = . if ac_nat_need > 97
+	
+	replace 			ac_nat = 0 if ac_nat == 2
+ 
+ * access to preventative care 
+	replace 			ac_prev_app = 0 if ac_prev_app == 2
 
-* access to medicine
-	lab val				ac_med .
-	lab var				ac_med "Unable to access medicine"
+ * access to vaccines	
+	
+	
+	
+ * access to soap
+	replace 			ac_soap = 0 if ac_soap == 2
+	replace 			ac_soap_why = . if ac_soap_why == 96 | ac_soap_why == 9	
+	
+ * access to staples
+	foreach 			var in ac_oil ac_teff ac_wheat ac_maize {
+		replace 		`var' = . if `var' < 0
+	}
+	replace 			ac_maize_why = . if ac_maize_why < 0 | ac_maize_why == 7
+	foreach 			s in maize rice beans cass yam sorg staple {
+		replace 		ac_`s' = 0 if ac_`s' == 2
+		replace 		ac_`s'_need = 0 if ac_`s'_need == 2
+	}
+	replace 			ac_staple = . if ac_staple == 3
+	replace 			ac_sauce = . if ac_sauce == 3
+	replace 			ac_sauce = 0 if ac_sauce == 2
+	
+ * access to drinking water
+	replace 			ac_drink = . if ac_drink == 3 & country == 2
+	replace 			ac_drink = 0 if ac_drink == 1 & (country == 2 | country == 4)
+	replace 			ac_drink = 1 if ac_drink == 2 & (country == 2 | country == 4)
+	replace 			ac_drink = 0 if ac_drink == 2 & country == 3
 
-	replace				ac_med = . if ac_med == -97 & country == 1
-	replace				ac_med = . if ac_med == -98 & country == 1
-	replace				ac_med = 1 if ac_med == -99 & country == 1
-	replace				ac_med = 2 if ac_med == 1 & country == 1
-	replace				ac_med = 1 if ac_med == 0 & country == 1
-	replace				ac_med = 0 if ac_med == 2 & country == 1
-	
-	replace				ac_med = 0 if ac_med == 1 & country == 2
-	replace				ac_med = 1 if ac_med == 2 & country == 2
-	
-	replace				ac_med = 0 if ac_med == 1 & country == 3
-	replace				ac_med = 1 if ac_med == 2 & country == 3
+	replace 			ac_drink_why = . if (ac_drink_why == -96 | ac_drink_why > 94)
+	lab def 			ac_drink_why 1 "water supply not available" 2 "water supply reduced" ///
+						3 "unable to access communal supply" 4 "unable to access water tanks" ///
+						5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
+						8 "restriction to go out" 9 "increase in price" 10 "cannot afford", replace
+	lab val 			ac_drink_why ac_drink_why 	
 
-	replace				ac_med = . if ac_med == 3 & country == 4
-	replace				ac_med = 0 if ac_med == 2 & country == 4
+ * access to water for handwashing	
+	replace 			ac_water = 0 if ac_water == 2
 	
-	lab val				ac_med yesno
+	replace 			ac_water_why = . if (ac_water_why < 0 | ac_water_why > 94)
+	lab def 			ac_water_why 1 "water supply not available" 2 "water supply reduced" ///
+						3 "unable to access communal supply" 4 "unable to access water tanks" ///
+						5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
+						8 "restriction to go out" 9 "increase in price" 10 "cannot afford" ///
+						11 "afraid to get viurs" 12 "water source too far" ///
+						13 "too many people at water source" 14 "large household size" ///
+						15 "lack of money", replace
+	lab val 			ac_water_why ac_water_why
 	
-/* access to medical services
-	replace				ac_medserv_need = . if country == 1
-	replace				ac_medserv = . if country == 1
-	replace				ac_medserv_why = . if country == 1
-	
-	replace				ac_medserv_need = 0 if ac_medserv == . & country == 2
-	replace				ac_medserv_need = 1 if ac_medserv_need == . & country == 2
-	
-	replace				ac_medserv_need = 0 if ac_medserv == . & country == 3
-	replace				ac_medserv_need = 1 if ac_medserv_need == . & country == 3
-	replace				ac_medserv = 0 if ac_medserv == 2
+ * access to cleaning supllies
+	replace 			ac_clean_need = 0 if ac_clean_need == 2
+	replace 			ac_clean = 0 if ac_clean == 2
 
-	replace				ac_medserv_need = 0 if ac_medserv == . & country == 4
-	replace				ac_medserv_need = 1 if ac_medserv_need == . & country == 4
-	replace				ac_medserv = . if ac_medserv == 3 & country == 4
+ * access to bank 
+	replace 			ac_bank = 0 if ac_bank == 2
+	replace 			ac_bank_why = . if ac_bank_why < 0 | ac_bank_why > 95
 	
-	lab val				ac_medserv yesno
-	lab val				ac_medserv_need yesno	
-*/
-* access to soap
-	lab val				ac_soap .
+ * access to credit
+	replace 			ac_cr_need = 0 if ac_cr_need == 2
+	
+	replace 			ac_cr_loan = . if ac_cr_loan < 0
+	replace 			ac_cr_loan = 0 if ac_cr_loan == 2
+	lab def 			ac_cr_loan 0 "Unable or did not try" 1 "Yes"
+	lab val 			ac_cr_loan ac_cr_loan 
+	* NOTE: Uganda data seems off, missing instead of "no"
+
+	lab var 			ac_cr_lend_1 "Lender: friend or relative"
+	lab var 			ac_cr_lend_2 "Lender: neighbour"
+	lab var 			ac_cr_lend_3 "Lender: local merchant"
+	lab var 			ac_cr_lend_4 "Lender: money lender"
+	lab var 			ac_cr_lend_5 "Lender: employer"
+	lab var 			ac_cr_lend_6 "Lender: religious institution"
+	lab var 			ac_cr_lend_7 "Lender: microfinance institution"
+	lab var 			ac_cr_lend_8 "Lender: bank"
+	lab var 			ac_cr_lend_9 "Lender: NGO"
+	lab var 			ac_cr_lend_10 "Lender: saccos"	
+	lab var 			ac_cr_lend_11 "Lender: cooperative society"
+	lab var 			ac_cr_lend_12 "Lender: saving association"
+	lab var 			ac_cr_lend_13 "Lender: hire purchase"
+	lab var 			ac_cr_lend_14 "Lender: womens group"
+
+	drop 				ac_cr_why* ac_cr_who* ac_cr_bef_why* ac_cr_bef_who* ///
+						ac_cr_slc_why* ac_cr_slc_who*
+	* NOTE: dropped because very inconsistent across countries - can add back and clean if needed
+	
+	replace 			ac_cr_due = 7 if ac_cr_due == -97
+	lab def 			ac_cr_due 1 "Already Due" 2 "Within One Month" 3 "Within 2-3 Months" ///
+						4 "Within 4-6 Months" 5 "Within 7-12 Months" 6 "More Than 12 Months" ///
+						7 "Already Repaid"
+	lab val 			ac_cr_due ac_cr_due 
+	
+	replace 			ac_cr_bef = . if ac_cr_bef < 0
+	replace 			ac_cr_bef = 0 if ac_cr_bef ==2
+	
+	replace 			ac_cr_worry = . if ac_cr_worry == -99
+	replace 			ac_cr_worry =  5 if ac_cr_worry == -97
+	lab def 			ac_cr_worry 1 "very worried" 2 "somewhat worried" 3 "not too worried" ///
+						4 "not worried at all" 5 "already repaid"
+	lab val 			ac_cr_worry ac_cr_worry 
+	
+	replace 			ac_cr_miss = . if ac_cr_miss < 0
+	replace 			ac_cr_miss = 0 if ac_cr_miss == 2
+	
+	replace 			ac_cr_delay = . if ac_cr_delay < 0 | ac_cr_delay > 97
+	replace 			ac_cr_delay = 0 if ac_cr_delay == 2
+	
+	replace 			ac_cr_att = 0 if ac_cr_att == 2
+	replace 			ac_cr_slc = 0 if ac_cr_slc == 2	
+	
+//ADD IN UGANDA - AC CREDIT BY LOAN # 
+//NEED TO FINISH CLEANING CREDIT
+
+
+ * negate question (unable to access) 
+ * NOTE: cannot negate preventative care and credit
+	foreach 			var in ac_soap ac_med ac_medserv ac_oil ac_teff ac_wheat ac_maize ///
+						ac_rice  ac_beans ac_cass ac_yam ac_sorg ac_staple ac_sauce ///
+						ac_clean ac_nat ac_bank ac_water ac_drink {
+		replace 		`var' = 2 if `var' == 1
+		replace 		`var' = 1 if `var' == 0
+		replace 		`var' = 0 if `var' == 2
+		lab val 		`var' yesno
+	}
 	lab var				ac_soap "Unable to access soap"
-	
-	replace				ac_soap = 0 if ac_soap == 1
-	replace				ac_soap = 1 if ac_soap == 2
-	
-/*added in from ethiopia - numbers dif - check all for consistency
-	* Note - only available round 4 and numbers in data do not match survey instument, corrected below
-	gen ac_soap_why = .
-	replace ac_soap_why = 1 if wa6_soap_wash_why == 5
-	replace ac_soap_why = 2 if wa6_soap_wash_why == 6 
-	replace ac_soap_why = 4 if wa6_soap_wash_why == 8
-	replace ac_soap_why = 5 if wa6_soap_wash_why == 9
-	replace ac_soap_why = 7 if wa6_soap_wash_why == 10
-	replace ac_soap_why = 8 if wa6_soap_wash_why == 11
-	lab def			ac_soap_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
-								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
-								7 "cannot afford" 8 "afraid to go out" 9 "other"
-	lab val			ac_soap_why ac_soap_why	
-*/
-	
-	
-	lab val				ac_soap yesno
-	
-* access oil/teff/wheat in Ethiopia
-	replace				ac_oil = . if ac_oil == -97
-	replace				ac_oil = . if ac_oil == -98
-	replace				ac_oil = 2 if ac_oil == 1
-	replace				ac_oil = 1 if ac_oil == 0
-	replace				ac_oil = 0 if ac_oil == 2
+	lab var				ac_med "Unable to access medicine"
 	lab var				ac_oil "Unable to access oil"
-	lab val				ac_oil yesno
-	
-	replace				ac_teff = . if ac_teff == -99
-	replace				ac_teff = . if ac_teff == -97
-	replace				ac_teff = . if ac_teff == -98
-	replace				ac_teff = 2 if ac_teff == 1
-	replace				ac_teff = 1 if ac_teff == 0
-	replace				ac_teff = 0 if ac_teff == 2
 	lab var				ac_teff "Unable to access teff"
-	lab val				ac_teff yesno
-	
-	replace				ac_wheat = . if ac_wheat == -99
-	replace				ac_wheat = . if ac_wheat == -97
-	replace				ac_wheat = . if ac_wheat == -98
-	replace				ac_wheat = 2 if ac_wheat == 1
-	replace				ac_wheat = 1 if ac_wheat == 0
-	replace				ac_wheat = 0 if ac_wheat == 2
 	lab var				ac_wheat "Unable to access wheat"
-	lab val				ac_wheat yesno
-	
-	replace				ac_maize = . if ac_maize == -99 & country == 1
-	replace				ac_maize = . if ac_maize == -97 & country == 1
-	replace				ac_maize = . if ac_maize == -98 & country == 1
-	replace				ac_maize = 2 if ac_maize == 1 & country == 1
-	replace				ac_maize = 1 if ac_maize == 0 & country == 1
-	replace				ac_maize = 0 if ac_maize == 2 & country == 1
 	lab var				ac_maize "Unable to access maize"
-	lab val				ac_maize yesno
-
-* access to maize/clean/water in Malawi
-	replace				ac_maize = 0 if ac_maize == 1 & country == 2
-	replace				ac_maize = 1 if ac_maize == 2 & country == 2
-
-	lab val				ac_clean .
-	replace				ac_clean = 0 if ac_clean == 1 & country == 2
-	replace				ac_clean = 1 if ac_clean == 2 & country == 2
-	lab val				ac_clean yesno
-
-* access to staples in Nigeria
-	replace				ac_rice = 0 if ac_rice == 1 & country == 3
-	replace				ac_rice = 1 if ac_rice == 2 & country == 3
 	lab var				ac_rice "Unable to access rice"
-	lab val				ac_rice yesno
-	
-	replace				ac_beans = 0 if ac_beans == 1 & country == 3
-	replace				ac_beans = 1 if ac_beans == 2 & country == 3
 	lab var				ac_beans "Unable to access beans"
-	lab val				ac_beans yesno
-	
-	replace				ac_cass = 0 if ac_cass == 1 & country == 3
-	replace				ac_cass = 1 if ac_cass == 2 & country == 3
 	lab var				ac_cass "Unable to access cassava"
-	lab val				ac_cass yesno
-
-	replace				ac_yam = 0 if ac_yam == 1 & country == 3
-	replace				ac_yam = 1 if ac_yam == 2 & country == 3
 	lab var				ac_yam "Unable to access yam"
-	lab val				ac_yam yesno
-	
-	replace				ac_sorg = 0 if ac_sorg == 1 & country == 3
-	replace				ac_sorg = 1 if ac_sorg == 2 & country == 3
 	lab var				ac_sorg "Unable to access sorghum"
-	lab val				ac_sorg yesno	
-	
-	replace				ac_clean = 0 if ac_clean == 1 & country == 3
-	replace				ac_clean = 1 if ac_clean == 2 & country == 3	
-	
-	drop				ac_bank ac_bank_why
-	
-* access to staple	
-	lab val				ac_staple .
-	replace				ac_staple = 0 if ac_staple == 1 & country == 2
-	replace				ac_staple = 1 if ac_staple == 2 & country == 2
-
-	replace				ac_staple = . if ac_staple == 3 & country == 4
-	replace				ac_staple = 0 if ac_staple == 2 & country == 4	
 	lab var				ac_staple "Unable to access staple"
-	lab val				ac_staple yesno
-	
-	replace				ac_staple_need = 2 if ac_oil == . & ac_teff == . & ///
-							ac_wheat == . & ac_maize == . & country == 1
-	
-	replace				ac_staple_need = 2 if  ac_rice== . & ac_beans == . & ///
-							ac_cass == . & ac_yam == . & ac_sorg == . & ///
-							country == 3
-	
-	replace				ac_staple_need = 1 if ac_staple_need == . & country == 1
-	replace				ac_staple_need = 1 if ac_staple_need == . & country == 3 & wave != 2
-							
-	replace				ac_staple = 1 if ac_oil == 1 | ac_teff == 1 | ///
-							ac_wheat == 1 | ac_maize == 1 & ac_staple_need == 1
-	replace				ac_staple = 0 if ac_staple == . & ac_staple_need == 1 & ///
-							country == 1					
-							
+	lab var				ac_sauce "Unable to access sauce"
+	lab var				ac_clean "Unable to access cleaning supplies"
+	lab var				ac_nat "Unable to access pre-natal care"
+	lab var				ac_bank "Unable to access bank"
+	lab var				ac_water "Unable to access water for handwashing"
+	lab var				ac_drink "Unable to access drinking water"
+
+ * access to masks (already asks "unable")
+	replace 			ac_mask = . if ac_mask == 3
+	replace 			ac_mask = 0 if ac_mask == 2
+	lab val 			ac_mask yesno
+ 
+ * unable to access any staple
+	replace 			ac_staple = 1 if (ac_oil == 1 | ac_teff == 1 | ///
+						ac_wheat == 1 | ac_maize == 1) & country == 1	
+						
+need to check here, difference between two codes below, should fill in ac_staple_need?
 	replace				ac_staple = 1 if ac_rice== 1 | ac_beans == 1 | ///
 							ac_cass == 1 | ac_yam == 1 | ///
 							ac_sorg == 1 & ac_staple_need == 1
-	replace				ac_staple = 0 if ac_rice== 0 | ac_beans == 0 | ///
-							ac_cass == 0 | ac_yam == 0 | ///
-							ac_sorg == 0 & ac_staple == . & ac_staple_need == 1 & ///
-							country == 3
-		
-* label variables 
-	lab var 		ac_soap_why "Reason for unable to purchase soap"
+							
+							
+	replace 			ac_staple = 1 if (ac_rice == 1 | ac_beans == 1 | ///
+						ac_cass == 1 | ac_yam == 1 | ac_sorg == 1) & country == 3
+	
+	
+	lab var 		ac_soap_why "Reason unable to purchase soap"
 	lab var 		ac_water_why "Reason unable to access water for washing hands"		
 	lab var 		ac_drink_why "Reason unable to access water for drinking"
-		
+	
 * **********************************************************************
 * 4 - clean concerns and income changes
 * **********************************************************************

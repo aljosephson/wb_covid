@@ -247,7 +247,7 @@
 	rename			s2q01b__14 symp_14
 	rename			s2q01b__n98 symp_15	
 
-* rename education
+* rename education & bank
 	rename 			s4q012 children318
 	rename 			s4q013 sch_child
 	rename 			s4q014 edu_act
@@ -270,6 +270,7 @@
 	rename 			s4q18 bank
 	rename 			s4q19 ac_bank
 	rename 			s4q20 ac_bank_why
+	replace 		ac_bank_why = 3 if ac_bank_why == 2
 	
 * rename agriculture (R1&3)
 	rename			s5aq16 ag_prep
@@ -396,6 +397,13 @@
  * drinking water 
 	rename			s4q01e ac_drink
 	rename			s4q01f ac_drink_why
+	replace 		ac_drink_why = 7 if ac_drink_why == 6
+	replace 		ac_drink_why = 9 if ac_drink_why == 8
+	lab def 		ac_drink_why 1 "water supply not available" 2 "water supply reduced" ///
+					3 "unable to access communal supply" 4 "unable to access water tanks" ///
+					5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
+					8 "restriction to go out" 9 "increase in price" 10 "cannot afford"
+	lab val 		ac_drink_why ac_drink_why
  * soap
 	rename 			s4q01 ac_soap
 	rename			s4q02 ac_soap_why
@@ -408,6 +416,16 @@
  * water wash
 	rename 			s4q03 ac_water
 	rename 			s4q04 ac_water_why
+	replace 		ac_water_why = 15 if ac_water_why == 9
+	replace 		ac_water_why = ac_water_why + 1 if (ac_water_why > 5 & ac_water_why < 10)
+	lab def 			ac_water_why 1 "water supply not available" 2 "water supply reduced" ///
+						3 "unable to access communal supply" 4 "unable to access water tanks" ///
+						5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
+						8 "restriction to go out" 9 "increase in price" 10 "cannot afford" ///
+						11 "afraid to get viurs" 12 "water source too far" ///
+						13 "too many people at water source" 14 "large household size" ///
+						15 "lack of money", replace
+	lab val 			ac_water_why ac_water_why
  * staple	
 	rename 			s4q05 ac_staple_def
 	rename 			s4q06 ac_staple
@@ -432,13 +450,15 @@
 	rename 			s4q09 ac_medserv_need
 	rename 			s4q10 ac_medserv
 	rename 			s4q11 ac_medserv_why
-	replace			ac_medserv_why = 3 if ac_medserv_why == 5
+	replace 		ac_medserv_why = 8 if ac_medserv_why == 4
+	replace			ac_medserv_why = 4 if ac_medserv_why == 5
 	replace			ac_medserv_why = 5 if ac_medserv_why == 7
-	replace 		ac_medserv_why = 7 if ac_medserv_why == 4
-	replace			ac_medserv_why = 4 if ac_medserv_why == -96
-	lab def			ac_medserv_why 1 "no money" 2 "no med personnel" 3 "facility full / closed" ///
-								4 "other" 5 "no transportation" 6 "restrictions to go out" ///
-								7 "afraid of virus" 8 "facility closed "
+	replace			ac_medserv_why = 7 if ac_medserv_why == 6
+	lab def			ac_medserv_why 1 "lack of money" 2 "no med personnel" 3 "facility full" ///
+								4 "facility closed" 5 "not enough supplies" ///
+								6 "lack of transportation" 7 "restriction to go out" ///
+								8 "afraid to get virus"
+	lab val 		ac_medserv_why ac_medserv_why 
 	lab var 		ac_medserv_why "reason for unable to access medical services"
  * masks
 	rename 			s4q12 ac_mask
@@ -543,50 +563,50 @@
 	
 * credit
  * since last call (slc)
-	rename s7aq01 ac_cr_slc
-	rename s7aq02* ac_cr_slc_lend*
-	forval x = 1/13 {
-		rename s7aq03__`x'_* ac_cr_slc_why_*_`x'
+	rename 			s7aq01 ac_cr_slc
+	rename 			s7aq02* ac_cr_slc_lend*
+	forval 			x = 1/13 {
+		rename 		s7aq03__`x'_* ac_cr_slc_why_*_`x'
 	}	
-	forval x = 1/2 {
-	    forval l = 1/2 {
-			rename s7aq04_`x'_l`l' ac_cr_slc_who_l`l'_`x'
+	forval 			x = 1/2 {
+	    forval 		l = 1/2 {
+			rename 	s7aq04_`x'_l`l' ac_cr_slc_who_l`l'_`x'
 		}
 	}
-	rename s7aq05* ac_cr_slc_due*
-	rename s7aq06* ac_cr_slc_worry*
-	rename s7aq07* ac_cr_slc_miss*
-	rename s7aq08* ac_cr_slc_delay*
+	rename 			s7aq05* ac_cr_slc_due*
+	rename 			s7aq06* ac_cr_slc_worry*
+	rename 			s7aq07* ac_cr_slc_miss*
+	rename 			s7aq08* ac_cr_slc_delay*
  * since march
-	rename s7bq01 ac_cr_loan
-	rename s7bq02* ac_cr_lend*
-	forval x = 1/13 {
-		rename s7bq03__`x'_* ac_cr_why_*_`x'
+	rename 			s7bq01 ac_cr_loan
+	rename 			s7bq02* ac_cr_lend*
+	forval 			x = 1/13 {
+		rename 		s7bq03__`x'_* ac_cr_why_*_`x'
 	}	
-	forval x = 1/2 {
-	    forval l = 1/2 {
-			rename s7bq04_`x'_l`l' ac_cr_who_l`l'_`x'
+	forval 			x = 1/2 {
+	    forval 		l = 1/2 {
+			rename 	s7bq04_`x'_l`l' ac_cr_who_l`l'_`x'
 		}
 	}
-	rename s7bq05* ac_cr_due*
-	rename s7bq06* ac_cr_worry*
-	rename s7bq07* ac_cr_miss*
-	rename s7bq08* ac_cr_delay*
+	rename 			s7bq05* ac_cr_due*
+	rename 			s7bq06* ac_cr_worry*
+	rename 			s7bq07* ac_cr_miss*
+	rename 			s7bq08* ac_cr_delay*
  * before march
-	rename s7cq01 ac_cr_bef
-	rename s7cq02* ac_cr_bef_lend*
-	forval x = 1/13 {
-		rename s7cq03__`x'_* ac_cr_bef_why_*_`x'
+	rename 			s7cq01 ac_cr_bef
+	rename 			s7cq02* ac_cr_bef_lend*
+	forval 			x = 1/13 {
+		rename 		s7cq03__`x'_* ac_cr_bef_why_*_`x'
 	}	
-	forval x = 1/2 {
-	    forval l = 1/2 {
-			rename s7cq04_`x'_l`l' ac_cr_bef_who_l`l'_`x'
+	forval 			x = 1/2 {
+	    forval 		l = 1/2 {
+			rename 	s7cq04_`x'_l`l' ac_cr_bef_who_l`l'_`x'
 		}
 	}
-	rename s7cq05* ac_cr_bef_due*
-	rename s7cq06* ac_cr_bef_worry*
-	rename s7cq07* ac_cr_bef_miss*
-	rename s7cq08* ac_cr_bef_delay*
+	rename 			s7cq05* ac_cr_bef_due*
+	rename 			s7cq06* ac_cr_bef_worry*
+	rename 			s7cq07* ac_cr_bef_miss*
+	rename 			s7cq08* ac_cr_bef_delay*
 	
 * drop unnecessary variables
 	drop			 BSEQNO DistrictName sec0_endtime	///

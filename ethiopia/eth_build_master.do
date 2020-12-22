@@ -239,6 +239,11 @@
 	 * only in round 4
 		rename 			wa1_water_drink ac_drink
 		rename 			wa2_water_drink_why ac_drink_why
+		lab def 		ac_drink_why 1 "water supply not available" 2 "water supply reduced" ///
+						3 "unable to access communal supply" 4 "unable to access water tanks" ///
+						5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
+						8 "restriction to go out" 9 "increase in price" 10 "cannot afford"
+		lab val 		ac_drink_why ac_drink_why
 		lab var 		ac_drink "Had Enough Drinking Water in Last 7 Days"
 		lab var 		ac_drink_why "Main Reason Not Enough Drinking Water in Last 7 Days"
 		
@@ -247,8 +252,15 @@
 		lab var 		ac_water "Had Enough Handwashing Water in Last 7 Days"
 		lab var 		ac_water_why "Main Reason Not Enough Handwashing Water in Last 7 Days"
 
-		rename 			wa5_soap_wash ac_soap
+		rename 			wa5_soap_wash ac_soap		
 		rename 			wa6_soap_wash_why ac_soap_why
+		replace 		ac_soap_why = ac_soap_why - 4
+		replace 		ac_soap_why = 8 if ac_soap_why == 7
+		replace 		ac_soap_why = 7 if ac_soap_why == 6
+		lab def 		ac_soap_why 1 "shops out" 2 "markets closed" 3 "lack of transportation" ///
+						4 "restriction to go out" 5 "increase in price" 6 "lack of money" ///
+						7 "cannot afford" 8 "afraid to get virus"
+		lab val 		ac_soap_why ac_soap_why
 		lab var 		ac_soap "Had Enough Handwashing Soap in Last 7 Day"
 		lab var 		ac_soap_why "Main Reason Not Enough Handwashing Soap in Last 7 Days"
 	*credit 
@@ -257,6 +269,9 @@
 		forval 			x = 1/11 {
 			rename 		cr2_since_lender_`x' ac_cr_lend_`x'
 		}
+		replace 		ac_cr_lend_1 = 1 if ac_cr_lend_11 == 1
+		drop 			ac_cr_lend_11
+		lab var 		ac_cr_lend_1 "friend or relative"
 		forval 			x = 1/11 {
 			rename 		cr3_since_reas_`x' ac_cr_why_`x'
 		}

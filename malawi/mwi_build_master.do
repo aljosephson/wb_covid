@@ -164,10 +164,10 @@
 	label 			var ngo_inc "income from NGO assistance in last 12 months"
 	rename			s7q210 ngo_chg
 	label 			var ngo_chg "change in income from NGO assistance since covid"
-	rename 			s7q196 other_inc
-	label 			var other_inc "income from other source in last 12 months"
-	rename			s7q296 other_chg
-	label 			var other_chg "change in income from other source since covid"
+	rename 			s7q196 oth_inc
+	label 			var oth_inc "income from other source in last 12 months"
+	rename			s7q296 oth_chg
+	label 			var oth_chg "change in income from other source since covid"
 	drop 			s7q199
 	*** yes or no response to ``total income'' - unclear what this measures
 	*** omit, but keep overall change
@@ -413,6 +413,10 @@
 	rename 			s4q4 bh_3
 	rename			s4q5 bh_4
 	rename			s4q6 bh_5
+	replace 		bh_5 = 7 if bh_5 == 1 & wave > 2
+	replace 		bh_5 = 1 if (bh_5 == 2 | bh_5 == 3) & wave > 2
+	replace 		bh_5 = 2 if bh_5 == 7
+	replace 		bh_5 = . if bh_5 == 4
 	rename			s4q7 bh_7
 	rename			s4q8 bh_8
 	rename 			s4q9 bh_comply_1

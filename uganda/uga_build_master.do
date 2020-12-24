@@ -629,13 +629,13 @@
 						s5aq15__4 s5aq15__5 s5aq15__6 s5aq15__n96 s5aq15b__1 ///
 						s5aq15b__2 s5aq15b__3 s5aq15b__4 s5aq15b__5 s5aq15b__6 ///
 						s5aq15b__n96 s4q01f_Other s4q02_Other s4q04_Other ///
-						s4q11_Other case_filter Commment CountyCode2 CountyName2 ///
+						s4q11_Other case_filter CountyCode2 CountyName2 ///
 						DistrictCode2 DistrictName2 ParishCode2 ParishName2 ///
 						SubcountyCode2 SubcountyName2 VillageCode2 VillageName2 ///
-						s4q13_Other ac_mask_srceOther ac_mask_srce_n96 harv_cov_why_n96 ///
+						ac_mask_srce_n96 harv_cov_why_n96 Sq02 PID baseline_hhid///
 						s5bq16 s5bq25 s5bq26 ag_sell_where_n96 Sq01 s5aq11b__0 ///
-						s5bq18_1 s5bq18_2 s5bq18_3 *_interview_ID *_hh_weight weight ///
-						Sq02 PID baseline_hhid
+						s5bq18_1 s5bq18_2 s5bq18_3 *_interview_ID *_hh_weight weight
+						
 						
 * rename basic information
 	gen				sector = 2 if urban == 1

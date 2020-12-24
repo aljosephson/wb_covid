@@ -14,10 +14,9 @@
 	* cleaned country data
 
 * TO DO:
-	* need to revist access for some variables - done?
-	* change new ethiopia access data to match other rounds (yes to no, etc)
+	* finish cleaning credit variables
+	* clean access why variables
 	* NOTE make sure add regions and labels  to countries 2-4
-	* make sure credit variables match
 
 * **********************************************************************
 * 0 - setup
@@ -97,9 +96,11 @@
 	tostring		hhid_nga, replace
 	replace 		hhid_nga = "n" + hhid_nga if hhid_nga != "."
 	replace			hhid_nga = "" if hhid_nga == "."	
-	tostring		hhid_uga, replace u force
-	replace 		hhid_uga = "u" + hhid_uga if hhid_uga != "."
-	replace			hhid_uga = "" if hhid_uga == "."	
+	rename 			hhid_uga hhid_uga1
+	egen 			hhid_uga = group(hhid_uga1)
+	tostring 		hhid_uga, replace 	
+	replace 		hhid_uga = "" if country != 4
+	replace 		hhid_uga = "u" + hhid_uga if hhid_uga != ""	
 	gen				HHID = hhid_eth if hhid_eth != ""
 	replace			HHID = hhid_mwi if hhid_mwi != ""
 	replace			HHID = hhid_nga if hhid_nga != ""
@@ -109,7 +110,7 @@
 	drop			HHID hhid_eth hhid_mwi hhid_nga hhid_uga
 	lab var			hhid "Unique household ID"
 	order 			hhid resp_id hhid*, after(country)
-	
+
 * generate weights
 	rename			phw hhw
 	lab var			hhw "Household sampling weight"
@@ -124,55 +125,58 @@
 	order			phw ahw chw shw, after(hhw)
 						
 * know 
-	replace			know = 0 if know == 2 
-	replace			know_1 = 0 if know_1 == 2
-	replace			know_2 = 0 if know_2 == 2
-	replace 		know_3 = 0 if know_3 == 2
-	replace 		know_4 = 0 if know_4 == 2
-	replace 		know_5 = 0 if know_5 == 2
-	replace 		know_6 = 0 if know_6 == 2
-	replace			know_7 = 0 if know_7 == 2
-	replace 		know_8 = 0 if know_8 == 2 
-	order			know_9 know_11 know_10, after(know_8)
+	forval 			x = 1/11 {
+		replace 	know_`x' = 0 if know_`x' == 2
+		lab val 	know_`x' yesno
+	}
 
-* behavior 
-	replace 		bh_1 = 1 if bh_1 == 4 & country == 2
-	replace			bh_1 = 0 if bh_1 >= 2 & bh_1 < . 	
-	replace 		bh_2 = 1 if bh_2 == 4 & country == 2
-	replace			bh_2 = 0 if bh_2 >= 2 & bh_2 < . 	
-	replace 		bh_3 = 1 if bh_3 == 4 & country == 2
-	replace			bh_3 = 0 if bh_3 >= 2 & bh_3 < . 	
-	replace			bh_3 = . if bh_3 == -97
-	replace 		bh_4 = 1 if bh_4 == 4 & country == 2
-	replace			bh_4 = 0 if bh_4 >= 2 & bh_4 < . 	
-	replace 		bh_5 = 1 if bh_5 == 4 & country == 2
-	replace			bh_5 = 0 if bh_5 >= 2 & bh_5 < . 	
-	replace 		bh_6 = 1 if bh_6 == 4 & country == 2
-	replace			bh_6 = 0 if bh_6 >= 2 & bh_6 < . 	
-	replace 		bh_6a = 1 if bh_6a == 4 & country == 2
-	replace			bh_6a = 0 if bh_6a >= 2 & bh_6a < . 	
-	replace 		bh_7 = 1 if bh_7 == 4 & country == 2
-	replace			bh_7 = 0 if bh_7 >= 2 & bh_7 < . 	
-	replace 		bh_8 = 1 if bh_8 == 4 & country == 2
-	replace			bh_8 = 0 if bh_8 >= 2 & bh_8 < . 
-	order 			bh_2 bh_3 bh_4 bh_5 bh_6 bh_7 bh_8, after(bh_1)
-	
-	drop			bh_6a
-	
+* behavior (QC THIS - double check)
+	replace 		bh_1 = 0 if bh_1 > 1 & bh_1 != .
+	replace 		bh_2 = 0 if bh_2 < 3 & country == 2
+	replace 		bh_2 = 1 if bh_2 > 0 & country == 2 & bh_2 != .
+	replace 		bh_2 = 0 if bh_2 == 2
+	replace 		bh_2 = . if bh_2 == 3
+	replace 		bh_3 = . if bh_3 == 3 | bh_3 < 0
+	replace 		bh_3 = 0 if bh_3 == 2
+	replace 		bh_4 = 0 if bh_4 == 2
+	replace 		bh_5 = 0 if bh_5 == 2
+	replace 		bh_7 = . if bh_7 < 0
+	replace 		bh_8 = . if bh_7 < 0
+	order 			bh_2 bh_3 bh_4 bh_5 bh_6* bh_7 bh_8* bh_9, after(bh_1)
+	* NOTE: there were errors in recoding here, corrected
 	order			gov_13 gov_14 gov_15 gov_16 gov_none gov_dnk, after(gov_12)
 	order			edu hhsize, after(relate_hoh)
 
-	gen				cope_any = 1 if cope_1 == 1 | cope_2 == 1 | cope_3 == 1 | ///
-						cope_4 == 1 | cope_5 == 1 | cope_6 == 1 | ///
-						cope_7 == 1 | cope_8 == 1 | cope_9 == 1 | ///
-						cope_10 == 1 | cope_11 == 1 | cope_12 == 1 | ///
-						cope_13 == 1 | cope_14 == 1 | cope_15 == 1
-	replace			cope_any = 0 if cope_any == . & country == 1
-	replace			cope_any = 0 if cope_any == . & country == 2 & wave == 2
-	replace			cope_any = 0 if cope_any == . & country == 3 & wave != 2
-	replace			cope_any = 0 if cope_any == . & country == 4 & wave == 1
+* coping (create cope_any = 1 if any coping used, 0 if not, . if no data for that wave)
+	egen 			tempgrp = group(country wave)
+	levelsof		(tempgrp), local(countrywave)
+	foreach 		cw in `countrywave' {
+		preserve 
+		keep 		if tempgrp == `cw' 
+		gen			cope_any = 1 if cope_1 == 1 | cope_2 == 1 | cope_3 == 1 | ///
+					cope_4 == 1 | cope_5 == 1 | cope_6 == 1 | ///
+					cope_7 == 1 | cope_8 == 1 | cope_9 == 1 | ///
+					cope_10 == 1 | cope_11 == 1 | cope_12 == 1 | ///
+					cope_13 == 1 | cope_14 == 1 | cope_15 == 1
+		egen 		cope_tot = total(cope_any)
+		replace 	cope_any = 0 if cope_any == . & cope_tot != 0
+		tempfile 	temp`cw'
+		save 		`temp`cw''
+		restore
+	}
+	clear
+	foreach 		cw in `countrywave' {
+		append 		using `temp`cw''
+	}
+	drop 			tempgrp cope_tot cope_16 cope_17
 	lab var			cope_any "Adopted any coping strategy"
 	lab val 		cope_any yesno
+	
+	gen				cope_none = 1 if cope_any == 0
+	replace			cope_none = 0 if cope_any == 1
+	lab var			cope_none "Did nothing"
+
+	order 			cope_none cope_any, before(cope_1)
 	
 	lab def			myth 0 "No" 1 "Yes" 3 "Don't Know"
 	
@@ -183,12 +187,10 @@
 		lab val	`v' myth
 	}	
 	
- 
+
 * **********************************************************************
 * 3- revise access variables as needed 
 * **********************************************************************
-	
-* access variables 
 	order			ac_med_need ac_med ac_med_why ///
 						ac_medserv_need ac_medserv ac_medserv_why ///
 						ac_soap_need ac_soap ac_soap_why ///
@@ -205,14 +207,14 @@
 						ac_water ac_water_why ///
 						ac_bank ac_bank_why, after(bh_8)	
 	
- * access to medicine 
+* access to medicine 
 	replace				ac_med = . if ac_med < 0 & country == 1	
 	replace				ac_med = 0 if ac_med == 2 
 	replace				ac_med = . if ac_med == 3
 	replace 			ac_med_why = . if ac_med_why < 0
 	* note "decrease in reg income" and "no money" both coded as 6
  	
- * access to medical services
+* access to medical services
 	replace				ac_medserv_need = . if ac_medserv_need < 0 | ac_medserv_need == 99
 	replace 			ac_medserv_need = 0 if ac_medserv_need == 2
 	
@@ -226,38 +228,70 @@
 								7 "restriction to go out" 8 "afraid to get virus", replace
 	lab val 			ac_medserv_why ac_medserv_why
 	
- * access to pre-natal care
+* access to pre-natal care
 	replace 			ac_nat_filter = 0 if ac_nat_filter == 2
 	replace 			ac_nat_need = 0 if ac_nat_need == 2
 	replace 			ac_nat_need = . if ac_nat_need > 97
 	
 	replace 			ac_nat = 0 if ac_nat == 2
  
- * access to preventative care 
+* access to preventative care 
 	replace 			ac_prev_app = 0 if ac_prev_app == 2
 
- * access to vaccines	
+* access to vaccines	
+	replace 			ac_vac = 0 if ac_vac == 2
+	replace 			ac_vac_need = 0 if ac_vac_need == 2
 	
-	
-	
- * access to soap
+* access to soap
 	replace 			ac_soap = 0 if ac_soap == 2
 	replace 			ac_soap_why = . if ac_soap_why == 96 | ac_soap_why == 9	
 	
- * access to staples
-	foreach 			var in ac_oil ac_teff ac_wheat ac_maize {
-		replace 		`var' = . if `var' < 0
-	}
-	replace 			ac_maize_why = . if ac_maize_why < 0 | ac_maize_why == 7
-	foreach 			s in maize rice beans cass yam sorg staple {
-		replace 		ac_`s' = 0 if ac_`s' == 2
-		replace 		ac_`s'_need = 0 if ac_`s'_need == 2
-	}
-	replace 			ac_staple = . if ac_staple == 3
-	replace 			ac_sauce = . if ac_sauce == 3
-	replace 			ac_sauce = 0 if ac_sauce == 2
+* access to staples
+	* Ethiopia
+		foreach 		var in ac_oil ac_teff ac_wheat ac_maize {
+			replace 	`var' = . if `var' < 0
+		}
+		// change not applicable/did not need to buy to not needed (2)
+		replace			ac_staple_need = 2 if country == 1 & (ac_oil == . & ac_teff == . & ///
+						ac_wheat == . & ac_maize == .)
+		// change missing ac_staple_need (needed to buy) to 1 
+		replace			ac_staple_need = 1 if ac_staple_need == . & country == 1	
+		replace			ac_staple = 1 if ac_staple_need == 1 & country == 1 & ///
+						(ac_oil == 1 | ac_teff == 1 | ac_wheat == 1 | ac_maize == 1) 	
+		replace			ac_staple = 0 if ac_staple == . & ac_staple_need == 1 & ///
+						country == 1	
+	* Malawi 
+		replace 		ac_maize_why = . if ac_maize_why < 0 | ac_maize_why == 7
+		replace 		ac_maize = 0 if ac_maize == 2
+		replace 		ac_maize_need = 0 if ac_maize_need == 2
+		replace 		ac_staple = 0 if ac_staple == 2 & country == 2
+		replace 		ac_staple_need = 0 if ac_staple_need == 2
+	* Nigeria
+		foreach 		s in rice beans cass yam sorg  {
+			replace 	ac_`s' = 0 if ac_`s' == 2
+			replace 	ac_`s'_need = 0 if ac_`s'_need == 2
+		}
+		replace 		ac_staple_need = 1 if country == 3 & (ac_rice_need == 1 | ///
+						ac_beans_need == 1 | ac_cass_need == 1 | ac_yam_need == 1 | ///
+						ac_sorg_need == 1)
+		replace 		ac_staple_need = 0 if country == 3 & ac_rice_need == 0 & ///
+						ac_beans_need == 0 & ac_cass_need == 0 & ac_yam_need == 0 & ///
+						ac_sorg_need == 0
+		replace 		ac_staple = 1 if country == 3 & (ac_rice == 1 | ac_beans == 1 | ///
+						ac_cass == 1 | ac_yam == 1 | ac_sorg == 1)
+		replace 		ac_staple = 0 if country == 3 & ((ac_rice == 0 & ac_rice_need == 1 ) ///
+						| (ac_beans == 0 & ac_beans_need == 1) | (ac_cass == 0 & ac_cass_need == 1) ///
+						| (ac_yam == 0 & ac_yam_need == 1)  | (ac_sorg == 0 & ac_sorg_need == 1))
+	* Uganda
+		replace 		ac_staple_need = 0 if ac_staple == 3 & country == 4
+		replace 		ac_staple_need = 1 if ac_staple == 1 | ac_staple == 2
+		replace 		ac_staple = . if ac_staple == 3 & country == 4
+		replace 		ac_staple = 0 if ac_staple == 1 & country == 4
+		replace 		ac_staple = 1 if ac_staple == 2 & country == 4
+		replace 		ac_sauce = . if ac_sauce == 3
+		replace 		ac_sauce = 0 if ac_sauce == 2
 	
- * access to drinking water
+* access to drinking water
 	replace 			ac_drink = . if ac_drink == 3 & country == 2
 	replace 			ac_drink = 0 if ac_drink == 1 & (country == 2 | country == 4)
 	replace 			ac_drink = 1 if ac_drink == 2 & (country == 2 | country == 4)
@@ -270,7 +304,7 @@
 						8 "restriction to go out" 9 "increase in price" 10 "cannot afford", replace
 	lab val 			ac_drink_why ac_drink_why 	
 
- * access to water for handwashing	
+* access to water for handwashing	
 	replace 			ac_water = 0 if ac_water == 2
 	
 	replace 			ac_water_why = . if (ac_water_why < 0 | ac_water_why > 94)
@@ -283,15 +317,15 @@
 						15 "lack of money", replace
 	lab val 			ac_water_why ac_water_why
 	
- * access to cleaning supllies
+* access to cleaning supllies
 	replace 			ac_clean_need = 0 if ac_clean_need == 2
 	replace 			ac_clean = 0 if ac_clean == 2
 
- * access to bank 
+* access to bank 
 	replace 			ac_bank = 0 if ac_bank == 2
 	replace 			ac_bank_why = . if ac_bank_why < 0 | ac_bank_why > 95
-	
- * access to credit
+
+* access to credit
 	replace 			ac_cr_need = 0 if ac_cr_need == 2
 	
 	replace 			ac_cr_loan = . if ac_cr_loan < 0
@@ -343,22 +377,26 @@
 	replace 			ac_cr_att = 0 if ac_cr_att == 2
 	replace 			ac_cr_slc = 0 if ac_cr_slc == 2	
 	
-//ADD IN UGANDA - AC CREDIT BY LOAN # 
-//NEED TO FINISH CLEANING CREDIT
+***Uganda asks credit by loan number, need to clean to match format of other countries
 
 
- * negate question (unable to access) 
- * NOTE: cannot negate preventative care and credit
-	foreach 			var in ac_soap ac_med ac_medserv ac_oil ac_teff ac_wheat ac_maize ///
-						ac_rice  ac_beans ac_cass ac_yam ac_sorg ac_staple ac_sauce ///
-						ac_clean ac_nat ac_bank ac_water ac_drink {
+* negate questions (unable to access) 
+ /* NOTE: cannot negate preventative care and credit (only mwi & nga ask if needed loan, 
+	others just ask if took out loan, not if able to access loan) */
+	foreach 			var in ac_soap ac_med ac_medserv ac_nat ac_vac ac_oil ac_teff ///
+						ac_wheat ac_maize ac_rice ac_beans ac_cass ac_yam ac_sorg ///
+						ac_staple ac_sauce ac_clean ac_nat ac_bank ac_water ac_drink {
 		replace 		`var' = 2 if `var' == 1
 		replace 		`var' = 1 if `var' == 0
 		replace 		`var' = 0 if `var' == 2
 		lab val 		`var' yesno
 	}
-	lab var				ac_soap "Unable to access soap"
+
 	lab var				ac_med "Unable to access medicine"
+	lab var 			ac_medserv "Unable to access medical services"
+	lab var 			ac_nat "Unable to access pre/post-natal care"
+	lab var 			ac_vac "Unable to access vaccines"
+	lab var				ac_soap "Unable to access soap"
 	lab var				ac_oil "Unable to access oil"
 	lab var				ac_teff "Unable to access teff"
 	lab var				ac_wheat "Unable to access wheat"
@@ -380,30 +418,18 @@
 	replace 			ac_mask = . if ac_mask == 3
 	replace 			ac_mask = 0 if ac_mask == 2
 	lab val 			ac_mask yesno
- 
- * unable to access any staple
-	replace 			ac_staple = 1 if (ac_oil == 1 | ac_teff == 1 | ///
-						ac_wheat == 1 | ac_maize == 1) & country == 1	
-						
-need to check here, difference between two codes below, should fill in ac_staple_need?
-	replace				ac_staple = 1 if ac_rice== 1 | ac_beans == 1 | ///
-							ac_cass == 1 | ac_yam == 1 | ///
-							ac_sorg == 1 & ac_staple_need == 1
-							
-							
-	replace 			ac_staple = 1 if (ac_rice == 1 | ac_beans == 1 | ///
-						ac_cass == 1 | ac_yam == 1 | ac_sorg == 1) & country == 3
-	
 	
 	lab var 		ac_soap_why "Reason unable to purchase soap"
 	lab var 		ac_water_why "Reason unable to access water for washing hands"		
 	lab var 		ac_drink_why "Reason unable to access water for drinking"
-	
+*** clean access why variables for consistencty and add labels here
+
+
 * **********************************************************************
 * 4 - clean concerns and income changes
 * **********************************************************************
 	
-* turn concern into binary
+* turn concerns 1 and 2 into binary
 	replace				concern_1 = 0 if concern_1 == 3 | concern_1 == 4
 	replace				concern_1 = 1 if concern_1 == 2
 	lab val				concern_1 yesno
@@ -412,19 +438,15 @@ need to check here, difference between two codes below, should fill in ac_staple
 	replace				concern_2 = 1 if concern_2 == 2
 	lab val				concern_2 yesno
 
-
-	replace				oth_inc = other_inc if other_inc != . & oth_inc == .
-	replace				oth_chg = other_chg if other_chg != . & oth_chg == .
-	drop				other_inc other_chg
-	
 	loc inc				farm_inc bus_inc wage_inc isp_inc pen_inc gov_inc ngo_inc oth_inc asst_inc
-	foreach var of varlist `inc' {
-		replace				`var' = 0 if `var' == 2
-		replace				`var' = 0 if `var' == -99
-		*replace				`var' = 0 if `var' == . 
-		lab val				`var' yesno
-		replace				`var' = . if country == 3 & wave == 2 | wave == 3
-		}	
+	foreach 			var of varlist `inc' {
+		replace			`var' = 0 if `var' == 2
+		replace			`var' = 0 if `var' == -99
+		lab val			`var' yesno
+		replace			`var' = . if country == 3 & (wave == 2 | wave == 3)
+	}	
+	* NOTE: this was an error, was replacing with missing for all variables in round 3
+lksdjf 
 		*** omit nigeria wave 2 and 3 due to incomplete questions 
 
 	gen 				other_inc = 1 if isp_inc == 1 | pen_inc == 1 | gov_inc == 1 | ngo_inc == 1 | oth_inc == 1 | asst_inc == 1 

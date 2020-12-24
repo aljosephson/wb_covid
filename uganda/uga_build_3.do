@@ -48,9 +48,6 @@
 * reformat HHID
 	format 			%12.0f HHID
 
-* drop other source
-	drop			s6q01_Other 
-
 * replace value for "other"
 	replace			income_loss__id = 96 if income_loss__id == -96
 
@@ -76,7 +73,7 @@
 	drop			s10q02 s10q03__1 s10q03__2 s10q03__3 s10q03__4 ///
 						s10q03__5 s10q03__6 s10q03__n96 s10q05 s10q06__1 ///
 						s10q06__2 s10q06__3 s10q06__4 s10q06__6 s10q06__7 ///
-						s10q06__8 s10q06__n96 other_nets *_Other
+						s10q06__8 s10q06__n96 other_nets 
 
 * reshape data
 	reshape 		wide s10q01, i(HHID) j(safety_net__id)
@@ -103,7 +100,7 @@
 	lab val			asst_kind assist
 	
 	gen				asst_any = 1 if asst_food == 1 | asst_cash == 1 | ///
-						asst_kind == 1
+					asst_kind == 1
 	replace			asst_any = 0 if asst_any == .
 	lab var			asst_any "Recieved any assistance"
 	lab val			asst_any assist
@@ -238,7 +235,7 @@
 	reshape 		wide s7aq*, i(HHID) j(loan_roster)
 	rename 			*101 *_l1
 	rename 			*102 *_l2
-	drop 			*Other* *96*
+	drop 			*96*
  
 * save temp file
 	tempfile		temp7
@@ -252,7 +249,7 @@
 	reshape 		wide s7bq*, i(HHID) j(loan_roster)
 	rename 			*201 *_l1
 	rename 			*202 *_l2
-	drop 			*Other* *96*
+	drop 			*96*
 	
 * save temp file
 	tempfile		temp8
@@ -265,7 +262,7 @@
 	reshape 		wide s7cq*, i(HHID) j(loan_roster)
 	rename 			*301 *_l1
 	rename 			*302 *_l2
-	drop 			*Other* *96*
+	drop 			*96*
 	
 * save temp file
 	tempfile		temp9

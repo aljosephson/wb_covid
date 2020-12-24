@@ -212,7 +212,8 @@
 		rename			ac5_edu_type_4 edu_4
 		rename			ac5_edu_type_5 edu_5
 
-		drop 			ac5a_pri_edu_type ac5a_pri_edu_type__98 ac5a_pri_edu_type__99 ac5a_pri_edu_type_other 
+		drop 			ac5a_pri_edu_type ac5a_pri_edu_type__98 ac5a_pri_edu_type__99 ///
+						ac5a_pri_edu_type_other 
 		rename 			ac5a_pri_edu_type_1 edu_1_prim 
 		rename 			ac5a_pri_edu_type_2 edu_2_prim  
 		rename 			ac5a_pri_edu_type_3 edu_3_prim 
@@ -221,7 +222,8 @@
 		rename 			ac5a_pri_edu_type__96 edu_other_prim 	
 
 		rename 			ac4b_sec_child edu_act_sec 
-		drop 			ac5b_sec_edu_type ac5b_sec_edu_type__98 ac5b_sec_edu_type__99 ac5b_sec_edu_type_other
+		drop 			ac5b_sec_edu_type ac5b_sec_edu_type__98 ac5b_sec_edu_type__99 ///
+						ac5b_sec_edu_type_other
 		rename 			ac5b_sec_edu_type_1 edu_1_sec 
 		rename 			ac5b_sec_edu_type_2 edu_2_sec  
 		rename 			ac5b_sec_edu_type_3 edu_3_sec 

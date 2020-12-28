@@ -267,7 +267,7 @@
 	rename 			s4q17__6 edu_cont_6
 	rename 			s4q17__7 edu_cont_7
 	rename 			s4q17__8 edu_cont_8
-	rename 			s4q18 bank
+	rename 			s4q18 ac_bank_need 
 	rename 			s4q19 ac_bank
 	rename 			s4q20 ac_bank_why
 	replace 		ac_bank_why = 3 if ac_bank_why == 2
@@ -632,10 +632,9 @@
 						s4q11_Other case_filter CountyCode2 CountyName2 ///
 						DistrictCode2 DistrictName2 ParishCode2 ParishName2 ///
 						SubcountyCode2 SubcountyName2 VillageCode2 VillageName2 ///
-						ac_mask_srce_n96 harv_cov_why_n96 Sq02 PID baseline_hhid///
+						ac_mask_srce_n96 harv_cov_why_n96 Sq02 PID baseline_hhid ///
 						s5bq16 s5bq25 s5bq26 ag_sell_where_n96 Sq01 s5aq11b__0 ///
 						s5bq18_1 s5bq18_2 s5bq18_3 *_interview_ID *_hh_weight weight
-						
 						
 * rename basic information
 	gen				sector = 2 if urban == 1

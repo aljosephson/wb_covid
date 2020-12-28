@@ -392,7 +392,7 @@
 	rename 			s3q7__3 satis_3
 	rename 			s3q7__4 satis_4
 	rename 			s3q7__5 satis_5
-	rename 			s3q7__6 satisf_6
+	rename 			s3q7__6 satis_6
 	rename 			s3q7__96 satis_7
 	rename 			s3q7_os satis_7_details
 	rename 			s3q8_7 ngo_pers_1	
@@ -621,7 +621,7 @@
 	rename 			s5q6__1 edu_1
 	rename 			s5q6__2 edu_2
 	rename 			s5q6__3 edu_3
-	rename 			s5q6__4 edu_04
+	rename 			s5q6__4 edu_4
 	rename 			s5q6__5 edu_5
 	rename 			s5q6__6 edu_6
 	rename 			s5q6__7 edu_7
@@ -635,7 +635,7 @@
 	rename 			s5q8__6 edu_cont_6
 	rename 			s5q8__7 edu_cont_7
 	rename 			s5q8__8 edu_cont_8
-	rename 			s5q9 bank
+	rename 			s5q9 ac_bank_need
 	rename 			s5q10 ac_bank
 	rename 			s5q11 ac_bank_why
 	rename 			s5q12 internet7

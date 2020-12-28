@@ -198,7 +198,7 @@
 	rename 			s3q5__3 satis_3
 	rename 			s3q5__4 satis_4 
 	rename 			s3q5__5 satis_5 
-	rename 			s3q5__6 satisf_6 
+	rename 			s3q5__6 satis_6 
 	rename 			s3q5__96 satis_7 
 	
 * behavior
@@ -406,21 +406,30 @@
 	forval 			x = 1/11 {
 	    rename 		s5cq4__`x' sch_prec_`x'
 	}
-	rename 			s5cq4__99 sch_prec_15
+	rename 			s5cq4__99 sch_prec_none
 	rename 			s5cq5 sch_prec_sat
 	rename 			s5cq8 sch_contact
 	forval 			x = 1/7 {
 	    rename 		s5cq9__`x' sch_contact_`x'
 	}
   * credit	
-	rename 			s5q8 bank
+	rename 			s5q8 ac_bank_need
 	rename 			s5q9 ac_bank 
 	rename 			s5q10 ac_bank_why 
  
 	rename 			s5bq1 ac_cr_loan
 	forval 			x = 1/9 {
-		rename 		s5bq2__`x' cr_lend_`x'
+		rename 		s5bq2__`x' ac_cr_lend_`x'
 	}
+	rename 			ac_cr_lend_1 ac_cr_lend_11
+	rename 			ac_cr_lend_2 ac_cr_lend_12
+	rename 			ac_cr_lend_6 ac_cr_lend_1
+	rename 			ac_cr_lend_8 ac_cr_lend_13
+	rename 			ac_cr_lend_4 ac_cr_lend_8
+	rename 			ac_cr_lend_7 ac_cr_lend_4
+	rename 			ac_cr_lend_3 ac_cr_lend_7
+	rename 			ac_cr_lend_5 ac_cr_lend_15
+	rename 			ac_cr_lend_9 ac_cr_lend_14
 	drop 			s5bq2__96
 	forval 			x = 1/13 {
 		rename 		s5bq3__`x' ac_cr_why_`x'
@@ -487,9 +496,9 @@
 	rename			s6q17__5 farm_why_5
 	rename			s6q17__6 farm_why_6
 	rename			s6q17__96 farm_why_7	 
-	rename 			s6q1a emp_7
-	rename 			s6q1b emp_7ret 
-	rename 			s6q1c emp_7why
+	rename 			s6q1a rtrn_emp
+	rename 			s6q1b rtrn_when 
+	rename 			s6q1c rtrn_emp_why
 	rename 			s6q3a emp_search_month
 	rename 			s6q3b emp_search 
 	rename			s6q4a emp_same

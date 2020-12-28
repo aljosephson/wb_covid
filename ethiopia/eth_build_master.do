@@ -196,7 +196,7 @@
 		rename			ac6_med ac_medserv_need
 		rename			ac7_med_access ac_medserv
 		rename			ac8_med_access_reas ac_medserv_why
-		rename			ac9_bank bank
+		rename			ac9_bank ac_bank_need
 		
 	* education 
 		rename			ac3_sch_child sch_child
@@ -546,7 +546,7 @@
 						cr8_before_who cr8_before_who__96 cr8_before_who_other ///
 						fi1_outoffood fi2_hungrynoteat fi3_noteatfullday lo3_impact ///
 						weight *why_other ea_id ac5_edu_type emp_act_other emp_stat_other ///
-						farm_why live_other submission_date round attempt 
+						farm_why live_other submission_date round attempt em19_*
 						
 * rename regions
 	replace 		region = 1001 if region == 1

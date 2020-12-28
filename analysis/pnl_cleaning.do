@@ -14,14 +14,22 @@
 	* cleaned country data
 
 * TO DO:
+	* automate line ~432 income and waves in nga so do not have to update manually
 	* finish cleaning credit variables
-	* clean access why variables
-	* NOTE make sure add regions and labels  to countries 2-4
-
+	* add more notes and annotation
+	* search "NOTE" and review
+	* generate variable crosswalk (see end of doc)
+	
 * **********************************************************************
 * 0 - setup
 * **********************************************************************
 
+* run do files for each country (takes a little while to run)
+	run				"$code/ethiopia/eth_build_master"
+	run 			"$code/malawi/mwi_build_master"
+	run				"$code/nigeria/nga_build_master"
+	run 			"$code/uganda/uga_build_master"
+	
 * define
 	global	eth		=	"$data/ethiopia/refined" 
 	global	mwi		=	"$data/malawi/refined"
@@ -44,36 +52,59 @@
 	if `"`c(username)'"' == "annfu" {
 		global 		code  	"C:/Users/annfu/git/wb_covid"
 		global 		data	"G:/My Drive/wb_covid/data"
-		
+	}	
+	
 * open log
 	cap log 		close
 	log using		"$logout/analysis", append
-	}
+	
 
 * **********************************************************************
 * 1 - build data set
 * **********************************************************************
-/*
-* run do files for each country (takes a little while to run)
-	run				"$code/ethiopia/eth_build_master"
-	run 			"$code/malawi/mwi_build_master"
-	run				"$code/nigeria/nga_build_master"
-	run 			"$code/uganda/uga_build_master"
-*/
+
 * read in data
 	use				"$eth/eth_panel", clear	
 	append using 	"$mwi/mwi_panel"	
 	append using 	"$nga/nga_panel"
 	append using	"$uga/uga_panel"
 	
-	order			country
 	lab def			country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda", replace
 	lab val			country country	
 	lab var			country "Country"
 	
+	lab def			region 1001 "Tigray" 1002 "Afar" 1003 "Amhara" 1004 ///
+					"Oromia" 1005 "Somali" 1006 "Benishangul-Gumuz" 1007 ///
+					"SNNPR" 1008 "Gambela" 1009 "Harar" 1010 ///
+					"Addis Ababa" 1011 "Dire Dawa" 2101 "Chitipa" 2102 ///
+					"Karonga" 2103 "Nkhata Bay" 2104 "Rumphi" 2105 ///
+					"Mzimba" 2106 "Likoma" 2107 "Mzuzu City" 2201 ///
+					"Kasungu" 2202 "Nkhotakota" 2203 "Ntchisi" 2204 ///
+					"Dowa" 2205 "Salima" 2206 "Lilongwe" 2207 ///
+					"Mchinji" 2208 "Dedza" 2209 "Ntcheu" 2210 ///
+					"Lilongwe City" 2301 "Mangochi" 2302 "Machinga" 2303 ///
+					"Zomba" 2304 "Chiradzulu" 2305 "Blantyre" 2306 ///
+					"Mwanza" 2307 "Thyolo" 2308 "Mulanje" 2309 ///
+					"Phalombe" 2310 "Chikwawa" 2311 "Nsanje" 2312 ///
+					"Balaka" 2313 "Neno" 2314 "Zomba City" 2315 ///
+					"Blantyre City" 3001 "Abia" 3002 "Adamawa" 3003 ///
+					"Akwa Ibom" 3004 "Anambra" 3005 "Bauchi" 3006 ///
+					"Bayelsa" 3007 "Benue" 3008 "Borno" 3009 ///
+					"Cross River" 3010 "Delta" 3011 "Ebonyi" 3012 ///
+					"Edo" 3013 "Ekiti" 3014 "Enugu" 3015 "Gombe" 3016 ///
+					"Imo" 3017 "Jigawa" 3018 "Kaduna" 3019 "Kano" 3020 ///
+					"Katsina" 3021 "Kebbi" 3022 "Kogi" 3023 "Kwara" 3024 ///
+					"Lagos" 3025 "Nasarawa" 3026 "Niger" 3027 "Ogun" 3028 ///
+					"Ondo" 3029 "Osun" 3030 "Oyo" 3031 "Plateau" 3032 ///
+					"Rivers" 3033 "Sokoto" 3034 "Taraba" 3035 "Yobe" 3036 ///
+					"Zamfara" 3037 "FCT" 4012 "Central" 4013 ///
+					"Eastern" 4014 "Kampala" 4015 "Northern" 4016 ///
+					"Western" 4017 "North" 4018 "Central" 4019 "South", replace
+	lab val			region region
+	
 	
 * **********************************************************************
-* 2 - revise ID variables as needed 
+* 2 - initial cleaning and revise ID variables as needed 
 * **********************************************************************
 
 * drop variables with open responses
@@ -109,7 +140,7 @@
 	egen			hhid = group(HHID)
 	drop			HHID hhid_eth hhid_mwi hhid_nga hhid_uga
 	lab var			hhid "Unique household ID"
-	order 			hhid resp_id hhid*, after(country)
+	order 			country hhid resp_id hhid*
 
 * generate weights
 	rename			phw hhw
@@ -129,8 +160,8 @@
 		replace 	know_`x' = 0 if know_`x' == 2
 		lab val 	know_`x' yesno
 	}
-
-* behavior (QC THIS - double check)
+ 
+* behavior
 	replace 		bh_1 = 0 if bh_1 > 1 & bh_1 != .
 	replace 		bh_2 = 0 if bh_2 < 3 & country == 2
 	replace 		bh_2 = 1 if bh_2 > 0 & country == 2 & bh_2 != .
@@ -141,11 +172,8 @@
 	replace 		bh_4 = 0 if bh_4 == 2
 	replace 		bh_5 = 0 if bh_5 == 2
 	replace 		bh_7 = . if bh_7 < 0
-	replace 		bh_8 = . if bh_7 < 0
-	order 			bh_2 bh_3 bh_4 bh_5 bh_6* bh_7 bh_8* bh_9, after(bh_1)
+	replace 		bh_8 = . if bh_8 < 0
 	* NOTE: there were errors in recoding here, corrected
-	order			gov_13 gov_14 gov_15 gov_16 gov_none gov_dnk, after(gov_12)
-	order			edu hhsize, after(relate_hoh)
 
 * coping (create cope_any = 1 if any coping used, 0 if not, . if no data for that wave)
 	egen 			tempgrp = group(country wave)
@@ -175,8 +203,6 @@
 	gen				cope_none = 1 if cope_any == 0
 	replace			cope_none = 0 if cope_any == 1
 	lab var			cope_none "Did nothing"
-
-	order 			cope_none cope_any, before(cope_1)
 	
 	lab def			myth 0 "No" 1 "Yes" 3 "Don't Know"
 	
@@ -189,23 +215,8 @@
 	
 
 * **********************************************************************
-* 3- revise access variables as needed 
-* **********************************************************************
-	order			ac_med_need ac_med ac_med_why ///
-						ac_medserv_need ac_medserv ac_medserv_why ///
-						ac_soap_need ac_soap ac_soap_why ///
-						ac_staple_def ac_staple_need ac_staple ac_staple_why ///
-						ac_oil ac_oil_why  ///
-						ac_teff ac_teff_why ac_wheat ac_wheat_why ///
-						ac_maize_need ac_maize ac_maize_why ///
-						ac_rice_need ac_rice ac_rice_why ///
-						ac_beans_need ac_beans ac_beans_why ///
-						ac_cass_need ac_cass ac_cass_why ///
-						ac_yam_need ac_yam ac_yam_why ///
-						ac_sorg_need ac_sorg ac_sorg_why ///
-						ac_clean_need ac_clean ac_clean_why ///
-						ac_water ac_water_why ///
-						ac_bank ac_bank_why, after(bh_8)	
+* 3 - revise access variables as needed 
+* **********************************************************************	
 	
 * access to medicine 
 	replace				ac_med = . if ac_med < 0 & country == 1	
@@ -231,8 +242,7 @@
 * access to pre-natal care
 	replace 			ac_nat_filter = 0 if ac_nat_filter == 2
 	replace 			ac_nat_need = 0 if ac_nat_need == 2
-	replace 			ac_nat_need = . if ac_nat_need > 97
-	
+	replace 			ac_nat_need = . if ac_nat_need > 97	
 	replace 			ac_nat = 0 if ac_nat == 2
  
 * access to preventative care 
@@ -290,6 +300,7 @@
 		replace 		ac_staple = 1 if ac_staple == 2 & country == 4
 		replace 		ac_sauce = . if ac_sauce == 3
 		replace 		ac_sauce = 0 if ac_sauce == 2
+	* NOTE: does not include ac_staple_why for countries where ac_staple was generated
 	
 * access to drinking water
 	replace 			ac_drink = . if ac_drink == 3 & country == 2
@@ -320,11 +331,16 @@
 * access to cleaning supllies
 	replace 			ac_clean_need = 0 if ac_clean_need == 2
 	replace 			ac_clean = 0 if ac_clean == 2
-
+ 
 * access to bank 
+	replace 			ac_bank_need = 1 if country == 1 & (ac_bank_need == 1 | ac_bank_need == 2)
+	replace 			ac_bank_need = 0 if ac_bank_need == 2
+	replace 			ac_bank_need = . if ac_bank_need < 0
+	lab val 			ac_bank_need yesno 
 	replace 			ac_bank = 0 if ac_bank == 2
 	replace 			ac_bank_why = . if ac_bank_why < 0 | ac_bank_why > 95
-
+	replace 			ac_bank_why = 4 if ac_bank_why == 3 & country == 4
+ 	
 * access to credit
 	replace 			ac_cr_need = 0 if ac_cr_need == 2
 	
@@ -348,6 +364,7 @@
 	lab var 			ac_cr_lend_12 "Lender: saving association"
 	lab var 			ac_cr_lend_13 "Lender: hire purchase"
 	lab var 			ac_cr_lend_14 "Lender: womens group"
+	lab var 			ac_cr_lend_15 "Lender: adashi/esusu/ajo"
 
 	drop 				ac_cr_why* ac_cr_who* ac_cr_bef_why* ac_cr_bef_who* ///
 						ac_cr_slc_why* ac_cr_slc_who*
@@ -377,11 +394,11 @@
 	replace 			ac_cr_att = 0 if ac_cr_att == 2
 	replace 			ac_cr_slc = 0 if ac_cr_slc == 2	
 	
-***Uganda asks credit by loan number, need to clean to match format of other countries
+***NOTE: Uganda asks credit by loan number, need to clean to match format of other countries
 
 
 * negate questions (unable to access) 
- /* NOTE: cannot negate preventative care and credit (only mwi & nga ask if needed loan, 
+ /* note: cannot negate preventative care and credit (only mwi & nga ask if needed loan, 
 	others just ask if took out loan, not if able to access loan) */
 	foreach 			var in ac_soap ac_med ac_medserv ac_nat ac_vac ac_oil ac_teff ///
 						ac_wheat ac_maize ac_rice ac_beans ac_cass ac_yam ac_sorg ///
@@ -418,13 +435,28 @@
 	replace 			ac_mask = . if ac_mask == 3
 	replace 			ac_mask = 0 if ac_mask == 2
 	lab val 			ac_mask yesno
-	
+
+	lab var 		ac_med_why "Reason unable to access medicine"
+	lab var 		ac_medserv_why "Reason unable to access medical services"
+	lab var 		ac_vac_why "Reason unable to access vaccines"
 	lab var 		ac_soap_why "Reason unable to purchase soap"
+	lab var 		ac_bank_why "Reason unable to access bank"
 	lab var 		ac_water_why "Reason unable to access water for washing hands"		
 	lab var 		ac_drink_why "Reason unable to access water for drinking"
-*** clean access why variables for consistencty and add labels here
+	lab var 		ac_clean_why "Reason unable to access cleaning supplies"
+	lab var 		ac_maize_why "Reason unable to purchase maize"
+	lab var 		ac_oil_why "Reason unable to access oil"
+	lab var 		ac_teff_why "Reason unable to access teff"
+	lab var 		ac_wheat_why "Reason unable to access wheat"
+	lab var 		ac_rice_why "Reason unable to access rice"
+	lab var 		ac_beans_why "Reason unable to access beans"
+	lab var 		ac_cass_why "Reason unable to access cassava"
+	lab var 		ac_yam_why "Reason unable to access yam"
+	lab var 		ac_sorg_why "Reason unable to access sorghum"
+	lab var 		ac_staple_why "Reason unable to access staple foods"
+	lab var 		ac_sauce_why "Reason unable to access sauce"
 
-
+	
 * **********************************************************************
 * 4 - clean concerns and income changes
 * **********************************************************************
@@ -440,16 +472,17 @@
 
 	loc inc				farm_inc bus_inc wage_inc isp_inc pen_inc gov_inc ngo_inc oth_inc asst_inc
 	foreach 			var of varlist `inc' {
-		replace			`var' = 0 if `var' == 2
-		replace			`var' = 0 if `var' == -99
+		replace			`var' = 0 if `var' == 2 | `var' == -98
 		lab val			`var' yesno
-		replace			`var' = . if country == 3 & (wave == 2 | wave == 3)
-	}	
+		replace			`var' = . if country == 3 & (wave == 2 | wave == 3 | wave == 5)
+	}
 	* NOTE: this was an error, was replacing with missing for all variables in round 3
-lksdjf 
-		*** omit nigeria wave 2 and 3 due to incomplete questions 
+	*** omit nigeria wave 2, 3 and 5 due to incomplete questions 
+	* NOTE: not sure I understand why these are ommitted, Ethiopia missing asst_inc?
+	* NOTE: should automate last line so do not have to update for every wave in nga
 
-	gen 				other_inc = 1 if isp_inc == 1 | pen_inc == 1 | gov_inc == 1 | ngo_inc == 1 | oth_inc == 1 | asst_inc == 1 
+	gen 				other_inc = 1 if isp_inc == 1 | pen_inc == 1 | gov_inc == 1 | ///
+						ngo_inc == 1 | oth_inc == 1 | asst_inc == 1 
 	replace 			other_inc = 0 if other_inc == . 
 	lab var 			other_inc "other income sources (isp, pen, gov, ngo, oth, asst)"
 
@@ -465,20 +498,21 @@ lksdjf
 
 	lab def				change -1 "Reduce" 0 "Stayed the same" 1 "Increased"
 	
-	loc chg				farm_chg bus_chg wage_chg isp_chg pen_chg gov_chg ngo_chg oth_chg asst_chg rem_dom_chg rem_for_chg
-
-	foreach var of varlist `chg' {
+	loc chg				farm_chg bus_chg wage_chg isp_chg pen_chg gov_chg ngo_chg ///
+						oth_chg asst_chg rem_dom_chg rem_for_chg
+	foreach 			var of varlist `chg' {		
 		replace				`var' = 0 if `var' == 2
-		replace				`var' = 0 if `var' == -98
+		replace				`var' = 0 if `var' == -98 | `var' == -99
 		replace				`var' = -1 if `var' == 3
 		replace				`var' = -1 if `var' == 4
 		lab val				`var' change
-		}				
+	}				
 
 	gen 				remit_chg = 1 if rem_dom_chg == 1 | rem_for_chg == 1 
 	replace 			remit_chg = 0 if remit_chg == .
 	lab var 			remit_chg "change in remittances (foreign, domestic)"
-	gen 				other_chg = 1 if isp_chg == 1 | pen_chg == 1 | ngo_chg == 1 | gov_chg == 1 | oth_chg == 1 | asst_chg == 1 
+	gen 				other_chg = 1 if isp_chg == 1 | pen_chg == 1 | ngo_chg == 1 | ///
+						gov_chg == 1 | oth_chg == 1 | asst_chg == 1 
 	replace				other_chg = 0 if other_chg == .
 	lab var 			other_chg "change in other income sources (isp, pen, gov, ngo, oth, asst)"	
 	
@@ -511,16 +545,17 @@ lksdjf
 	lab var				rem_dom_dwn "Remittances (dom) reduced"
 	lab var				rem_for_dwn "Remittances (for) reduced"		
 	
-	*egen 				dwn_count9 = rsum (farm_dwn bus_dwn wage_dwn isp_dwn pen_dwn gov_dwn ngo_dwn rem_dom_dwn rem_for_dwn)	
-	*lab var 			dwn_count9 "count of income sources which are down - total of nine"
-	*gen 				dwn_percent9 = dwn_count9 / 9
-	*label var 			dwn_percent9 "percent of income sources which had losses - total of nine"
+	egen 				dwn_count9 = rsum (farm_dwn bus_dwn wage_dwn isp_dwn pen_dwn ///
+						gov_dwn ngo_dwn rem_dom_dwn rem_for_dwn)	
+	lab var 			dwn_count9 "count of income sources which are down - total of nine"
+	gen 				dwn_per9 = dwn_count9 / 9
+	label var 			dwn_per9 "percent of income sources which had losses - total of nine"
 							
-	loc dwn				farm_dwn bus_dwn wage_dwn isp_dwn pen_dwn gov_dwn ngo_dwn rem_dom_dwn rem_for_dwn		
-
+	loc dwn				farm_dwn bus_dwn wage_dwn isp_dwn pen_dwn gov_dwn ngo_dwn ///
+						rem_dom_dwn rem_for_dwn		
 	foreach var of varlist `dwn' {
 		lab val				`var' yesno
-		}				
+	}				
 		
 	gen					work_dwn = 1 if farm_dwn == 1 | bus_dwn == 1
 	replace				work_dwn = 0 if farm_dwn == 0 & work_dwn == .
@@ -554,84 +589,49 @@ lksdjf
 	gen					dwn = 1 if dwn_count != 0 | dwn_count != . 
 	replace 			dwn = 0 if dwn_count == 0 
 	lab var 			dwn "=1 if household experience any type of income loss"
-	
-	order 				farm_dwn bus_dwn wage_dwn isp_dwn pen_dwn gov_dwn ///
-							ngo_dwn rem_dom_dwn rem_for_dwn remit_dwn other_dwn dwn dwn_count  ///
-							 dwn_percent, after(rem_for_chg)
 		
 	replace				edu_cont = 0 if edu_cont == 2
 	lab val				edu_cont yesno
-		
-		
-* **********************************************************************
-* 5 - revise access variables as needed 
-* **********************************************************************
-
-	order			myth_1 myth_2 myth_3 myth_4 myth_5 myth_6 myth_7, ///
-						after(ac_clean_why)
-	order			shock_1 shock_2 shock_3 shock_4 shock_5 shock_6 ///
-						shock_7 shock_8 shock_9 shock_10 shock_11 ///
-						shock_12 shock_13 shock_14, after(ac_clean_why)
-	order			cope_1 cope_2 cope_3 cope_4 cope_5 cope_6 cope_7 ///
-						cope_08 cope_09 cope_10 cope_11 cope_12 cope_13 ///
-						cope_14 cope_15 cope_16 cope_17 fies_1 fies_2 ///
-						fies_3 fies_4 fies_5 fies_6 fies_7 fies_8, ///
-						after(myth_7)
-		
-	rename			satisf_06 satis_06
 	
-	order			children318 children618, before(sch_child)
-	order			sch_child_meal sch_child_mealskip, after(sch_child)
-	order			edu_6 edu_7, after(edu_5)
-	order			edu_other edu_cont edu_cont_1 edu_cont_2 edu_cont_3 ///
-						edu_cont_4 edu_cont_5 edu_cont_6 edu_cont_7 edu_cont_8, ///
-						after(edu_5)
-	
-	replace			edu_cont_8 = educ_cont_8 if edu_cont_8 == .
-	drop			educ_cont_8
-		
-	order			asst_food asst_cash asst_kind asst_any, after(tot_inc_chg)
-	
-	order			ag_prep- ag_price ag_chg_1- ag_seed_7 ag_plan- ag_graze, ///
-						after(concern_3)
-						
-	order			concern_1 concern_2 concern_3 concern_4 concern_5 ///
-						concern_6, after(myth_7)
-	
+	* generate remittance income variable 
+	gen 					remit_inc = 1 if rem_dom == 2
+	replace					remit_inc = 1 if rem_for == 2 
+	replace					remit_inc = 0 if remit_inc == .
+	replace 				remit_inc = . if rem_dom == -99 & remit_inc == .
+	replace 				remit_inc = . if rem_for == -99 & remit_inc == .
+	* others fine as is: bus_inc farm_inc wage_inc 	
 	
 * **********************************************************************
-* 6 - clean food security information 
+* 5 - clean food security information 
 * **********************************************************************
 
-	loc fies				fies_1 fies_2 fies_3 fies_4 fies_5 fies_6 fies_7 fies_8
-
+	loc fies				fies_1 fies_2 fies_3 fies_4 fies_5 fies_6 fies_7 fies_8	
 	foreach var of varlist `fies' {
-		replace 			`var' = 2 if `var' == 0
+		replace 			`var' = 0 if `var' == 2
 		replace				`var' = . if `var' == -99
 		replace				`var' = . if `var' == -98
+		lab val 			`var' yesno
+	}				
 
-		}				
-
-	egen 					fies_count = rsum(fies_1 fies_2 fies_3 fies_4 fies_5 fies_6 fies_07 fies_8)				
+	egen 					fies_count = rsum(fies_1 fies_2 fies_3 fies_4 fies_5 ///
+							fies_6 fies_7 fies_8)				
 	gen 					fies_percent = fies_count / 8 
 	
 * **********************************************************************
-* 7 - clean myth questions
+* 6 - clean myth questions
 * **********************************************************************
 
 	loc myth				myth_1 myth_2 myth_3 myth_4 myth_5
-
 	foreach var of varlist `myth' {
 		replace				`var' = 3 if `var' == -98
-		}				
+	}				
 
 * **********************************************************************
-* 8 - education questions
+* 7 - clean education questions
 * **********************************************************************
 
 	replace 				edu_act = 0 if edu_act == 2
-	replace					edu_act = . if edu_act == -99 
-	replace 				edu_act = . if edu_act == -98 
+	replace					edu_act = . if edu_act == -99 | edu_act == -98 
 	
 	gen						edu_none = 1 if edu_act == 0
 	replace					edu_none = 0 if edu_act == 1
@@ -642,20 +642,7 @@ lksdjf
 	
 	
 * **********************************************************************
-* 9 - clean up education receipts 
-* **********************************************************************
-
-* generate remittance income variable 
-	gen 					remit_inc = 1 if rem_dom == 2
-	replace					remit_inc = 1 if rem_for == 2 
-	replace					remit_inc = 0 if remit_inc == .
-	replace 				remit_inc = . if rem_dom == -99 & remit_inc == .
-	replace 				remit_inc = . if rem_for == -99 & remit_inc == .
-
-* others fine as is: bus_inc farm_inc wage_inc 
-	
-* **********************************************************************
-* 10 - merge in covid data
+* 8 - merge in covid data
 * **********************************************************************	
 
 * merge in covid data
@@ -665,8 +652,28 @@ lksdjf
 	drop 					_merge
 
 * *********************************************************************
-* 11 - end matter, clean up to save
+* 9 - end matter, clean up to save
 * **********************************************************************
+
+order 			wave, after(hhid)
+order 			know* curb* gov* satis* info* bh* ac_cr* ac_*  sch* edu_c* edu* emp* ///
+				bus* farm* wage* rem* *_inc *_chg *dwn cope* fies* ag* harv* live* ///
+				shock* concern* symp*, after(neighborhood_id) alpha
+order			ag_chg_10 ag_chg_11 ag_chg_12 ag_chg_13, after (ag_chg_9)
+order 			ac_cr_lend_10 ac_cr_lend_11 ac_cr_lend_12 ac_cr_lend_13 ac_cr_lend_14 ///
+				ac_cr_lend_15, after(ac_cr_lend_9)
+order			ag_crop_pl_10 ag_crop_pl_11 ag_crop_pl_12, after(ag_crop_pl_9)
+order 			ag_live_10, after(ag_live_9)
+order 			ag_sold_10 ag_sold_11 ag_sold_12, after(ag_sold_9)
+order 			cope_10 cope_11 cope_12 cope_13 cope_14 cope_15, after(cope_9)
+order			gov_10 gov_11 gov_12 gov_13 gov_14 gov_15 gov_16, after(gov_9)
+order 			info_10 info_11 info_12 info_13, after(info_9)
+order 			sch_att_why_10 sch_att_why_11 sch_att_why_12 sch_att_why_13 ///
+				sch_att_why_14, after(sch_att_why_9)
+order 			sch_prec_10 sch_prec_11, after(sch_prec_9)
+order 			shock_10 shock_11 shock_12 shock_13 shock_14, after(shock_9)
+order 			symp_10 symp_11 symp_12 symp_13 symp_14 symp_15, after(symp_9)
+order 			know_10 know_11, after(know_9)
 
 compress
 describe

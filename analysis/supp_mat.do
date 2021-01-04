@@ -13,7 +13,8 @@
 	* palettes and colrspace installed	
 
 * TO DO:
-	* done
+	* add in new waves and update with any revisions
+	* QC based on old version
 
 
 * **********************************************************************
@@ -45,9 +46,9 @@
 
 * regressions for advised citizens to stay at home
 	local 					counter = 1
-		reg 				gov_01 ib(2).country [pweight = phw] if wave == 1, vce(robust)
+		reg 				gov_1 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 		outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-							replace excel dec(3) ctitle(S`tabnum' gov_01) label alpha(0.001, 0.01, 0.05)
+							replace excel dec(3) ctitle(S`tabnum' gov_1) label alpha(0.001, 0.01, 0.05)
 						
 	* Wald test for differences between other countries
 		test				1.country = 3.country
@@ -74,7 +75,7 @@
 * regressions for restricted travel within country/area, closure of schools,
 	* curfew/lockdown, closure of non-essential businesses, stopping or limiting social gatherings
 
-	foreach 				var in gov_02 gov_04 gov_05 gov_06 gov_10 {
+	foreach 				var in gov_2 gov_4 gov_5 gov_6 gov_10 {
 		reg 				`var' ib(2).country [pweight = phw] if wave == 1, vce(robust)
 		outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 							append excel dec(3) ctitle(S`tabnum' `var') label
@@ -134,7 +135,7 @@ local tabnum = `tabnum' + 1
 	* avoiding Crowds and Gatherings Reduces Risk of Coronavirus Contraction, 
 	* mainting Social Distance of at least 1 Meter Reduces Risk of Coronavirus Common
 	local 					counter = 1
-	foreach 				var in know_01 know_02 know_03 know_05 know_06 know_07 {
+	foreach 				var in know_1 know_2 know_3 know_5 know_6 know_7 {
 		reg 				`var' ib(2).country [pweight = phw] if wave == 1, vce(robust)
 		outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 							append excel dec(3) ctitle(S`tabnum' `var') label
@@ -195,7 +196,7 @@ local tabnum = `tabnum' + 1
 local tabnum = `tabnum' + 1
 
 * handwashed with Soap More Often Since Outbreak
-	reg 					bh_01 ib(2).country [pweight = phw] if wave == 1, vce(robust)
+	reg 					bh_1 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 							append excel dec(3) ctitle(S`tabnum' Handwashed with soap more often) label
 	
@@ -223,7 +224,7 @@ local tabnum = `tabnum' + 1
 		restore
 		
 * avoided Handshakes/Physical Greetings Since Outbreak
-	reg 					bh_02 ib(2).country [pweight = phw] if wave == 1, vce(robust)
+	reg 					bh_2 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 							append excel dec(3) ctitle(S`tabnum' Avoided physical greetings) label
 	
@@ -250,7 +251,7 @@ local tabnum = `tabnum' + 1
 		restore	
 
 * avoided Crowds and Gatherings Since Outbreak
-	reg 					bh_03 ib(2).country [pweight = phw] if wave == 1, vce(robust)
+	reg 					bh_3 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 							append excel dec(3) ctitle(S`tabnum' Avoided crowds) label
 	
@@ -305,7 +306,7 @@ local tabnum = `tabnum' + 1
 		foreach				c in 2 4 {
 			forval 			b = 1/3 {
 				forval 		w = 1/2 {
-					mean			bh_0`b' [pweight = phw] if country == `c', over(wave)	
+					mean			bh_`b' [pweight = phw] if country == `c', over(wave)	
 						local		n_c`c'b`b' = e(N)
 						local 		mean_c`c'b`b'w`w' = el(e(b),1,`w')
 						local		sd_c`c'b`b'w`w' = sqrt(el(e(V),`w',`w'))
@@ -347,28 +348,28 @@ local tabnum = `tabnum' + 1
 local tabnum = `tabnum' + 1
 
 * regressions of behavior on waves in Malawi
-	reg						bh_01 i.wave [pweight = phw] if country == 2, vce(robust) 
+	reg						bh_1 i.wave [pweight = phw] if country == 2, vce(robust) 
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 							append excel dec(3) ctitle(S`tabnum' Malawi Behavior 1) label
 	
-	reg						bh_02 i.wave [pweight = phw] if country == 2, vce(robust) 
+	reg						bh_2 i.wave [pweight = phw] if country == 2, vce(robust) 
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 							append excel dec(3) ctitle(S`tabnum' Malawi Behavior 2) label
 	
-	reg						bh_03 i.wave [pweight = phw] if country == 2, vce(robust) 
+	reg						bh_3 i.wave [pweight = phw] if country == 2, vce(robust) 
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 							append excel dec(3) ctitle(S`tabnum' Malawi Behavior 3) label
 	
 * regressions of behavior on waves in Uganda
-	reg						bh_01 i.wave [pweight = phw] if country == 4, vce(robust)
+	reg						bh_1 i.wave [pweight = phw] if country == 4, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 							append excel dec(3) ctitle(S`tabnum' Uganda Behavior 1) label
 	
-	reg						bh_02 i.wave [pweight = phw] if country == 4, vce(robust)
+	reg						bh_2 i.wave [pweight = phw] if country == 4, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 							append excel dec(3) ctitle(S`tabnum' Uganda Behavior 2) label
 	
-	reg						bh_03 i.wave [pweight = phw] if country == 4, vce(robust)		
+	reg						bh_3 i.wave [pweight = phw] if country == 4, vce(robust)		
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 							append excel dec(3) ctitle(S`tabnum' Uganda Behavior 3) label	
 		
@@ -379,7 +380,7 @@ local tabnum = `tabnum' + 1
 
 preserve
 		
-	local 					myth myth_02 myth_03 myth_04 myth_05
+	local 					myth myth_2 myth_3 myth_4 myth_5
 	foreach 				v in `myth' {
 	    replace 			`v' = . if `v' == 3
 	}	
@@ -389,22 +390,22 @@ preserve
 local tabnum = `tabnum' + 1
 	
 * africans are immune to corona virus
-	reg 					myth_02 i.country [pweight = phw], vce(robust)
+	reg 					myth_2 i.country [pweight = phw], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 							append excel dec(3) ctitle(S`tabnum' Africans immune) label
 							
 * corona virus does not affect children
-	reg 					myth_03 i.country [pweight = phw], vce(robust)
+	reg 					myth_3 i.country [pweight = phw], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 							append excel dec(3) ctitle(S`tabnum' Not affect children) label
 	
 * corona virus cannot survive in warm weather
-	reg 					myth_04 i.country [pweight = phw], vce(robust)
+	reg 					myth_4 i.country [pweight = phw], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 							append excel dec(3) ctitle(S`tabnum' Survive warm weather) label
 	
 * corona virus is just common flu
-	reg 					myth_05 i.country [pweight = phw], vce(robust)
+	reg 					myth_5 i.country [pweight = phw], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
 							append excel dec(3) ctitle(S`tabnum' Common flu) label
 restore
@@ -415,13 +416,13 @@ local tabnum = `tabnum' + 1
 
 * totals by myths
 	forval 					x = 2/5 {
-	    gen 				myth_0`x'y = cond(myth_0`x' == 1,1,cond(myth_01 == 0 | myth_01 == 3, 0,.))
-	    gen 				myth_0`x'n = cond(myth_0`x' == 0,1,cond(myth_01 == 1 | myth_01 == 3, 0,.))
-	    gen 				myth_0`x'k = cond(myth_0`x' == 3,1,cond(myth_01 == 0 | myth_01 == 1, 0,.))
+	    gen 				myth_`x'y = cond(myth_`x' == 1,1,cond(myth_1 == 0 | myth_1 == 3, 0,.))
+	    gen 				myth_`x'n = cond(myth_`x' == 0,1,cond(myth_1 == 1 | myth_1 == 3, 0,.))
+	    gen 				myth_`x'k = cond(myth_`x' == 3,1,cond(myth_1 == 0 | myth_1 == 1, 0,.))
 	}
 
 	forval 					m = 2/5 {
-		total 				myth_0`m'y myth_0`m'n myth_0`m'k [pweight = phw], over(country)
+		total 				myth_`m'y myth_`m'n myth_`m'k [pweight = phw], over(country)
 			local 			ytot_c2m`m' = el(e(b),1,1)
 			local 			ytot_c4m`m' = el(e(b),1,2)
 			local 			ntot_c2m`m' = el(e(b),1,3)
@@ -437,9 +438,9 @@ local tabnum = `tabnum' + 1
 	}	
 		
 	forval 					m = 2/5 {
-		total 				myth_0`m'y myth_0`m'n myth_0`m'k [pweight = phw] if country == 2
+		total 				myth_`m'y myth_`m'n myth_`m'k [pweight = phw] if country == 2
 		local				c2_n_m`m' = e(N)
-		total 				myth_0`m'y myth_0`m'n myth_0`m'k [pweight = phw] if country == 4
+		total 				myth_`m'y myth_`m'n myth_`m'k [pweight = phw] if country == 4
 		local				c4_n_m`m' = e(N)
 	}
 		
@@ -453,7 +454,7 @@ local tabnum = `tabnum' + 1
 			expand 			2
 			gen 			country = cond(_n<8,2,4)
 			forval 			x = 2/5 {
-							gen myth_0`x' = .
+							gen myth_`x' = .
 			}
 			
 		* replace values with stored locals
@@ -461,14 +462,14 @@ local tabnum = `tabnum' + 1
 				forval 		m = 2/5 {
 					foreach s in tot se {
 						foreach r in y n k {
-							replace myth_0`m' = ``r'`s'_c`c'm`m'' if response == "`r'" & stat == "`s'" & country == `c' 
+							replace myth_`m' = ``r'`s'_c`c'm`m'' if response == "`r'" & stat == "`s'" & country == `c' 
 						}
 					}
 				}
 			}
 			foreach c in 2 4 {
 				forval 			x = 2/5 {
-					replace 	myth_0`x' = `c`c'_n_m`x'' if stat == "Observations" & country == `c'
+					replace 	myth_`x' = `c`c'_n_m`x'' if stat == "Observations" & country == `c'
 				} 
 			}
 			export 			excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
@@ -565,8 +566,8 @@ local tabnum = `tabnum' + 1
 		gen 				stat = ""
 		local 				q = 1
 		foreach c in 1 2 3 4 all {
-			replace 		stat = cond(_n==`q',"tot",cond(_n==`q'+1,"tsd",cond(_n==`q'+2,"mean",cond(_n==`q'+3,"msd", ///
-			cond(_n==`q'+4,"n",""))))) if c == "`c'"
+			replace 		stat = cond(_n==`q',"tot",cond(_n==`q'+1,"tsd",cond(_n==`q'+2,"mean", ///
+							cond(_n==`q'+3,"msd", cond(_n==`q'+4,"n",""))))) if c == "`c'"
 			local 			q = `q' + 5
 		}
 		foreach 			var in farm_inc bus_inc wage_inc remit_inc other_inc {
@@ -844,7 +845,7 @@ preserve
 	drop if 				country == 2 & wave == 1
 	drop if 				country == 4 & wave == 1
 
-	reg 					p_mod concern_01 concern_02 ib(2).country [pweight = wt_18], vce(robust)
+	reg 					p_mod concern_1 concern_2 ib(2).country [pweight = wt_18], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
 							append excel dec(3) ctitle(S`tabnum' concerns & food insec mod)
 					
@@ -854,7 +855,7 @@ preserve
 
 * regression for concerns and food insecurity: severe  	
 	
-	reg 					p_sev concern_01 concern_02 ib(2).country [pweight = wt_18], vce(robust)
+	reg 					p_sev concern_1 concern_2 ib(2).country [pweight = wt_18], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
 							append excel dec(3) ctitle(S`tabnum' concerns & food insec sev)	
 					
@@ -883,13 +884,13 @@ preserve
 	drop if 				country == 4 & wave == 1
 	
 * summary statistics for concerns 
-	foreach 				var in concern_01 concern_02 {
+	foreach 				var in concern_1 concern_2 {
 	    total 				`var' [pweight = phw]
 			local			n_`var'_ca = e(N)
 			local 			tot_`var'_ca = el(e(b),1,1)
 			local 			sd_`var'_ca = sqrt(el(e(V),1,1))
 	}
-	foreach 				var in concern_01 concern_02 {
+	foreach 				var in concern_1 concern_2 {
 	    foreach 			c in 1 2 3 4 {
 		    total 			`var' [pweight = phw] if country == `c'
 				local		n_`var'_c`c' = e(N)
@@ -901,14 +902,14 @@ preserve
 * create table of stored results
 	clear
 	set 					obs 6
-	gen 					concern = cond(_n<4,"concern_01","concern_02")
+	gen 					concern = cond(_n<4,"concern_1","concern_2")
 	gen 					stat = cond(_n==1|_n==4,"tot",cond(_n==2|_n==5,"sd","n"))
 	foreach 				c in a 1 2 3 4 {
 		gen 				c`c' = .
 	}
 	foreach 				c in a 1 2 3 4 {
 	    foreach 			stat in tot sd n {
-		    foreach 		con in concern_01 concern_02 {
+		    foreach 		con in concern_1 concern_2 {
 				replace 	c`c' = ``stat'_`con'_c`c'' if concern == "`con'" & stat == "`stat'"
 			}
 		}
@@ -926,16 +927,16 @@ preserve
 	drop if 			country == 2 & wave == 1
 	drop if 			country == 4 & wave == 1
 
-	gen					p_mod_01 = p_mod if quint == 1
-	gen					p_mod_02 = p_mod if quint == 2
-	gen					p_mod_03 = p_mod if quint == 3
-	gen					p_mod_04 = p_mod if quint == 4
-	gen					p_mod_05 = p_mod if quint == 5
+	gen					p_mod_1 = p_mod if quint == 1
+	gen					p_mod_2 = p_mod if quint == 2
+	gen					p_mod_3 = p_mod if quint == 3
+	gen					p_mod_4 = p_mod if quint == 4
+	gen					p_mod_5 = p_mod if quint == 5
 
 	colorpalette edkblue khaki, ipolate(15, power(1)) locals
 
-	graph bar 		(mean) p_mod_01 p_mod_02 p_mod_03 p_mod_04 p_mod_05 ///
-						[pweight = wt_18], over(concern_01, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
+	graph bar 		(mean) p_mod_1 p_mod_2 p_mod_3 p_mod_4 p_mod_5 ///
+						[pweight = wt_18], over(concern_1, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
 						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
 						ytitle("Prevalence of moderate or severe food insecurity", size(vlarge))  ///
 						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
@@ -946,8 +947,8 @@ preserve
 						title("Concerned that family/self will fall ill with COVID-19", size(vlarge)) ///
 						saving("$output/fiesq1_modsev", replace)
 						
-	graph bar 		(mean) p_mod_01 p_mod_02 p_mod_03 p_mod_04 p_mod_05 ///
-						[pweight = wt_18], over(concern_02, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
+	graph bar 		(mean) p_mod_1 p_mod_2 p_mod_3 p_mod_4 p_mod_5 ///
+						[pweight = wt_18], over(concern_2, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
 						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
 						ytitle("Prevalence of moderate or severe food insecurity", size(vlarge))  ///
 						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
@@ -972,16 +973,16 @@ preserve
 	drop if 		country == 2 & wave == 1
 	drop if 		country == 4 & wave == 1
 
-	gen				p_sev_01 = p_sev if quint == 1
-	gen				p_sev_02 = p_sev if quint == 2
-	gen				p_sev_03 = p_sev if quint == 3
-	gen				p_sev_04 = p_sev if quint == 4
-	gen				p_sev_05 = p_sev if quint == 5
+	gen				p_sev_1 = p_sev if quint == 1
+	gen				p_sev_2 = p_sev if quint == 2
+	gen				p_sev_3 = p_sev if quint == 3
+	gen				p_sev_4 = p_sev if quint == 4
+	gen				p_sev_5 = p_sev if quint == 5
 
 	colorpalette edkblue khaki, ipolate(15, power(1)) locals
 
-	graph bar 		(mean) p_sev_01 p_sev_02 p_sev_03 p_sev_04 p_sev_05 ///
-						[pweight = wt_18], over(concern_01, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
+	graph bar 		(mean) p_sev_1 p_sev_2 p_sev_3 p_sev_4 p_sev_5 ///
+						[pweight = wt_18], over(concern_1, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
 						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
 						ytitle("Prevalence of severe food insecurity", size(vlarge))  ///
 						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
@@ -992,8 +993,8 @@ preserve
 						title("Concerned that family/self will fall ill with COVID-19", size(vlarge)) ///
 						saving("$output/fiesq1_sev", replace)
 						
-	graph bar 		(mean) p_sev_01 p_sev_02 p_sev_03 p_sev_04 p_sev_05 ///
-						[pweight = wt_18], over(concern_02, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
+	graph bar 		(mean) p_sev_1 p_sev_2 p_sev_3 p_sev_4 p_sev_5 ///
+						[pweight = wt_18], over(concern_2, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
 						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
 						ytitle("Prevalence of severe food insecurity", size(vlarge))  ///
 						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
@@ -1022,7 +1023,7 @@ preserve
 	drop 					if country == 4 & wave == 1
 	
 * regression for concern 1, by quintile and country 
-	reg 					concern_01 ib(1).quint ib(2).country [pweight = hhw], vce(robust)
+	reg 					concern_1 ib(1).quint ib(2).country [pweight = hhw], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
 							append excel dec(3) ctitle(S`tabnum' concern 1 by quintile)
 					
@@ -1036,7 +1037,7 @@ preserve
 	
 		
 * regression for concern 2, by quintile and country 	
-	reg 					concern_02 ib(1).quint ib(2).country [pweight = hhw], vce(robust)
+	reg 					concern_2 ib(1).quint ib(2).country [pweight = hhw], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
 							append excel dec(3) ctitle(S`tabnum' concern 2 by quintile)
 	
@@ -1138,12 +1139,12 @@ preserve
 	drop if					country == 3 & wave == 2
 	drop if					country == 4 & wave == 2
 
-	replace					cope_03 = 1 if cope_03 == 1 | cope_04 == 1
-	replace					cope_05 = 1 if cope_05 == 1 | cope_06 == 1 | cope_07 == 1
+	replace					cope_3 = 1 if cope_3 == 1 | cope_4 == 1
+	replace					cope_5 = 1 if cope_5 == 1 | cope_6 == 1 | cope_7 == 1
 
 * total and mean for any, relied on savings, sale of assets, reduced food consumption
   * reduced non_food consumption, assistance from friends & family, any assistance
-	foreach 				var in cope_any cope_11 cope_01 cope_09 cope_10 cope_03 asst_any {
+	foreach 				var in cope_any cope_11 cope_1 cope_9 cope_10 cope_3 asst_any {
 	    total 				`var' [pweight = hhw]
 			local 			n_`var' = e(N)
 			local 			tot_`var' = el(e(b),1,1)
@@ -1157,7 +1158,7 @@ preserve
 	clear
 	set 					obs 5
 	gen 					stat = cond(_n==1,"tot",cond(_n==2,"tsd",cond(_n==3,"mean",cond(_n==4,"msd","n"))))
-	foreach 				var in cope_any cope_11 cope_01 cope_09 cope_10 cope_03 asst_any {
+	foreach 				var in cope_any cope_11 cope_1 cope_9 cope_10 cope_3 asst_any {
 	    gen 				`var' = .
 		foreach 			s in tot tsd mean msd n {
 			replace 		`var' = ``s'_`var'' if stat == "`s'"
@@ -1181,8 +1182,8 @@ preserve
 	drop if					country == 3 & wave == 2
 	drop if					country == 4 & wave == 2
 
-	replace					cope_03 = 1 if cope_03 == 1 | cope_04 == 1
-	replace					cope_05 = 1 if cope_05 == 1 | cope_06 == 1 | cope_07 == 1
+	replace					cope_3 = 1 if cope_3 == 1 | cope_4 == 1
+	replace					cope_5 = 1 if cope_5 == 1 | cope_6 == 1 | cope_7 == 1
 	
 * regressions for cross-country comparisons 
 					
@@ -1199,7 +1200,7 @@ preserve
 		test				3.country = 4.country
 		local 				cope_11_t3 = r(p)
 	
-	foreach 				var in cope_01 cope_09 cope_10 cope_03 asst_any {
+	foreach 				var in cope_1 cope_9 cope_10 cope_3 asst_any {
 		reg 				`var' ib(2).country [pweight = hhw], vce(robust)
 		outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
 							append excel dec(3) ctitle(S`tabnum'_`var')
@@ -1218,7 +1219,7 @@ preserve
 	gen 					testcountries =  "Ethiopia-Nigeria"
 	replace 				testcountries = "Ethiopia-Uganda" in 2
 	replace 				testcountries = "Nigeria-Uganda" in 3
-	foreach					var in cope_11 cope_01 cope_09 cope_10 cope_03 asst_any {
+	foreach					var in cope_11 cope_1 cope_9 cope_10 cope_3 asst_any {
 	    gen 				`var' = .
 		forval 				t = 1/3 {
 		    replace 		`var' = ``var'_t`t'' in `t'
@@ -1241,14 +1242,14 @@ preserve
 	drop if					country == 3 & wave == 2
 	drop if					country == 4 & wave == 2
 
-	replace					cope_03 = 1 if cope_03 == 1 | cope_04 == 1
-	replace					cope_05 = 1 if cope_05 == 1 | cope_06 == 1 | cope_07 == 1
+	replace					cope_3 = 1 if cope_3 == 1 | cope_4 == 1
+	replace					cope_5 = 1 if cope_5 == 1 | cope_6 == 1 | cope_7 == 1
 	
 * regressions comparing rural urban
 
 * regressions for relied on savings, sale of assets,reduced food consumption, reduced non_food consumption
 	* received assistance from friends & family, recieved any assistance 
-	foreach 				var in cope_11 cope_01 cope_09 cope_10 cope_03 asst_any {
+	foreach 				var in cope_11 cope_1 cope_9 cope_10 cope_3 asst_any {
 	reg 					`var' i.sector ib(2).country [pweight = hhw], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
 							append excel dec(3) ctitle(S`tabnum'_`var')
@@ -1459,11 +1460,11 @@ local tabnum = `tabnum' + 1
 * fies and educational activity
 	preserve
 	
-	drop if				country == 2 & wave == 1
-	drop if				country == 4 & wave == 2
+	drop if					country == 2 & wave == 1
+	drop if					country == 4 & wave == 2
 
-	reg					p_mod edu_act ib(2).country [pweight = shw], vce(robust)
-	outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
+	reg						p_mod edu_act ib(2).country [pweight = shw], vce(robust)
+	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
 							append excel dec(3) ctitle(S`tabnum' edu act mod)
 
 	* Wald test for differences between other countries
@@ -1474,8 +1475,8 @@ local tabnum = `tabnum' + 1
 		test				3.country = 4.country
 		local 				mod_t3 = r(p)		
 
-	reg					p_sev edu_act ib(2).country [pweight = shw], vce(robust)
-	outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
+	reg						p_sev edu_act ib(2).country [pweight = shw], vce(robust)
+	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
 							append excel dec(3) ctitle(S`tabnum' edu act sev)
 	* Wald test for differences between other countries
 		test				1.country = 3.country
@@ -1506,7 +1507,7 @@ local tabnum = `tabnum' + 1
 local tabnum = `tabnum' + 1
 
 * changes in educational activity over time by country
-	foreach 				var in edu_act edu_04 edu_02 edu_03 edu_05 {
+	foreach 				var in edu_act edu_4 edu_2 edu_3 edu_5 {
 	    forval 				c = 1/3 {
 			reg				`var' i.wave [pweight = shw] if country == `c', vce(robust)	
 			outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///

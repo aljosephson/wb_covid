@@ -109,17 +109,8 @@
 
 	foreach var of varlist shock_1-shock_14 {
 		lab val		`var' shock
-		}
+	}
 
-* generate any shock variable
-	gen				shock_any = 1 if shock_1 == 1 | shock_2 == 1 | ///
-						shock_3 == 1 | shock_4 == 1 | shock_5 == 1 | ///
-						shock_6 == 1 | shock_7 == 1 | shock_8 == 1 | ///
-						shock_9 == 1 | shock_10 == 1 | shock_11 == 1 | ///
-						shock_12 == 1 | shock_13 == 1 | shock_14== 1
-	replace			shock_any = 0 if shock_any == .
-	lab var			shock_any "Experience some shock"
-	
 * rename cope variables
 	rename			s9q03__1 cope_1
 	rename			s9q03__2 cope_2
@@ -144,7 +135,15 @@
 
 * collapse to household level
 	collapse (max) cope_1- shock_14, by(HHID)
-
+	
+* generate any shock variable
+	gen				shock_any = 1 if shock_1 == 1 | shock_2 == 1 | ///
+						shock_3 == 1 | shock_4 == 1 | shock_5 == 1 | ///
+						shock_6 == 1 | shock_7 == 1 | shock_8 == 1 | ///
+						shock_9 == 1 | shock_10 == 1 | shock_11 == 1 | ///
+						shock_12 == 1 | shock_13 == 1 | shock_14== 1
+	replace			shock_any = 0 if shock_any == .
+	lab var			shock_any "Experience some shock"
 * save temp file
 	tempfile		temp2
 	save			`temp2'

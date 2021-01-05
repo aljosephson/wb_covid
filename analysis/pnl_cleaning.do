@@ -2,7 +2,7 @@
 * Created on: July 2020
 * Created by: jdm
 * Edited by: alj
-* Last edit: 28 September 2020 
+* Last edit: January 2020 
 * Stata v.16.1
 
 * does
@@ -55,8 +55,8 @@
 	}	
 	
 * open log
-	cap log 		close
-	log using		"$logout/analysis", append
+	cap log 			close
+	log using			"$logout/analysis", append
 	
 
 * **********************************************************************
@@ -64,43 +64,43 @@
 * **********************************************************************
 
 * read in data
-	use				"$eth/eth_panel", clear	
-	append using 	"$mwi/mwi_panel"	
-	append using 	"$nga/nga_panel"
-	append using	"$uga/uga_panel"
+	use					"$eth/eth_panel", clear	
+	append using 		"$mwi/mwi_panel"	
+	append using 		"$nga/nga_panel"
+	append using		"$uga/uga_panel"
 	
-	lab def			country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda", replace
-	lab val			country country	
-	lab var			country "Country"
+	lab def				country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda", replace
+	lab val				country country	
+	lab var				country "Country"
 	
-	lab def			region 1001 "Tigray" 1002 "Afar" 1003 "Amhara" 1004 ///
-					"Oromia" 1005 "Somali" 1006 "Benishangul-Gumuz" 1007 ///
-					"SNNPR" 1008 "Gambela" 1009 "Harar" 1010 ///
-					"Addis Ababa" 1011 "Dire Dawa" 2101 "Chitipa" 2102 ///
-					"Karonga" 2103 "Nkhata Bay" 2104 "Rumphi" 2105 ///
-					"Mzimba" 2106 "Likoma" 2107 "Mzuzu City" 2201 ///
-					"Kasungu" 2202 "Nkhotakota" 2203 "Ntchisi" 2204 ///
-					"Dowa" 2205 "Salima" 2206 "Lilongwe" 2207 ///
-					"Mchinji" 2208 "Dedza" 2209 "Ntcheu" 2210 ///
-					"Lilongwe City" 2301 "Mangochi" 2302 "Machinga" 2303 ///
-					"Zomba" 2304 "Chiradzulu" 2305 "Blantyre" 2306 ///
-					"Mwanza" 2307 "Thyolo" 2308 "Mulanje" 2309 ///
-					"Phalombe" 2310 "Chikwawa" 2311 "Nsanje" 2312 ///
-					"Balaka" 2313 "Neno" 2314 "Zomba City" 2315 ///
-					"Blantyre City" 3001 "Abia" 3002 "Adamawa" 3003 ///
-					"Akwa Ibom" 3004 "Anambra" 3005 "Bauchi" 3006 ///
-					"Bayelsa" 3007 "Benue" 3008 "Borno" 3009 ///
-					"Cross River" 3010 "Delta" 3011 "Ebonyi" 3012 ///
-					"Edo" 3013 "Ekiti" 3014 "Enugu" 3015 "Gombe" 3016 ///
-					"Imo" 3017 "Jigawa" 3018 "Kaduna" 3019 "Kano" 3020 ///
-					"Katsina" 3021 "Kebbi" 3022 "Kogi" 3023 "Kwara" 3024 ///
-					"Lagos" 3025 "Nasarawa" 3026 "Niger" 3027 "Ogun" 3028 ///
-					"Ondo" 3029 "Osun" 3030 "Oyo" 3031 "Plateau" 3032 ///
-					"Rivers" 3033 "Sokoto" 3034 "Taraba" 3035 "Yobe" 3036 ///
-					"Zamfara" 3037 "FCT" 4012 "Central" 4013 ///
-					"Eastern" 4014 "Kampala" 4015 "Northern" 4016 ///
-					"Western" 4017 "North" 4018 "Central" 4019 "South", replace
-	lab val			region region
+	lab def				region 1001 "Tigray" 1002 "Afar" 1003 "Amhara" 1004 ///
+						"Oromia" 1005 "Somali" 1006 "Benishangul-Gumuz" 1007 ///
+						"SNNPR" 1008 "Gambela" 1009 "Harar" 1010 ///
+						"Addis Ababa" 1011 "Dire Dawa" 2101 "Chitipa" 2102 ///
+						"Karonga" 2103 "Nkhata Bay" 2104 "Rumphi" 2105 ///
+						"Mzimba" 2106 "Likoma" 2107 "Mzuzu City" 2201 ///
+						"Kasungu" 2202 "Nkhotakota" 2203 "Ntchisi" 2204 ///
+						"Dowa" 2205 "Salima" 2206 "Lilongwe" 2207 ///
+						"Mchinji" 2208 "Dedza" 2209 "Ntcheu" 2210 ///
+						"Lilongwe City" 2301 "Mangochi" 2302 "Machinga" 2303 ///
+						"Zomba" 2304 "Chiradzulu" 2305 "Blantyre" 2306 ///
+						"Mwanza" 2307 "Thyolo" 2308 "Mulanje" 2309 ///
+						"Phalombe" 2310 "Chikwawa" 2311 "Nsanje" 2312 ///
+						"Balaka" 2313 "Neno" 2314 "Zomba City" 2315 ///
+						"Blantyre City" 3001 "Abia" 3002 "Adamawa" 3003 ///
+						"Akwa Ibom" 3004 "Anambra" 3005 "Bauchi" 3006 ///
+						"Bayelsa" 3007 "Benue" 3008 "Borno" 3009 ///
+						"Cross River" 3010 "Delta" 3011 "Ebonyi" 3012 ///
+						"Edo" 3013 "Ekiti" 3014 "Enugu" 3015 "Gombe" 3016 ///
+						"Imo" 3017 "Jigawa" 3018 "Kaduna" 3019 "Kano" 3020 ///
+						"Katsina" 3021 "Kebbi" 3022 "Kogi" 3023 "Kwara" 3024 ///
+						"Lagos" 3025 "Nasarawa" 3026 "Niger" 3027 "Ogun" 3028 ///
+						"Ondo" 3029 "Osun" 3030 "Oyo" 3031 "Plateau" 3032 ///
+						"Rivers" 3033 "Sokoto" 3034 "Taraba" 3035 "Yobe" 3036 ///
+						"Zamfara" 3037 "FCT" 4012 "Central" 4013 ///
+						"Eastern" 4014 "Kampala" 4015 "Northern" 4016 ///
+						"Western" 4017 "North" 4018 "Central" 4019 "South", replace
+	lab val				region region
 	
 	
 * **********************************************************************
@@ -108,13 +108,25 @@
 * **********************************************************************
 
 * drop variables with open responses
-	drop dis_gov* sup_cmpln_done sup_cmpln_who emp_safos
+	drop 				dis_gov* sup_cmpln_done sup_cmpln_who emp_safos bus_act
+
+* destring string variables 
+	replace 			ag_pr_cass_chip = subinstr(ag_pr_cass_chip, ",","",.)
+	replace 			ag_pr_cass_chip = "" if ag_pr_cass_chip == "-98" | ///
+						ag_pr_cass_chip == "##N/A##"
+	destring 			ag_pr_cass_chip, replace
+
+	replace 			ag_quant_kgcon = "" if ag_quant_kgcon == "##N/A##" | ///
+						ag_quant_kgcon  == "don't know  yet"
+	replace 			ag_quant_kgcon = subinstr(ag_quant_kgcon, "kg","",.)
+	replace 			ag_quant_kgcon = subinstr(ag_quant_kgcon, "KG SACK","",.)
+	destring 			ag_quant_kgcon, replace
 
 * drop if variable contains all missing values
-	foreach var of varlist _all {
-		 capture assert mi(`var')
-		 if !_rc {
-			drop `var'
+	foreach 			var of varlist _all {
+		 capture 		assert mi(`var')
+		 if 			!_rc {
+			drop 		`var'
 		 }
 	 }
 
@@ -122,95 +134,99 @@
 	lab	def				yesno 0 "No" 1 "Yes", replace
 
 * generate household id
-	replace 		hhid_eth = "e" + hhid_eth if hhid_eth != ""
-	replace 		hhid_mwi = "m" + hhid_mwi if hhid_mwi != ""	
-	tostring		hhid_nga, replace
-	replace 		hhid_nga = "n" + hhid_nga if hhid_nga != "."
-	replace			hhid_nga = "" if hhid_nga == "."	
-	rename 			hhid_uga hhid_uga1
-	egen 			hhid_uga = group(hhid_uga1)
-	tostring 		hhid_uga, replace 	
-	replace 		hhid_uga = "" if country != 4
-	replace 		hhid_uga = "u" + hhid_uga if hhid_uga != ""	
-	gen				HHID = hhid_eth if hhid_eth != ""
-	replace			HHID = hhid_mwi if hhid_mwi != ""
-	replace			HHID = hhid_nga if hhid_nga != ""
-	replace			HHID = hhid_uga if hhid_uga != ""	
-	sort			HHID
-	egen			hhid = group(HHID)
-	drop			HHID hhid_eth hhid_mwi hhid_nga hhid_uga
-	lab var			hhid "Unique household ID"
-	order 			country hhid resp_id hhid*
+	replace 			hhid_eth = "e" + hhid_eth if hhid_eth != ""
+	replace 			hhid_mwi = "m" + hhid_mwi if hhid_mwi != ""	
+	tostring			hhid_nga, replace
+	replace 			hhid_nga = "n" + hhid_nga if hhid_nga != "."
+	replace				hhid_nga = "" if hhid_nga == "."	
+	rename 				hhid_uga hhid_uga1
+	egen 				hhid_uga = group(hhid_uga1)
+	tostring 			hhid_uga, replace 	
+	replace 			hhid_uga = "" if country != 4
+	replace 			hhid_uga = "u" + hhid_uga if hhid_uga != ""	
+	gen					HHID = hhid_eth if hhid_eth != ""
+	replace				HHID = hhid_mwi if hhid_mwi != ""
+	replace				HHID = hhid_nga if hhid_nga != ""
+	replace				HHID = hhid_uga if hhid_uga != ""	
+	sort				HHID
+	egen				hhid = group(HHID)
+	drop				HHID hhid_eth hhid_mwi hhid_nga hhid_uga*
+	lab var				hhid "Unique household ID"
+	order 				country hhid resp_id hhid*
 
 * generate weights
-	rename			phw hhw
-	lab var			hhw "Household sampling weight"
-	gen				phw = hhw * hhsize
-	lab var			phw "Population weight"
-	gen 			ahw = hhw * hhsize_adult
-	lab var 		ahw "Household adult sampling weight"
-	gen 			chw = hhw * hhsize_child 
-	lab var 		chw "Household child sampling weight"
-	gen 			shw = hhw * hhsize_schchild
-	lab var 		shw "Household school child sampling weight"	
-	order			phw ahw chw shw, after(hhw)
+	rename				phw hhw
+	lab var				hhw "Household sampling weight"
+	gen					phw = hhw * hhsize
+	lab var				phw "Population weight"
+	gen 				ahw = hhw * hhsize_adult
+	lab var 			ahw "Household adult sampling weight"
+	gen 				chw = hhw * hhsize_child 
+	lab var 			chw "Household child sampling weight"
+	gen 				shw = hhw * hhsize_schchild
+	lab var 			shw "Household school child sampling weight"	
+	order				phw ahw chw shw, after(hhw)
 						
 * know 
-	forval 			x = 1/11 {
-		replace 	know_`x' = 0 if know_`x' == 2
-		lab val 	know_`x' yesno
+	forval 				x = 1/11 {
+		replace 		know_`x' = 0 if know_`x' == 2
+		lab val 		know_`x' yesno
 	}
  
 * behavior
-	replace 		bh_1 = 0 if bh_1 > 1 & bh_1 != .
-	replace 		bh_2 = 0 if bh_2 < 3 & country == 2
-	replace 		bh_2 = 1 if bh_2 > 0 & country == 2 & bh_2 != .
-	replace 		bh_2 = 0 if bh_2 == 2
-	replace 		bh_2 = . if bh_2 == 3
-	replace 		bh_3 = . if bh_3 == 3 | bh_3 < 0
-	replace 		bh_3 = 0 if bh_3 == 2
-	replace 		bh_4 = 0 if bh_4 == 2
-	replace 		bh_5 = 0 if bh_5 == 2
-	replace 		bh_7 = . if bh_7 < 0
-	replace 		bh_8 = . if bh_8 < 0
+	replace 			bh_1 = 0 if bh_1 > 1 & bh_1 != .
+	replace 			bh_2 = 0 if bh_2 < 3 & country == 2
+	replace 			bh_2 = 1 if bh_2 > 0 & country == 2 & bh_2 != .
+	replace 			bh_2 = 0 if bh_2 == 2
+	replace 			bh_2 = . if bh_2 == 3
+	replace 			bh_3 = . if bh_3 == 3 | bh_3 < 0
+	replace 			bh_3 = 0 if bh_3 == 2
+	replace 			bh_4 = 0 if bh_4 == 2
+	replace 			bh_5 = 0 if bh_5 == 2
+	replace 			bh_7 = . if bh_7 < 0
+	replace 			bh_8 = . if bh_8 < 0 | bh_8 == 6
+	replace 			bh_8 = 0 if bh_8 == 5
+	replace 			bh_8 = 1 if bh_8 == 1 | bh_8 == 2 | bh_8 == 3 | bh_8 == 4
+	lab var 			bh_8 "Wore mask in public in last 7 days"
+	lab val 			bh_8 yesno
 	* NOTE: there were errors in recoding here, corrected
 
 * coping (create cope_any = 1 if any coping used, 0 if not, . if no data for that wave)
-	egen 			tempgrp = group(country wave)
-	levelsof		(tempgrp), local(countrywave)
-	foreach 		cw in `countrywave' {
+	egen 				tempgrp = group(country wave)
+	levelsof			(tempgrp), local(countrywave)
+	foreach 			cw in `countrywave' {
 		preserve 
-		keep 		if tempgrp == `cw' 
-		gen			cope_any = 1 if cope_1 == 1 | cope_2 == 1 | cope_3 == 1 | ///
-					cope_4 == 1 | cope_5 == 1 | cope_6 == 1 | ///
-					cope_7 == 1 | cope_8 == 1 | cope_9 == 1 | ///
-					cope_10 == 1 | cope_11 == 1 | cope_12 == 1 | ///
-					cope_13 == 1 | cope_14 == 1 | cope_15 == 1
-		egen 		cope_tot = total(cope_any)
-		replace 	cope_any = 0 if cope_any == . & cope_tot != 0
-		tempfile 	temp`cw'
-		save 		`temp`cw''
+		keep 			if tempgrp == `cw' 
+		gen				cope_any = 1 if cope_1 == 1 | cope_2 == 1 | cope_3 == 1 | ///
+						cope_4 == 1 | cope_5 == 1 | cope_6 == 1 | ///
+						cope_7 == 1 | cope_8 == 1 | cope_9 == 1 | ///
+						cope_10 == 1 | cope_11 == 1 | cope_12 == 1 | ///
+						cope_13 == 1 | cope_14 == 1 | cope_15 == 1
+		egen 			cope_tot = total(cope_any)
+		replace 		cope_any = 0 if cope_any == . & cope_tot != 0
+		tempfile 		temp`cw'
+		save 			`temp`cw''
 		restore
 	}
 	clear
-	foreach 		cw in `countrywave' {
-		append 		using `temp`cw''
+	foreach 			cw in `countrywave' {
+		append 			using `temp`cw''
 	}
-	drop 			tempgrp cope_tot cope_16 cope_17
-	lab var			cope_any "Adopted any coping strategy"
-	lab val 		cope_any yesno
+	drop 				tempgrp cope_tot cope_16 cope_17
+	lab var				cope_any "Adopted any coping strategy"
+	lab val 			cope_any yesno
 	
-	gen				cope_none = 1 if cope_any == 0
-	replace			cope_none = 0 if cope_any == 1
-	lab var			cope_none "Did nothing"
+	gen					cope_none = 1 if cope_any == 0
+	replace				cope_none = 0 if cope_any == 1
+	lab var				cope_none "Did nothing"
 	
-	lab def			myth 0 "No" 1 "Yes" 3 "Don't Know"
+	lab def				myth 0 "No" 1 "Yes" 3 "Don't Know"
 	
-	local myth		 myth_1 myth_2 myth_3 myth_4 myth_5
-	foreach v in `myth' {
-	    replace `v' = 3 if `v' == -98
-		replace `v' = 0 if `v' == 2
-		lab val	`v' myth
+	local myth			myth_1 myth_2 myth_3 myth_4 myth_5
+	foreach 			v in `myth' {
+	    replace 		`v' = 3 if `v' == -98
+		replace 		`v' = 0 if `v' == 2
+		lab val			`v' myth
 	}	
 	
 
@@ -553,7 +569,7 @@
 							
 	loc dwn				farm_dwn bus_dwn wage_dwn isp_dwn pen_dwn gov_dwn ngo_dwn ///
 						rem_dom_dwn rem_for_dwn		
-	foreach var of varlist `dwn' {
+	foreach 			var of varlist `dwn' {
 		lab val				`var' yesno
 	}				
 		
@@ -594,51 +610,51 @@
 	lab val				edu_cont yesno
 	
 	* generate remittance income variable 
-	gen 					remit_inc = 1 if rem_dom == 2
-	replace					remit_inc = 1 if rem_for == 2 
-	replace					remit_inc = 0 if remit_inc == .
-	replace 				remit_inc = . if rem_dom == -99 & remit_inc == .
-	replace 				remit_inc = . if rem_for == -99 & remit_inc == .
+	gen 				remit_inc = 1 if rem_dom == 2
+	replace				remit_inc = 1 if rem_for == 2 
+	replace				remit_inc = 0 if remit_inc == .
+	replace 			remit_inc = . if rem_dom == -99 & remit_inc == .
+	replace 			remit_inc = . if rem_for == -99 & remit_inc == .
 	* others fine as is: bus_inc farm_inc wage_inc 	
 	
 * **********************************************************************
 * 5 - clean food security information 
 * **********************************************************************
 
-	loc fies				fies_1 fies_2 fies_3 fies_4 fies_5 fies_6 fies_7 fies_8	
-	foreach var of varlist `fies' {
-		replace 			`var' = 0 if `var' == 2
-		replace				`var' = . if `var' == -99
-		replace				`var' = . if `var' == -98
-		lab val 			`var' yesno
+	loc fies			fies_1 fies_2 fies_3 fies_4 fies_5 fies_6 fies_7 fies_8	
+	foreach 			var of varlist `fies' {
+		replace 		`var' = 0 if `var' == 2
+		replace			`var' = . if `var' == -99
+		replace			`var' = . if `var' == -98
+		lab val 		`var' yesno
 	}				
 
-	egen 					fies_count = rsum(fies_1 fies_2 fies_3 fies_4 fies_5 ///
-							fies_6 fies_7 fies_8)				
-	gen 					fies_percent = fies_count / 8 
+	egen 				fies_count = rsum(fies_1 fies_2 fies_3 fies_4 fies_5 ///
+						fies_6 fies_7 fies_8)				
+	gen 				fies_percent = fies_count / 8 
 	
 * **********************************************************************
 * 6 - clean myth questions
 * **********************************************************************
 
-	loc myth				myth_1 myth_2 myth_3 myth_4 myth_5
-	foreach var of varlist `myth' {
-		replace				`var' = 3 if `var' == -98
+	loc myth			myth_1 myth_2 myth_3 myth_4 myth_5
+	foreach 			var of varlist `myth' {
+		replace			`var' = 3 if `var' == -98
 	}				
 
 * **********************************************************************
 * 7 - clean education questions
 * **********************************************************************
 
-	replace 				edu_act = 0 if edu_act == 2
-	replace					edu_act = . if edu_act == -99 | edu_act == -98 
+	replace 			edu_act = 0 if edu_act == 2
+	replace				edu_act = . if edu_act == -99 | edu_act == -98 
 	
-	gen						edu_none = 1 if edu_act == 0
-	replace					edu_none = 0 if edu_act == 1
-	lab var					edu_none "Child not engaged in any learning activity"
+	gen					edu_none = 1 if edu_act == 0
+	replace				edu_none = 0 if edu_act == 1
+	lab var				edu_none "Child not engaged in any learning activity"
 	
-	replace 				sch_child = 0 if sch_child == 2
-	replace					sch_child = . if sch_child == -99 
+	replace 			sch_child = 0 if sch_child == 2
+	replace				sch_child = . if sch_child == -99 
 	
 	
 * **********************************************************************
@@ -646,82 +662,92 @@
 * **********************************************************************	
 
 * merge in covid data
-	merge m:1 				country region using "$export\covid_data"
+	merge m:1 			country region using "$export\covid_data"
 	
-	drop if					_merge == 2
-	drop 					_merge
+	drop if				_merge == 2
+	drop 				_merge
 
 * *********************************************************************
 * 9 - end matter, clean up to save
 * **********************************************************************
 
-order 			wave, after(hhid)
-order 			know* curb* gov* satis* info* bh* ac_cr* ac_*  sch* edu_c* edu* emp* ///
-				bus* farm* wage* rem* *_inc *_chg *dwn cope* fies* ag* harv* live* ///
-				shock* concern* symp*, after(neighborhood_id) alpha
-order			ag_chg_10 ag_chg_11 ag_chg_12 ag_chg_13, after (ag_chg_9)
-order 			ac_cr_lend_10 ac_cr_lend_11 ac_cr_lend_12 ac_cr_lend_13 ac_cr_lend_14 ///
-				ac_cr_lend_15, after(ac_cr_lend_9)
-order			ag_crop_pl_10 ag_crop_pl_11 ag_crop_pl_12, after(ag_crop_pl_9)
-order 			ag_live_10, after(ag_live_9)
-order 			ag_sold_10 ag_sold_11 ag_sold_12, after(ag_sold_9)
-order 			cope_10 cope_11 cope_12 cope_13 cope_14 cope_15, after(cope_9)
-order			gov_10 gov_11 gov_12 gov_13 gov_14 gov_15 gov_16, after(gov_9)
-order 			info_10 info_11 info_12 info_13, after(info_9)
-order 			sch_att_why_10 sch_att_why_11 sch_att_why_12 sch_att_why_13 ///
-				sch_att_why_14, after(sch_att_why_9)
-order 			sch_prec_10 sch_prec_11, after(sch_prec_9)
-order 			shock_10 shock_11 shock_12 shock_13 shock_14, after(shock_9)
-order 			symp_10 symp_11 symp_12 symp_13 symp_14 symp_15, after(symp_9)
-order 			know_10 know_11, after(know_9)
+	order 				wave, after(hhid)
+	order 				know* curb* gov* satis* info* bh* ac_cr* ac_*  sch* edu_c* edu* emp* ///
+						bus* farm* wage* rem* *_inc *_chg *dwn cope* fies* ag* harv* live* ///
+						shock* concern* symp*, after(neighborhood_id) alpha
+	order				ag_chg_10 ag_chg_11 ag_chg_12 ag_chg_13, after (ag_chg_9)
+	order 				ac_cr_lend_10 ac_cr_lend_11 ac_cr_lend_12 ac_cr_lend_13 ac_cr_lend_14 ///
+						ac_cr_lend_15, after(ac_cr_lend_9)
+	order				ag_crop_pl_10 ag_crop_pl_11 ag_crop_pl_12, after(ag_crop_pl_9)
+	order 				ag_live_10, after(ag_live_9)
+	order 				ag_sold_10 ag_sold_11 ag_sold_12, after(ag_sold_9)
+	order 				cope_10 cope_11 cope_12 cope_13 cope_14 cope_15, after(cope_9)
+	order				gov_10 gov_11 gov_12 gov_13 gov_14 gov_15 gov_16, after(gov_9)
+	order 				info_10 info_11 info_12 info_13, after(info_9)
+	order 				sch_att_why_10 sch_att_why_11 sch_att_why_12 sch_att_why_13 ///
+						sch_att_why_14, after(sch_att_why_9)
+	order 				sch_prec_10 sch_prec_11, after(sch_prec_9)
+	order 				shock_10 shock_11 shock_12 shock_13 shock_14, after(shock_9)
+	order 				symp_10 symp_11 symp_12 symp_13 symp_14 symp_15, after(symp_9)
+	order 				know_10 know_11, after(know_9)
 
-compress
-describe
-summarize 
+	compress
+	describe
+	summarize 
 	
 * save file 	
-	save			"$export/lsms_panel", replace
+	save				"$export/lsms_panel", replace
 
 * close the log
 	log	close	
 	
-/* END */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* VARIABLE CROSSWALK
-
-
-gen country_s = cond(country == 1, "eth", cond(country == 2, "mwi", cond(country == 3, "nga", "uga")))
-drop country
-levelsof country_s, local(countries)
-levelsof wave, local(waves)
-
-ds
-foreach var in `r(varlist)' {
-    foreach c in `countries' {
-	    foreach w in `waves' {
-		    collapse (sum) `var', by(country wave)
-			capture confirm numeric variable `var' 
-			gen `c'_w`w'_`var' = 1 if `var' != .
-			if !_rc {
-				 gen `c'_w`w'_`var' = 1 if `var' != ""
-			}
+/*	
+* *********************************************************************
+* 10 - generate variable-country-wave crosswalk
+* **********************************************************************	
+	preserve
+	drop 				country wave 
+	ds
+	restore
+	foreach 			var in `r(varlist)' {
+		preserve
+		keep 			country wave `var'
+		collapse 		(sum) `var', by(country wave)
+		replace 		`var' = 1 if `var' != 0
+		gen 			country_s = cond(country == 1, "eth", cond(country == 2, ///
+						"mwi", cond(country == 3, "nga", "uga")))
+		drop 			country
+		reshape 		wide `var', i(country) j(wave)
+		gen 			variable = _n
+		reshape 		wide `var'*, i(variable) j(country_s) string
+		levelsof 		variable, local(t)
+		* drop if variable contains all missing values
+		foreach 			v of varlist _all {
+			 capture 		assert mi(`v')
+			 if 			!_rc {
+				drop 		`v'
+			 }
+		 }
+		tostring 		variable, replace
+		replace 		variable = "`var'"
+		collapse 		(sum) `var'*, by(variable)
+		foreach 		c in eth mwi nga uga {
+			rename 		`var'*`c' `c'*
 		}
-
+		tempfile 		temp`var'
+		save 			`temp`var''
+		restore
 	}
-}
+	preserve
+	drop 				country wave 
+	ds
+	clear
+	foreach 			var in `r(varlist)' {
+		append 			using `temp`var''
+	}
+
+	export 				excel "$export/variable_country_wave_crosswalk.xlsx", first(var) replace
+	restore	
+	
+	
+/* END */

@@ -134,6 +134,7 @@
 	lab	def				yesno 0 "No" 1 "Yes", replace
 
 * generate household id
+<<<<<<< Updated upstream
 	replace 			hhid_eth = "e" + hhid_eth if hhid_eth != ""
 	replace 			hhid_mwi = "m" + hhid_mwi if hhid_mwi != ""	
 	tostring			hhid_nga, replace
@@ -153,6 +154,27 @@
 	drop				HHID hhid_eth hhid_mwi hhid_nga hhid_uga*
 	lab var				hhid "Unique household ID"
 	order 				country hhid resp_id hhid*
+=======
+	replace 		hhid_eth = "e" + hhid_eth if hhid_eth != ""
+	replace 		hhid_mwi = "m" + hhid_mwi if hhid_mwi != ""	
+	tostring		hhid_nga, replace
+	replace 		hhid_nga = "n" + hhid_nga if hhid_nga != "."
+	replace			hhid_nga = "" if hhid_nga == "."	
+	rename 			hhid_uga hhid_uga1
+	egen 			hhid_uga = group(hhid_uga1)
+	tostring 		hhid_uga, replace 	
+	replace 		hhid_uga = "" if country != 4
+	replace 		hhid_uga = "u" + hhid_uga if hhid_uga != ""	
+	gen				HHID = hhid_eth if hhid_eth != ""
+	replace			HHID = hhid_mwi if hhid_mwi != ""
+	replace			HHID = hhid_nga if hhid_nga != ""
+	replace			HHID = hhid_uga if hhid_uga != ""	
+	sort			HHID
+	egen			hhid = group(HHID)
+	drop			HHID hhid_eth hhid_mwi hhid_nga hhid_uga*
+	lab var			hhid "Unique household ID"
+	order 			country hhid resp_id hhid*
+>>>>>>> Stashed changes
 
 * generate weights
 	rename				phw hhw
@@ -701,6 +723,7 @@
 * close the log
 	log	close	
 	
+<<<<<<< Updated upstream
 /*	
 * *********************************************************************
 * 10 - generate variable-country-wave crosswalk
@@ -751,3 +774,22 @@
 	
 	
 /* END */
+=======
+/* END */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> Stashed changes

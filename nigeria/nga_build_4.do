@@ -169,7 +169,15 @@
 * 2 - FIES score
 * ***********************************************************************
 
-* not available for round 
+* load and format data
+	use				"$fies/NG_FIES_round`w'.dta", clear
+	drop 			country round
+	rename 			HHID hhid 
+	destring 		hhid, replace
+
+* save temp file
+	tempfile		tempe
+	save			`tempe'
 
 	
 * ***********************************************************************
@@ -178,7 +186,7 @@
 
 * merge sections based on hhid
 	use				"$root/wave_0`w'/r`w'_sect_a_2_5_5b_6_8_9_12", clear
-	foreach 		s in a b c d {
+	foreach 		s in a b c d e {
 	    merge		1:1 hhid using `temp`s'', nogen
 	}
 	

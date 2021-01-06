@@ -99,7 +99,17 @@
 * 3 - FIES score
 * ***********************************************************************	
 	
-* not available for round 4
+* load FIES score data
+	use				"$fies/ET_FIES_round`w'.dta", clear
+	
+* format variables
+	drop 			country round 
+	rename 			HHID household_id
+	
+* save temp file	
+	tempfile 		temp_fies
+	save 			`temp_fies'
+	
 	
 * ***********************************************************************
 * 4 - merge to build complete dataset for the round 
@@ -108,7 +118,8 @@
 * merge household size, microdata, and FIES
 	use 			`temp_hhsize', clear
 	merge 			1:1 household_id using `temp_micro', assert(3) nogen
-
+	merge 			1:1 household_id using `temp_fies'., nogen
+	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace		
 	

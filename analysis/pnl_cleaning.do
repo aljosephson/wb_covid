@@ -134,7 +134,6 @@
 	lab	def				yesno 0 "No" 1 "Yes", replace
 
 * generate household id
-<<<<<<< Updated upstream
 	replace 			hhid_eth = "e" + hhid_eth if hhid_eth != ""
 	replace 			hhid_mwi = "m" + hhid_mwi if hhid_mwi != ""	
 	tostring			hhid_nga, replace
@@ -154,27 +153,6 @@
 	drop				HHID hhid_eth hhid_mwi hhid_nga hhid_uga*
 	lab var				hhid "Unique household ID"
 	order 				country hhid resp_id hhid*
-=======
-	replace 		hhid_eth = "e" + hhid_eth if hhid_eth != ""
-	replace 		hhid_mwi = "m" + hhid_mwi if hhid_mwi != ""	
-	tostring		hhid_nga, replace
-	replace 		hhid_nga = "n" + hhid_nga if hhid_nga != "."
-	replace			hhid_nga = "" if hhid_nga == "."	
-	rename 			hhid_uga hhid_uga1
-	egen 			hhid_uga = group(hhid_uga1)
-	tostring 		hhid_uga, replace 	
-	replace 		hhid_uga = "" if country != 4
-	replace 		hhid_uga = "u" + hhid_uga if hhid_uga != ""	
-	gen				HHID = hhid_eth if hhid_eth != ""
-	replace			HHID = hhid_mwi if hhid_mwi != ""
-	replace			HHID = hhid_nga if hhid_nga != ""
-	replace			HHID = hhid_uga if hhid_uga != ""	
-	sort			HHID
-	egen			hhid = group(HHID)
-	drop			HHID hhid_eth hhid_mwi hhid_nga hhid_uga*
-	lab var			hhid "Unique household ID"
-	order 			country hhid resp_id hhid*
->>>>>>> Stashed changes
 
 * generate weights
 	rename				phw hhw
@@ -188,13 +166,24 @@
 	gen 				shw = hhw * hhsize_schchild
 	lab var 			shw "Household school child sampling weight"	
 	order				phw ahw chw shw, after(hhw)
-						
+
+	
+* **********************************************************************
+* 3 - revise knowledge, myths, behavior, and coping variables
+* **********************************************************************
+	
 * know 
 	forval 				x = 1/11 {
 		replace 		know_`x' = 0 if know_`x' == 2
 		lab val 		know_`x' yesno
 	}
- 
+	
+* myths	
+ 	loc myth			myth_1 myth_2 myth_3 myth_4 myth_5
+	foreach 			var of varlist `myth' {
+		replace			`var' = 3 if `var' == -98
+	}
+	
 * behavior
 	replace 			bh_1 = 0 if bh_1 > 1 & bh_1 != .
 	replace 			bh_2 = 0 if bh_2 < 3 & country == 2
@@ -253,7 +242,7 @@
 	
 
 * **********************************************************************
-* 3 - revise access variables as needed 
+* 4 - revise access variables as needed 
 * **********************************************************************	
 	
 * access to medicine 
@@ -496,7 +485,7 @@
 
 	
 * **********************************************************************
-* 4 - clean concerns and income changes
+* 5 - clean concerns and income changes
 * **********************************************************************
 	
 * turn concerns 1 and 2 into binary
@@ -639,8 +628,11 @@
 	replace 			remit_inc = . if rem_for == -99 & remit_inc == .
 	* others fine as is: bus_inc farm_inc wage_inc 	
 	
+	* business income 
+	replace 			bus_emp_inc = . if bus_emp_inc < 0
+	
 * **********************************************************************
-* 5 - clean food security information 
+* 6 - clean food security information 
 * **********************************************************************
 
 	loc fies			fies_1 fies_2 fies_3 fies_4 fies_5 fies_6 fies_7 fies_8	
@@ -655,14 +647,6 @@
 						fies_6 fies_7 fies_8)				
 	gen 				fies_percent = fies_count / 8 
 	
-* **********************************************************************
-* 6 - clean myth questions
-* **********************************************************************
-
-	loc myth			myth_1 myth_2 myth_3 myth_4 myth_5
-	foreach 			var of varlist `myth' {
-		replace			`var' = 3 if `var' == -98
-	}				
 
 * **********************************************************************
 * 7 - clean education questions
@@ -723,8 +707,7 @@
 * close the log
 	log	close	
 	
-	
-	
+
 * *********************************************************************
 * 10 - generate variable-country-wave crosswalk
 * **********************************************************************	

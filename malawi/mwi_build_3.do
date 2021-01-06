@@ -150,7 +150,18 @@
 * 1e - FIES score
 * ***********************************************************************
 
-* not available for round
+* load data
+	use				"$fies/MW_FIES_round`w'.dta", clear
+	drop 			country round 
+
+* merge in other data to get HHID to match 
+	rename 			HHID y4_hhid 
+	merge 			1:1 y4_hhid using "$root/wave_0`w'/secta_Cover_Page_r`w'"
+	keep 			HHID hhsize wt_hh p_mod urban weight Above_18 wt_18 p_sev
+
+* save temp file
+	tempfile		tempe
+	save			`tempe'
 
 
 * ***********************************************************************
@@ -184,7 +195,7 @@
 	use				"$root/wave_0`w'/secta_Cover_Page_r`w'", clear
 	
 * merge formatted sections
-	foreach 		x in a b c d f {
+	foreach 		x in a b c d e f {
 	    merge 		1:1 HHID using `temp`x'', nogen
 	}
 	

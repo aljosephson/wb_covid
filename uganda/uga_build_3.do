@@ -277,10 +277,7 @@
 	use				"$root/wave_0`w'/Cover", clear
 
 * merge in other sections	
-	forval 			x = 1/5 {
-	    merge 		1:1 HHID using `temp`x'', nogen
-	}
-	forval 			x = 7/9 {
+	forval 			x = 1/9 {
 	    merge 		1:1 HHID using `temp`x'', nogen
 	}
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC3.dta", nogen

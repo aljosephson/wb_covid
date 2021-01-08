@@ -18,7 +18,7 @@
 	* finish cleaning credit variables
 	* add more notes and annotation
 	* search "NOTE" and review
-	* generate variable crosswalk (see end of doc)
+
 	
 * **********************************************************************
 * 0 - setup
@@ -200,7 +200,6 @@
 	replace 			bh_8 = 1 if bh_8 == 1 | bh_8 == 2 | bh_8 == 3 | bh_8 == 4
 	lab var 			bh_8 "Wore mask in public in last 7 days"
 	lab val 			bh_8 yesno
-	* NOTE: there were errors in recoding here, corrected
 
 * coping (create cope_any = 1 if any coping used, 0 if not, . if no data for that wave)
 	egen 				tempgrp = group(country wave)
@@ -249,6 +248,9 @@
 	replace				ac_med = . if ac_med < 0 & country == 1	
 	replace				ac_med = 0 if ac_med == 2 
 	replace				ac_med = . if ac_med == 3
+	replace 			ac_med = 2 if ac_med == 0 & country == 4
+	replace 			ac_med = 0 if ac_med == 1 & country == 4
+	replace 			ac_med = 1 if ac_med == 2 & country == 4
 	replace 			ac_med_why = . if ac_med_why < 0
 	* note "decrease in reg income" and "no money" both coded as 6
  	
@@ -503,7 +505,6 @@
 		lab val			`var' yesno
 		replace			`var' = . if country == 3 & (wave == 2 | wave == 3 | wave == 5)
 	}
-	* NOTE: this was an error, was replacing with missing for all variables in round 3
 	*** omit nigeria wave 2, 3 and 5 due to incomplete questions 
 	* NOTE: not sure I understand why these are ommitted, Ethiopia missing asst_inc?
 	* NOTE: should automate last line so do not have to update for every wave in nga

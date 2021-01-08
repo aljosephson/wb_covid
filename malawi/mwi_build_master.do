@@ -408,8 +408,8 @@
 	rename			s4q1 bh_1
 	rename			s4q2a bh_2
 	rename			s4q3a bh_6
-	rename 			s4q3b bh_6a
-	rename 			s4q3c bh_6b
+	rename 			s4q3b bh_6b
+	rename 			s4q3c bh_6c
 	rename 			s4q4 bh_3
 	rename			s4q5 bh_4
 	rename			s4q6 bh_5

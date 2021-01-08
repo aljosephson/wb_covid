@@ -232,10 +232,7 @@
 		rename 			ac5b_sec_edu_type__96 edu_other_sec 
 
 		drop 			ac5_edu_type__98 ac5_edu_type__99 ac5_edu_type__96 ///
-							ac5_edu_type_other edu_1_prim edu_2_prim ///
-							edu_3_prim edu_4_prim edu_5_prim edu_other_prim ///
-							edu_1_sec edu_2_sec edu_3_sec edu_4_sec edu_5_sec ///
-							edu_other_sec
+							ac5_edu_type_other edu_other_prim edu_other_sec
 							
 	* water and soap
 	 * only in round 4

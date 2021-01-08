@@ -210,8 +210,11 @@
 	merge 1:1 		HHID using "$root/wave_0`w'/sect8_food_security_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect9_Concerns_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect12_Interview_Result_r`w'.dta", nogen
+
+* behavior
+	rename			s4q3a bh_6a
 	
-*rename variables inconsistent with  wave 1
+* rename variables inconsistent with  wave 1
 	rename			s6q1a rtrn_emp
 	rename 	 		s6q2_1 emp_pre
 	rename			s6q3a_1 emp_pre_why

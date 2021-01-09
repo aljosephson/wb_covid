@@ -225,7 +225,46 @@
 
 	
 * ***********************************************************************
-* 7 - build uganda cross section
+* 7 - education
+* ***********************************************************************
+ /*
+* generate edu_act_any = 1 if any child engaged in learning activities
+	use				"$root/wave_0`w'/SEC1.dta", clear
+	preserve
+		keep 			if s1q09 == 1
+		replace 		s1q10 = 0 if s1q10 == 2
+		collapse		(sum) s1q10, by(HHID)
+		gen 			edu_act_any = 1 if s1q10 > 0 
+		keep 			HHI edu_act_any
+		tempfile 		tempany
+		save 			`tempany'
+	restore 
+	
+* generate edu_act_any = 1 if all children who were in school are engaged in learning activities 
+	use				"$root/wave_0`w'/SEC1.dta", clear
+	preserve
+		keep 			if s1q09 == 1
+		replace 		s1q10 = 0 if s1q10 == 2
+		collapse		(sum) s1q09 s1q10, by(HHID)
+		gen 			edu_act_all = 1 if s1q10 == s1q09 
+		keep 			HHI edu_act_all
+		tempfile 		tempall
+		save 			`tempall'
+	restore 
+		
+* generate educational engagement variables  
+	use				"$root/wave_0`w'/SEC1.dta", clear	
+	forval 			x = 1/11 {
+		replace 	s1q12__`x' = 0 if s1q12__`x' == 2
+	}
+	collapse 		(sum) s1q12*, by(HHID)
+	keep 			
+	
+	
+*/
+	
+* ***********************************************************************
+* 8 - build uganda cross section
 * ***********************************************************************
 
 * load cover data

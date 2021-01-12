@@ -14,7 +14,6 @@
 	* raw Uganda data
 
 * TO DO:
-	* add round 3 FIES (waiting for data)
 	* when new waves available:
 		* create build for new wave based on previous ones
 		* update global list of waves below
@@ -248,16 +247,6 @@
 	rename			s2q01b__n98 symp_15	
 
 * rename education & bank
-	rename 			s4q012 children318
-	rename 			s4q013 sch_child
-	rename 			s4q014 edu_act
-	rename 			s4q15__1 edu_1
-	rename 			s4q15__2 edu_2
-	rename 			s4q15__3 edu_3
-	rename 			s4q15__4 edu_4
-	rename 			s4q15__5 edu_5
-	rename 			s4q15__6 edu_6
-	rename 			s4q15__n96 edu_other
 	rename 			s4q16 edu_cont
 	rename			s4q17__1 edu_cont_1
 	rename 			s4q17__2 edu_cont_2

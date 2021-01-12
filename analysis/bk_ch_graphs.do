@@ -55,7 +55,7 @@
 	lab def 		months 4 "April" 5 "May" 6 "June" 7 "July" 8 "Aug" 9 "Sept"
 	lab val			wave months
 	
-	
+
 * **********************************************************************
 * 1 - behavior
 * **********************************************************************
@@ -148,7 +148,7 @@
 	drop if 			size == .
 	drop if				size == 3
 
-	catplot 			size country myth [aweight = phw], percent(country myth) ///
+	catplot 			size country myth [aweight = phw], percent(country myth) stack ///
 							ytitle("Percent", size(vlarge)) var1opts(label(labsize(vlarge))) ///
 							var2opts(label(labsize(vlarge))) var3opts(label(labsize(large)) ///
 							relabel (1 `""Africans are immune" "to coronavirus"""' ///
@@ -347,7 +347,7 @@
 	
 	graph export 		"$output/fies.png", as(png) replace
 	
-	
+
 * **********************************************************************
 * 5 - concerns 
 * **********************************************************************
@@ -514,21 +514,102 @@
 			graph bar 			(mean) `v' [pweight = phw], ///
 									over(wave, label(labsize(medlarge))) title("`country'", size(vlarge)) ///
 									ytitle("Percent unable to purchase", size(med)) ///
-									ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
+									ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(med)) ///
 									bar(1, color(navy*1.5)) legend(off) ///
 									saving("$output/stata_graphs/`v'`c'", replace)
 			restore
 		}
-			
 	
 	graph combine			"$output/stata_graphs/`v'1" "$output/stata_graphs/`v'2" ///
 								"$output/stata_graphs/`v'3" "$output/stata_graphs/`v'4", ///
 								col(2) commonscheme 							
 					
 	graph export 			"$output/`v'.png", as(png) replace				
-	}					
-					
+	
+	}	
+	
+	
+* Jeff 
 
+	graph bar 				hhsize, over(wave) asyvars bar(1, color(navy*2)) ///
+							bar(2, color(brown*1.3)) bar(3, color(maroon*4)) bar(4, color(cranberry*3)) ///
+							bar(5, color(stone*2)) bar(6, color(eltgreen*3)) saving("$output/stata_graphs/tempac", replace) 
+	
+	preserve
+		egen 				temp = total(ac_medserv), by (country wave)
+		keep if 			temp != 0 & country == 1
+		graph bar 			(mean) ac_medserv [pweight = phw], ///
+							over(wave, label(labsize(medlarge))) asyvars bar(1, color(navy*2)) ///
+							bar(2, color(brown*1.3)) bar(3, color(maroon*4))  ///
+							bar(4, color(stone*2)) bar(5, color(eltgreen*3)) title("Ethiopia", size(vlarge)) ///
+							ytitle("Percent unable to purchase", size(med)) ///
+							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(med)) legend(off) ///
+							saving("$output/stata_graphs/ac_medserv1", replace)
+	restore
+	
+	preserve
+		egen 				temp = total(ac_medserv), by (country wave)
+		keep if 			temp != 0 & country == 2
+		graph bar 			(mean) ac_medserv [pweight = phw], ///
+							over(wave, label(labsize(medlarge))) ascategory asyvars ///
+							bar(1, color(maroon*4)) bar(2, color(cranberry*3)) ///
+							title("Malawi", size(vlarge)) ///
+							ytitle("Percent unable to purchase", size(med)) ///
+							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(med)) legend(off) ///
+							saving("$output/stata_graphs/ac_medserv2", replace)
+	restore
+	
+	preserve
+		egen 				temp = total(ac_medserv), by (country wave)
+		keep if 			temp != 0 & country == 3
+		graph bar 			(mean) ac_medserv [pweight = phw], ///
+							over(wave, label(labsize(medlarge))) ascategory asyvars  ///
+							bar(1, color(brown*1.3)) bar(2, color(maroon*4)) bar(3, color(cranberry*3)) ///
+							bar(4, color(stone*2)) title("Nigeria", size(vlarge)) ///
+							ytitle("Percent unable to purchase", size(med)) ///
+							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(med)) legend(off) ///
+							saving("$output/stata_graphs/ac_medserv3", replace)
+	restore
+	
+	preserve
+		egen 				temp = total(ac_medserv), by (country wave)
+		keep if 			temp != 0 & country == 4
+		graph bar 			(mean) ac_medserv [pweight = phw], ///
+							over(wave, label(labsize(medlarge))) ascategory asyvars  ///
+							bar(1, color(maroon*4)) bar(2, color(stone*2))  ///
+							bar(3, color(eltgreen*3)) title("Uganda", size(vlarge)) ///
+							ytitle("Percent unable to purchase", size(med)) ///
+							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(med)) legend(off) ///
+							saving("$output/stata_graphs/ac_medserv4", replace)
+	restore
+	
+	
+	gr combine			"$output/stata_graphs/ac_medserv1" "$output/stata_graphs/ac_medserv2" ///
+								"$output/stata_graphs/ac_medserv3" "$output/stata_graphs/ac_medserv4", ///
+								col(2) commonscheme 
+								
+	graph export 			"$output/ac_medserv.png", as(png) replace				
+	
+
+	
+	
+
+					
+* Ethipia staple foods 
+	graph bar 		(mean) ac_teff ac_oil  ac_wheat ac_maize [pweight = phw]  if country == 1, ///
+						over(wave, label(labsize(large))) ///
+						ytitle("Percent unable to purchase", size(vlarge)) ///
+						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
+						bar(1, color(brown*1.3)) bar(2, color(maroon*4)) bar(3, color(cranberry*3)) ///
+						bar(4, color(stone*2)) bar(5, color(eltgreen*5)) ///
+						legend( label(1 "Teff") label(2 "Oil") ///
+						label(3 "Wheat") label(4 "Maize") col(4)) ///
+						saving("$output/stata_graphs/ac_staple_eth", replace)
+
+	grc1leg2		"$output/stata_graphs/ac_staple_eth.gph", col(2) iscale(.5) pos(6) commonscheme 
+	
+	graph export 	"$output/ac_staple_eth.png", as(png) replace
+	
 * nigeria staple foods
 	preserve
 	
@@ -539,8 +620,8 @@
 						over(wave, label(labsize(large))) ///
 						ytitle("Percent unable to purchase", size(vlarge)) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
-						bar(1, color(navy*1.5)) bar(2, color(teal*1.5)) bar(3, color(khaki*1.5)) ///
-						bar(4, color(brown*2.3)) bar(5, color(eltgreen*5)) legend( label(1 "Yams") label(2 "Rice") ///
+						bar(1, color(brown*1.3)) bar(2, color(maroon*4)) bar(3, color(cranberry*3)) ///
+						bar(4, color(stone*2)) bar(5, color(eltgreen*5)) legend( label(1 "Yams") label(2 "Rice") ///
 						label(3 "Beans") label(4 "Cassava") label(5 "Sorghum") col(5)) ///
 						saving("$output/stata_graphs/ac_staple_nga", replace)
 
@@ -550,21 +631,6 @@
 	
 	restore 
 
-* Ethipia staple foods 
-	graph bar 		(mean) ac_teff ac_oil  ac_wheat ac_maize [pweight = phw]  if country == 1, ///
-						over(wave, label(labsize(large))) ///
-						ytitle("Percent unable to purchase", size(vlarge)) ///
-						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
-						bar(1, color(navy*1.5)) bar(2, color(teal*1.5)) bar(3, color(khaki*1.5)) ///
-						bar(4, color(brown*2.3)) bar(5, color(eltgreen*5)) ///
-						legend( label(1 "Teff") label(2 "Oil") ///
-						label(3 "Wheat") label(4 "Maize") col(4)) ///
-						saving("$output/stata_graphs/ac_staple_eth", replace)
-
-	grc1leg2		"$output/stata_graphs/ac_staple_eth.gph", col(2) iscale(.5) pos(6) commonscheme 
-	
-	graph export 	"$output/ac_staple_eth.png", as(png) replace
-	
 	
 * **********************************************************************
 * 9 - educational engagement

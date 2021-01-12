@@ -907,7 +907,7 @@
 						s6q1c__10 s6q1c__11 s6q1c__12 s6q1c__13 s6q1c__96 s6q1c_os ///
 						s6q3__1 s6q3__2 s6q3__3 s6q3__4 s6q3__5 s6q3__6 s6q3__7 ///
 						s6q3__8 s6q3__9 s6q3__10 s6q3__11 s6q3__12 s6q3__13 ///
-						s6q3__96 s6q3_os hh_a16 hh_a17 result s5q1c1__* ///
+						s6q3__96 s6q3_os hh_a16 hh_a17 s5q1c1__* ///
 						s5q1c4__* s5q2c__* s5q1c3__* s5q5__*  *_os ///
 						s13q5_* s13q6_* *details  s6q8c__2 s6q8c__99 s6q10__* ///
 						s5q17a_ot s5q1a2_2_oth s5q1b2_oth s5q2_2c__95 s5q2_2c_ot ///
@@ -917,7 +917,7 @@
 						s6qe6__95 s6qe6_ot s6qe2_ot s6qe3_ot s6qe4__95 s6qe4_ot ///
 						s6qf1 s6qf2__95 s6qf2_ot s6qf3 s6qf6__95 s6qf6_ot s6qf7__95 ///
 						s6qf7_ot s6qf10__95 s6qf10_ot s6qf4__95 s6qf4_ot s6qf5__95 ///
-						s6qf5_ot s6dq10_ot weight s2q9
+						s6qf5_ot s6dq10_ot weight s2q9 result
 
 * regional and sector information
 	gen				sector = 2 if urb_rural == 1

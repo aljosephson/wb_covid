@@ -1013,12 +1013,12 @@
 * 5 - end matter, clean up to save
 * **********************************************************************
 
-	drop 			interviewDate PID Above_18 y4_hhid
+	drop 			interviewDate PID Above_18 HHID
 	compress
 	describe
 	summarize
 
-	rename 			HHID hhid_mwi
+	rename 			y4_hhid hhid_mwi
 	lab var			hhid_mwi "household ID malawi"
 
 * save file

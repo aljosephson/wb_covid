@@ -75,7 +75,7 @@
 							 imargin(0 0 0 0) legend()
 					
 	graph export 		"$output/behavior_w1.png", as(png) replace	
-	graph export 		"$output/behavior_w1.eps", as(eps) replace
+	graph export 		"$output/behavior_w1.emf", as(emf) replace
 	
 	* sig tests
 		reg 			bh_3 i.country [pweight = phw] if wave_orig == 1 
@@ -90,7 +90,7 @@
 			test 			2.country = 1.country
 			test 			2.country = 3.country
 			test 			2.country = 4.country
-			
+ 			
 * over waves in mwi and uga 	
 	graph bar 			(mean) bh_3 bh_1 bh_2 bh_8 if country == 2 [pweight = phw], ///
 							over(wave, lab(labs(vlarge)))  title("Malawi", size(large)) ///
@@ -116,7 +116,7 @@
 							col(2) iscale(.5) commonscheme imargin(0 0 0 0) legend()
 					
 	graph export 		"$output/behavior_waves.png", as(png) replace
-	graph export 		"$output/behavior_waves.eps", as(eps) replace
+	graph export 		"$output/behavior_waves.emf", as(emf) replace
 	
 	* sig tests 
 		reg 			bh_3 i.wave [pweight = phw] if country == 2
@@ -167,7 +167,7 @@
 							imargin(0 0 0 0) legend()	
 						
 	graph export 		"$output/myth.png", as(png) replace
-	graph export 		"$output/myth.eps", as(eps) replace
+	graph export 		"$output/myth.emf", as(emf) replace
 	
 	
 * **********************************************************************
@@ -238,7 +238,7 @@
 							col(2) iscale(.5) commonscheme 
 
 	graph export 		"$output/income_all_line.png", as(png) replace
-	graph export 		"$output/income_all_line.eps", as(eps) replace
+	graph export 		"$output/income_all_line.emf", as(emf) replace
 	
 	* means and sig tests
 		mean farm_dwn [pweight = hhw] if country == 1 & wave == 4
@@ -324,7 +324,7 @@
 							col(1) iscale(.5) commonscheme imargin(0 0 0 0) 
 						
 	graph export 		"$output/bus_emp_inc.png", as(png) replace
-	graph export 		"$output/bus_emp_inc.eps", as(eps) replace
+	graph export 		"$output/bus_emp_inc.emf", as(emf) replace
 
 
 * **********************************************************************
@@ -348,7 +348,7 @@
 	grc1leg2 			"$output/stata_graphs/fies_modsev.gph", iscale(.5) pos(6) commonscheme 
 	
 	graph export 		"$output/fies.png", as(png) replace
-	graph export 		"$output/fies.eps", as(eps) replace
+	graph export 		"$output/fies.emf", as(emf) replace
 	
 	* sig tests
 	reg					p_mod i.wave [pweight = wt_18] if country == 2
@@ -388,7 +388,7 @@
 								col(1) iscale(.5) commonscheme imargin(0 0 0 0)
 														
 	graph export 			"$output/concerns_w1.png", as(png) replace
-	graph export 			"$output/concerns_w1.eps", as(eps) replace
+	graph export 			"$output/concerns_w1.emf", as(emf) replace
 
 * over waves in mwi and uga 
 	forval c = 1/2 {
@@ -417,7 +417,7 @@
 								col(1) iscale(.5) commonscheme imargin(0 0 0 0)
 								
 		graph export 		"$output/concern_waves.png", as(png) replace
-		graph export 		"$output/concern_waves.eps", as(eps) replace
+		graph export 		"$output/concern_waves.emf", as(emf) replace
 					
 
 * sig tests 
@@ -493,7 +493,7 @@
 						col(2) iscale(.5) commonscheme 
 						
 	graph export 	"$output/cope.png", as(png) replace
-	graph export 	"$output/cope.eps", as(eps) replace
+	graph export 	"$output/cope.emf", as(emf) replace
 	
 					
 * **********************************************************************
@@ -538,7 +538,7 @@
 								col(2) iscale(.5) commonscheme
 						
 	graph export 			"$output/asst.png", as(png) replace
-	graph export 			"$output/asst.eps", as(eps) replace
+	graph export 			"$output/asst.emf", as(emf) replace
 	
 	reg 				asst_any i.wave [pweight = hhw] if country == 4
 		test 			6.wave = 9.wave
@@ -606,7 +606,7 @@
 								col(2) commonscheme 
 								
 	graph export 			"$output/ac_medserv.png", as(png) replace
-	graph export 			"$output/ac_medserv.eps", as(eps) replace
+	graph export 			"$output/ac_medserv.emf", as(emf) replace
 	
 * medicine 
 	mean 				ac_med [pweight = phw] if country == 1 & wave == 4
@@ -669,7 +669,7 @@
 								col(2) commonscheme 
 								
 	graph export 			"$output/ac_staple.png", as(png) replace
-	graph export 			"$output/ac_staple.eps", as(eps) replace
+	graph export 			"$output/ac_staple.emf", as(emf) replace
 	
 * Ethipia staple foods 
 	graph bar 		(mean) ac_teff ac_oil  ac_wheat ac_maize [pweight = phw]  if country == 1, ///
@@ -771,7 +771,7 @@
 						iscale(.5) commonscheme 
 						
 	graph export 	"$output/edu_eng.png", as(png) replace
-	graph export 	"$output/edu_eng.eps", as(eps) replace
+	graph export 	"$output/edu_eng.emf", as(emf) replace
 				
 
 * **********************************************************************
@@ -829,7 +829,7 @@
 						col(2) iscale(.5) commonscheme imargin(0 0 0 0) legend() 
 						
 	graph export 	"$output/edu_how.png", as(png) replace
-	graph export 	"$output/edu_how.eps", as(eps) replace
+	graph export 	"$output/edu_how.emf", as(emf) replace
 
 
 * **********************************************************************

@@ -821,11 +821,11 @@
 							bar(4, color(brown*2.3)) bar(5, color(eltgreen*5)) bar(6, color(maroon*2.3)) ///
 							legend( size(medsmall) ///
 							label (1 "Educational radio programs") ///
-							label (2 "Using mobile learning apps") ///
+							label (2 "Used mobile learning apps") ///
 							label (3 "Watched education television") ///
 							label (4 "Session with teacher") ///
-							label (5 "Reading material from government") ///
-							label (6 "Revised textbooks and notes") pos(6) col(2)) ///
+							label (5 "Read material from government") ///
+							label (6 "Reviewed textbooks and notes") pos(6) col(2)) ///
 							ytitle("Percent of households", size(vlarge))  ///
 							saving("$output/stata_graphs/educont_eth", replace)
 	

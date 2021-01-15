@@ -358,7 +358,10 @@
 	
 	mean 				p_mod [pweight = wt_18] if wave == 6
 	mean 				p_mod [pweight = wt_18] if wave == 8
-
+	total 				p_mod [pweight = wt_18] if wave == 6
+	di					%18.3fc _b[p_mod]
+	total 				p_mod [pweight = wt_18] if wave == 8 
+	di					%18.3fc _b[p_mod]
 	
 * **********************************************************************
 * 5 - concerns 

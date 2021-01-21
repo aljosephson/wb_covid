@@ -1,20 +1,19 @@
 * Project: WB COVID
 * Created on: September 2020 
 * Created by: amf
-* Edited by: jdm, alj 
-* Last edit: 29 September 2020 
+* Edited by: jdm 
+* Last edit: 19 November 2020 
 * Stata v.16.1
 
 * does
 	* runs regressions and produces tables for supplemental material
 
 * assumes
-	* cleaned country data
+	* cleaned country data (lsms_panel) & pre/post covid FIES data
 	* palettes and colrspace installed	
 
 * TO DO:
-	* add in new waves and update with any revisions
-	* QC based on old version
+	* complete
 
 
 * **********************************************************************
@@ -24,6 +23,7 @@
 * define
 	global					ans		=	"$data/analysis"
 	global					output	=	"$data/analysis/tables"
+	global					figure	=	"$data/analysis/figures"
 	global					logout	=	"$data/analysis/logs"
 	local 					tabnum  =   1
 	
@@ -48,7 +48,8 @@
 	local 					counter = 1
 		reg 				gov_1 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 		outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-							replace excel dec(3) ctitle(S`tabnum' gov_1) label alpha(0.001, 0.01, 0.05)
+							replace excel dec(3) ctitle(S`tabnum' gov_01) label noas stats(coef pval ci) ///
+							drop (gov_01)
 						
 	* Wald test for differences between other countries
 		test				1.country = 3.country
@@ -78,7 +79,8 @@
 	foreach 				var in gov_2 gov_4 gov_5 gov_6 gov_10 {
 		reg 				`var' ib(2).country [pweight = phw] if wave == 1, vce(robust)
 		outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-							append excel dec(3) ctitle(S`tabnum' `var') label
+							append excel dec(3) ctitle(S`tabnum' `var') label noas stats(coef pval ci) ///
+							drop (`var')
 						
 	* Wald test for differences between other countries
 		test				1.country = 3.country
@@ -138,7 +140,8 @@ local tabnum = `tabnum' + 1
 	foreach 				var in know_1 know_2 know_3 know_5 know_6 know_7 {
 		reg 				`var' ib(2).country [pweight = phw] if wave == 1, vce(robust)
 		outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-							append excel dec(3) ctitle(S`tabnum' `var') label
+							append excel dec(3) ctitle(S`tabnum' `var') label noas stats(coef pval ci) ///
+							drop (`var')
 								
 	* Wald test for differences between other countries
 		test				1.country = 3.country
@@ -184,11 +187,7 @@ local tabnum = `tabnum' + 1
 	
 
 * **********************************************************************
-* 2 - create tables for Fig. 2
-* **********************************************************************	
-	
-* **********************************************************************
-* 2a - create tables S3-S5 for Fig. 2A
+* 1c - create tables S3-S4 for Fig. 1C
 * **********************************************************************
 
 *** table S3 ***
@@ -198,7 +197,8 @@ local tabnum = `tabnum' + 1
 * handwashed with Soap More Often Since Outbreak
 	reg 					bh_1 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-							append excel dec(3) ctitle(S`tabnum' Handwashed with soap more often) label
+							append excel dec(3) ctitle(S`tabnum' Handwashed with soap more often) ///
+							label noas stats(coef pval ci) drop (bh_01)
 	
 	* Wald test for differences between other countries
 		test				1.country = 3.country
@@ -226,7 +226,8 @@ local tabnum = `tabnum' + 1
 * avoided Handshakes/Physical Greetings Since Outbreak
 	reg 					bh_2 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-							append excel dec(3) ctitle(S`tabnum' Avoided physical greetings) label
+							append excel dec(3) ctitle(S`tabnum' Avoided physical greetings) label ///
+							noas stats(coef pval ci) drop (bh_02)
 	
 	* Wald test for differences between other countries
 		test				1.country = 3.country
@@ -253,7 +254,8 @@ local tabnum = `tabnum' + 1
 * avoided Crowds and Gatherings Since Outbreak
 	reg 					bh_3 ib(2).country [pweight = phw] if wave == 1, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-							append excel dec(3) ctitle(S`tabnum' Avoided crowds) label
+							append excel dec(3) ctitle(S`tabnum' Avoided crowds) label noas stats(coef pval ci) ///
+							drop (bh_03)
 	
 	* Wald test for differences between other countries
 		test				1.country = 3.country
@@ -299,83 +301,43 @@ local tabnum = `tabnum' + 1
 *** table S4 ***
 
 local tabnum = `tabnum' + 1
-		
-* percentage over time for Malawi and Uganda
-
-	* calculate statistics and store results
-		foreach				c in 2 4 {
-			forval 			b = 1/3 {
-				forval 		w = 1/2 {
-					mean			bh_`b' [pweight = phw] if country == `c', over(wave)	
-						local		n_c`c'b`b' = e(N)
-						local 		mean_c`c'b`b'w`w' = el(e(b),1,`w')
-						local		sd_c`c'b`b'w`w' = sqrt(el(e(V),`w',`w'))
-				}
-			}
-		}
-			
-	* create table S4 with stored locals
-		preserve
-			clear
-			set 			obs 5
-			gen 			wave = cond(_n<3,"w1",cond(_n<5,"w2",""))
-			gen 			stat = cond(_n == 1 | _n == 3, "mean",cond(_n == 5, "Observations","sd"))
-			foreach 		country in c2 c4 {
-				foreach 	behavior in 1 2 3 {
-					gen 	`country'_b`behavior' = .
-				}
-			}
-			foreach 		c in 2 4 {
-				forval 		b = 1/3 {
-					forval	w = 1/2 {
-						foreach stat in mean sd {
-						  replace c`c'_b`b' = ``stat'_c`c'b`b'w`w'' if wave == "w`w'" & stat == "`stat'"  
-						}
-					}
-				}
-			}
-			foreach 		c in 2 4 {
-				forval 		b = 1/3 {
-					replace c`c'_b`b' = `n_c`c'b`b'' if stat == "Observations"
-				}
-			}
-			export 			excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
-							sheetreplace sheet(sumstatsS`tabnum') first(var)
-		restore	
-		
-*** table S5 ***
-
-local tabnum = `tabnum' + 1
 
 * regressions of behavior on waves in Malawi
 	reg						bh_1 i.wave [pweight = phw] if country == 2, vce(robust) 
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-							append excel dec(3) ctitle(S`tabnum' Malawi Behavior 1) label
+							append excel dec(3) ctitle(S`tabnum' Malawi Behavior 1) label ///
+							noas stats(coef pval ci) drop (bh_01)
 	
 	reg						bh_2 i.wave [pweight = phw] if country == 2, vce(robust) 
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-							append excel dec(3) ctitle(S`tabnum' Malawi Behavior 2) label
-	
-	reg						bh_3 i.wave [pweight = phw] if country == 2, vce(robust) 
+							append excel dec(3) ctitle(S`tabnum' Malawi Behavior 2) label ///
+							noas stats(coef pval ci) drop (bh_02)
+	 
+	reg						bh_03 i.wave [pweight = phw] if country == 2, vce(robust) 
+
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-							append excel dec(3) ctitle(S`tabnum' Malawi Behavior 3) label
+							append excel dec(3) ctitle(S`tabnum' Malawi Behavior 3) label ///
+							noas stats(coef pval ci) drop (bh_03)
 	
 * regressions of behavior on waves in Uganda
 	reg						bh_1 i.wave [pweight = phw] if country == 4, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-							append excel dec(3) ctitle(S`tabnum' Uganda Behavior 1) label
+							append excel dec(3) ctitle(S`tabnum' Uganda Behavior 1) label ///
+							noas stats(coef pval ci) drop (bh_01)
 	
 	reg						bh_2 i.wave [pweight = phw] if country == 4, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-							append excel dec(3) ctitle(S`tabnum' Uganda Behavior 2) label
+							append excel dec(3) ctitle(S`tabnum' Uganda Behavior 2) label ///
+							noas stats(coef pval ci) drop (bh_02)
 	
 	reg						bh_3 i.wave [pweight = phw] if country == 4, vce(robust)		
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-							append excel dec(3) ctitle(S`tabnum' Uganda Behavior 3) label	
+							append excel dec(3) ctitle(S`tabnum' Uganda Behavior 3) label ///
+							noas stats(coef pval ci) drop (bh_03)
 		
 		
 * **********************************************************************
-* 2b - create tables S6-S7 for Fig. 2B
+* 1d - create tables S5-S6 for Fig. 1D
 * **********************************************************************
 
 preserve
@@ -385,32 +347,36 @@ preserve
 	    replace 			`v' = . if `v' == 3
 	}	
 
-*** table S6 ***
+*** table S5 ***
 
 local tabnum = `tabnum' + 1
 	
 * africans are immune to corona virus
 	reg 					myth_2 i.country [pweight = phw], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-							append excel dec(3) ctitle(S`tabnum' Africans immune) label
+							append excel dec(3) ctitle(S`tabnum' Africans immune) label noas stats(coef pval ci) ///
+							drop (myth_02)
 							
 * corona virus does not affect children
 	reg 					myth_3 i.country [pweight = phw], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-							append excel dec(3) ctitle(S`tabnum' Not affect children) label
+							append excel dec(3) ctitle(S`tabnum' Not affect children) label noas stats(coef pval ci) ///
+							drop (myth_03)
 	
 * corona virus cannot survive in warm weather
 	reg 					myth_4 i.country [pweight = phw], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-							append excel dec(3) ctitle(S`tabnum' Survive warm weather) label
+							append excel dec(3) ctitle(S`tabnum' Survive warm weather) label noas stats(coef pval ci) ///
+							drop (myth_04)
 	
 * corona virus is just common flu
 	reg 					myth_5 i.country [pweight = phw], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results", ///
-							append excel dec(3) ctitle(S`tabnum' Common flu) label
+							append excel dec(3) ctitle(S`tabnum' Common flu) label noas stats(coef pval ci) ///
+							drop (myth_05)
 restore
 
-*** table S7 ***
+*** table S6 ***
 
 local tabnum = `tabnum' + 1
 
@@ -478,55 +444,14 @@ local tabnum = `tabnum' + 1
 
 		
 * **********************************************************************
-* 3 - create tables for Fig. 3
+* 3 - create tables for Fig. 2
 * **********************************************************************
 
 * **********************************************************************
-* 3a - create Table S8-S10 for Fig. 3A
+* 2a - create Table S7-S9 for Fig. 2A
 * **********************************************************************
 
-*** table S8 ***
-
-local tabnum = `tabnum' + 1
-
-* summary statistics on losses of income
-	foreach 				var in dwn farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
-		mean 				`var' [pweight = phw] if wave == 1 
-			local 			n_`var' = e(N)
-			local 			mean_`var' = el(e(b),1,1)
-			local 			msd_`var' = sqrt(el(e(V),1,1))
-		total 				`var' [pweight = phw]
-			local 			tot_`var' = el(e(b),1,1)
-			local 			tsd_`var' = sqrt(el(e(V),1,1))
-	}	
-	* format table
-		preserve
-			keep 			dwn farm_dwn bus_dwn wage_dwn remit_dwn other_dwn
-			drop 			if dwn < 2 //drop all observations
-			label 			variable dwn "Any type of income loss"
-			label 			variable remit_dwn "Remittances reduced"
-			label 			variable other_dwn "Other income sources reduced"
-			set 			obs 5
-			gen 			stat = cond(_n==1,"tot",cond(_n==2,"tsd",cond(_n==3,"mean",cond(_n==4,"msd","n"))))
-			order 			stat dwn *
-			foreach 		var in farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
-				decode 		`var', gen(`var'_de)
-				destring 	`var'_de, replace
-				drop 		`var'
-			}
-	* populate table with stored results
-			foreach 		var in dwn farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
-			    foreach 	s in n mean msd tot tsd {
-					replace `var' = ``s'_`var'' if stat == "`s'"
-				}
-			}
-			
-		export 				excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
-							sheetreplace sheet(sumstatsS`tabnum') first(varlabels)
-		restore
-		
-
-*** table S9 ***	
+*** table S7 ***	
 
 local tabnum = `tabnum' + 1
 
@@ -581,10 +506,49 @@ local tabnum = `tabnum' + 1
 		
 		export 				excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
 							sheetreplace sheet(sumstatsS`tabnum') first(varlabels)			
-	restore				
-		
+	restore		
+	
+*** table S8 ***
 
-*** table S10 ***	
+local tabnum = `tabnum' + 1
+
+* summary statistics on losses of income
+	foreach 				var in dwn farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
+		mean 				`var' [pweight = phw] if wave == 1 
+			local 			n_`var' = e(N)
+			local 			mean_`var' = el(e(b),1,1)
+			local 			msd_`var' = sqrt(el(e(V),1,1))
+		total 				`var' [pweight = phw] if wave == 1 
+			local 			tot_`var' = el(e(b),1,1)
+			local 			tsd_`var' = sqrt(el(e(V),1,1))
+	}	
+	* format table
+		preserve
+			keep 			dwn farm_dwn bus_dwn wage_dwn remit_dwn other_dwn
+			drop 			if dwn < 2 //drop all observations
+			label 			variable dwn "Any type of income loss"
+			label 			variable remit_dwn "Remittances reduced"
+			label 			variable other_dwn "Other income sources reduced"
+			set 			obs 5
+			gen 			stat = cond(_n==1,"tot",cond(_n==2,"tsd",cond(_n==3,"mean",cond(_n==4,"msd","n"))))
+			order 			stat dwn *
+			foreach 		var in farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
+				decode 		`var', gen(`var'_de)
+				destring 	`var'_de, replace
+				drop 		`var'
+			}
+	* populate table with stored results
+			foreach 		var in dwn farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
+			    foreach 	s in n mean msd tot tsd {
+					replace `var' = ``s'_`var'' if stat == "`s'"
+				}
+			}
+			
+		export 				excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
+							sheetreplace sheet(sumstatsS`tabnum') first(varlabels)
+		restore		
+
+*** table S9 ***	
 
 local tabnum = `tabnum' + 1
 			
@@ -593,7 +557,9 @@ local tabnum = `tabnum' + 1
 * regressions for income loss: farm
 	reg 					farm_dwn ib(2).country [pweight = hhw] if wave == 1, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
-							replace excel dec(3) ctitle(S`tabnum' farm_dwn) 
+							replace excel dec(3) ctitle(S`tabnum' farm_dwn) noas stats(coef pval ci) ///
+							drop (farm_dwn)
+							
 	* Wald test for differences between other countries
 		test				1.country = 3.country
 		local 				t1_farm_dwn = r(p)
@@ -606,7 +572,9 @@ local tabnum = `tabnum' + 1
 	foreach 				var in bus_dwn wage_dwn remit_dwn other_dwn {
 		reg 				`var' ib(2).country [pweight = hhw] if wave == 1, vce(robust)
 		outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
-							append excel dec(3) ctitle(S`tabnum' `var') 
+							append excel dec(3) ctitle(S`tabnum' `var') noas stats(coef pval ci) ///
+							drop (`var')
+							
 	* Wald test for differences between other countries
 		test				1.country = 3.country
 		local 				t1_`var' = r(p)
@@ -630,7 +598,7 @@ local tabnum = `tabnum' + 1
 							sheetreplace sheet(testresultsS`tabnum') first(var)
 	restore
 	
-*** table s11 ***
+*** table s10 ***
 
 local tabnum = `tabnum' + 1
 
@@ -640,13 +608,16 @@ local tabnum = `tabnum' + 1
 	foreach 				var in farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
 		reg 				`var' i.sector ib(2).country [pweight = hhw] if wave == 1, vce(robust)
 		outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
-							append excel dec(3) ctitle(S`tabnum' `var') 	
+							append excel dec(3) ctitle(S`tabnum' `var') noas stats(coef pval ci) ///
+							drop (`var')
 	}
 
 	
 * **********************************************************************
-* 3b - create Table S12 for Fig. 3B
+* 2b - create Table S11 for Fig. 2B
 * **********************************************************************
+
+*** table s11 ***
 
 local tabnum = `tabnum' + 1
 
@@ -659,7 +630,9 @@ preserve
 	ologit 					bus_emp_inc i.wave ib(2).country [pweight = phw]
 	local 					pr2 = e(r2_p)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
-							append excel dec(3) ctitle(S`tabnum' bus rev loss)
+							append excel dec(3) ctitle(S`tabnum' bus rev loss) noas stats(coef pval ci) ///
+							drop (bus_emp_inc)
+							
 * Wald test for differences between other countries
 	test					1.country = 3.country
 	local 					ct1 = r(p)
@@ -686,16 +659,12 @@ preserve
 							sheetreplace sheet(testresultsS`tabnum') first(var)
 restore 
 
-		
-* **********************************************************************
-* 4 - create tables for Fig. 4
-* **********************************************************************
 
 * **********************************************************************
-* 4a - create Table S13-S15 for Fig. 4A
+* 2c - create Table S12-S13 for Fig. 2C
 * **********************************************************************
 
-*** table s13 ***
+*** table s12 ***
 
 local tabnum = `tabnum' + 1
 
@@ -774,7 +743,7 @@ preserve
 							sheetreplace sheet(sumstatsS`tabnum') first(var)
 restore 
 	
-*** table s14 ***
+*** table s12 ***
 
 local tabnum = `tabnum' + 1
 
@@ -787,7 +756,8 @@ preserve
 * regression for moderate food insecurity 
 	reg 					p_mod ib(2).country [pweight = wt_18], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
-							append excel dec(3) ctitle(S`tabnum' mod food insecurity)
+							append excel dec(3) ctitle(S`tabnum' mod food insecurity) noas stats(coef pval ci) ///
+							drop (p_mod)
 
 * Wald test for differences between other countries
 		test				1.country = 3.country
@@ -800,7 +770,8 @@ preserve
 * regression for severe food insecurity 
 	reg 					p_sev ib(2).country [pweight = wt_18], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
-							append excel dec(3) ctitle(S`tabnum' sev food insecurity)
+							append excel dec(3) ctitle(S`tabnum' sev food insecurity) noas stats(coef pval ci) ///
+							drop (p_sev)
 	
 * Wald test for differences between other countries
 		test				1.country = 3.country
@@ -830,10 +801,148 @@ restore
 
 
 * **********************************************************************
-* 4b - create Table S15 for Fig. 4B
+* 2d - create Table S14 for Fig. 2D
 * **********************************************************************
 
+*** table s14 ***
+
+local tabnum = `tabnum' + 1
+
+preserve 
+
+	* precovid Nigeria 
+		use				"$ans/raw/FIES/FIES_PreCOVID.dta", clear
+		keep 		if country=="Nigeria"
+		keep 		if sample=="Planting Post-COVID"
+		keep 		HHID p_mod p_sev 
+		gen 		time = 0
+
+		tempfile precovid
+		save `precovid'
+
+	* post-covid Nigeria
+		use			"$ans/raw/FIES/FIES_PostCOVID.dta", clear
+		keep 		if country=="Nigeria" & round==2
+
+	* merge in pre to post 	
+		merge 		1:1 HHID using `precovid'
+		keep 		if _merge==3
+		drop 		_merge
+
+		tempfile covid
+		save `covid'
+
+		keep 		HHID urban popweight_adult
+
+		tempfile analysis
+		save `analysis'
+
+	* combine
+		use 		`precovid', clear
+		merge 		1:1 HHID using `analysis'
+		assert 		_merge==3
+		drop 		_merge
+
+		tempfile precovid
+		save `precovid'
+
+		use 		`covid', clear
+		keep 		HHID urban popweight_adult p_mod p_sev
+		gen 		time = 1
+		append 		using `precovid'
+		encode 		HHID, gen(hhid)
+
+	* determine statistical differences - regressions 
+		xtset 			hhid time
+		xtreg 			p_mod i.time [pweight=popweight_adult], fe
+		outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
+							append excel dec(3) ctitle(S`tabnum' mod food insecurity) ///
+							label noas stats(coef pval ci) ///
+							
+		xtreg			p_sev i.time [pweight=popweight_adult], fe
+		outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
+							append excel dec(3) ctitle(S`tabnum' sev food insecurity) ///
+							label noas stats(coef pval ci) ///
+							
+restore	
+
+
 *** table s15 ***
+
+local tabnum = `tabnum' + 1
+
+preserve
+	
+	drop if 				country == 1 & wave == 2
+	drop if 				country == 2 & wave == 1
+	drop if 				country == 4 & wave == 1
+
+* summary statistics for concerns 
+	foreach 				var in concern_1 concern_2 {
+	    total 				`var' [pweight = phw]
+			local			tn_`var'_ca = e(N)
+			local 			ttot_`var'_ca = el(e(b),1,1)
+			local 			tsd_`var'_ca = sqrt(el(e(V),1,1))
+	}
+	foreach 				var in concern_1 concern_2 {
+	    foreach 			c in 1 2 3 4 {
+		    total 			`var' [pweight = phw] if country == `c'
+				local		tn_`var'_c`c' = e(N)
+				local 		ttot_`var'_c`c' = el(e(b),1,1)
+				local		tsd_`var'_c`c' = sqrt(el(e(V),1,1)) 
+		}
+	}
+		
+	foreach 				var in concern_01 concern_02 {
+		mean				`var' [pweight = phw] 
+			local 			mmean_`var'_ca = el(e(b),1,1)
+			local 			msd_`var'_ca = sqrt(el(e(V),1,1))
+	}
+	foreach 				var in concern_01 concern_02 {
+		forval 				c= 1/4 {
+			mean 			`var' [pweight = phw] if country == `c'
+				local 		mmean_`var'_c`c' = el(e(b),1,1)
+				local		msd_`var'_c`c' = sqrt(el(e(V),1,1))
+		}
+	} 
+	
+* create table of stored results
+	clear
+
+	set 					obs 5
+	gen 					stat = cond(mod(_n,2)!=0,"mean","sd")
+	replace 				stat = "n" if _n == 5 
+	expand 					2
+	replace 				stat = "tot" if _n == 3 | _n == 8 
+	gen 					concern = cond(_n<6,"concern_01","concern_02")
+	gen 					func = substr(stat,1,1)
+	replace 				func = func[_n-1] if func == "s"
+	replace 				func = "t" if func == "n"
+	
+	foreach 				c in a 1 2 3 4 {
+		gen 				c`c' = .
+	}
+	foreach 				c in a 1 2 3 4 {
+	    foreach 			stat in tot sd n {
+
+			foreach 		con in concern_01 concern_02 {
+				replace 	c`c' = `t`stat'_`con'_c`c'' if concern == "`con'" & stat == "`stat'" & func == "t"
+			}
+		}
+	}
+	foreach 				c in a 1 2 3 4 {
+	    foreach 			stat in mean sd {
+			foreach 		con in concern_01 concern_02 {
+				replace 	c`c' = `m`stat'_`con'_c`c'' if concern == "`con'" & stat == "`stat'" & func == "m"
+			}
+		}
+	}
+	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
+							sheetreplace sheet(sumstatsS`tabnum') first(var)	
+restore 
+
+
+*** table s16 ***
 
 local tabnum = `tabnum' + 1
 
@@ -845,9 +954,11 @@ preserve
 	drop if 				country == 2 & wave == 1
 	drop if 				country == 4 & wave == 1
 
-	reg 					p_mod concern_1 concern_2 ib(2).country [pweight = wt_18], vce(robust)
+	reg 					p_mod concern_01 concern_02 ib(2).country [pweight = wt_18], vce(robust)
+
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
-							append excel dec(3) ctitle(S`tabnum' concerns & food insec mod)
+							append excel dec(3) ctitle(S`tabnum' concerns & food insec mod) noas stats(coef pval ci) ///
+							drop (p_mod)
 					
 * Wald test for differences between other countries
 	test					1.country = 4.country
@@ -855,9 +966,11 @@ preserve
 
 * regression for concerns and food insecurity: severe  	
 	
-	reg 					p_sev concern_1 concern_2 ib(2).country [pweight = wt_18], vce(robust)
+	reg 					p_sev concern_01 concern_02 ib(2).country [pweight = wt_18], vce(robust)
+
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
-							append excel dec(3) ctitle(S`tabnum' concerns & food insec sev)	
+							append excel dec(3) ctitle(S`tabnum' concerns & food insec sev)	noas stats(coef pval ci) ///
+							drop (p_sev)
 					
 * Wald test for differences between other countries
 	test					1.country = 4.country
@@ -873,212 +986,7 @@ preserve
 							sheetreplace sheet(testresultsS`tabnum') first(var)
 restore 
 
-*** table s16 ***
-
-local tabnum = `tabnum' + 1
-
-preserve
-	
-	drop if 				country == 1 & wave == 2
-	drop if 				country == 2 & wave == 1
-	drop if 				country == 4 & wave == 1
-	
-* summary statistics for concerns 
-	foreach 				var in concern_1 concern_2 {
-	    total 				`var' [pweight = phw]
-			local			n_`var'_ca = e(N)
-			local 			tot_`var'_ca = el(e(b),1,1)
-			local 			sd_`var'_ca = sqrt(el(e(V),1,1))
-	}
-	foreach 				var in concern_1 concern_2 {
-	    foreach 			c in 1 2 3 4 {
-		    total 			`var' [pweight = phw] if country == `c'
-				local		n_`var'_c`c' = e(N)
-				local 		tot_`var'_c`c' = el(e(b),1,1)
-				local		sd_`var'_c`c' = sqrt(el(e(V),1,1)) 
-		}
-	}
-	
-* create table of stored results
-	clear
-	set 					obs 6
-	gen 					concern = cond(_n<4,"concern_1","concern_2")
-	gen 					stat = cond(_n==1|_n==4,"tot",cond(_n==2|_n==5,"sd","n"))
-	foreach 				c in a 1 2 3 4 {
-		gen 				c`c' = .
-	}
-	foreach 				c in a 1 2 3 4 {
-	    foreach 			stat in tot sd n {
-		    foreach 		con in concern_1 concern_2 {
-				replace 	c`c' = ``stat'_`con'_c`c'' if concern == "`con'" & stat == "`stat'"
-			}
-		}
-	}
-	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
-							sheetreplace sheet(sumstatsS`tabnum') first(var)	
-restore 
-
-
-*** figure s1 ***
-
-preserve
-
-	drop if 			country == 1 & wave == 2
-	drop if 			country == 2 & wave == 1
-	drop if 			country == 4 & wave == 1
-
-	gen					p_mod_1 = p_mod if quint == 1
-	gen					p_mod_2 = p_mod if quint == 2
-	gen					p_mod_3 = p_mod if quint == 3
-	gen					p_mod_4 = p_mod if quint == 4
-	gen					p_mod_5 = p_mod if quint == 5
-
-	colorpalette edkblue khaki, ipolate(15, power(1)) locals
-
-	graph bar 		(mean) p_mod_1 p_mod_2 p_mod_3 p_mod_4 p_mod_5 ///
-						[pweight = wt_18], over(concern_1, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
-						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
-						ytitle("Prevalence of moderate or severe food insecurity", size(vlarge))  ///
-						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
-						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
-						bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First Quintile")  ///
-						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
-						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
-						title("Concerned that family/self will fall ill with COVID-19", size(vlarge)) ///
-						saving("$output/fiesq1_modsev", replace)
-						
-	graph bar 		(mean) p_mod_1 p_mod_2 p_mod_3 p_mod_4 p_mod_5 ///
-						[pweight = wt_18], over(concern_2, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
-						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
-						ytitle("Prevalence of moderate or severe food insecurity", size(vlarge))  ///
-						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
-						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
-						bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First Quintile")  ///
-						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
-						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
-						title("Concerned about the financial threat of COVID-19", size(vlarge)) ///
-						saving("$output/fiesq2_modsev", replace)
-
-	restore
-
-	grc1leg2 		"$output/fiesq1_modsev.gph" "$output/fiesq2_modsev.gph", ///
-						col(3) iscale(.5) pos(6) commonscheme
-
-	graph export 	"$output/fiesquintetc1.emf", as(emf) replace
-
-* figure s2 ***
- 
-preserve
-
-	drop if 		country == 2 & wave == 1
-	drop if 		country == 4 & wave == 1
-
-	gen				p_sev_1 = p_sev if quint == 1
-	gen				p_sev_2 = p_sev if quint == 2
-	gen				p_sev_3 = p_sev if quint == 3
-	gen				p_sev_4 = p_sev if quint == 4
-	gen				p_sev_5 = p_sev if quint == 5
-
-	colorpalette edkblue khaki, ipolate(15, power(1)) locals
-
-	graph bar 		(mean) p_sev_1 p_sev_2 p_sev_3 p_sev_4 p_sev_5 ///
-						[pweight = wt_18], over(concern_1, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
-						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
-						ytitle("Prevalence of severe food insecurity", size(vlarge))  ///
-						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
-						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
-						bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First Quintile")  ///
-						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
-						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
-						title("Concerned that family/self will fall ill with COVID-19", size(vlarge)) ///
-						saving("$output/fiesq1_sev", replace)
-						
-	graph bar 		(mean) p_sev_1 p_sev_2 p_sev_3 p_sev_4 p_sev_5 ///
-						[pweight = wt_18], over(concern_2, lab(labs(vlarge))) over(country, lab(labs(vlarge))) ylabel(0 "0" ///
-						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
-						ytitle("Prevalence of severe food insecurity", size(vlarge))  ///
-						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
-						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
-						bar(5, fcolor(`13') lcolor(none))  legend(label (1 "First Quintile")  ///
-						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
-						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
-						title("Concerned about the financial threat of COVID-19", size(vlarge)) ///
-						saving("$output/fiesq2_sev", replace)
-
-	restore
-
-	grc1leg2 		"$output/fiesq1_sev.gph" "$output/fiesq2_sev.gph", ///
-						col(3) iscale(.5) pos(6) commonscheme
-
-	graph export 	"$output/fiesquintetc12.emf", as(emf) replace
-
-
 *** table s17 ***
-
-local tabnum = `tabnum' + 1
-
-preserve
-	
-	drop 					if country == 2 & wave == 1
-	drop 					if country == 4 & wave == 1
-	
-* regression for concern 1, by quintile and country 
-	reg 					concern_1 ib(1).quint ib(2).country [pweight = hhw], vce(robust)
-	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
-							append excel dec(3) ctitle(S`tabnum' concern 1 by quintile)
-					
-* Wald test for differences between other countries
-		test				1.country = 3.country
-		local 				c1_t1 = r(p)
-		test				1.country = 4.country
-		local 				c1_t2 = r(p)
-		test				3.country = 4.country
-		local 				c1_t3 = r(p)
-	
-		
-* regression for concern 2, by quintile and country 	
-	reg 					concern_2 ib(1).quint ib(2).country [pweight = hhw], vce(robust)
-	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
-							append excel dec(3) ctitle(S`tabnum' concern 2 by quintile)
-	
-* Wald test for differences between other countries
-		test				1.country = 3.country
-		local 				c2_t1 = r(p)
-		test				1.country = 4.country
-		local 				c2_t2 = r(p)
-		test				3.country = 4.country
-		local 				c2_t3 = r(p)
-				
-* create table of stored results
-	clear
-	set 					obs 3
-	gen 					testcountries =  cond(_n==1,"Ethiopia-Nigeria","")
-	replace 				testcountries = "Ethiopia-Uganda" in 2
-	replace 				testcountries = "Nigeria-Uganda" in 3
-	forval 					c = 1/2 {
-		gen 				result_concern_`c' = .
-		forval 				t = 1/3 {
-		    replace 		result_concern_`c' = `c`c'_t`t'' if _n == `t'
-		}
-	}
-	
-	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
-							sheetreplace sheet(testresultsS`tabnum') first(var)	
-		
-restore 
-
-
-		
-* **********************************************************************
-* 5 - create tables for Fig. 5
-* **********************************************************************
-
-* **********************************************************************
-* 5a - create Table S18-S21 for Fig. 5A
-* **********************************************************************
-
-
-*** table s18 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1126,7 +1034,7 @@ preserve
 restore							
 							
 							
-*** table s19 ***
+*** table s18 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1169,7 +1077,7 @@ export 						excel using "$output/Supplementary_Materials_Excel_Tables_Test_Resu
 							sheetreplace sheet(sumstatsS`tabnum') first(var)	
 restore
 
-*** table S20 ***
+*** table S19 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1191,7 +1099,9 @@ preserve
   * reduced non_food consumption, assistance from friends & family, any assistance
 	reg 					cope_11  ib(2).country [pweight = hhw], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
-							replace excel dec(3) ctitle(S`tabnum'_cope_11 )
+							replace excel dec(3) ctitle(S`tabnum'_cope_11 ) noas stats(coef pval ci) ///
+							drop (cope_11)
+							
 	* Wald test for differences between other countries
 		test				1.country = 3.country
 		local 				cope_11_t1 = r(p)
@@ -1203,7 +1113,9 @@ preserve
 	foreach 				var in cope_1 cope_9 cope_10 cope_3 asst_any {
 		reg 				`var' ib(2).country [pweight = hhw], vce(robust)
 		outreg2 			using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
-							append excel dec(3) ctitle(S`tabnum'_`var')
+							append excel dec(3) ctitle(S`tabnum'_`var') noas stats(coef pval ci) ///
+							drop (`var')
+							
 		* Wald test for differences between other countries
 			test			1.country = 3.country
 			local 			`var'_t1 = r(p)
@@ -1229,7 +1141,7 @@ export 						excel using "$output/Supplementary_Materials_Excel_Tables_Test_Resu
 							sheetreplace sheet(testresultsS`tabnum') first(var)	
 restore
 		
-*** table s21 ***
+*** table s20 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1252,17 +1164,18 @@ preserve
 	foreach 				var in cope_11 cope_1 cope_9 cope_10 cope_3 asst_any {
 	reg 					`var' i.sector ib(2).country [pweight = hhw], vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
-							append excel dec(3) ctitle(S`tabnum'_`var')
+							append excel dec(3) ctitle(S`tabnum'_`var') noas stats(coef pval ci) ///
+							drop (`var')
 	}	
 				
 restore
-
-
+				
+	
 * **********************************************************************
-* 5b - create Table S22-S23 for Fig. 5B
+* 3b - create Table S21-S22 for Fig. 3B
 * **********************************************************************
 
-*** table s22 ***
+*** table s21 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1296,78 +1209,127 @@ local tabnum = `tabnum' + 1
 						
 	restore
 
-*** table s23 ***
+*** table s22 ***
 
 local tabnum = `tabnum' + 1
 
 * regressions across quintiles
 
 * regression on access to medicine
-	reg						ac_med i.quint ib(2).country [pweight = phw] if wave == 1, vce(robust)
+	reg						ac_med i.quint [pweight = phw] if wave == 1, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
-							append excel dec(3) ctitle(S`tabnum' access to medicine)
+							append excel dec(3) ctitle(S`tabnum' access to medicine) noas stats(coef pval ci) ///
+							drop (ac_med)
 	
-	* Wald test for differences between other countries
-		test				1.country = 3.country
+	* Wald test for differences between other quintiles
+		test				1.quint = 2.quint
 		local 				med_t1 = r(p)
-		test				1.country = 4.country
+		test				1.quint = 3.quint
 		local 				med_t2 = r(p)
-		test				3.country = 4.country
-		local 				med_t3 = r(p)		
+		test				1.quint = 4.quint
+		local 				med_t3 = r(p)
+		test				1.quint = 5.quint
+		local 				med_t4 = r(p)
+		test				2.quint = 3.quint
+		local 				med_t5 = r(p)
+		test				2.quint = 4.quint
+		local 				med_t6 = r(p)
+		test				2.quint = 5.quint
+		local 				med_t7 = r(p)
+		test				3.quint = 4.quint
+		local 				med_t8 = r(p)
+		test				3.quint =5.quint
+		local 				med_t9 = r(p)
+		test				4.quint = 5.quint
+		local 				med_t10 = r(p)		
 		
 * regression on access to staple
-	reg						ac_staple i.quint ib(2).country [pweight = phw] if wave == 1, vce(robust)
+	reg						ac_staple i.quint [pweight = phw] if wave == 1, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
-							append excel dec(3) ctitle(S`tabnum' access to staple)
+							append excel dec(3) ctitle(S`tabnum' access to staple) noas stats(coef pval ci) ///
+							drop (ac_staple)
 	
-	* Wald test for differences between other countries
-		test				1.country = 3.country
+	* Wald test for differences between other quintiles
+		test				1.quint = 2.quint
 		local 				stap_t1 = r(p)
-		test				1.country = 4.country
+		test				1.quint = 3.quint
 		local 				stap_t2 = r(p)
-		test				3.country = 4.country
-		local 				stap_t3 = r(p)	
+		test				1.quint = 4.quint
+		local 				stap_t3 = r(p)
+		test				1.quint = 5.quint
+		local 				stap_t4 = r(p)
+		test				2.quint = 3.quint
+		local 				stap_t5 = r(p)
+		test				2.quint = 4.quint
+		local 				stap_t6 = r(p)
+		test				2.quint = 5.quint
+		local 				stap_t7 = r(p)
+		test				3.quint = 4.quint
+		local 				stap_t8 = r(p)
+		test				3.quint =5.quint
+		local 				stap_t9 = r(p)
+		test				4.quint = 5.quint
+		local 				stap_t10 = r(p)	
 		
 * regression on access to soap
-	reg						ac_soap i.quint ib(2).country [pweight = phw] if wave == 1, vce(robust)
+	reg						ac_soap i.quint [pweight = phw] if wave == 1, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
-							append excel dec(3) ctitle(S`tabnum' access to soap)
+							append excel dec(3) ctitle(S`tabnum' access to soap) noas stats(coef pval ci) ///
+							drop (ac_soap)
 	
-	* Wald test for differences between other countries
-		test				3.country = 4.country
-		local 				soap_t3 = r(p)		
+	* Wald test for differences between other quintiles
+		test				1.quint = 2.quint
+		local 				soap_t1 = r(p)
+		test				1.quint = 3.quint
+		local 				soap_t2 = r(p)
+		test				1.quint = 4.quint
+		local 				soap_t3 = r(p)
+		test				1.quint = 5.quint
+		local 				soap_t4 = r(p)
+		test				2.quint = 3.quint
+		local 				soap_t5 = r(p)
+		test				2.quint = 4.quint
+		local 				soap_t6 = r(p)
+		test				2.quint = 5.quint
+		local 				soap_t7 = r(p)
+		test				3.quint = 4.quint
+		local 				soap_t8 = r(p)
+		test				3.quint =5.quint
+		local 				soap_t9 = r(p)
+		test				4.quint = 5.quint
+		local 				soap_t10 = r(p)	
 		
 * create table of stored results
 preserve
 	clear
-	set 					obs 3
-	gen 					testcountries =  "Ethiopia-Nigeria"
-	replace 				testcountries = "Ethiopia-Uganda" in 2
-	replace 				testcountries = "Nigeria-Uganda" in 3
-	foreach					var in med stap {
+	set 					obs 10
+	gen 					testcountries =  cond(_n==1,"Quintiles 1-2","")
+	replace 				testcountries = "Quintiles 1-3" in 2
+	replace 				testcountries = "Quintiles 1-4" in 3
+	replace 				testcountries = "Quintiles 1-5" in 4
+	replace 				testcountries = "Quintiles 2-3" in 5
+	replace 				testcountries = "Quintiles 2-4" in 6
+	replace 				testcountries = "Quintiles 2-5" in 7
+	replace 				testcountries = "Quintiles 3-4" in 8
+	replace 				testcountries = "Quintiles 3-5" in 9
+	replace 				testcountries = "Quintiles 4-5" in 10
+	foreach					var in med stap soap {
 	    gen 				`var' = .
-		forval 				t = 1/3 {
+		forval 				t = 1/10 {
 		    replace 		`var' = ``var'_t`t'' in `t'
 		}
 	}
-	gen 					soap = `soap_t3' in 3
+	
 	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
 							sheetreplace sheet(testresultsS`tabnum') first(var)	
 restore					
 
 
-
-		
 * **********************************************************************
-* 6 - create tables for Fig. 6
+* 3c - create Table S23-S24 for Fig. 3A
 * **********************************************************************
 
-
-* **********************************************************************
-* 6a - create Table S24-S25 for Fig. 6A
-* **********************************************************************
-
-*** table s24 ***
+*** table s23 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1400,32 +1362,54 @@ local tabnum = `tabnum' + 1
 								sheetreplace sheet(sumstatsS`tabnum') first(var)	
 	restore
 
-*** table s25 ***
+*** table s24 ***
 
 local tabnum = `tabnum' + 1
 
 * regression of educational activity on quintile
-	reg						edu_act i.quint ib(2).country [pweight = phw] if wave == 1, vce(robust)
+	reg						edu_act i.quint [pweight = phw] if wave == 1, vce(robust)
 	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
-							append excel dec(3) ctitle(S`tabnum' edu act on quint)
+							append excel dec(3) ctitle(S`tabnum' edu act on quint) noas stats(coef pval ci) ///
+							drop (edu_act)
 		
-	* Wald test for differences between other countries
-		test				1.country = 3.country
+	* Wald test for differences between other quintiles
+		test				1.quint = 2.quint
 		local 				t1 = r(p)
-		test				1.country = 4.country
+		test				1.quint = 3.quint
 		local 				t2 = r(p)
-		test				3.country = 4.country
-		local 				t3 = r(p)		
+		test				1.quint = 4.quint
+		local 				t3 = r(p)
+		test				1.quint = 5.quint
+		local 				t4 = r(p)
+		test				2.quint = 3.quint
+		local 				t5 = r(p)
+		test				2.quint = 4.quint
+		local 				t6 = r(p)
+		test				2.quint = 5.quint
+		local 				t7 = r(p)
+		test				3.quint = 4.quint
+		local 				t8 = r(p)
+		test				3.quint =5.quint
+		local 				t9 = r(p)
+		test				4.quint = 5.quint
+		local 				t10 = r(p)		
 		
 * create table of stored results
 preserve
 	clear
-	set 					obs 3
-	gen 					testcountries =  "Ethiopia-Nigeria"
-	replace 				testcountries = "Ethiopia-Uganda" in 2
-	replace 				testcountries = "Nigeria-Uganda" in 3
+	set 					obs 10
+	gen 					testcountries =  cond(_n==1,"Quintiles 1-2","")
+	replace 				testcountries = "Quintiles 1-3" in 2
+	replace 				testcountries = "Quintiles 1-4" in 3
+	replace 				testcountries = "Quintiles 1-5" in 4
+	replace 				testcountries = "Quintiles 2-3" in 5
+	replace 				testcountries = "Quintiles 2-4" in 6
+	replace 				testcountries = "Quintiles 2-5" in 7
+	replace 				testcountries = "Quintiles 3-4" in 8
+	replace 				testcountries = "Quintiles 3-5" in 9
+	replace 				testcountries = "Quintiles 4-5" in 10
 	gen 					pval = .
-	forval 					t = 1/3 {
+	forval 					t = 1/10 {
 		replace 			pval = `t`t'' in `t'
 	}
 	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
@@ -1434,75 +1418,10 @@ restore
 
 		
 * **********************************************************************
-* 6b - create Figure S3 and Table S26-S27 for Fig. 6B
+* 3d - create Figure S3 and Table S25 for Fig. 3D
 * **********************************************************************
 
-*** figure s3 ***	
-	graph bar 			p_mod p_sev [pweight = wt_18], over(edu_act, lab(labs(vlarge))) ///
-							over(country, lab(labs(vlarge))) ylabel(0 "0" .2 "20" .4 "40" .6 "60" ///
-							.8 "80" 1 "100", labs(large)) ytitle("Prevalence of food insecurity", size(large)) ///
-							bar(1, color(stone*1.5)) bar(2, color(maroon*1.5)) ///
-							legend(label (1 "Moderate or severe")  ///
-							label (2 "Severe") pos(6) col(2) size(medsmall)) ///
-							title("Children engaged in learning activities (yes/no)", size(vlarge)) ///
-							saving("$output/fies_edu", replace)
-						
-	grc1leg2 			"$output/fies_edu.gph", ///
-							col(3) iscale(.5) pos(6) commonscheme						
-						
-	graph export 		"$output/fies_edu1.emf", as(emf) replace
-
-	
-*** table s26 ***
-
-local tabnum = `tabnum' + 1
-
-* fies and educational activity
-	preserve
-	
-	drop if					country == 2 & wave == 1
-	drop if					country == 4 & wave == 2
-
-	reg						p_mod edu_act ib(2).country [pweight = shw], vce(robust)
-	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
-							append excel dec(3) ctitle(S`tabnum' edu act mod)
-
-	* Wald test for differences between other countries
-		test				1.country = 3.country
-		local 				mod_t1 = r(p)
-		test				1.country = 4.country
-		local 				mod_t2 = r(p)
-		test				3.country = 4.country
-		local 				mod_t3 = r(p)		
-
-	reg						p_sev edu_act ib(2).country [pweight = shw], vce(robust)
-	outreg2 				using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
-							append excel dec(3) ctitle(S`tabnum' edu act sev)
-	* Wald test for differences between other countries
-		test				1.country = 3.country
-		local 				sev_t1 = r(p)
-		test				1.country = 4.country
-		local 				sev_t2 = r(p)
-		test				3.country = 4.country
-		local 				sev_t3 = r(p)		
-		
-* create table of stored results
-	clear
-	set 					obs 3
-	gen 					testcountries =  "Ethiopia-Nigeria"
-	replace 				testcountries = "Ethiopia-Uganda" in 2
-	replace 				testcountries = "Nigeria-Uganda" in 3
-	foreach					var in mod sev {
-	    gen 				`var' = .
-		forval 				t = 1/3 {
-		    replace 		`var' = ``var'_t`t'' in `t'
-		}
-	}
-	export 					excel using "$output/Supplementary_Materials_Excel_Tables_Test_Results", ///
-							sheetreplace sheet(testresultsS`tabnum') first(var)
-	restore
-	
-*** table s27 ***
+*** table s25 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1511,7 +1430,8 @@ local tabnum = `tabnum' + 1
 	    forval 				c = 1/3 {
 			reg				`var' i.wave [pweight = shw] if country == `c', vce(robust)	
 			outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig3", ///
-							append excel dec(3) ctitle(S`tabnum' `var' country `c')
+							append excel dec(3) ctitle(S`tabnum' `var' country `c') noas stats(coef pval ci) ///
+							drop (`var')
 		}
 	}
 

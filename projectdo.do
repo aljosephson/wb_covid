@@ -94,11 +94,11 @@ if $pack == 1 {
 * 1 - run household data cleaning .do file
 * **********************************************************************
 
-*	do 			"$code/ethiopia/eth_build.do"			//	builds Ethiopia panel
-*	do 			"$code/malawi/mwi_build.do"				//	builds Malawi panel
-*	do 			"$code/nigeria/nga_reshape.do"			//	reshapes Nigeria wide data
-*	do 			"$code/nigeria/nga_build.do"			//	builds Nigeria panel
-*	do 			"$code/uganda/uga_build.do"				//	builds Uganda panel
+	do 			"$code/ethiopia/eth_build.do"			//	builds Ethiopia panel
+	do 			"$code/malawi/mwi_build.do"				//	builds Malawi panel
+	do 			"$code/nigeria/nga_reshape.do"			//	reshapes Nigeria wide data
+	do 			"$code/nigeria/nga_build.do"			//	builds Nigeria panel
+	do 			"$code/uganda/uga_build.do"				//	builds Uganda panel
 		
 * **********************************************************************
 * 2 - run analysis .do files

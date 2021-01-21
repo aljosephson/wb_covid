@@ -1,8 +1,8 @@
 * Project: WB COVID
 * Created on: July 2020
 * Created by: jdm
-* Edited by: alj
-* Last edit: 29 September 2020
+* Edited by: jdm
+* Last edit: 19 November 2020
 * Stata v.16.1
 
 * does
@@ -30,14 +30,14 @@
 
 * open log
 	cap log 		close
-	log using		"$logout/presentation_graphs", append
+	log using		"$logout/analysis_graphs", append
 
 * read in data
 	use				"$ans/lsms_panel", clear
 
 	
 * **********************************************************************
-* 1 - government restrictions and knowledge
+* 1 - knowledge of covid-19 restrictions, behaviours, and false beliefs
 * **********************************************************************
 
 
@@ -56,9 +56,9 @@
 						label (5 "Closed businesses") label (6 "Stopped social gatherings") ///
 						pos (6) col(3) size(medsmall)) saving("$output/restriction", replace)
 
-	grc1leg2  		 "$output/restriction.gph", col(3) iscale(.5) commonscheme ///
+	grc1leg2  		"$output/restriction.gph", col(3) iscale(.5) commonscheme ///
 						title("A", size(huge)) imargin(0 0 0 0) legend()
-						
+					
 	graph export 	"$output/restriction.eps", as(eps) replace
 
 
@@ -76,35 +76,31 @@
 						label (6 "Socially distance") pos (6) col(3) ///
 						size(medsmall)) saving("$output/knowledge", replace)
 
-	grc1leg2  		 "$output/knowledge.gph", col(3) iscale(.5) commonscheme ///
+	grc1leg2		"$output/knowledge.gph", col(3) iscale(.5) commonscheme ///
 						title("B", size(huge)) imargin(0 0 0 0) legend()
 						
-	graph export 	"$output/knowledge.eps", as(eps) replace
+	graph export	"$output/knowledge.eps", as(eps) replace
+						
 
-
-* **********************************************************************
-* 2 - behavior and myths
-* **********************************************************************
-
-* graph A - changes in behavior
+* graph C - changes in behaviour
 	graph bar 		(mean) bh_01 bh_02 bh_03 if wave == 1 [pweight = phw], ///
 						over(country, lab(labs(vlarge)))  ///
 						bar(1, color(maroon*1.5)) ///
 						bar(2, color(navy*1.5)) bar(3, color(stone*1.5)) ///
-						ytitle("Individual's change in behavior to reduce exposure (%)", size(vlarge)) ///
+						ytitle("Individual's change in behaviour to reduce exposure (%)", size(vlarge)) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
 						legend(	label (1 "Increased hand washing") ///
 						label (2 "Avoided physical contact") ///
 						label (3 "Avoided crowds") pos(6) col(3) ///
 						size(medsmall)) saving("$output/behavior", replace)
 
-	grc1leg2  		 "$output/behavior.gph", col(3) iscale(.5) commonscheme ///
+	grc1leg2  		"$output/behavior.gph", col(3) iscale(.5) commonscheme ///
 						title("C", size(huge)) imargin(0 0 0 0) legend()	
-						
+
 	graph export 	"$output/behavior.eps", as(eps) replace
+	
 
-
-* graph B - false beliefs
+* graph D - false beliefs
 	preserve
 
 	drop if			country == 1 | country == 3
@@ -130,14 +126,15 @@
 
 	restore
 	
-	grc1leg2  		 "$output/myth.gph", col(3) iscale(.5) commonscheme ///
+	grc1leg2  		"$output/myth.gph", col(3) iscale(.5) commonscheme ///
 						title("D", size(huge)) imargin(0 0 0 0) legend()	
 						
 	graph export 	"$output/myth.eps", as(eps) replace
 
 
+	
 * **********************************************************************
-* 3 - income and business revenue
+* 2 - household income, food insecurity, and concerns about covid-19
 * **********************************************************************
 
 * graph A - income loss by sector
@@ -225,12 +222,8 @@
 						
 	graph export 	"$output/bus_emp_inc.eps", as(eps) replace
 
-
-* **********************************************************************
-* 4 - food insecurity and concerns
-* **********************************************************************
 	
-* graph A - FIES score and consumption quntile
+* graph C - FIES score and consumption quntile
 	preserve
 	drop if 		country == 1 & wave == 2
 	drop if 		country == 2 & wave == 1
@@ -278,7 +271,7 @@
 	graph export 	"$output/fies.eps", as(eps) replace
 
 
-* graph B - concerns with FIES
+* graph D - concerns with FIES
 	preserve
 	drop if			country == 2 & wave == 1
 	drop if			country == 4 & wave == 1
@@ -310,7 +303,7 @@
 
 
 * **********************************************************************
-* 5 - coping and access
+* 3 - household coping strategies and access to basics necessities
 * **********************************************************************
 
 * graph A - coping mechanisms
@@ -334,7 +327,7 @@
 						legend( label (1 "Relied on savings") label (2 "Sale of asset") ///
 						label (3 "Reduced food cons.") label (4 "Reduced non-food cons.") ///
 						label (5 "Help from family") ///
-						label (6 "Recieved assistance") /// 
+						label (6 "Received assistance") /// 
 						label (7 "Did nothing") size(medsmall) pos(6) col(3)) ///
 						saving("$output/cope_all.gph", replace)
 
@@ -426,12 +419,8 @@
 						
 	graph export 	"$output/access.eps", as(eps) replace
 
-
-* **********************************************************************
-* 6 - create graphs on concerns and access and education
-* **********************************************************************
 	
-* graph A - education and food
+* graph C - education and food
 	gen				edu_act_01 = edu_act if quint == 1
 	gen				edu_act_02 = edu_act if quint == 2
 	gen				edu_act_03 = edu_act if quint == 3
@@ -461,7 +450,7 @@
 	graph export "$output/edu_quint.eps", as(eps) replace
 						
 
-* graph B - education activities
+* graph D - education activities
 	graph bar		edu_04 edu_02 edu_03 edu_05 [pweight = hhw] if country == 1 ///
 						, over(wave, relabel (1 "May" 2 "June" 3 "July") label(labsize(vlarge))) over(country, label(labsize(vlarge))) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///

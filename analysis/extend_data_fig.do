@@ -2,7 +2,7 @@
 * Created on: November 2020
 * Created by: alj
 * Edited by: alj
-* Last edit: 17 November 2020
+* Last edit: 22 November 2020
 * Stata v.16.1
 
 * does
@@ -26,7 +26,6 @@
 * define
 	global	ans		=	"$data/analysis"
 	global	output	=	"$data/analysis/figures"
-	global	present =	"$output/presentation"
 	global	logout	=	"$data/analysis/logs"
 
 * open log
@@ -43,7 +42,9 @@
 
 /*
 
-In Nigeria LSMS-ISA, the FIES module was administered twice – once in post-planting visit (July 2018-September 2019), and once in post-harvest (January 2019- February 2018). 
+NOTES ON POSSIBLE DATA USE 
+
+In Nigeria LSMS-ISA, the FIES module was administered twice – once in post-planting visit (July 2019-September 2019), and once in post-harvest (January 2019-February 2020). 
 
 Same as the FIES module include in the phone survey, the module had a reference period of last 30 days, and a reference population of adult household members. 
 
@@ -57,7 +58,8 @@ There are 4 samples for which FIES estimates could be derived from pre-COVID-19 
 
 4.	Planting Post-COVID – Portion of the Nigeria LSMS-ISA sample that received the FIES module in post-planting visit and that were also interviewed by the phone survey (in Round 1)
 
-To compare pre- vs. post-COVID-levels and in view of the data collection period, I would use Planting Post-COVID sample. And in terms of weights, I would use a common weight for pre- and post-COVID FIES variable and take the popweight_adult included in the phone survey database that I shared (so, the adjusted weight computed post-COVID, as part of the phone survey).
+To compare pre- vs. post-COVID-levels and in view of the data collection period, use Planting pre-COVID sample. 
+For weights, use a common weight for pre- and post-COVID FIES variable and take the popweight_adult included.
 
 */
 
@@ -114,7 +116,7 @@ save `precovid'
 
 * graph change over time 
 
-	lab def time 0 "Pre-COVID" 1 "Post-COVID"
+	lab def time 0 "Pre-COVID Food Insecurity Level" 1 "Post-COVID Food Insecurity Level"
 	label val time time 
 
 	graph bar 		(mean) p_mod p_sev [pweight = popweight_adult], over(time, lab(labs(vlarge))) ///
@@ -130,23 +132,15 @@ save `precovid'
 	grc1leg2 		"$output/fies_time.gph", col(3) iscale(.5) pos(6) ///
 						commonscheme
 						
-	graph export 	"$present/fies_time.eps", as(eps) replace
+	graph export 	"$output/fies_time.eps", as(eps) replace
 	
 * determine statistical differences - regressions 
 	
 xtset hhid time
 
 *national level 
-*	xtreg 			p_mod i.time [pweight=popweight_adult], fe
-*	xtreg			p_sev i.time [pweight=popweight_adult], fe
-
-* urban 
-*	xtreg 			p_mod i.time [pweight=popweight_adult] if urban==1, fe
-*	xtreg 			p_sev i.time [pweight=popweight_adult] if urban==1, fe
-
-* rural 
-*	xtreg 			p_mod i.time [pweight=popweight_adult] if urban==0, fe
-*	xtreg 			p_sev i.time [pweight=popweight_adult] if urban==0, fe
+	xtreg 			p_mod i.time [pweight=popweight_adult], fe
+	xtreg			p_sev i.time [pweight=popweight_adult], fe
 
 * **********************************************************************
 * 4 - end matter, clean up to save

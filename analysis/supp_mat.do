@@ -9,7 +9,7 @@
 	* runs regressions and produces tables for supplemental material
 
 * assumes
-	* cleaned country data
+	* cleaned country data (lsms_panel) & pre/post covid FIES data
 	* palettes and colrspace installed	
 
 * TO DO:
@@ -807,6 +807,69 @@ restore
 
 local tabnum = `tabnum' + 1
 
+preserve 
+
+	* precovid Nigeria 
+		use				"$ans/raw/FIES/FIES_PreCOVID.dta", clear
+		keep 		if country=="Nigeria"
+		keep 		if sample=="Planting Post-COVID"
+		keep 		HHID p_mod p_sev 
+		gen 		time = 0
+
+		tempfile precovid
+		save `precovid'
+
+	* post-covid Nigeria
+		use			"$ans/raw/FIES/FIES_PostCOVID.dta", clear
+		keep 		if country=="Nigeria" & round==2
+
+	* merge in pre to post 	
+		merge 		1:1 HHID using `precovid'
+		keep 		if _merge==3
+		drop 		_merge
+
+		tempfile covid
+		save `covid'
+
+		keep 		HHID urban popweight_adult
+
+		tempfile analysis
+		save `analysis'
+
+	* combine
+		use 		`precovid', clear
+		merge 		1:1 HHID using `analysis'
+		assert 		_merge==3
+		drop 		_merge
+
+		tempfile precovid
+		save `precovid'
+
+		use 		`covid', clear
+		keep 		HHID urban popweight_adult p_mod p_sev
+		gen 		time = 1
+		append 		using `precovid'
+		encode 		HHID, gen(hhid)
+	
+	* determine statistical differences - regressions 
+		xtset 			hhid time
+		xtreg 			p_mod i.time [pweight=popweight_adult], fe
+		outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
+							append excel dec(3) ctitle(S`tabnum' mod food insecurity) ///
+							label noas stats(coef pval ci) ///
+							
+		xtreg			p_sev i.time [pweight=popweight_adult], fe
+		outreg2 		using "$output/Supplementary_Materials_Excel_Tables_Reg_Results_fig2", ///
+							append excel dec(3) ctitle(S`tabnum' sev food insecurity) ///
+							label noas stats(coef pval ci) ///
+							
+restore	
+
+
+*** table s15 ***
+
+local tabnum = `tabnum' + 1
+
 preserve
 	
 	drop if 				country == 1 & wave == 2
@@ -875,7 +938,7 @@ preserve
 							sheetreplace sheet(sumstatsS`tabnum') first(var)	
 restore 
 
-*** table s15 ***
+*** table s16 ***
 
 local tabnum = `tabnum' + 1
 
@@ -917,7 +980,7 @@ preserve
 							sheetreplace sheet(testresultsS`tabnum') first(var)
 restore 
 
-*** table s16 ***
+*** table s17 ***
 
 local tabnum = `tabnum' + 1
 
@@ -965,7 +1028,7 @@ preserve
 restore							
 							
 							
-*** table s17***
+*** table s18 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1008,7 +1071,7 @@ export 						excel using "$output/Supplementary_Materials_Excel_Tables_Test_Resu
 							sheetreplace sheet(sumstatsS`tabnum') first(var)	
 restore
 
-*** table S18 ***
+*** table S19 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1072,7 +1135,7 @@ export 						excel using "$output/Supplementary_Materials_Excel_Tables_Test_Resu
 							sheetreplace sheet(testresultsS`tabnum') first(var)	
 restore
 		
-*** table s19 ***
+*** table s20 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1103,10 +1166,10 @@ restore
 				
 	
 * **********************************************************************
-* 3b - create Table S20-S21 for Fig. 3B
+* 3b - create Table S21-S22 for Fig. 3B
 * **********************************************************************
 
-*** table s20 ***
+*** table s21 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1140,7 +1203,7 @@ local tabnum = `tabnum' + 1
 						
 	restore
 
-*** table s21 ***
+*** table s22 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1257,10 +1320,10 @@ restore
 
 
 * **********************************************************************
-* 3c - create Table S22-S23 for Fig. 3A
+* 3c - create Table S23-S24 for Fig. 3A
 * **********************************************************************
 
-*** table s22 ***
+*** table s23 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1293,7 +1356,7 @@ local tabnum = `tabnum' + 1
 								sheetreplace sheet(sumstatsS`tabnum') first(var)	
 	restore
 
-*** table s23 ***
+*** table s24 ***
 
 local tabnum = `tabnum' + 1
 
@@ -1349,10 +1412,10 @@ restore
 
 		
 * **********************************************************************
-* 3d - create Figure S3 and Table S24 for Fig. 3D
+* 3d - create Figure S3 and Table S25 for Fig. 3D
 * **********************************************************************
 
-*** table s24 ***
+*** table s25 ***
 
 local tabnum = `tabnum' + 1
 

@@ -652,19 +652,9 @@
 	replace 			sch_child = 0 if sch_child == 2
 	replace				sch_child = . if sch_child == -99 
 	
-	
-* **********************************************************************
-* 8 - merge in covid data
-* **********************************************************************	
-
-* merge in covid data
-	merge m:1 			country region using "$export\covid_data"
-	
-	drop if				_merge == 2
-	drop 				_merge
 
 * *********************************************************************
-* 9 - end matter, clean up to save
+* 8 - end matter, clean up to save
 * **********************************************************************
 
 	order 				wave, after(hhid)
@@ -698,7 +688,7 @@
 	log	close	
 	
 * *********************************************************************
-* 10 - generate variable-country-wave crosswalk
+* 9 - generate variable-country-wave crosswalk
 * **********************************************************************	
 	preserve
 	drop 				country wave 

@@ -18,7 +18,6 @@
 	* finish cleaning credit variables
 	* add more notes and annotation
 	* search "NOTE" and review
-	* generate variable crosswalk (see end of doc)
 	
 	
 * **********************************************************************
@@ -167,13 +166,24 @@
 	gen 				shw = hhw * hhsize_schchild
 	lab var 			shw "Household school child sampling weight"	
 	order				phw ahw chw shw, after(hhw)
-						
+
+	
+* **********************************************************************
+* 3 - revise knowledge, myths, behavior, and coping variables
+* **********************************************************************
+	
 * know 
 	forval 				x = 1/11 {
 		replace 		know_`x' = 0 if know_`x' == 2
 		lab val 		know_`x' yesno
 	}
- 
+	
+* myths	
+ 	loc myth			myth_1 myth_2 myth_3 myth_4 myth_5
+	foreach 			var of varlist `myth' {
+		replace			`var' = 3 if `var' == -98
+	}
+	
 * behavior
 	replace 			bh_1 = 0 if bh_1 > 1 & bh_1 != .
 	replace 			bh_2 = 0 if bh_2 < 3 & country == 2
@@ -185,8 +195,11 @@
 	replace 			bh_4 = 0 if bh_4 == 2
 	replace 			bh_5 = 0 if bh_5 == 2
 	replace 			bh_7 = . if bh_7 < 0
-	replace 			bh_8 = . if bh_8 < 0
-	* NOTE: there were errors in recoding here, corrected
+	replace 			bh_8 = . if bh_8 < 0 | bh_8 == 6
+	replace 			bh_8 = 0 if bh_8 == 5
+	replace 			bh_8 = 1 if bh_8 == 1 | bh_8 == 2 | bh_8 == 3 | bh_8 == 4
+	lab var 			bh_8 "Wore mask in public in last 7 days"
+	lab val 			bh_8 yesno
 
 * coping (create cope_any = 1 if any coping used, 0 if not, . if no data for that wave)
 	egen 				tempgrp = group(country wave)
@@ -225,18 +238,19 @@
 		replace 		`v' = 0 if `v' == 2
 		lab val			`v' myth
 	}	
-	
+		
 
 * **********************************************************************
-* 3 - revise access variables as needed 
+* 4 - revise access variables as needed 
 * **********************************************************************	
  	
 * access to medicine 
 	replace				ac_med = . if ac_med < 0 & country == 1	
-	replace				ac_med = 0 if ac_med == 2 & country != 4
+	replace				ac_med = 0 if ac_med == 2 
+	replace				ac_med = . if ac_med == 3
+	replace 			ac_med = 2 if ac_med == 0 & country == 4
 	replace 			ac_med = 0 if ac_med == 1 & country == 4
 	replace 			ac_med = 1 if ac_med == 2 & country == 4
-	replace				ac_med = . if ac_med == 3
 	replace 			ac_med_why = . if ac_med_why < 0
 	* note "decrease in reg income" and "no money" both coded as 6
  	
@@ -325,9 +339,9 @@
 
 	replace 			ac_drink_why = . if (ac_drink_why == -96 | ac_drink_why > 94)
 	lab def 			ac_drink_why 1 "water supply not available" 2 "water supply reduced" ///
-						3 "unable to access communal supply" 4 "unable to access water tanks" ///
-						5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
-						8 "restriction to go out" 9 "increase in price" 10 "cannot afford", replace
+							3 "unable to access communal supply" 4 "unable to access water tanks" ///
+							5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
+							8 "restriction to go out" 9 "increase in price" 10 "cannot afford", replace
 	lab val 			ac_drink_why ac_drink_why 	
 
 * access to water for handwashing	
@@ -335,12 +349,12 @@
 	
 	replace 			ac_water_why = . if (ac_water_why < 0 | ac_water_why > 94)
 	lab def 			ac_water_why 1 "water supply not available" 2 "water supply reduced" ///
-						3 "unable to access communal supply" 4 "unable to access water tanks" ///
-						5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
-						8 "restriction to go out" 9 "increase in price" 10 "cannot afford" ///
-						11 "afraid to get viurs" 12 "water source too far" ///
-						13 "too many people at water source" 14 "large household size" ///
-						15 "lack of money", replace
+							3 "unable to access communal supply" 4 "unable to access water tanks" ///
+							5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
+							8 "restriction to go out" 9 "increase in price" 10 "cannot afford" ///
+							11 "afraid to get viurs" 12 "water source too far" ///
+							13 "too many people at water source" 14 "large household size" ///
+							15 "lack of money", replace
 	lab val 			ac_water_why ac_water_why
 	
 * access to cleaning supllies
@@ -387,8 +401,8 @@
 	
 	replace 			ac_cr_due = 7 if ac_cr_due == -97
 	lab def 			ac_cr_due 1 "Already Due" 2 "Within One Month" 3 "Within 2-3 Months" ///
-						4 "Within 4-6 Months" 5 "Within 7-12 Months" 6 "More Than 12 Months" ///
-						7 "Already Repaid"
+							4 "Within 4-6 Months" 5 "Within 7-12 Months" 6 "More Than 12 Months" ///
+							7 "Already Repaid"
 	lab val 			ac_cr_due ac_cr_due 
 	
 	replace 			ac_cr_bef = . if ac_cr_bef < 0
@@ -397,7 +411,7 @@
 	replace 			ac_cr_worry = . if ac_cr_worry == -99
 	replace 			ac_cr_worry =  5 if ac_cr_worry == -97
 	lab def 			ac_cr_worry 1 "very worried" 2 "somewhat worried" 3 "not too worried" ///
-						4 "not worried at all" 5 "already repaid"
+							4 "not worried at all" 5 "already repaid"
 	lab val 			ac_cr_worry ac_cr_worry 
 	
 	replace 			ac_cr_miss = . if ac_cr_miss < 0
@@ -473,7 +487,7 @@
 
 	
 * **********************************************************************
-* 4 - clean concerns and income changes
+* 5 - clean concerns and income changes
 * **********************************************************************
 	
 * turn concerns 1 and 2 into binary
@@ -491,13 +505,12 @@
 		lab val			`var' yesno
 		replace			`var' = . if country == 3 & (wave == 2 | wave == 3 | wave == 5)
 	}
-	* NOTE: this was an error, was replacing with missing for all variables in round 3
 	*** omit nigeria wave 2, 3 and 5 due to incomplete questions 
 	* NOTE: not sure I understand why these are ommitted, Ethiopia missing asst_inc?
 	* NOTE: should automate last line so do not have to update for every wave in nga
 
 	gen 				other_inc = 1 if isp_inc == 1 | pen_inc == 1 | gov_inc == 1 | ///
-						ngo_inc == 1 | oth_inc == 1 | asst_inc == 1 
+							ngo_inc == 1 | oth_inc == 1 | asst_inc == 1 
 	replace 			other_inc = 0 if other_inc == . 
 	lab var 			other_inc "other income sources (isp, pen, gov, ngo, oth, asst)"
 
@@ -514,7 +527,7 @@
 	lab def				change -1 "Reduce" 0 "Stayed the same" 1 "Increased"
 	
 	loc chg				farm_chg bus_chg wage_chg isp_chg pen_chg gov_chg ngo_chg ///
-						oth_chg asst_chg rem_dom_chg rem_for_chg
+							oth_chg asst_chg rem_dom_chg rem_for_chg
 	foreach 			var of varlist `chg' {		
 		replace				`var' = 0 if `var' == 2
 		replace				`var' = 0 if `var' == -98 | `var' == -99
@@ -561,13 +574,13 @@
 	lab var				rem_for_dwn "Remittances (for) reduced"		
 	
 	egen 				dwn_count9 = rsum (farm_dwn bus_dwn wage_dwn isp_dwn pen_dwn ///
-						gov_dwn ngo_dwn rem_dom_dwn rem_for_dwn)	
+							gov_dwn ngo_dwn rem_dom_dwn rem_for_dwn)	
 	lab var 			dwn_count9 "count of income sources which are down - total of nine"
 	gen 				dwn_per9 = dwn_count9 / 9
 	label var 			dwn_per9 "percent of income sources which had losses - total of nine"
 							
 	loc dwn				farm_dwn bus_dwn wage_dwn isp_dwn pen_dwn gov_dwn ngo_dwn ///
-						rem_dom_dwn rem_for_dwn		
+							rem_dom_dwn rem_for_dwn		
 	foreach 			var of varlist `dwn' {
 		lab val				`var' yesno
 	}				
@@ -616,8 +629,12 @@
 	replace 			remit_inc = . if rem_for == -99 & remit_inc == .
 	* others fine as is: bus_inc farm_inc wage_inc 	
 	
+	* business income 
+	replace 			bus_emp_inc = . if bus_emp_inc < 0
+	
+	
 * **********************************************************************
-* 5 - clean food security information 
+* 6 - clean food security information 
 * **********************************************************************
 
 	loc fies			fies_1 fies_2 fies_3 fies_4 fies_5 fies_6 fies_7 fies_8	
@@ -629,18 +646,10 @@
 	}				
 
 	egen 				fies_count = rsum(fies_1 fies_2 fies_3 fies_4 fies_5 ///
-						fies_6 fies_7 fies_8)				
+							fies_6 fies_7 fies_8)				
 	gen 				fies_percent = fies_count / 8 
 	
-* **********************************************************************
-* 6 - clean myth questions
-* **********************************************************************
-
-	loc myth			myth_1 myth_2 myth_3 myth_4 myth_5
-	foreach 			var of varlist `myth' {
-		replace			`var' = 3 if `var' == -98
-	}				
-
+	
 * **********************************************************************
 * 7 - clean education questions
 * **********************************************************************
@@ -655,6 +664,13 @@
 	replace 			sch_child = 0 if sch_child == 2
 	replace				sch_child = . if sch_child == -99 
 	
+	foreach 			x in 1 2 3 4 5 act {
+		replace			edu_`x' = 0 if edu_`x'_prim == 0 
+		replace			edu_`x' = 0 if edu_`x'_sec == 0 
+		replace			edu_`x' = 1 if edu_`x'_prim == 1 
+		replace			edu_`x' = 1 if edu_`x'_sec == 1
+	}
+
 
 * *********************************************************************
 * 8 - end matter, clean up to save
@@ -690,7 +706,7 @@
 * close the log
 	log	close	
 	
-/*	
+
 * *********************************************************************
 * 9 - generate variable-country-wave crosswalk
 * **********************************************************************	

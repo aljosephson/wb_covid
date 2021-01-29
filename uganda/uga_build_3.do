@@ -212,7 +212,7 @@
 * ***********************************************************************
 * 6 - FIES
 * ***********************************************************************
-/*
+
 * load data
 	use				"$fies/UG_FIES_round`w'.dta", clear
 
@@ -223,7 +223,7 @@
 	tempfile		temp6
 	save			`temp6'
 
-*/	
+	
 * ***********************************************************************
 * 7 - credit
 * ***********************************************************************	
@@ -270,17 +270,65 @@
 	
 	
 * ***********************************************************************
-* 8 - build uganda cross section
+* 8 - education (NOTE: does not include why not in school and challenges to learning at home, could add)
+* ***********************************************************************
+ 
+* generate edu_act = 1 if any child engaged in learning activities
+	use				"$root/wave_0`w'/SEC1.dta", clear
+	preserve
+		keep 			if s1q09 == 1
+		replace 		s1q10 = 0 if s1q10 == 2
+		collapse		(sum) s1q10, by(HHID)
+		gen 			edu_act = 1 if s1q10 > 0 
+		replace 		edu_act = 0 if edu_act == .
+		keep 			HHI edu_act
+		tempfile 		tempany
+		save 			`tempany'
+	restore 
+
+* generate educational engagement type variables  
+	use				"$root/wave_0`w'/SEC1.dta", clear
+	keep 			if s1q10 == 1
+	forval 			x = 1/11 {
+		replace 	s1q12__`x' = 0 if s1q12__`x' == 2
+	}
+	collapse 		(sum) s1q12*, by(HHID)
+	forval 			x = 1/11 {
+		replace 	s1q12__`x' = 1 if s1q12__`x' > 1
+	}
+	replace 		s1q12__n96 = 1 if s1q12__n96 > 1
+	forval 			x = 1/5 {
+		rename 		s1q12__`x' edu_`x'
+	}
+	rename			s1q12__6 edu_8 
+	rename 			s1q12__7 edu_9 
+	lab var 		edu_9 "Private tutor"
+	rename	 		s1q12__8 edu_10
+	lab var 		edu_10 "Home school"
+	rename	 		s1q12__9 edu_11
+	lab var 		edu_11 "Revisions of textbooks/notes from past classes"
+	rename	 		s1q12__10 edu_12 
+	lab var 		edu_12 "Newspaper"
+	rename	 		s1q12__11 edu_7
+	rename 	 		s1q12__n96 edu_other
+
+* merge data together 
+	merge 1:1 HHID using `tempany', nogen
+	
+* save temp file
+	tempfile		temp10
+	save			`temp10'
+
+		
+* ***********************************************************************
+* 9 - build uganda cross section
 * ***********************************************************************
 
 * load cover data
 	use				"$root/wave_0`w'/Cover", clear
 
 * merge in other sections	
-	forval 			x = 1/5 {
-	    merge 		1:1 HHID using `temp`x'', nogen
-	}
-	forval 			x = 7/9 {
+	forval 			x = 1/10 {
 	    merge 		1:1 HHID using `temp`x'', nogen
 	}
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC3.dta", nogen

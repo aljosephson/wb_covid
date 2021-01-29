@@ -38,6 +38,21 @@
 * drop new waves not used in nhb 
 	keep 					if ((country == 1 | country == 3) & (wave == 1 | wave == 2 | wave == 3)) | ///
 							((country == 2 | country == 4) & (wave == 1 | wave == 2))
+
+* waves to month number
+	gen 				wave_orig = wave
+	replace 			wave = 6 if wave == 3 & country == 1
+	replace 			wave = 5 if wave == 2 & country == 1
+	replace 			wave = 4 if wave == 1 & country == 1
+	replace 			wave = 7 if wave == 3 & country == 3
+	replace 			wave = 6 if wave == 2 & country == 3
+	replace 			wave = 5 if wave == 1 & country == 3
+	replace 			wave = 7 if wave == 2 & country == 2
+	replace 			wave = 6 if wave == 1 & (country == 2 | country == 4)
+	replace 			wave = 8 if wave == 2 & country == 4
+
+	lab def 			months 4 "April" 5 "May" 6 "June" 7 "July" 8 "Aug" 9 "Sept"
+	lab val				wave months
 	
 	
 * **********************************************************************
@@ -87,7 +102,7 @@
 						
 
 * graph C - changes in behaviour
-	graph bar 		(mean) bh_1 bh_2 bh_3 if wave == 1 [pweight = phw], ///
+	graph bar 		(mean) bh_1 bh_2 bh_3 if wave_orig == 1 [pweight = phw], ///
 						over(country, lab(labs(vlarge)))  ///
 						bar(1, color(maroon*1.5)) ///
 						bar(2, color(navy*1.5)) bar(3, color(stone*1.5)) ///
@@ -144,7 +159,7 @@
 * graph A - income loss by sector
 	preserve
 	
-	keep if			wave == 1
+	keep if			wave_orig == 1
 
 	graph bar		(mean) farm_dwn bus_dwn wage_dwn remit_dwn other_dwn [pweight = hhw] ///
 						, over(sector, lab(labs(large))) ///
@@ -181,7 +196,7 @@
 	catplot 		size wave country [aweight = hhw] if country == 1, percent(country wave) stack ///
 						var1opts(label(labsize(large))) ///
 						var3opts(label(labsize(large))) ///
-						var2opts( relabel (1 "May" 2 "June" 3 "July") label(labsize(large))) ///
+						var2opts( label(labsize(large))) ///
 						ytitle("", size(vlarge)) bar(1, fcolor(`1') lcolor(none)) ///
 						bar(2, fcolor(`7') lcolor(none))  ///
 						bar(3, fcolor(`15') lcolor(none)) ylabel(, labs(large)) legend( ///
@@ -193,7 +208,7 @@
 	catplot 		size wave country [aweight = hhw] if country == 2, percent(country wave) stack	 ///
 						var1opts(label(labsize(large))) ///
 						var3opts(label(labsize(large))) ///
-						var2opts( relabel (1 "June" 2 "July") label(labsize(large))) ///
+						var2opts( label(labsize(large))) ///
 						ytitle("", size(vlarge)) bar(1, fcolor(`1') lcolor(none)) ///
 						bar(2, fcolor(`7') lcolor(none))  ///
 						bar(3, fcolor(`15') lcolor(none)) ylabel(, labs(large)) legend(off) ///
@@ -202,7 +217,7 @@
 	catplot 		size wave country [aweight = hhw] if country == 3, percent(country wave) stack	 ///
 						var1opts(label(labsize(large))) ///
 						var3opts(label(labsize(large))) ///
-						var2opts( relabel (1 "May" 2 "June" 3 "July") label(labsize(large))) ///
+						var2opts( label(labsize(large))) ///
 						ytitle("", size(vlarge)) bar(1, fcolor(`1') lcolor(none)) ///
 						bar(2, fcolor(`7') lcolor(none))  ///
 						bar(3, fcolor(`15') lcolor(none)) ylabel(, labs(large)) legend(off) ///
@@ -211,7 +226,7 @@
 	catplot 		size wave country [aweight = hhw] if country == 4, percent(country wave) stack	 ///
 						var1opts(label(labsize(large))) ///
 						var3opts(label(labsize(large))) ///
-						var2opts( relabel (1 "June" 2 "July") label(labsize(large))) ///
+						var2opts( label(labsize(large))) ///
 						ytitle("Households reporting change in business revenue (%)", size(huge)) ///
 						bar(1, fcolor(`1') lcolor(none)) ///
 						bar(2, fcolor(`7') lcolor(none))  ///
@@ -229,9 +244,9 @@
 	
 * graph C - FIES score and consumption quntile
 	preserve
-	drop if 		country == 1 & wave == 2
-	drop if 		country == 2 & wave == 1
-	drop if 		country == 4 & wave == 1
+	drop if 		country == 1 & wave_orig == 2
+	drop if 		country == 2 & wave_orig == 1
+	drop if 		country == 4 & wave_orig == 1
 
 	gen				p_mod_1 = p_mod if quint == 1
 	gen				p_mod_2 = p_mod if quint == 2
@@ -277,8 +292,8 @@
 
 * graph D - concerns with FIES
 	preserve
-	drop if			country == 2 & wave == 1
-	drop if			country == 4 & wave == 1
+	drop if			country == 2 & wave_orig == 1
+	drop if			country == 4 & wave_orig == 1
 
 	graph hbar		(mean) p_mod p_sev [pweight = wt_18], over(concern_1, lab(labs(vlarge))) ///
 						over(country, lab(labs(vlarge)))  ylabel(0 "0" .2 "20" .4 "40" .6 "60" ///
@@ -312,9 +327,9 @@
 
 * graph A - coping mechanisms
 	preserve
-	drop if country == 1 & wave == 1
-	drop if country == 1 & wave == 2
-	drop if country == 3 & wave == 1
+	drop if 		country == 1 & wave_orig == 1
+	drop if 		country == 1 & wave_orig == 2
+	drop if 		country == 3 & wave_orig == 1
 	
 	
 	replace			cope_3 = 1 if cope_3 == 1 | cope_4 == 1
@@ -384,7 +399,7 @@
 
 
 	graph bar 		(mean) ac_med_1 ac_med_2 ac_med_3 ac_med_4 ac_med_5 ///
-						[pweight = phw] if wave == 1, ///
+						[pweight = phw] if wave_orig == 1, ///
 						over(country, label(labsize(medlarge)))  ///
 						ytitle("Prevalence of household's inability to buy medicine (%)", size(vlarge)) ///
 						ylabel(0 "0" ///
@@ -397,7 +412,7 @@
 						saving("$output/ac_med", replace)
 
 	graph bar 		(mean) ac_staple_1 ac_staple_2 ac_staple_3 ac_staple_4 ac_staple_5 ///
-						[pweight = phw] if wave == 1,  ///
+						[pweight = phw] if wave_orig == 1,  ///
 						over(country, label(labsize(medlarge)))   ///
 						ytitle("Prevalence of household's inability to buy staple food (%)", size(vlarge)) ///
 						ylabel(0 "0" ///
@@ -408,7 +423,7 @@
 						saving("$output/ac_staple", replace)
 
 	graph bar 		(mean) ac_soap_1 ac_soap_2 ac_soap_3 ac_soap_4 ac_soap_5 ///
-						[pweight = phw] if wave == 1 & country != 1,  ///
+						[pweight = phw] if wave_orig == 1 & country != 1,  ///
 						over(country, label(labsize(medlarge)))   ///
 						ytitle("Prevalence of household's inability to buy soap (%)", size(vlarge)) ///
 						ylabel(0 "0" ///
@@ -424,21 +439,21 @@
 	graph export 	"$output/access.eps", as(eps) replace
 
 	
-* graph C - education and food
+* graph C - education and quintiles
 	gen				edu_act_1 = edu_act if quint == 1
 	gen				edu_act_2 = edu_act if quint == 2
 	gen				edu_act_3 = edu_act if quint == 3
 	gen				edu_act_4 = edu_act if quint == 4
 	gen				edu_act_5 = edu_act if quint == 5
 
-	mean			sch_child [pweight = shw] if wave == 1
-	mean			edu_none [pweight = shw] if wave == 1
-	mean			edu_cont [pweight = shw] if wave == 1
+	mean			sch_child [pweight = shw] if wave_orig == 1
+	mean			edu_none [pweight = shw] if wave_orig == 1
+	mean			edu_cont [pweight = shw] if wave_orig == 1
 	
 	colorpalette edkblue khaki, ipolate(15, power(1)) locals
 
 	graph bar 		(mean) edu_act_1 edu_act_2 edu_act_3 edu_act_4 edu_act_5 ///
-						[pweight = hhw] if wave == 1, over(country, label(labsize(vlarge)))  ///
+						[pweight = hhw] if wave_orig == 1, over(country, label(labsize(vlarge)))  ///
 						ytitle("Households with children engaged in learning activities (%)", size(vlarge)) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
 						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
@@ -456,7 +471,7 @@
 
 * graph D - education activities
 	graph bar		edu_4 edu_2 edu_3 edu_5 [pweight = hhw] if country == 1 ///
-						, over(wave, relabel (1 "May" 2 "June" 3 "July") label(labsize(vlarge))) over(country, label(labsize(vlarge))) ///
+						, over(wave, label(labsize(vlarge))) over(country, label(labsize(vlarge))) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
 						bar(1, color(khaki*1.5)) bar(2, color(cranberry*1.5)) ///
 						bar(3, color(teal*1.5)) bar(4, color(lavender*1.5)) ///
@@ -469,21 +484,21 @@
 						saving("$output/educont_eth", replace)
 
 	graph bar		 edu_4 edu_2 edu_3 edu_5  [pweight = hhw] if country == 2 ///
-						, over(wave, relabel (1 "June" 2 "July") label(labsize(vlarge))) over(country, label(labsize(vlarge))) ///
+						, over(wave, label(labsize(vlarge))) over(country, label(labsize(vlarge))) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
 						bar(1, color(khaki*1.5)) bar(2, color(cranberry*1.5)) ///
 						bar(3, color(teal*1.5)) bar(4, color(lavender*1.5)) ///
 						bar(5, color(brown*1.5)) legend(off) saving("$output/educont_mwi", replace)
 
 	graph bar		 edu_4 edu_2 edu_3 edu_5 [pweight = hhw] if country == 3 ///
-						, over(wave, relabel (1 "May" 2 "June" 3 "July") label(labsize(vlarge))) over(country, label(labsize(vlarge))) ///
+						, over(wave, label(labsize(vlarge))) over(country, label(labsize(vlarge))) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
 						bar(1, color(khaki*1.5)) bar(2, color(cranberry*1.5)) ///
 						bar(3, color(teal*1.5)) bar(4, color(lavender*1.5)) ///
 						bar(5, color(brown*1.5)) legend(off) saving("$output/educont_nga", replace)
 
-	graph bar		edu_4 edu_2 edu_3 edu_5  [pweight = hhw] if country == 4 & wave == 1 ///
-						, over(wave, relabel (1 "June" 2 "July") label(labsize(vlarge))) over(country, label(labsize(vlarge))) ///
+	graph bar		edu_4 edu_2 edu_3 edu_5  [pweight = hhw] if country == 4  ///
+						, over(wave, label(labsize(vlarge))) over(country, label(labsize(vlarge))) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
 						bar(1, color(khaki*1.5)) bar(2, color(cranberry*1.5)) ///
 						bar(3, color(teal*1.5)) bar(4, color(lavender*1.5)) ///

@@ -35,6 +35,10 @@
 * read in data
 	use				"$ans/lsms_panel", clear
 
+* drop new waves not used in nhb 
+	keep 					if ((country == 1 | country == 3) & (wave == 1 | wave == 2 | wave == 3)) | ///
+							((country == 2 | country == 4) & (wave == 1 | wave == 2))
+	
 	
 * **********************************************************************
 * 1 - knowledge of covid-19 restrictions, behaviours, and false beliefs
@@ -42,7 +46,7 @@
 
 
 * graph A - knowledge of government restrictions
-	graph bar		(mean) gov_01 gov_02 gov_04 gov_05 gov_06 gov_10 [pweight = phw], ///
+	graph bar		(mean) gov_1 gov_2 gov_4 gov_5 gov_6 gov_10 [pweight = phw], ///
 						over(country, lab(labs(vlarge))) ///
 						bar(1, color(khaki*1.5)) ///
 						bar(2, color(cranberry*1.5)) bar(3, color(teal*1.5)) ///
@@ -63,7 +67,7 @@
 
 
 * graph B - knowledge of COVID-19
-	graph bar		(mean) know_01 know_02 know_03 know_05 know_06 know_07 ///
+	graph bar		(mean) know_1 know_2 know_3 know_5 know_6 know_7 ///
 						[pweight = phw], over(country, lab(labs(vlarge)))  ///
 						bar(1, color(edkblue*1.5)) bar(2, color(emidblue*1.5)) ///
 						bar(3, color(eltblue*1.5)) bar(4, color(emerald*1.5)) ///
@@ -83,7 +87,7 @@
 						
 
 * graph C - changes in behaviour
-	graph bar 		(mean) bh_01 bh_02 bh_03 if wave == 1 [pweight = phw], ///
+	graph bar 		(mean) bh_1 bh_2 bh_3 if wave == 1 [pweight = phw], ///
 						over(country, lab(labs(vlarge)))  ///
 						bar(1, color(maroon*1.5)) ///
 						bar(2, color(navy*1.5)) bar(3, color(stone*1.5)) ///
@@ -104,14 +108,14 @@
 	preserve
 
 	drop if			country == 1 | country == 3
-	keep 			myth_02 myth_03 myth_04 myth_05 country phw
+	keep 			myth_2 myth_3 myth_4 myth_5 country phw
 	gen 			id=_n
-	ren 			(myth_02 myth_03 myth_04 myth_05) (size=)
+	ren 			(myth_2 myth_3 myth_4 myth_5) (size=)
 	reshape long 	size, i(id) j(myth) string
 	drop if 		size == .
 	drop if			size == 3
 
-	catplot 		size country myth [aweight = phw], percent(country myth) ///
+	catplot 		size country myth [aweight = phw], percent(country myth) stack ///
 						ytitle("Percent", size(vlarge)) var1opts(label(labsize(vlarge))) ///
 						var2opts(label(labsize(vlarge))) var3opts(label(labsize(large)) ///
 						relabel (1 `""Africans are immune" "to coronavirus"""' ///
@@ -229,21 +233,21 @@
 	drop if 		country == 2 & wave == 1
 	drop if 		country == 4 & wave == 1
 
-	gen				p_mod_01 = p_mod if quint == 1
-	gen				p_mod_02 = p_mod if quint == 2
-	gen				p_mod_03 = p_mod if quint == 3
-	gen				p_mod_04 = p_mod if quint == 4
-	gen				p_mod_05 = p_mod if quint == 5
+	gen				p_mod_1 = p_mod if quint == 1
+	gen				p_mod_2 = p_mod if quint == 2
+	gen				p_mod_3 = p_mod if quint == 3
+	gen				p_mod_4 = p_mod if quint == 4
+	gen				p_mod_5 = p_mod if quint == 5
 
-	gen				p_sev_01 = p_sev if quint == 1
-	gen				p_sev_02 = p_sev if quint == 2
-	gen				p_sev_03 = p_sev if quint == 3
-	gen				p_sev_04 = p_sev if quint == 4
-	gen				p_sev_05 = p_sev if quint == 5
+	gen				p_sev_1 = p_sev if quint == 1
+	gen				p_sev_2 = p_sev if quint == 2
+	gen				p_sev_3 = p_sev if quint == 3
+	gen				p_sev_4 = p_sev if quint == 4
+	gen				p_sev_5 = p_sev if quint == 5
 
 	colorpalette edkblue khaki, ipolate(15, power(1)) locals
 
-	graph bar 		(mean) p_mod_01 p_mod_02 p_mod_03 p_mod_04 p_mod_05 ///
+	graph bar 		(mean) p_mod_1 p_mod_2 p_mod_3 p_mod_4 p_mod_5 ///
 						[pweight = wt_18], over(country, lab(labs(vlarge))) ylabel(0 "0" ///
 						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
 						ytitle("Prevalence of moderate or severe food insecurity", size(vlarge))  ///
@@ -254,8 +258,8 @@
 						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
 						saving("$output/fies_modsev", replace)
 
-	graph bar 		(mean) p_sev_01 p_sev_02 p_sev_03 p_sev_04 p_sev_05 ///
-						[pweight = wt_18], over(country, lab(labs(vlarge)))  ylabel(0 "0" ///
+	graph bar 		(mean) p_sev_1 p_sev_2 p_sev_3 p_sev_4 p_sev_5 ///
+						[pweight = wt_18], over(country, lab(labs(vlarge))) ylabel(0 "0" ///
 						.2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
 						ytitle("Prevalence of severe food insecurity", size(vlarge))  ///
 						bar(1, fcolor(`1') lcolor(none)) bar(2, fcolor(`4') lcolor(none))  ///
@@ -276,21 +280,21 @@
 	drop if			country == 2 & wave == 1
 	drop if			country == 4 & wave == 1
 
-	graph hbar		(mean) p_mod p_sev [pweight = wt_18], over(concern_01, lab(labs(vlarge))) ///
-						over(country, lab(labs(vlarge))) ylabel(0 "0" .2 "20" .4 "40" .6 "60" ///
-						.8 "80" 1 "100", labs(large)) ytitle("Prevalence of food insecurity", size(large)) ///
+	graph hbar		(mean) p_mod p_sev [pweight = wt_18], over(concern_1, lab(labs(vlarge))) ///
+						over(country, lab(labs(vlarge)))  ylabel(0 "0" .2 "20" .4 "40" .6 "60" ///
+						.8 "80" 1 "100", labs(large)) ytitle("Prevalence of food insecurity", size(vlarge)) ///
 						bar(1, color(stone*1.5)) bar(2, color(maroon*1.5)) ///
 						legend(label (1 "Moderate or severe")  ///
 						label (2 "Severe") pos(6) col(2) size(medsmall)) ///
-						title("Concerned that family or self will fall ill with COVID-19", size(vlarge)) ///
+						title("Concerned that family or self will fall ill with COVID-19", size(huge)) ///
 						saving("$output/concern_1", replace)
 
-	graph hbar		(mean) p_mod p_sev [pweight = wt_18], over(concern_02, lab(labs(vlarge))) ///
+	graph hbar		(mean) p_mod p_sev [pweight = wt_18], over(concern_2, lab(labs(vlarge))) ///
 						over(country, lab(labs(vlarge))) ylabel(0 "0" .2 "20" .4 "40" .6 "60" ///
-						.8 "80" 1 "100", labs(large)) ytitle("Prevalence of food insecurity", size(large)) ///
+						.8 "80" 1 "100", labs(large)) ytitle("Prevalence of food insecurity", size(vlarge)) ///
 						bar(1, color(stone*1.5)) bar(2, color(maroon*1.5)) ///
 						legend(off) ///
-						title("Concerned about the financial threat of COVID-19", size(vlarge)) ///
+						title("Concerned about the financial threat of COVID-19", size(huge)) ///
 						saving("$output/concern_2", replace)
 	*** Nigeria has information on concerns in wave 1, but only FIES in wave 2
 
@@ -313,10 +317,10 @@
 	drop if country == 3 & wave == 1
 	
 	
-	replace			cope_03 = 1 if cope_03 == 1 | cope_04 == 1
-	replace			cope_05 = 1 if cope_05 == 1 | cope_06 == 1 | cope_07 == 1
+	replace			cope_3 = 1 if cope_3 == 1 | cope_4 == 1
+	replace			cope_5 = 1 if cope_5 == 1 | cope_6 == 1 | cope_7 == 1
 	
-	graph bar		(mean) cope_11 cope_01 cope_09 cope_10 cope_03 asst_any cope_none ///
+	graph bar		(mean) cope_11 cope_1 cope_9 cope_10 cope_3 asst_any cope_none ///
 						[pweight = hhw], over(sector, ///
 						label (labsize(large))) over(country, label (labsize(vlarge))) ///
 						bar(1, color(maroon*1.5)) bar(2, color(emidblue*1.5)) ///
@@ -340,46 +344,46 @@
 
 	
 * graph B - access to med, food, soap
-	gen				ac_med_01 = 1 if quint == 1 & ac_med == 1
-	gen				ac_med_02 = 1 if quint == 2 & ac_med == 1
-	gen				ac_med_03 = 1 if quint == 3 & ac_med == 1
-	gen				ac_med_04 = 1 if quint == 4 & ac_med == 1
-	gen				ac_med_05 = 1 if quint == 5 & ac_med == 1
+	gen				ac_med_1 = 1 if quint == 1 & ac_med == 1
+	gen				ac_med_2 = 1 if quint == 2 & ac_med == 1
+	gen				ac_med_3 = 1 if quint == 3 & ac_med == 1
+	gen				ac_med_4 = 1 if quint == 4 & ac_med == 1
+	gen				ac_med_5 = 1 if quint == 5 & ac_med == 1
 
-	gen				ac_staple_01 = 1 if quint == 1 & ac_staple == 1
-	gen				ac_staple_02 = 1 if quint == 2 & ac_staple == 1
-	gen				ac_staple_03 = 1 if quint == 3 & ac_staple == 1
-	gen				ac_staple_04 = 1 if quint == 4 & ac_staple == 1
-	gen				ac_staple_05 = 1 if quint == 5 & ac_staple == 1
+	gen				ac_staple_1 = 1 if quint == 1 & ac_staple == 1
+	gen				ac_staple_2 = 1 if quint == 2 & ac_staple == 1
+	gen				ac_staple_3 = 1 if quint == 3 & ac_staple == 1
+	gen				ac_staple_4 = 1 if quint == 4 & ac_staple == 1
+	gen				ac_staple_5 = 1 if quint == 5 & ac_staple == 1
 
-	gen				ac_soap_01 = 1 if quint == 1 & ac_soap == 1
-	gen				ac_soap_02 = 1 if quint == 2 & ac_soap == 1
-	gen				ac_soap_03 = 1 if quint == 3 & ac_soap == 1
-	gen				ac_soap_04 = 1 if quint == 4 & ac_soap == 1
-	gen				ac_soap_05 = 1 if quint == 5 & ac_soap == 1
+	gen				ac_soap_1 = 1 if quint == 1 & ac_soap == 1
+	gen				ac_soap_2 = 1 if quint == 2 & ac_soap == 1
+	gen				ac_soap_3 = 1 if quint == 3 & ac_soap == 1
+	gen				ac_soap_4 = 1 if quint == 4 & ac_soap == 1
+	gen				ac_soap_5 = 1 if quint == 5 & ac_soap == 1
 
-	replace			ac_med_01 = 0 if quint == 1 & ac_med == 0
-	replace			ac_med_02 = 0 if quint == 2 & ac_med == 0
-	replace			ac_med_03 = 0 if quint == 3 & ac_med == 0
-	replace			ac_med_04 = 0 if quint == 4 & ac_med == 0
-	replace			ac_med_05 = 0 if quint == 5 & ac_med == 0
+	replace			ac_med_1 = 0 if quint == 1 & ac_med == 0
+	replace			ac_med_2 = 0 if quint == 2 & ac_med == 0
+	replace			ac_med_3 = 0 if quint == 3 & ac_med == 0
+	replace			ac_med_4 = 0 if quint == 4 & ac_med == 0
+	replace			ac_med_5 = 0 if quint == 5 & ac_med == 0
 
-	replace			ac_staple_01 = 0 if quint == 1 & ac_staple == 0
-	replace			ac_staple_02 = 0 if quint == 2 & ac_staple == 0
-	replace			ac_staple_03 = 0 if quint == 3 & ac_staple == 0
-	replace			ac_staple_04 = 0 if quint == 4 & ac_staple == 0
-	replace			ac_staple_05 = 0 if quint == 5 & ac_staple == 0
+	replace			ac_staple_1 = 0 if quint == 1 & ac_staple == 0
+	replace			ac_staple_2 = 0 if quint == 2 & ac_staple == 0
+	replace			ac_staple_3 = 0 if quint == 3 & ac_staple == 0
+	replace			ac_staple_4 = 0 if quint == 4 & ac_staple == 0
+	replace			ac_staple_5 = 0 if quint == 5 & ac_staple == 0
 
-	replace			ac_soap_01 = 0 if quint == 1 & ac_soap == 0
-	replace			ac_soap_02 = 0 if quint == 2 & ac_soap == 0
-	replace			ac_soap_03 = 0 if quint == 3 & ac_soap == 0
-	replace			ac_soap_04 = 0 if quint == 4 & ac_soap == 0
-	replace			ac_soap_05 = 0 if quint == 5 & ac_soap == 0
+	replace			ac_soap_1 = 0 if quint == 1 & ac_soap == 0
+	replace			ac_soap_2 = 0 if quint == 2 & ac_soap == 0
+	replace			ac_soap_3 = 0 if quint == 3 & ac_soap == 0
+	replace			ac_soap_4 = 0 if quint == 4 & ac_soap == 0
+	replace			ac_soap_5 = 0 if quint == 5 & ac_soap == 0
 
 	colorpalette edkblue khaki, ipolate(15, power(1)) locals
 
 
-	graph bar 		(mean) ac_med_01 ac_med_02 ac_med_03 ac_med_04 ac_med_05 ///
+	graph bar 		(mean) ac_med_1 ac_med_2 ac_med_3 ac_med_4 ac_med_5 ///
 						[pweight = phw] if wave == 1, ///
 						over(country, label(labsize(medlarge)))  ///
 						ytitle("Prevalence of household's inability to buy medicine (%)", size(vlarge)) ///
@@ -392,7 +396,7 @@
 						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) 	///
 						saving("$output/ac_med", replace)
 
-	graph bar 		(mean) ac_staple_01 ac_staple_02 ac_staple_03 ac_staple_04 ac_staple_05 ///
+	graph bar 		(mean) ac_staple_1 ac_staple_2 ac_staple_3 ac_staple_4 ac_staple_5 ///
 						[pweight = phw] if wave == 1,  ///
 						over(country, label(labsize(medlarge)))   ///
 						ytitle("Prevalence of household's inability to buy staple food (%)", size(vlarge)) ///
@@ -403,7 +407,7 @@
 						bar(5, fcolor(`13') lcolor(none)) legend(off) ///
 						saving("$output/ac_staple", replace)
 
-	graph bar 		(mean) ac_soap_01 ac_soap_02 ac_soap_03 ac_soap_04 ac_soap_05 ///
+	graph bar 		(mean) ac_soap_1 ac_soap_2 ac_soap_3 ac_soap_4 ac_soap_5 ///
 						[pweight = phw] if wave == 1 & country != 1,  ///
 						over(country, label(labsize(medlarge)))   ///
 						ytitle("Prevalence of household's inability to buy soap (%)", size(vlarge)) ///
@@ -421,11 +425,11 @@
 
 	
 * graph C - education and food
-	gen				edu_act_01 = edu_act if quint == 1
-	gen				edu_act_02 = edu_act if quint == 2
-	gen				edu_act_03 = edu_act if quint == 3
-	gen				edu_act_04 = edu_act if quint == 4
-	gen				edu_act_05 = edu_act if quint == 5
+	gen				edu_act_1 = edu_act if quint == 1
+	gen				edu_act_2 = edu_act if quint == 2
+	gen				edu_act_3 = edu_act if quint == 3
+	gen				edu_act_4 = edu_act if quint == 4
+	gen				edu_act_5 = edu_act if quint == 5
 
 	mean			sch_child [pweight = shw] if wave == 1
 	mean			edu_none [pweight = shw] if wave == 1
@@ -433,7 +437,7 @@
 	
 	colorpalette edkblue khaki, ipolate(15, power(1)) locals
 
-	graph bar 		(mean) edu_act_01 edu_act_02 edu_act_03 edu_act_04 edu_act_05 ///
+	graph bar 		(mean) edu_act_1 edu_act_2 edu_act_3 edu_act_4 edu_act_5 ///
 						[pweight = hhw] if wave == 1, over(country, label(labsize(vlarge)))  ///
 						ytitle("Households with children engaged in learning activities (%)", size(vlarge)) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
@@ -451,7 +455,7 @@
 						
 
 * graph D - education activities
-	graph bar		edu_04 edu_02 edu_03 edu_05 [pweight = hhw] if country == 1 ///
+	graph bar		edu_4 edu_2 edu_3 edu_5 [pweight = hhw] if country == 1 ///
 						, over(wave, relabel (1 "May" 2 "June" 3 "July") label(labsize(vlarge))) over(country, label(labsize(vlarge))) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
 						bar(1, color(khaki*1.5)) bar(2, color(cranberry*1.5)) ///
@@ -464,21 +468,21 @@
 						ytitle("Households with children experiencing educational contact (%)", size(vlarge))  ///
 						saving("$output/educont_eth", replace)
 
-	graph bar		 edu_04 edu_02 edu_03 edu_05 [pweight = hhw] if country == 2 ///
+	graph bar		 edu_4 edu_2 edu_3 edu_5  [pweight = hhw] if country == 2 ///
 						, over(wave, relabel (1 "June" 2 "July") label(labsize(vlarge))) over(country, label(labsize(vlarge))) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
 						bar(1, color(khaki*1.5)) bar(2, color(cranberry*1.5)) ///
 						bar(3, color(teal*1.5)) bar(4, color(lavender*1.5)) ///
 						bar(5, color(brown*1.5)) legend(off) saving("$output/educont_mwi", replace)
 
-	graph bar		 edu_04 edu_02 edu_03 edu_05 [pweight = hhw] if country == 3 ///
+	graph bar		 edu_4 edu_2 edu_3 edu_5 [pweight = hhw] if country == 3 ///
 						, over(wave, relabel (1 "May" 2 "June" 3 "July") label(labsize(vlarge))) over(country, label(labsize(vlarge))) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
 						bar(1, color(khaki*1.5)) bar(2, color(cranberry*1.5)) ///
 						bar(3, color(teal*1.5)) bar(4, color(lavender*1.5)) ///
 						bar(5, color(brown*1.5)) legend(off) saving("$output/educont_nga", replace)
 
-	graph bar		edu_04 edu_02 edu_03 edu_05 [pweight = hhw] if country == 4 & wave == 1 ///
+	graph bar		edu_4 edu_2 edu_3 edu_5  [pweight = hhw] if country == 4 & wave == 1 ///
 						, over(wave, relabel (1 "June" 2 "July") label(labsize(vlarge))) over(country, label(labsize(vlarge))) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
 						bar(1, color(khaki*1.5)) bar(2, color(cranberry*1.5)) ///

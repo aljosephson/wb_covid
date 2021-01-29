@@ -20,6 +20,7 @@
 	* search "NOTE" and review
 	* generate variable crosswalk (see end of doc)
 	
+	
 * **********************************************************************
 * 0 - setup
 * **********************************************************************
@@ -229,10 +230,12 @@
 * **********************************************************************
 * 3 - revise access variables as needed 
 * **********************************************************************	
-	
+ 	
 * access to medicine 
 	replace				ac_med = . if ac_med < 0 & country == 1	
-	replace				ac_med = 0 if ac_med == 2 
+	replace				ac_med = 0 if ac_med == 2 & country != 4
+	replace 			ac_med = 0 if ac_med == 1 & country == 4
+	replace 			ac_med = 1 if ac_med == 2 & country == 4
 	replace				ac_med = . if ac_med == 3
 	replace 			ac_med_why = . if ac_med_why < 0
 	* note "decrease in reg income" and "no money" both coded as 6
@@ -687,6 +690,7 @@
 * close the log
 	log	close	
 	
+/*	
 * *********************************************************************
 * 9 - generate variable-country-wave crosswalk
 * **********************************************************************	

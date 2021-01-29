@@ -748,10 +748,6 @@
 * 9 - educational engagement
 * **********************************************************************
 
-	replace 			edu_act = 1 if sch_child_prim == 1 & edu_act_prim == 1 
-	replace 			edu_act = 1 if sch_child_sec == 1 & edu_act_sec == 1 
-	replace 			edu_act = 0 if (sch_child_sec == 1 & edu_act_sec == 0) & (sch_child_prim == 1 & edu_act_prim == 0)
-	
 	preserve 
 	keep 				if country == 1
 	graph bar 			(mean) edu_act [pweight = hhw], over(wave, gap(10) label(labsize(large))) ///
@@ -807,12 +803,6 @@
 * **********************************************************************
 * 10 - educational contact 
 * **********************************************************************
-
-	forval				 x = 1/5 {
-		replace 		edu_`x' = 1 if edu_`x'_prim == 1 | edu_`x'_sec == 1
-		replace 		edu_`x' = 0 if (edu_`x'_prim == 0 & edu_`x'_sec == 0) |  ///
-						(edu_`x'_prim == . & edu_`x'_sec == 0) |  (edu_`x'_prim == 0 & edu_`x'_sec == .) 
-	} 
 
 	graph bar			edu_4 edu_2 edu_3 edu_5 edu_8 edu_11 [pweight = hhw] if country == 1 ///
 							, over(wave, label(labsize(vlarge))) title("Ethiopia", size(vlarge)) ///

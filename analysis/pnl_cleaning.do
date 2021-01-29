@@ -24,20 +24,6 @@
 * 0 - setup
 * **********************************************************************
 
-* run do files for each country (takes a little while to run)
-	run				"$code/ethiopia/eth_build_master"
-	run 			"$code/malawi/mwi_build_master"
-	run				"$code/nigeria/nga_build_master"
-	run 			"$code/uganda/uga_build_master"
-	
-* define
-	global	eth		=	"$data/ethiopia/refined" 
-	global	mwi		=	"$data/malawi/refined"
-	global	nga		=	"$data/nigeria/refined" 
-	global	uga		=	"$data/uganda/refined"
-	global	export	=	"$data/analysis"
-	global	logout	=	"$data/analysis/logs"
-
 * Define root folder globals
     if `"`c(username)'"' == "jdmichler" {
         global 		code  	"C:/Users/jdmichler/git/wb_covid"
@@ -53,6 +39,20 @@
 		global 		code  	"C:/Users/annfu/git/wb_covid"
 		global 		data	"G:/My Drive/wb_covid/data"
 	}	
+
+* run do files for each country (takes a little while to run)
+	run				"$code/ethiopia/eth_build_master"
+	run 			"$code/malawi/mwi_build_master"
+	run				"$code/nigeria/nga_build_master"
+	run 			"$code/uganda/uga_build_master"	
+	
+* define
+	global	eth		=	"$data/ethiopia/refined" 
+	global	mwi		=	"$data/malawi/refined"
+	global	nga		=	"$data/nigeria/refined" 
+	global	uga		=	"$data/uganda/refined"
+	global	export	=	"$data/analysis"
+	global	logout	=	"$data/analysis/logs"	
 	
 * open log
 	cap log 			close
@@ -632,6 +632,7 @@
 	* business income 
 	replace 			bus_emp_inc = . if bus_emp_inc < 0
 	
+	
 * **********************************************************************
 * 6 - clean food security information 
 * **********************************************************************
@@ -662,6 +663,13 @@
 	
 	replace 			sch_child = 0 if sch_child == 2
 	replace				sch_child = . if sch_child == -99 
+	
+	foreach 			x in 1 2 3 4 5 act {
+		replace			edu_`x' = 0 if edu_`x'_prim == 0 
+		replace			edu_`x' = 0 if edu_`x'_sec == 0 
+		replace			edu_`x' = 1 if edu_`x'_prim == 1 
+		replace			edu_`x' = 1 if edu_`x'_sec == 1
+	}
 	
 	
 * **********************************************************************

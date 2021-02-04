@@ -795,7 +795,7 @@
 	rename 			s9q9 symp_call
 	
 * agriculture
-	rename			s13q1 ag_prep
+	rename			s13q1 ag_crop
 	rename			s13q2a ag_crop_1
 	rename			s13q2b ag_crop_2
 	rename			s13q2c ag_crop_3

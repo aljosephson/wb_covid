@@ -262,8 +262,8 @@
 	replace 		ac_bank_why = 3 if ac_bank_why == 2
 	
 * rename agriculture (R1&3)
-	rename			s5aq16 ag_prep
-	replace 		ag_prep = s5bq16 if ag_prep == . & s5bq16 != . & s5bq16 != .a
+	rename			s5aq16 ag_crop
+	replace 		ag_crop = s5bq16 if ag_crop == . & s5bq16 != . & s5bq16 != .a
 	rename			s5aq17 ag_plan
 	rename			s5qaq17_1 ag_plan_why
 	rename			s5aq18__0 ag_crop_1
@@ -298,15 +298,15 @@
 	rename			s5aq23 ag_fert
 	rename			s5aq24 ag_input
 	rename			s5aq25 ag_crop_lost
-	rename			s5aq26 live_lost
-	rename			s5aq27 live_chg
-	rename			s5aq28__1 live_chg_3
-	rename			s5aq28__2 live_chg_3a
-	rename			s5aq28__3 live_chg_3b
-	rename			s5aq28__4 live_chg_2
-	rename			s5aq28__5 live_chg_1
-	rename			s5aq28__6 live_chg_8
-	rename			s5aq28__7 live_chg_9
+	rename			s5aq26 ag_live_lost
+	rename			s5aq27 ag_live_chg
+	rename			s5aq28__1 ag_live_chg_3
+	rename			s5aq28__2 ag_live_chg_3a
+	rename			s5aq28__3 ag_live_chg_3b
+	rename			s5aq28__4 ag_live_chg_2
+	rename			s5aq28__5 ag_live_chg_1
+	rename			s5aq28__6 ag_live_chg_8
+	rename			s5aq28__7 ag_live_chg_9
 	rename			s5aq29 ag_locust
 	rename			s5aq30 ag_sell_need
 	replace 		ag_sell_need = s5bq25 if ag_sell_need == .
@@ -341,45 +341,45 @@
 	rename 			s5bq09 harv_sell
 	
 * rename livestock 
-	rename 			s5cq01 live
+	rename 			s5cq01 ag_live
 	* rename livestock type to match Nigeria
-	rename 			s5cq02__1 live_1
-	rename 			s5cq02__2 live_1a
-	rename 			s5cq02__3 live_2
-	rename 			s5cq02__4 live_2a
-	rename 			s5cq02__5 live_3
-	rename 			s5cq02__6 live_3a
-	rename 			s5cq02__7 live_5
-	rename 			s5cq02__8 live_4
-	rename 			s5cq03 live_cov
-	replace 		live_chg_1 = s5cq04__1 if live_chg_1 == .
-	replace 		live_chg_2 = s5cq04__2 if live_chg_2 == .
-	replace 		live_chg_3 = s5cq04__3 if live_chg_3 == .
+	rename 			s5cq02__1 ag_live_1
+	rename 			s5cq02__2 ag_live_1a
+	rename 			s5cq02__3 ag_live_2
+	rename 			s5cq02__4 ag_live_2a
+	rename 			s5cq02__5 ag_live_3
+	rename 			s5cq02__6 ag_live_3a
+	rename 			s5cq02__7 ag_live_5
+	rename 			s5cq02__8 ag_live_4
+	rename 			s5cq03 ag_live_cov
+	replace 		ag_live_chg_1 = s5cq04__1 if ag_live_chg_1 == .
+	replace 		ag_live_chg_2 = s5cq04__2 if ag_live_chg_2 == .
+	replace 		ag_live_chg_3 = s5cq04__3 if ag_live_chg_3 == .
 	drop 			s5cq04__1 s5cq04__2 s5cq04__3
-	rename 			s5cq04_* live_chg* // cannot tell what live_chg_7 is, not in survey
-	rename 			s5cq08 live_sell_want
-	rename 			s5cq09 live_sell_able
-	rename 			s5cq11_* live_sell_nowhy*
-	rename 			s5cq13* live_*_sales
-	lab var			live_eggs_sales "Since March have sales of eggs"
-	lab var			live_meat_sales "Since March have sales of meat"
-	lab var			live_milk_sales "Since March have sales of milk"
-	lab var			live_other_sales "Since March have sales of other"
+	rename 			s5cq04_* ag_live_chg* // cannot tell what live_chg_7 is, not in survey
+	rename 			s5cq08 ag_live_sell_want
+	rename 			s5cq09 ag_live_sell_able
+	rename 			s5cq11_* ag_live_sell_nowhy*
+	rename 			s5cq13* ag_live_*_sales
+	lab var			ag_live_eggs_sales "Since March have sales of eggs"
+	lab var			ag_live_meat_sales "Since March have sales of meat"
+	lab var			ag_live_milk_sales "Since March have sales of milk"
+	lab var			ag_live_other_sales "Since March have sales of other"
 	forval 			x = 1/6 {
 		foreach 	p in eggs meat milk other {
-			rename 	s5cq14_1__`x'`p' live_`p'_dec_why_`x'
-			lab var live_`p'_dec_why_`x' "Why have the sales of [LIVESTOCK PRODUCT] declined?"
+			rename 	s5cq14_1__`x'`p' ag_live_`p'_dec_why_`x'
+			lab var ag_live_`p'_dec_why_`x' "Why have the sales of [LIVESTOCK PRODUCT] declined?"
 		}
 	}
 	forval 			x = 1/6 {
 		foreach 	p in eggs meat milk other {
-			rename 	s5cq14_2__`x'`p' live_`p'_no_why_`x'
-			lab var live_`p'_no_why_`x' "Why there were no sales of [LIVESTOCK PRODUCT]?"
+			rename 	s5cq14_2__`x'`p' ag_live_`p'_no_why_`x'
+			lab var ag_live_`p'_no_why_`x' "Why there were no sales of [LIVESTOCK PRODUCT]?"
 		}
 	}
 	foreach 		p in eggs meat milk other {
-		rename 		s5cq15`p' live_pr_`p'
-		lab var 	live_pr_`p' "Since March 20, 2020 has the price of [LIVESTOCK PRODUCT]…"
+		rename 		s5cq15`p' ag_live_pr_`p'
+		lab var 	ag_live_pr_`p' "Since March 20, 2020 has the price of [LIVESTOCK PRODUCT]…"
 	}
 
 * rename access

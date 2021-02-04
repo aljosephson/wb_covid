@@ -24,20 +24,6 @@
 * 0 - setup
 * **********************************************************************
 
-* run do files for each country (takes a little while to run)
-	run				"$code/ethiopia/eth_build_master"
-	run 			"$code/malawi/mwi_build_master"
-	run				"$code/nigeria/nga_build_master"
-	run 			"$code/uganda/uga_build_master"
-	
-* define
-	global	eth		=	"$data/ethiopia/refined" 
-	global	mwi		=	"$data/malawi/refined"
-	global	nga		=	"$data/nigeria/refined" 
-	global	uga		=	"$data/uganda/refined"
-	global	export	=	"$data/analysis"
-	global	logout	=	"$data/analysis/logs"
-
 * Define root folder globals
     if `"`c(username)'"' == "jdmichler" {
         global 		code  	"C:/Users/jdmichler/git/wb_covid"
@@ -54,6 +40,20 @@
 		global 		data	"G:/My Drive/wb_covid/data"
 	}	
 	
+* run do files for each country (takes a little while to run)
+	run				"$code/ethiopia/eth_build_master"
+	run 			"$code/malawi/mwi_build_master"
+	run				"$code/nigeria/nga_build_master"
+	run 			"$code/uganda/uga_build_master"
+	
+* define
+	global	eth		=	"$data/ethiopia/refined" 
+	global	mwi		=	"$data/malawi/refined"
+	global	nga		=	"$data/nigeria/refined" 
+	global	uga		=	"$data/uganda/refined"
+	global	export	=	"$data/analysis"
+	global	logout	=	"$data/analysis/logs"
+
 * open log
 	cap log 			close
 	log using			"$logout/analysis", append
@@ -678,7 +678,7 @@
 
 	order 				wave, after(hhid)
 	order 				know* curb* gov* satis* info* bh* ac_cr* ac_*  sch* edu_c* edu* emp* ///
-						bus* farm* wage* rem* *_inc *_chg *dwn cope* fies* ag* harv* live* ///
+						bus* farm* wage* rem* *_inc *_chg *dwn cope* fies* ag* harv* ag_live* ///
 						shock* concern* symp*, after(neighborhood_id) alpha
 	order				ag_chg_10 ag_chg_11 ag_chg_12 ag_chg_13, after (ag_chg_9)
 	order 				ac_cr_lend_10 ac_cr_lend_11 ac_cr_lend_12 ac_cr_lend_13 ac_cr_lend_14 ///

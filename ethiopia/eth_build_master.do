@@ -311,7 +311,7 @@
 	rename			em16_bus_sector bus_sect
 	rename			em17_bus_inc bus_emp_inc
 	rename			em18_bus_inc_low_amt bus_amt
-	rename			em20_farm farm_emp
+	rename			em20_farm farm_emp_bef
 	rename			em21_farm_norm farm_norm
 	rename			em22_farm_norm_why farm_why
 	forval 			x = 1/7 {
@@ -445,8 +445,8 @@
 * agriculture 
  * first addition in R3 (note: round 3 has data for ag6-9 although the questions do not appear in the survey tool)
  * assume questions are the same as those in round 4 (same var names and similar proportion answering yes/no)
-	rename			ag1_crops farm_act
-	rename			ag1a_crops_plan ag_prep
+	rename			ag1_crops ag_crop
+	rename			ag1a_crops_plan ag_plan
 	rename 			ag2_crops_able ag_chg	
 	rename			ag3_crops_reas_1 ag_nocrop_1 
 	rename 			ag3_crops_reas_2 ag_nocrop_2
@@ -474,22 +474,22 @@
 * livestock 
 	drop 			ls2_type ls4_covid_impact ls4_covid_impact__96 ls4_covid_impact_other ///
 					ls12_sell_notable ls12_sell_notable__96 ls12_sell_notable_other 
-	rename 			ls1_livestock live
+	rename 			ls1_livestock ag_live
 	rename 			ls2_type_5 ls2_type_7
-	rename 			ls2_type* live*
-	rename 			ls3_covid live_cov
-	rename 			ls4_covid_impact_1 live_chg_1
-	rename 			ls4_covid_impact_2 live_chg_3
-	rename 			ls4_covid_impact_3 live_chg_4
-	rename 			ls4_covid_impact_4 live_chg_5
-	rename 			ls5_usual live_sell
-	rename 			ls6_revenue_chg live_sell_chg
-	rename 			ls7_since_covid live_sell_want
-	rename 			ls8_because_covid live_sell_why
-	rename 			ls9_sell_able live_sell_able
-	rename 			ls10* live* 
-	rename 			ls11_ live_sell_pr
-	rename 			ls12_sell_notable* live_sell_nowhy*
+	rename 			ls2_type* ag_live*
+	rename 			ls3_covid ag_live_cov
+	rename 			ls4_covid_impact_1 ag_live_chg_1
+	rename 			ls4_covid_impact_2 ag_live_chg_3
+	rename 			ls4_covid_impact_3 ag_live_chg_4
+	rename 			ls4_covid_impact_4 ag_live_chg_5
+	rename 			ls5_usual ag_live_sell
+	rename 			ls6_revenue_chg ag_live_sell_chg
+	rename 			ls7_since_covid ag_live_sell_want
+	rename 			ls8_because_covid ag_live_sell_why
+	rename 			ls9_sell_able ag_live_sell_able
+	rename 			ls10* ag_live* 
+	rename 			ls11_ ag_live_sell_pr
+	rename 			ls12_sell_notable* ag_live_sell_nowhy*
 	 
 * locusts
  * first addition in R4 (only in r4)
@@ -521,7 +521,7 @@
 	drop			kn3_gov kn3_gov_0 kn3_gov__98 kn3_gov__99 kn3_gov__96 ///
 						kn3_gov_other ac2_atb_med_why_other ac2_atb_teff_why_other ///
 						ac2_atb_wheat_why_other ac2_atb_maize_why_other ///
-						ac2_atb_oil_why_other ///
+						ac2_atb_oil_why_other ag3* ag5* ///
 						ac8_med_access_reas_other em9_work_change_why_other ///
 						em3_work_no_why_other em4_work_pre_act_other ///
 						em5_work_pre_status_other em14_work_cur_notable_why_other ///
@@ -535,7 +535,7 @@
 						ir1_endearly ir1_whyendearly ir1_whyendearly_other ///
 						ir_lang ir_understand ir_confident em15b_bus_prev_closed_other ///
 						key em19_bus_inc_low_why__* em19_bus_inc_low_why hh_id hhh_id ///
-						ag* start_date hhh_gender hhh_age same loc_chg same_hhh ///			
+						start_date hhh_gender hhh_age same loc_chg same_hhh ///			
 						cr2_since_lender cr2_since_lender__96 cr2_since_lender_other ///
 						cr3_since_reas cr3_since_reas__96 cr3_since_reas_other ///
 						cr4_since_who cr4_since_who__96 cr4_since_who_other ///
@@ -543,7 +543,7 @@
 						cr8_before_who cr8_before_who__96 cr8_before_who_other ///
 						fi1_outoffood fi2_hungrynoteat fi3_noteatfullday lo3_impact ///
 						weight *why_other ea_id ac5_edu_type emp_act_other emp_stat_other ///
-						farm_why live_other submission_date round attempt em19_*
+						farm_why ag_live_other submission_date round attempt em19_*
 						
 * rename regions
 	replace 		region = 1001 if region == 1

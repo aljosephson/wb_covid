@@ -209,6 +209,10 @@
 	gen				wave = `w'
 	lab var			wave "Wave number"	
 	
+* clean variables inconsistent with other rounds	
+	rename 			s6aq1 ag_crop
+	rename			s6q16a farm_emp
+	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace
 

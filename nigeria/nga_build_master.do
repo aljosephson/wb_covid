@@ -138,7 +138,8 @@
 	lab val			sector nga_sec
 	drop			urb_rural
 	order			sector, after(phw)	
-
+	rename 			filter2 children05
+	
 * covid variables
  * know
 	rename 			s3q1  know
@@ -391,6 +392,7 @@
 	    replace 	edu_`x' = s5cq7__`x' if edu_`x' == . & s5cq7__`x' != .
 	}
 	rename 			s5q6 edu_cont
+	replace 		edu_cont = s5cq8 if edu_cont == . & s5cq8 != .
 	rename			s5q7__1 edu_cont_1
 	rename 			s5q7__2 edu_cont_2 
 	rename 			s5q7__3 edu_cont_3 
@@ -398,6 +400,14 @@
 	rename 			s5q7__5 edu_cont_6 
 	rename 			s5q7__6 edu_cont_7 
 	rename 			s5q7__7	edu_cont_8 
+	forval 			x = 1/3 {
+	    replace		edu_cont_`x' = s5cq9__`x' if edu_cont_`x' == . & s5cq9__`x' !=.
+	}
+	forval 			q = 4/7 {
+	    local 		x = `q' + 1
+	    replace		edu_cont_`x' = s5cq9__`q' if edu_cont_`x' == . & s5cq9__`q' !=.
+	}
+	drop 			s5cq8 s5cq9__*
 	rename 			s5cq1 sch_att
 	forval 			x = 1/14 {
 	    rename 		s5cq2__`x' sch_att_why_`x'
@@ -408,10 +418,6 @@
 	}
 	rename 			s5cq4__99 sch_prec_none
 	rename 			s5cq5 sch_prec_sat
-	rename 			s5cq8 sch_contact
-	forval 			x = 1/7 {
-	    rename 		s5cq9__`x' sch_contact_`x'
-	}
   * credit	
 	rename 			s5q8 ac_bank_need
 	rename 			s5q9 ac_bank 
@@ -546,15 +552,15 @@
 	rename			s6q20__6 ag_chg_6
 	rename			s6q20__7 ag_chg_7
 	rename 			s6q20__96 ag_chg_13
-	rename			s6q21a__1 agcovid_chg_why_1 
-	rename 			s6q21a__2 agcovid_chg_why_2
-	rename 			s6q21a__3 agcovid_chg_why_3
-	rename			s6q21a__4 agcovid_chg_why_4
-	rename			s6q21a__5 agcovid_chg_why_5	 
-	rename 			s6q21a__6 agcovid_chg_why_6
-	rename 			s6q21a__7 agcovid_chg_why_7
-	rename 			s6q21a__8 agcovid_chg_why_8	
-	rename 			s6q21a__96 agcovid_chg_why_9 
+	rename			s6q21a__1 ag_covid_chg_why_1 
+	rename 			s6q21a__2 ag_covid_chg_why_2
+	rename 			s6q21a__3 ag_covid_chg_why_3
+	rename			s6q21a__4 ag_covid_chg_why_4
+	rename			s6q21a__5 ag_covid_chg_why_5	 
+	rename 			s6q21a__6 ag_covid_chg_why_6
+	rename 			s6q21a__7 ag_covid_chg_why_7
+	rename 			s6q21a__8 ag_covid_chg_why_8	
+	rename 			s6q21a__96 ag_covid_chg_why_9 
 	rename 			s6q21b__1 ag_nocrop_1 
 	rename 			s6q21b__2 ag_nocrop_2 
 	rename 			s6q21b__3 ag_nocrop_3 
@@ -643,7 +649,7 @@
 * concerns
 	rename			s9q1 concern_1
 	forval 			x = 1/8 {
-	    rename 		s9q3__`x' concern_1_`x'
+	    rename 		s9q3__`x' concern_1_why_`x'
 	}
 	rename			s9q2 concern_2
 
@@ -652,7 +658,7 @@
 						s12q5 s12q9 s12q10 s12q10_os s12q11 s12q14 baseline_date ///
 						s12q10a s5* s6q11c s6bq4__96 s6aq8__96 s6aq7__96 s6aq6__96 ///
 						s6aq5__96 s6aq4__96 s6q8b1 s6bq6a lga filter ///
-						PID s2q0a s2q0b 
+						PID s2q0a s2q0b s12q4a s12q4b s9q3__96
 	drop if			wave ==  .
 	
 * reorder variables

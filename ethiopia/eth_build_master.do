@@ -468,8 +468,8 @@
 	rename			ag4_crops_reas_fert ag_fert
 	rename 			ag6_ext_need ag_ext_need 
 	rename 			ag7_ext_receive ag_ext
-	rename 			ag8_travel_norm aglabor_normal
-	rename 			ag9_travel_curr aglabor 
+	rename 			ag8_travel_norm ag_labor_normal
+	rename 			ag9_travel_curr ag_labor 
   
 * livestock 
 	drop 			ls2_type ls4_covid_impact ls4_covid_impact__96 ls4_covid_impact_other ///

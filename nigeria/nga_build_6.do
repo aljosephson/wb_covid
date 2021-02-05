@@ -156,7 +156,7 @@
 * load data
 	use				"$root/wave_0`w'/r`w'_sect_5c.dta", clear	
 	
-	
+adsf 
 	
 * ***********************************************************************
 * 2 - FIES score

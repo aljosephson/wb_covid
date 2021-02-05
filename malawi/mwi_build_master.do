@@ -283,7 +283,7 @@
 	
 * knowledge
 	rename 			s3q1  know
-	rename			s3q1a internet
+	rename			s3q1a ac_internet
 	rename			s3q2__1 know_1
 	lab var			know_1 "Handwashing with Soap Reduces Risk of Coronavirus Contraction"
 	rename			s3q2__2 know_9
@@ -638,8 +638,8 @@
 	rename 			s5q9 ac_bank_need
 	rename 			s5q10 ac_bank
 	rename 			s5q11 ac_bank_why
-	rename 			s5q12 internet7
-	rename 			s5q13 internet7_diff	
+	rename 			s5q12 ac_internet_able
+	rename 			s5q13 ac_internet_qual	
 	rename 			s5q17 sch_open 
 	gen 			sch_open_act = sch_open if wave > 3
 	lab def 		sch_open_act 1 "yes, they returned" 2 "no, they will return next phase" ///
@@ -813,20 +813,20 @@
 	lab var 		ag_chg_7 "activities affected - delayed harvest"
 	rename			s13q5__7 ag_chg_12
 	lab var 		ag_chg_12 "activities affected - early harvest"
-	rename			s13q6__1 agcovid_chg_why_1
-	rename 			s13q6__2 agcovid_chg_why_2
-	rename 			s13q6__3 agcovid_chg_why_3
-	rename			s13q6__4 agcovid_chg_why_4
-	rename			s13q6__5 agcovid_chg_why_5
-	rename 			s13q6__6 agcovid_chg_why_6
-	rename 			s13q6__7 agcovid_chg_why_7
-	rename 			s13q6__8 agcovid_chg_why_8
-	rename 			s13q7 aghire_chg_why
+	rename			s13q6__1 ag_covid_chg_why_1
+	rename 			s13q6__2 ag_covid_chg_why_2
+	rename 			s13q6__3 ag_covid_chg_why_3
+	rename			s13q6__4 ag_covid_chg_why_4
+	rename			s13q6__5 ag_covid_chg_why_5
+	rename 			s13q6__6 ag_covid_chg_why_6
+	rename 			s13q6__7 ag_covid_chg_why_7
+	rename 			s13q6__8 ag_covid_chg_why_8
+	rename 			s13q7 ag_hire_chg_why
 	rename 			s13q8 ag_ext_need
 	rename 			s13q9 ag_ext
 	rename			s13q10 ag_live
 	replace 		ag_live = s6qf1 if ag_live == . & s6qf1 != .
-	forval 			x = 1/10 {
+	forval 			x = 1/11 {
 		rename 		s6qf2__`x' ag_live_`x'
 	}
 	rename			s13q11 ag_live_chg
@@ -863,7 +863,7 @@
 	forval 			x = 1/3 {
 		rename 			s6qf6__`x' ag_live_chg2_2_cope`x'
 	}
-	forval 			x = 1/3 {
+	forval 			x = 1/4 {
 		rename 			s6qf7__`x' ag_live_chg2_3_cope`x'
 	}
 	rename 			s6qf8 ag_sell_live_want

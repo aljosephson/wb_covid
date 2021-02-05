@@ -249,6 +249,10 @@
 	rename			s6q17_1__6 farm_why_6
 	rename			s6q17_1__96 farm_why_7
 	rename			s6q17_1__7 farm_why_8
+	rename 			s5q6__5 temp
+	rename 			s5q6__7 s5q6__5 
+	rename 			s5q6__6 s5q6__7
+	rename 			temp s5q6__6
 	
 * generate round variables
 	gen				wave = `w'

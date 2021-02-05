@@ -761,7 +761,8 @@
 		append 			using `temp`var''
 	}
 
-	export 				excel "$export/variable_country_wave_crosswalk.xlsx", first(var) replace
+	export 				excel "$export/variable_country_wave_crosswalk.xlsx", ///
+							sheetreplace sheet(Vars_waves) first(var)
 	restore	
 	
 	

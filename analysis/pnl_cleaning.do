@@ -663,14 +663,14 @@
 	
 	replace 			sch_child = 0 if sch_child == 2
 	replace				sch_child = . if sch_child == -99 
-	
+
 	foreach 			x in 1 2 3 4 5 act {
 		replace			edu_`x' = 0 if edu_`x'_prim == 0 
 		replace			edu_`x' = 0 if edu_`x'_sec == 0 
 		replace			edu_`x' = 1 if edu_`x'_prim == 1 
 		replace			edu_`x' = 1 if edu_`x'_sec == 1
 	}
-	
+
 	lab var				edu_1 "Completed assignments provided by the teacher"
 	lab var				edu_2 "Used mobile learning apps"
 	lab var				edu_3 "Watched educational TV programs"

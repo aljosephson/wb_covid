@@ -59,7 +59,6 @@
 * 1 - knowledge of covid-19 restrictions, behaviours, and false beliefs
 * **********************************************************************
 
-
 * graph A - knowledge of government restrictions
 	graph bar		(mean) gov_1 gov_2 gov_4 gov_5 gov_6 gov_10 [pweight = phw], ///
 						over(country, lab(labs(vlarge))) ///
@@ -475,11 +474,12 @@
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
 						bar(1, color(khaki*1.5)) bar(2, color(cranberry*1.5)) ///
 						bar(3, color(teal*1.5)) bar(4, color(lavender*1.5)) ///
-						bar(5, color(brown*1.5)) legend( size(medsmall) ///
+						bar(5, color(ebblue*4)) legend( size(medsmall) ///
 						label (1 "Listened to educational radio programs") ///
 						label (2 "Using mobile learning apps") ///
 						label (3 "Watched education television") ///
-						label (4 "Session with teacher") pos(6) col(2)) ///
+						label (4 "Session with teacher") ///
+						label (5 "Studying and reading on their own") pos(6) col(2)) ///
 						ytitle("Households with children experiencing educational contact (%)", size(vlarge))  ///
 						saving("$output/educont_eth", replace)
 
@@ -488,21 +488,21 @@
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
 						bar(1, color(khaki*1.5)) bar(2, color(cranberry*1.5)) ///
 						bar(3, color(teal*1.5)) bar(4, color(lavender*1.5)) ///
-						bar(5, color(brown*1.5)) legend(off) saving("$output/educont_mwi", replace)
+						bar(5, color(ebblue*4)) legend(off) saving("$output/educont_mwi", replace)
 
-	graph bar		 edu_4 edu_2 edu_3 edu_5 [pweight = hhw] if country == 3 ///
+	graph bar		 edu_4 edu_2 edu_3 edu_5  [pweight = hhw] if country == 3 ///
 						, over(wave, label(labsize(vlarge))) over(country, label(labsize(vlarge))) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
 						bar(1, color(khaki*1.5)) bar(2, color(cranberry*1.5)) ///
 						bar(3, color(teal*1.5)) bar(4, color(lavender*1.5)) ///
-						bar(5, color(brown*1.5)) legend(off) saving("$output/educont_nga", replace)
+						bar(5, color(ebblue*4)) legend(off) saving("$output/educont_nga", replace)
 
-	graph bar		edu_4 edu_2 edu_3 edu_5  [pweight = hhw] if country == 4  ///
+	graph bar		edu_4 edu_2 edu_3 edu_5 [pweight = hhw] if country == 4  ///
 						, over(wave, label(labsize(vlarge))) over(country, label(labsize(vlarge))) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
 						bar(1, color(khaki*1.5)) bar(2, color(cranberry*1.5)) ///
 						bar(3, color(teal*1.5)) bar(4, color(lavender*1.5)) ///
-						bar(5, color(brown*1.5)) legend(off) saving("$output/educont_uga", replace)
+						bar(5, color(ebblue*4)) legend(off) saving("$output/educont_uga", replace)
 
 	grc1leg2  		 "$output/educont_eth.gph" "$output/educont_mwi.gph" ///
 						"$output/educont_nga.gph" "$output/educont_uga.gph", ///

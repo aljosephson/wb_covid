@@ -1466,19 +1466,6 @@ restore
 
 local tabnum = `tabnum' + 1
 
-preserve
-
-	replace 			edu_act = 1 if sch_child_prim == 1 & edu_act_prim == 1 
-	replace 			edu_act = 1 if sch_child_sec == 1 & edu_act_sec == 1 
-	replace 			edu_act = 0 if (sch_child_sec == 1 & edu_act_sec == 0) & (sch_child_prim == 1 & edu_act_prim == 0)
-	
-	forval 				x = 1/5 { 
-	    replace			edu_`x' = 0 if edu_`x'_prim == 0 & wave == 3
-		replace			edu_`x' = 0 if edu_`x'_sec == 0 & wave == 3
-		replace			edu_`x' = 1 if edu_`x'_prim == 1 & wave == 3
-		replace			edu_`x' = 1 if edu_`x'_sec == 1 & wave == 3
-	}
-
 * changes in educational activity over time by country
 	forval 					c = 1/3 {
 		reg					edu_act i.wave [pweight = shw] if country == `c', vce(robust)	
@@ -1495,7 +1482,6 @@ preserve
 		}
 	}
 
- restore
   
 * **********************************************************************
 * 7 - end matter, clean up to save

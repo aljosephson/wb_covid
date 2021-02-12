@@ -187,7 +187,7 @@
 	lab var			wave "Wave number"	
 
 * clean variables inconsistent with other rounds	
-	rename			s6q16 farm_emp
+	rename			s6q16 ag_crop
 	rename 			s6bq1 ag_live
 	
 * save round file

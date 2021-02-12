@@ -360,7 +360,7 @@
 	* rename coping
 		rename			s9q04 meal
 		rename			s9q05 meal_source
-	* education 
+	* rename education 
 		rename 			s4q012 children318
 		rename 			s4q013 sch_child
 		rename 			s4q014 edu_act
@@ -371,7 +371,9 @@
 		rename 			s4q15__5 edu_5
 		rename 			s4q15__6 edu_8
 		lab var 		edu_8 "Used reading materials provided by government"
-		rename 			s4q15__n96 edu_other		
+		rename 			s4q15__n96 edu_other	
+	* rename agriculture
+		rename 			s5aq26 ag_live
 * save panel
 	* gen wave data
 		rename			wfinal phw

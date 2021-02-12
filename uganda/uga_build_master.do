@@ -298,7 +298,6 @@
 	rename			s5aq23 ag_fert
 	rename			s5aq24 ag_input
 	rename			s5aq25 ag_crop_lost
-	rename			s5aq26 ag_live_lost
 	rename			s5aq27 ag_live_chg
 	rename			s5aq28__1 ag_live_chg_3
 	rename			s5aq28__2 ag_live_chg_3a
@@ -340,9 +339,7 @@
 	rename 			s5bq08 harv_sell_need
 	rename 			s5bq09 harv_sell
 	
-* rename livestock 
-	rename 			s5cq01 ag_live
-	* rename livestock type to match Nigeria
+* rename livestock type to match Nigeria
 	rename 			s5cq02__1 ag_live_1
 	rename 			s5cq02__2 ag_live_1a
 	rename 			s5cq02__3 ag_live_2
@@ -739,8 +736,8 @@
 	export 			excel using "$export/uga_qc_flags.xlsx", first(var) sheetreplace sheet(flags)
 	restore
 	destring 		wave, replace
-	
 */	
+	
 * **********************************************************************
 * 5 - end matter, clean up to save
 * **********************************************************************

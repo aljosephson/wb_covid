@@ -503,11 +503,7 @@
 	foreach 			var of varlist `inc' {
 		replace			`var' = 0 if `var' == 2 | `var' == -98
 		lab val			`var' yesno
-		replace			`var' = . if country == 3 & (wave == 2 | wave == 3 | wave == 5)
 	}
-	*** omit nigeria wave 2, 3 and 5 due to incomplete questions 
-	* NOTE: not sure I understand why these are ommitted, Ethiopia missing asst_inc?
-	* NOTE: should automate last line so do not have to update for every wave in nga
 
 	gen 				other_inc = 1 if isp_inc == 1 | pen_inc == 1 | gov_inc == 1 | ///
 							ngo_inc == 1 | oth_inc == 1 | asst_inc == 1 
@@ -620,13 +616,14 @@
 		
 	replace				edu_cont = 0 if edu_cont == 2
 	lab val				edu_cont yesno
-	
+ 	
 	* generate remittance income variable 
-	gen 				remit_inc = 1 if rem_dom == 2
-	replace				remit_inc = 1 if rem_for == 2 
-	replace				remit_inc = 0 if remit_inc == .
-	replace 			remit_inc = . if rem_dom == -99 & remit_inc == .
-	replace 			remit_inc = . if rem_for == -99 & remit_inc == .
+	replace 			rem_dom = 2 if rem_dom == 0
+	replace 			rem_for = 2 if rem_for == 0
+	replace 			rem_dom = . if rem_dom <0
+	replace 			rem_for = . if rem_for <0
+	gen 				remit_inc = 0
+	replace 			remit_inc = 1 if rem_dom == 1 | rem_for == 1
 	* others fine as is: bus_inc farm_inc wage_inc 	
 	
 	* business income 

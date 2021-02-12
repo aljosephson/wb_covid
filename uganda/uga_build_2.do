@@ -393,7 +393,8 @@
 		rename			s9q09__3 curb_3
 		rename			s9q09__4 curb_4
 		rename			s9q09__5 curb_5
-		
+	* rename agriculture 	
+		rename 			s5cq01 ag_live
 * save panel
 	* gen wave data
 		rename			wfinal phw

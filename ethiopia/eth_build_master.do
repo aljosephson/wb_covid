@@ -311,7 +311,7 @@
 	rename			em16_bus_sector bus_sect
 	rename			em17_bus_inc bus_emp_inc
 	rename			em18_bus_inc_low_amt bus_amt
-	rename			em20_farm farm_emp_bef
+	rename			em20_farm farm_emp
 	rename			em21_farm_norm farm_norm
 	rename			em22_farm_norm_why farm_why
 	forval 			x = 1/7 {
@@ -443,8 +443,7 @@
 	rename 			as6_assist_tension perc_aidten 
 	
 * agriculture 
- * first addition in R3 (note: round 3 has data for ag6-9 although the questions do not appear in the survey tool)
- * assume questions are the same as those in round 4 (same var names and similar proportion answering yes/no)
+ * first addition in R3
 	rename			ag1_crops ag_crop
 	rename			ag1a_crops_plan ag_plan
 	rename 			ag2_crops_able ag_chg	

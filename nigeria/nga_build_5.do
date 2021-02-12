@@ -129,6 +129,17 @@
 * reshape data	
 	reshape 		wide s7q1, i(hhid) j(source_cd)
 
+	rename			s7q14 oth_inc_1
+	lab var 		oth_inc_1 "Other Income: Remittances from abroad"
+	rename			s7q15 oth_inc_2
+	lab var 		oth_inc_2 "Other Income: Remittances from family in the country"
+	rename			s7q16 oth_inc_3
+	lab var 		oth_inc_3 "Other Income: Assistance from non-family"
+	rename			s7q17 oth_inc_4
+	lab var 		oth_inc_4 "Other Income: Income from properties, investments, or savings"
+	rename			s7q18 oth_inc_5
+	lab var 		oth_inc_5 "Other Income: Pension"
+	
 * save temp file
 	tempfile		tempc
 	save			`tempc'
@@ -170,7 +181,7 @@
 	lab var			wave "Wave number"	
 
 * clean variables inconsistent with other rounds	
-	rename			s6q16 farm_emp
+	rename			s6q16 ag_crop
 	rename 			s6bq1 ag_live
  	
 * save round file

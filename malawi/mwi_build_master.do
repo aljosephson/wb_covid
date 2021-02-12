@@ -767,11 +767,16 @@
 	rename 			s6bq15c bus_oth_curr
 	rename 			s6bq15d bus_num_curr
 	rename			s6cq1 oth_inc_1
+	lab var 		oth_inc_1 "Other Income: Remittances from abroad"
 	rename			s6cq2 oth_inc_2
+	lab var 		oth_inc_2 "Other Income: Remittances from family in the country"
 	rename			s6cq3 oth_inc_3
+	lab var 		oth_inc_3 "Other Income: Assistance from non-family"
 	rename			s6cq4 oth_inc_4
+	lab var 		oth_inc_4 "Other Income: Income from properties, investments, or savings"
 	rename			s6cq5 oth_inc_5
-
+	lab var 		oth_inc_5 "Other Income: Pension"
+	
 * concern 
 	rename			s9q1 concern_1
 	rename			s9q2 concern_2

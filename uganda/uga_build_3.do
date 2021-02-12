@@ -326,7 +326,7 @@
 
 * load cover data
 	use				"$root/wave_0`w'/Cover", clear
-
+	
 * merge in other sections	
 	forval 			x = 1/10 {
 	    merge 		1:1 HHID using `temp`x'', nogen
@@ -336,6 +336,7 @@
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC5.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC5A.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC5B.dta", nogen 
+	merge 1:1 		HHID using "$root/wave_0`w'/SEC5C.dta", nogen 
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC7A_1.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC7B_1.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC7C_1.dta", nogen
@@ -408,7 +409,8 @@
 		rename			s9q08 concern_6
 		lab var			concern_6 "Corruption in the government has lowered the quality of medical supplies and care"
 		rename			s9q09 concern_7
-		
+	* rename agriculture
+		rename 			s5cq01 ag_live
 * save panel
 	* gen wave data
 		rename			wfinal phw

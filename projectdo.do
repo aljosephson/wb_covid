@@ -38,16 +38,19 @@
     if `"`c(username)'"' == "jdmichler" {
         global 		code  	"C:/Users/jdmichler/git/wb_covid"
 		global 		data	"G:/My Drive/wb_covid/data"
+		global 		output_f "G:/My Drive/wb_covid/output"
     }
 
     if `"`c(username)'"' == "aljosephson" {
         global 		code  	"C:/Users/aljosephson/git/wb_covid"
 		global 		data	"G:/My Drive/wb_covid/data"
+		global 		output_f "G:/My Drive/wb_covid/output"
     }
 
 	if `"`c(username)'"' == "annfu" {
 		global 		code  	"C:/Users/annfu/git/wb_covid"
 		global 		data	"G:/My Drive/wb_covid/data"
+		global 		output_f "G:/My Drive/wb_covid/output"
 	}
 	
 	

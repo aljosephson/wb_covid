@@ -171,7 +171,6 @@
 	rename			s6q4a_1 emp_same
 	rename			s6q4b_1 emp_chg_why
 	rename			s6q4c_1 emp_pre_actc
-	rename			s6q5_1 emp_act
 	rename			s6q6_1 emp_stat
 	rename			s6q7_1 emp_able
 	rename			s6q8_1 emp_unable
@@ -200,6 +199,38 @@
 	rename			s6q17_1__96 farm_why_7
 	rename			s6q17_1__7 farm_why_8
 
+* edit employment activity
+	rename			s6q5_1 emp_act	
+	replace 		emp_act = -96 if emp_act == 96
+	replace 		emp_act = 7 if emp_act == 10
+	replace 		emp_act = 13 if emp_act == 8
+	replace 		emp_act = 8 if emp_act == 6
+
+	replace 		s6q5 = -96 if s6q5 == 96
+	replace 		s6q5 = 16 if s6q5 == 15
+	replace 		s6q5 = 15 if s6q5 == 14
+	replace 		s6q5 = 14 if s6q5 == 9
+	replace 		s6q5 = 9 if s6q5 == 11 | s6q5 == 12
+	replace 		s6q5 = 11 if s6q5 == 4
+	replace 		s6q5 = 12 if s6q5 == 5
+	replace 		s6q5 = 4 if s6q5 == 7
+	replace 		s6q5 = 7 if s6q5 == 10
+	replace 		s6q5 = 10 if s6q5 == 2
+	replace 		s6q5 = 2 if s6q5 == 3
+	replace 		s6q5 = 0 if s6q5 == 8
+	replace 		s6q5 = 8 if s6q5 == 6
+	replace 		s6q5 = 6 if s6q5 == 13
+	replace 		s6q5 = 13 if s6q5 == 0
+	
+	lab def 		emp_act -96 "Other" 1 "Agriculture" 2 "Industry/manufacturing" ///
+						3 "Wholesale/retail" 4 "Transportation services" ///
+						5 "Restaurants/hotels" 6 "Public Administration" ///
+						7 "Personal Services" 8 "Construction" 9 "Education/Health" ///
+						10 "Mining" 11 "Professional/scientific/technical activities" ///
+						12 "Electic/water/gas/waste" 13 "Buying/selling" ///
+						14 "Finance/insurance/real estate" 15 "Tourism" 16 "Food processing" 
+	lab val 		emp_act emp_act
+		
 * rename access credit variables inconsistent with wave 3
 	rename 			s6dq1 ac_cr_loan
 	replace 		ac_cr_loan = 2 if ac_cr_loan == 3

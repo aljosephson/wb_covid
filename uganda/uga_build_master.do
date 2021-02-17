@@ -173,6 +173,31 @@
 	label 			var oth_inc "Income from other source in last 12 months"
 	rename			s6q0296 oth_chg
 	label 			var oth_chg "Change in income from other source since covid"	
+
+* clean employment
+	replace 		emp_act = 1 if emp_act == 11111
+	replace 		emp_act = 2 if emp_act == 31111
+	replace 		emp_act = 3 if emp_act == 71111
+	replace 		emp_act = 4 if emp_act == 81111
+	replace 		emp_act = 5 if emp_act == 91111
+	replace 		emp_act = 6 if emp_act == 151111  | emp_act == 141111
+	replace 		emp_act = 8 if emp_act == 61111
+	replace 		emp_act = 9 if emp_act == 161111 | emp_act == 171111
+	replace 		emp_act = 10 if emp_act == 21111
+	replace 		emp_act = 11 if emp_act == 131111
+	replace 		emp_act = 12 if emp_act == 41111 | emp_act == 51111
+	replace 		emp_act = 14 if emp_act == 111111 | emp_act == 121111
+	replace 		emp_act = -96 if emp_act == 101111 | emp_act == 191111 ///
+						| emp_act == 181111 | emp_act == 201111
+						
+	lab def 		emp_act -96 "Other" 1 "Agriculture" 2 "Industry/manufacturing" ///
+						3 "Wholesale/retail" 4 "Transportation services" ///
+						5 "Restaurants/hotels" 6 "Public Administration" ///
+						7 "Personal Services" 8 "Construction" 9 "Education/Health" ///
+						10 "Mining" 11 "Professional/scientific/technical activities" ///
+						12 "Electic/water/gas/waste" 13 "Buying/selling" ///
+						14 "Finance/insurance/real estate" 15 "Tourism" 16 "Food processing" 
+	lab val 		emp_act emp_act
 	
 * label cope variabels	
 	lab var			cope_1 "Sale of assets (Agricultural and Non_agricultural)"

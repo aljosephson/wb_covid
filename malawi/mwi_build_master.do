@@ -85,7 +85,7 @@
 	drop 			if variables == ""
 	export 			excel using "$export/mwi_variable_crosswalk.xlsx", first(var) replace
 	
-	
+
 * ***********************************************************************
 * 2 - create malawi panel
 * ***********************************************************************
@@ -666,6 +666,7 @@
 	replace			emp_same = s6q4a_1b if s6q4a_1b != .
 	replace			emp_chg_why = s6q4b if s6q4b != .
 	replace			emp_act = s6q5 if s6q5 != .
+	replace 		emp_act = -96 if emp_act == 96
 	replace			emp_stat = s6q6 if s6q6 != .
 	replace			emp_able = s6q7 if s6q7 != .
 	replace			emp_unable = s6q8 if s6q8 != .

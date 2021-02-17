@@ -498,18 +498,20 @@
 	replace				concern_2 = 0 if concern_2 == 3 | concern_2 == 4
 	replace				concern_2 = 1 if concern_2 == 2
 	lab val				concern_2 yesno
-
+ 
 	loc inc				farm_inc bus_inc wage_inc isp_inc pen_inc gov_inc ngo_inc oth_inc asst_inc
 	foreach 			var of varlist `inc' {
 		replace			`var' = 0 if `var' == 2 | `var' == -98
+		replace 		`var' = . if `var' == -99
 		lab val			`var' yesno
 	}
-
+			
 	gen 				other_inc = 1 if isp_inc == 1 | pen_inc == 1 | gov_inc == 1 | ///
 							ngo_inc == 1 | oth_inc == 1 | asst_inc == 1 
 	replace 			other_inc = 0 if other_inc == . 
 	lab var 			other_inc "other income sources (isp, pen, gov, ngo, oth, asst)"
-
+	lab val 			other_inc  yesno
+	
 	replace				farm_chg = . if farm_inc == 0
 	replace				bus_chg = . if bus_inc == 0 
 	replace				wage_chg = . if wage_inc == 0 
@@ -624,6 +626,7 @@
 	replace 			rem_for = . if rem_for <0
 	gen 				remit_inc = 0
 	replace 			remit_inc = 1 if rem_dom == 1 | rem_for == 1
+	lab val 			remit_inc yesno
 	* others fine as is: bus_inc farm_inc wage_inc 	
 	
 	* business income 
@@ -682,8 +685,53 @@
 	lab var				edu_12 "Newspaper"
 
 	
-* *********************************************************************
-* 8 - end matter, clean up to save
+* **********************************************************************
+* 8 - clean agriculture and livestock variables
+* **********************************************************************
+	
+	gen					farm_no_work = 1 if ag_crop == 2
+	lab var 			farm_no_work ""
+	replace 			ag_crop = 2 if ag_crop == 3
+	replace 			ag_crop = 0 if ag_crop == 2 | ag_crop == 3
+	replace 			ag_crop = . if ag_crop < 0
+	
+	replace 			ag_live = 0 if ag_live == 2
+	lab val 			ag_crop ag_live yesno
+	
+	
+* **********************************************************************
+* 9 - clean employment variables 
+* **********************************************************************
+	
+	replace 			emp = . if emp < 0
+	replace 			emp = 0 if emp == 2
+	lab val 			emp yesno
+	
+	replace 			emp_stat = 4 if country == 1 & (emp_stat == 2 | emp_stat == 3 ///
+							| emp_stat == 5  | emp_stat == 6 | emp_stat == 12)
+	replace 			emp_stat = 6 if emp_stat == 1 & country == 1
+	replace 			emp_stat = 1 if emp_stat == 7 & country == 1
+	replace 			emp_stat = -96 if country == 1 & (emp_stat == 8 | ///
+							emp_stat == 9 | emp_stat == 10)
+	replace 			emp_stat = 5 if country == 1 & emp_stat == 11
+	replace 			emp_stat = 123 if country == 3 & emp_stat == 5
+	replace 			emp_stat = 5 if country == 3 & emp_stat == 6
+	replace 			emp_stat = 6 if country == 3 & emp_stat == 123
+	replace 			emp_stat = . if emp_stat == -99
+	lab def 			emp_stat 1 "Own business" 2 "Family business" ///
+							3 "Family farm" 4 "Employee for someone else" ///
+							5 "Apprentice, trainee, intern" ///
+							6 "Employee for the government" -96 "Other"
+	lab val 			emp_stat emp_stat
+	
+	
+	foreach 			var in emp_able bus_emp farm_emp farm_norm {
+		replace 			`var' = 0 if `var' == 2
+		replace 			`var'= . if `var '< 0
+	}
+							
+* **********************************************************************
+* 10 - end matter, clean up to save
 * **********************************************************************
 
 	order 				wave, after(hhid)

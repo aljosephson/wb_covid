@@ -178,7 +178,6 @@
 	rename			s6q4a emp_same
 	rename			s6q4b emp_chg_why
 	rename			s6q4c emp_pre_actc
-	rename			s6q5 emp_act
 	rename			s6q6 emp_stat
 	rename			s6q7 emp_able
 	rename			s6q8 emp_unable
@@ -202,7 +201,35 @@
 	rename			s6q17__5 farm_why_5
 	rename			s6q17__6 farm_why_6
 	rename			s6q17__7 farm_why_7
+
+* edit employment activity	
+	rename			s6q5 emp_act
+	replace 		emp_act = -96 if emp_act == 16
+	replace 		emp_act = 16 if emp_act == 15
+	replace 		emp_act = 15 if emp_act == 14
+	replace 		emp_act = 14 if emp_act == 9
+	replace 		emp_act = 9 if emp_act == 11 | emp_act == 12
+	replace 		emp_act = 11 if emp_act == 4
+	replace 		emp_act = 12 if emp_act == 5
+	replace 		emp_act = 4 if emp_act == 7
+	replace 		emp_act = 7 if emp_act == 10
+	replace 		emp_act = 10 if emp_act == 2
+	replace 		emp_act = 2 if emp_act == 3
+	replace 		emp_act = 0 if emp_act == 8
+	replace 		emp_act = 8 if emp_act == 6
+	replace 		emp_act = 6 if emp_act == 13
+	replace 		emp_act = 13 if emp_act == 0
 	
+	lab def 		emp_act -96 "Other" 1 "Agriculture" 2 "Industry/manufacturing" ///
+						3 "Wholesale/retail" 4 "Transportation services" ///
+						5 "Restaurants/hotels" 6 "Public Administration" ///
+						7 "Personal Services" 8 "Construction" 9 "Education/Health" ///
+						10 "Mining" 11 "Professional/scientific/technical activities" ///
+						12 "Electic/water/gas/waste" 13 "Buying/selling" ///
+						14 "Finance/insurance/real estate" 15 "Tourism" 16 "Food processing" 
+	lab val 		emp_act emp_act
+	
+		
 * generate round variables
 	gen				wave = `w'
 	lab var			wave "Wave number"

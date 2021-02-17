@@ -35,9 +35,11 @@
 * read in data
 	use				"$ans/lsms_panel", clear
 
-* waves to month number
-	
-	keep 				if ((country == 1 | country == 3 ) & wave < 6) | (country == 2 & wave < 5) | (country == 4 & wave < 4)
+* keep waves included in book chapter 
+	keep 				if ((country == 1 | country == 3 ) & wave < 6) | ///
+							(country == 2 & wave < 5) | (country == 4 & wave < 4)
+							
+* waves to month number	
 	gen 				wave_orig = wave
 	replace 			wave = 9 if wave == 5 & (country == 3 | country == 1)
 	replace 			wave = 8 if wave == 4 & (country == 3 | country == 1)
@@ -56,8 +58,10 @@
 
 	lab def 			months 4 "April" 5 "May" 6 "June" 7 "July" 8 "Aug" 9 "Sept"
 	lab val				wave months
-	
+	lab var 			wave_orig "Original wave number"
+	lab var 			wave "Month"
 
+	
 * **********************************************************************
 * 1 - behavior
 * **********************************************************************

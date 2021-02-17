@@ -292,6 +292,14 @@
 * employment variables 	
 	rename			em1_work_cur emp
 	rename			em6_work_cur_act emp_act
+	lab def 		emp_act -96 "Other" 1 "Agriculture" 2 "Industry/manufacturing" ///
+						3 "Wholesale/retail" 4 "Transportation services" ///
+						5 "Restaurants/hotels" 6 "Public Administration" ///
+						7 "Personal Services" 8 "Construction" 9 "Education/Health" ///
+						10 "Mining" 11 "Professional/scientific/technical activities" ///
+						12 "Electic/water/gas/waste" 13 "Buying/selling" ///
+						14 "Finance/insurance/real estate" 15 "Tourism" 16 "Food processing" 
+	lab val 		emp_act emp_act
 	rename			em6_work_cur_act_other emp_act_other
 	rename			em7_work_cur_status emp_stat
 	rename			em7_work_cur_status_other emp_stat_other

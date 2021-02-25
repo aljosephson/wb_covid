@@ -25,7 +25,7 @@
 
 * define
 	global	ans		=	"$data/analysis"
-	global	output	=	"$data/analysis/figures"
+	global	output	=	"$output_f/nature_paper/nature_figures"
 	global	logout	=	"$data/analysis/logs"
 
 * open log
@@ -36,23 +36,23 @@
 	use				"$ans/lsms_panel", clear
 
 * drop new waves not used in nhb 
-	keep 					if ((country == 1 | country == 3) & (wave == 1 | wave == 2 | wave == 3)) | ///
-							((country == 2 | country == 4) & (wave == 1 | wave == 2))
+	keep 			if ((country == 1 | country == 3) & (wave == 1 | wave == 2 | wave == 3)) | ///
+						((country == 2 | country == 4) & (wave == 1 | wave == 2))
 
 * waves to month number
-	gen 				wave_orig = wave
-	replace 			wave = 6 if wave == 3 & country == 1
-	replace 			wave = 5 if wave == 2 & country == 1
-	replace 			wave = 4 if wave == 1 & country == 1
-	replace 			wave = 7 if wave == 3 & country == 3
-	replace 			wave = 6 if wave == 2 & country == 3
-	replace 			wave = 5 if wave == 1 & country == 3
-	replace 			wave = 7 if wave == 2 & country == 2
-	replace 			wave = 6 if wave == 1 & (country == 2 | country == 4)
-	replace 			wave = 8 if wave == 2 & country == 4
+	gen 			wave_orig = wave
+	replace 		wave = 6 if wave == 3 & country == 1
+	replace 		wave = 5 if wave == 2 & country == 1
+	replace 		wave = 4 if wave == 1 & country == 1
+	replace 		wave = 7 if wave == 3 & country == 3
+	replace 		wave = 6 if wave == 2 & country == 3
+	replace 		wave = 5 if wave == 1 & country == 3
+	replace 		wave = 7 if wave == 2 & country == 2
+	replace 		wave = 6 if wave == 1 & (country == 2 | country == 4)
+	replace 		wave = 8 if wave == 2 & country == 4
 
-	lab def 			months 4 "April" 5 "May" 6 "June" 7 "July" 8 "Aug" 9 "Sept"
-	lab val				wave months
+	lab def 		months 4 "April" 5 "May" 6 "June" 7 "July" 8 "Aug" 9 "Sept"
+	lab val			wave months
 	
 	
 * **********************************************************************
@@ -66,7 +66,7 @@
 						bar(2, color(cranberry*1.5)) bar(3, color(teal*1.5)) ///
 						bar(4, color(lavender*1.5)) bar(5, color(brown*1.5)) ///
 						bar(6, color(maroon*1.5))  ///
-						ytitle("Individual's Knowledge of government actions to curb spread (%)", size(vlarge)) ///
+						ytitle("Individual's Knowledge of government actions to curb spread (%)", size(large)) ///
 						ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
 						legend(label (1 "Advised to stay home") ///
 						label (2 "Restricted travel") ///
@@ -74,8 +74,13 @@
 						label (5 "Closed businesses") label (6 "Stopped social gatherings") ///
 						pos (6) col(3) size(medsmall)) saving("$output/restriction", replace)
 
+	gen 			temp = 1 if gov_1 < . | gov_2 < . |gov_4 < . |gov_5 < . |gov_6 < . |gov_10 < . 
+	count 			if temp < .
+	local 			obs1a = `r(N)'
+	drop 			temp
+	
 	grc1leg2  		"$output/restriction.gph", col(3) iscale(.5) commonscheme ///
-						title("A", size(huge)) imargin(0 0 0 0) legend()
+						title("A", size(huge)) imargin(0 0 0 0) legend() name("g1a", replace)
 					
 	graph export 	"$output/restriction.eps", as(eps) replace
 
@@ -93,9 +98,14 @@
 						label (4 "Stay at home") label (5 "Avoid crowds") ///
 						label (6 "Socially distance") pos (6) col(3) ///
 						size(medsmall)) saving("$output/knowledge", replace)
-
+	
+	gen 			temp = 1 if know_1 < . | know_2 < . |know_3 < . |know_5 < . |know_6 < . |know_7 < . 
+	count 			if temp < .
+	local 			obs1b = `r(N)'
+	drop 			temp
+	
 	grc1leg2		"$output/knowledge.gph", col(3) iscale(.5) commonscheme ///
-						title("B", size(huge)) imargin(0 0 0 0) legend()
+						title("B", size(huge)) imargin(0 0 0 0) legend() name("g1b", replace)
 						
 	graph export	"$output/knowledge.eps", as(eps) replace
 						
@@ -112,8 +122,13 @@
 						label (3 "Avoided crowds") pos(6) col(3) ///
 						size(medsmall)) saving("$output/behavior", replace)
 
+	gen 			temp = 1 if bh_1 < . | bh_2 < . |bh_3 < . 
+	count 			if temp < .
+	local 			obs1c = `r(N)'
+	drop 			temp
+	
 	grc1leg2  		"$output/behavior.gph", col(3) iscale(.5) commonscheme ///
-						title("C", size(huge)) imargin(0 0 0 0) legend()	
+						title("C", size(huge)) imargin(0 0 0 0) legend() name("g1c", replace)	
 
 	graph export 	"$output/behavior.eps", as(eps) replace
 	
@@ -136,21 +151,33 @@
 						2 `""Coronavirus does not" "affect children"""' ///
 						3 `""Coronavirus cannot survive" "warm weather""' ///
 						4 `""Coronavirus is just" "common flu""'))  ///
-						ylabel(, labs(vlarge)) ///
+						ylabel(, labs(huge)) ///
 						bar(1, color(khaki*1.5) ) ///
 						bar(2, color(emerald*1.5) ) ///
 						legend( label (2 "True") label (1 "False") pos(6) col(2) ///
 						size(medsmall)) saving("$output/myth", replace)
 
+	gen 			temp = 1 if myth != ""
+	count 			if temp
+	local 			obs1d = `r(N)'				
+	drop 			temp
+	
 	restore
 	
-	grc1leg2  		"$output/myth.gph", col(3) iscale(.5) commonscheme ///
-						title("D", size(huge)) imargin(0 0 0 0) legend()	
+	grc1leg2  		"$output/myth.gph", col(3) iscale(.7) commonscheme ///
+						title("D", size(huge)) imargin(0 0 0 0) legend() name("g1d", replace)
 						
 	graph export 	"$output/myth.eps", as(eps) replace
 
-
 	
+* combine 4 graphs, export as eps	
+
+	graph combine 	g1a g1b g1c g1d, col(2) iscale(.5) imargin(0 0 0 0) ///
+						saving("$output/fig1.gph", replace)
+						
+	graph export 	"$output/fig1.eps", as(eps) replace
+
+
 * **********************************************************************
 * 2 - household income, food insecurity, and concerns about covid-19
 * **********************************************************************
@@ -171,10 +198,15 @@
 						label (3 "Wage income") label (4 "Remittances") label (5 "All else") ///
 						pos(6) col(3) size(medsmall)) saving("$output/income_all", replace)
 
+	gen 			temp = 1 if farm_dwn < . |bus_dwn < . |wage_dwn  < . |remit_dwn < . |other_dwn < . 
+	count 			if temp < .
+	local 			obs2a = `r(N)'
+	drop 			temp
+						
 	restore
 	
 	grc1leg2 		"$output/income_all.gph", col(3) iscale(.5) ///
-						commonscheme title("A", size(huge))
+						commonscheme title("A", size(huge)) name("g2a", replace)	
 						
 	graph export 	"$output/income_all.eps", as(eps) replace
 						
@@ -231,12 +263,17 @@
 						bar(2, fcolor(`7') lcolor(none))  ///
 						bar(3, fcolor(`15') lcolor(none)) ylabel(, labs(large)) legend(off) ///
 						saving("$output/uga_bus_inc", replace)
-
+	
+	gen 			temp = 1 if bus_emp_inc != ""
+	count 			if temp
+	local 			obs2b = `r(N)'				
+	drop 			temp
+	
 	restore
 
 	grc1leg2 		"$output/eth_bus_inc.gph" "$output/mwi_bus_inc.gph" ///
-						"$output/nga_bus_inc.gph" "$output/uga_bus_inc.gph", ///
-						col(1) iscale(.5) commonscheme imargin(0 0 0 0) title("B", size(huge)) 
+						"$output/nga_bus_inc.gph" "$output/uga_bus_inc.gph", col(1) iscale(.5) ///
+						 commonscheme imargin(0 0 0 0) title("B", size(huge)) name("g2b", replace)	
 						
 	graph export 	"$output/bus_emp_inc.eps", as(eps) replace
 
@@ -281,10 +318,13 @@
 						bar(5, fcolor(`13') lcolor(none)) legend(off) ///
 						saving("$output/fies_sev", replace)
 
+	count 			if p_mod < . & quint < .
+	local 			obs2c = `r(N)'	
+						
 	restore
 
 	grc1leg2 		"$output/fies_modsev.gph" "$output/fies_sev.gph", ///
-						col(3) iscale(.5) pos(6) commonscheme title("C", size(huge))
+						col(3) iscale(.5) pos(6) commonscheme title("C", size(huge)) name("g2c", replace)
 						
 	graph export 	"$output/fies.eps", as(eps) replace
 
@@ -312,13 +352,23 @@
 						saving("$output/concern_2", replace)
 	*** Nigeria has information on concerns in wave 1, but only FIES in wave 2
 
+	count 			if p_mod < . | p_sev < .
+	local 			obs2d = `r(N)'	
+	
 	restore
 	
 	grc1leg2 		"$output/concern_1.gph" "$output/concern_2.gph", ///
-						col(1) iscale(.5) pos(6) commonscheme title("D", size(huge) span)
+						col(1) iscale(.5) pos(6) commonscheme title("D", size(huge) span) name("g2d", replace)
 						
 	graph export 	"$output/concerns.eps", as(eps) replace
 
+	
+* combine 4 graphs, export as eps	
+	graph combine 	g2a g2b g2c g2d, col(2) iscale(.5) imargin(0 0 0 0) ///
+						saving("$output/fig2.gph", replace)
+				
+	graph export 	"$output/fig2.eps", as(eps) replace	
+	
 
 * **********************************************************************
 * 3 - household coping strategies and access to basics necessities
@@ -329,7 +379,6 @@
 	drop if 		country == 1 & wave_orig == 1
 	drop if 		country == 1 & wave_orig == 2
 	drop if 		country == 3 & wave_orig == 1
-	
 	
 	replace			cope_3 = 1 if cope_3 == 1 | cope_4 == 1
 	replace			cope_5 = 1 if cope_5 == 1 | cope_6 == 1 | cope_7 == 1
@@ -349,10 +398,13 @@
 						label (7 "Did nothing") size(medsmall) pos(6) col(3)) ///
 						saving("$output/cope_all.gph", replace)
 
+	count 			if cope_11 < . | cope_1 < . | cope_9 < . | cope_10 < . | cope_3 < . | asst_any < . | cope_none < .
+	local 			obs3a = `r(N)'		
+						
 	restore
 
 	grc1leg2 		"$output/cope_all.gph", col(4) iscale(.5) commonscheme ///
-						title("A", size(huge))
+						title("A", size(huge)) name("g3a", replace)
 						
 	graph export 	"$output/cope.eps", as(eps) replace
 
@@ -431,9 +483,12 @@
 						bar(3, fcolor(`7') lcolor(none)) bar(4, fcolor(`10') lcolor(none))  ///
 						bar(5, fcolor(`13') lcolor(none)) legend(off) ///
 						saving("$output/ac_soap", replace)
-
+						
+	count 			if (ac_med < . & quint < .) | (ac_staple < . & quint < .)  | (ac_soap < . & quint < .) 
+	local 			obs3b = `r(N)'	
+	
 	grc1leg2		"$output/ac_med.gph" "$output/ac_staple.gph" "$output/ac_soap.gph", ///
-						col(3) iscale(.5) pos(6) commonscheme title("B", size(huge)) 
+						col(3) iscale(.5) pos(6) commonscheme title("B", size(huge)) name("g3b", replace)
 						
 	graph export 	"$output/access.eps", as(eps) replace
 
@@ -461,9 +516,12 @@
 						label (2 "Second Quintile") label (3 "Third Quintile") label (4 "Fourth Quintile") ///
 						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
 						saving("$output/edu_quinta", replace)
-
+						
+	count 			if (edu_act < . & quint < .) 
+	local 			obs3c = `r(N)'
+	
 	grc1leg2  		 "$output/edu_quinta.gph", col(3) iscale(.5) commonscheme ///
-						imargin(0 0 0 0) legend() title("C", size(huge))
+						imargin(0 0 0 0) legend() title("C", size(huge)) name("g3c", replace)
 						
 	graph export "$output/edu_quint.eps", as(eps) replace
 						
@@ -504,16 +562,35 @@
 						bar(3, color(teal*1.5)) bar(4, color(lavender*1.5)) ///
 						bar(5, color(ebblue*4)) legend(off) saving("$output/educont_uga", replace)
 
+	count 			if edu_4 < . | edu_2 < . | edu_3 < . | edu_5 < . 
+	local 			obs3d = `r(N)'					
+						
 	grc1leg2  		 "$output/educont_eth.gph" "$output/educont_mwi.gph" ///
 						"$output/educont_nga.gph" "$output/educont_uga.gph", ///
-						col(4) iscale(.5) commonscheme imargin(0 0 0 0) legend() title("D", size(huge)) 
+						col(4) iscale(.5) commonscheme imargin(0 0 0 0) ///
+						legend() title("D", size(huge)) name("g3d", replace)
 						
 	graph export 	"$output/educont.eps", as(eps) replace
 
-
+	
+* combine 4 graphs, export as eps	
+	graph combine 	g3a g3b g3c g3d, col(2) iscale(.5) imargin(0 0 0 0) ///
+						saving("$output/fig3.gph", replace)
+				
+	graph export 	"$output/fig3.eps", as(eps) replace	
+	
+	
 * **********************************************************************
 * 4 - end matter, clean up to save
 * **********************************************************************
+
+* print observation counts
+	forval x = 1/3 {
+	    foreach l in a b c d {
+		    di "`x' `l' observations"
+			di `obs`x'`l''
+		}
+	}
 
 * close the log
 	log	close

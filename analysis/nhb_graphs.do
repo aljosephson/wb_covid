@@ -75,8 +75,11 @@
 						pos (6) col(3) size(medsmall)) saving("$output/restriction", replace)
 
 	gen 			temp = 1 if gov_1 < . | gov_2 < . |gov_4 < . |gov_5 < . |gov_6 < . |gov_10 < . 
-	count 			if temp < .
-	local 			obs1a = `r(N)'
+	preserve 
+		collapse 		(count) temp, by(hhid)
+		count 			if temp != 0 & temp != . & temp != .a
+		local 			obs1a = `r(N)'
+	restore
 	drop 			temp
 	
 	grc1leg2  		"$output/restriction.gph", col(3) iscale(.5) commonscheme ///
@@ -100,8 +103,11 @@
 						size(medsmall)) saving("$output/knowledge", replace)
 	
 	gen 			temp = 1 if know_1 < . | know_2 < . |know_3 < . |know_5 < . |know_6 < . |know_7 < . 
-	count 			if temp < .
-	local 			obs1b = `r(N)'
+	preserve 
+		collapse 		(count) temp, by(hhid)
+		count 			if temp != 0 & temp != . & temp != .a
+		local 			obs1b = `r(N)'
+	restore
 	drop 			temp
 	
 	grc1leg2		"$output/knowledge.gph", col(3) iscale(.5) commonscheme ///
@@ -123,8 +129,11 @@
 						size(medsmall)) saving("$output/behavior", replace)
 
 	gen 			temp = 1 if bh_1 < . | bh_2 < . |bh_3 < . 
-	count 			if temp < .
-	local 			obs1c = `r(N)'
+	preserve 
+		collapse 		(count) temp, by(hhid)
+		count 			if temp != 0 & temp != . & temp != .a
+		local 			obs1c = `r(N)'
+	restore
 	drop 			temp
 	
 	grc1leg2  		"$output/behavior.gph", col(3) iscale(.5) commonscheme ///
@@ -157,11 +166,14 @@
 						legend( label (2 "True") label (1 "False") pos(6) col(2) ///
 						size(medsmall)) saving("$output/myth", replace)
 
-	gen 			temp = 1 if myth != ""
-	count 			if temp
-	local 			obs1d = `r(N)'				
-	drop 			temp
+	restore
 	
+	preserve 
+		drop if			country == 1 | country == 3
+		gen 			temp = 1 if myth_2 != . | myth_3 != . | myth_4 != . | myth_5 != .
+		collapse 		(count) temp, by(hhid)
+		count 			if temp
+		local 			obs1d = `r(N)'	
 	restore
 	
 	grc1leg2  		"$output/myth.gph", col(3) iscale(.7) commonscheme ///
@@ -197,12 +209,15 @@
 						legend( label (1 "Farm income") label (2 "Business income") ///
 						label (3 "Wage income") label (4 "Remittances") label (5 "All else") ///
 						pos(6) col(3) size(medsmall)) saving("$output/income_all", replace)
-
-	gen 			temp = 1 if farm_dwn < . |bus_dwn < . |wage_dwn  < . |remit_dwn < . |other_dwn < . 
-	count 			if temp < .
-	local 			obs2a = `r(N)'
-	drop 			temp
-						
+				
+	restore
+			
+	preserve
+		keep if			wave_orig == 1
+		gen 			temp = 1 if farm_dwn < . |bus_dwn < . |wage_dwn  < . |remit_dwn < . |other_dwn < . 
+		collapse 		(count) temp, by(hhid)
+		count 			if temp != 0 & temp != . & temp != .a
+		local 			obs2a = `r(N)'
 	restore
 	
 	grc1leg2 		"$output/income_all.gph", col(3) iscale(.5) ///
@@ -264,11 +279,13 @@
 						bar(3, fcolor(`15') lcolor(none)) ylabel(, labs(large)) legend(off) ///
 						saving("$output/uga_bus_inc", replace)
 	
-	gen 			temp = 1 if bus_emp_inc != ""
-	count 			if temp
-	local 			obs2b = `r(N)'				
-	drop 			temp
+	restore
 	
+	preserve 
+		gen 			temp = 1 if bus_emp_inc != . & bus_emp_inc != .a
+		collapse 		(count) temp, by(hhid)
+		count 			if temp != 0 & temp != . & temp != .a
+		local 			obs2b = `r(N)'				
 	restore
 
 	grc1leg2 		"$output/eth_bus_inc.gph" "$output/mwi_bus_inc.gph" ///
@@ -318,9 +335,16 @@
 						bar(5, fcolor(`13') lcolor(none)) legend(off) ///
 						saving("$output/fies_sev", replace)
 
-	count 			if p_mod < . & quint < .
-	local 			obs2c = `r(N)'	
-						
+	restore					
+	
+	preserve 
+		gen 			temp = 1 if p_mod < . & quint < .
+		drop if 		country == 1 & wave_orig == 2
+		drop if 		country == 2 & wave_orig == 1
+		drop if 		country == 4 & wave_orig == 1
+		collapse 		(count) temp, by(hhid)
+		count 			if temp != 0 & temp != . & temp != .a
+		local 			obs2c = `r(N)'	
 	restore
 
 	grc1leg2 		"$output/fies_modsev.gph" "$output/fies_sev.gph", ///
@@ -352,9 +376,15 @@
 						saving("$output/concern_2", replace)
 	*** Nigeria has information on concerns in wave 1, but only FIES in wave 2
 
-	count 			if p_mod < . | p_sev < .
-	local 			obs2d = `r(N)'	
-	
+	restore
+		
+	preserve
+		drop if			country == 2 & wave_orig == 1
+		drop if			country == 4 & wave_orig == 1	
+		gen 			temp = 1 if p_mod < . | p_sev < .
+		collapse 		(count) temp, by(hhid)
+		count 			if temp != 0 & temp != . & temp != .a
+		local 			obs2d = `r(N)'	
 	restore
 	
 	grc1leg2 		"$output/concern_1.gph" "$output/concern_2.gph", ///
@@ -397,12 +427,21 @@
 						label (6 "Received assistance") /// 
 						label (7 "Did nothing") size(medsmall) pos(6) col(3)) ///
 						saving("$output/cope_all.gph", replace)
-
-	count 			if cope_11 < . | cope_1 < . | cope_9 < . | cope_10 < . | cope_3 < . | asst_any < . | cope_none < .
-	local 			obs3a = `r(N)'		
 						
 	restore
-
+	
+	preserve
+		drop if 		country == 1 & wave_orig == 1
+		drop if 		country == 1 & wave_orig == 2
+		drop if 		country == 3 & wave_orig == 1
+		replace			cope_3 = 1 if cope_3 == 1 | cope_4 == 1
+		replace			cope_5 = 1 if cope_5 == 1 | cope_6 == 1 | cope_7 == 1
+		gen  			temp = 1 if cope_11 < . | cope_1 < . | cope_9 < . | cope_10 < . | cope_3 < . | asst_any < . | cope_none < .
+		collapse 		(count) temp, by(hhid)
+		count 			if temp != 0 & temp != . & temp != .a
+		local 			obs3a = `r(N)'	
+	restore 
+		
 	grc1leg2 		"$output/cope_all.gph", col(4) iscale(.5) commonscheme ///
 						title("A", size(huge)) name("g3a", replace)
 						
@@ -484,9 +523,13 @@
 						bar(5, fcolor(`13') lcolor(none)) legend(off) ///
 						saving("$output/ac_soap", replace)
 						
-	count 			if (ac_med < . & quint < .) | (ac_staple < . & quint < .)  | (ac_soap < . & quint < .) 
-	local 			obs3b = `r(N)'	
-	
+	preserve 
+		gen 			temp = 1 if (ac_med < . & quint < .) | (ac_staple < . & quint < .)  | (ac_soap < . & quint < .)
+		collapse 		(count) temp, by(hhid)
+		count 			if temp != 0 & temp != . & temp != .a
+		local 			obs3b = `r(N)'		
+	restore
+				
 	grc1leg2		"$output/ac_med.gph" "$output/ac_staple.gph" "$output/ac_soap.gph", ///
 						col(3) iscale(.5) pos(6) commonscheme title("B", size(huge)) name("g3b", replace)
 						
@@ -517,8 +560,13 @@
 						label (5 "Fifth Quintile") order( 1 2 3 4 5) pos(6) col(3) size(medsmall)) ///
 						saving("$output/edu_quinta", replace)
 						
-	count 			if (edu_act < . & quint < .) 
-	local 			obs3c = `r(N)'
+	
+	preserve 
+		gen 			temp = 1 if (edu_act < . & quint < .)
+		collapse 		(count) temp, by(hhid)
+		count 			if temp != 0 & temp != . & temp != .a
+		local 			obs3c = `r(N)'		
+	restore
 	
 	grc1leg2  		 "$output/edu_quinta.gph", col(3) iscale(.5) commonscheme ///
 						imargin(0 0 0 0) legend() title("C", size(huge)) name("g3c", replace)
@@ -562,8 +610,12 @@
 						bar(3, color(teal*1.5)) bar(4, color(lavender*1.5)) ///
 						bar(5, color(ebblue*4)) legend(off) saving("$output/educont_uga", replace)
 
-	count 			if edu_4 < . | edu_2 < . | edu_3 < . | edu_5 < . 
-	local 			obs3d = `r(N)'					
+	preserve 
+		gen 			temp = 1 if edu_4 < . | edu_2 < . | edu_3 < . | edu_5 < .
+		collapse 		(count) temp, by(hhid)
+		count 			if temp != 0 & temp != . & temp != .a
+		local 			obs3d = `r(N)'		
+	restore				
 						
 	grc1leg2  		 "$output/educont_eth.gph" "$output/educont_mwi.gph" ///
 						"$output/educont_nga.gph" "$output/educont_uga.gph", ///

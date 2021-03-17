@@ -325,8 +325,8 @@
 		rename			s5q07 emp_able
 		rename			s5q08 emp_unable
 		rename			s5q08a emp_unable_why
-		rename			s5q08b emp_hours
-		rename			s5q08c emp_hours_chg
+		rename			s5q08b emp_hrs
+		rename			s5q08c emp_hrs_chg
 		rename			s5q08d__1 emp_cont_1
 		rename			s5q08d__2 emp_cont_2
 		rename			s5q08d__3 emp_cont_3

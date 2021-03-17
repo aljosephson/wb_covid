@@ -703,9 +703,11 @@
 * 9 - clean employment variables 
 * **********************************************************************
 	
-	replace 			emp = . if emp < 0
-	replace 			emp = 0 if emp == 2
-	lab val 			emp yesno
+	foreach 			var in emp_pre emp emp_same {
+		replace 			`var' = . if `var' < 0
+		replace 			`var' = 0 if `var' == 2
+		lab val 			`var' yesno
+	}
 	
 	replace 			emp_stat = 4 if country == 1 & (emp_stat == 2 | emp_stat == 3 ///
 							| emp_stat == 5  | emp_stat == 6 | emp_stat == 12)

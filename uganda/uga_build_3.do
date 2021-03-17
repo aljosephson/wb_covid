@@ -14,7 +14,7 @@
 	* raw Uganda data
 
 * TO DO:
-	* add FIES (wating for data)
+	* complete
 
 
 * **********************************************************************
@@ -371,9 +371,10 @@
 		rename			s5q07 emp_able
 		rename			s5q08 emp_unable
 		rename			s5q08a emp_unable_why
-		rename			s5q08b emp_hours
-		rename			s5q08c emp_hours_chg
+		rename			s5q08b emp_hrs
+		rename			s5q08c emp_hrs_chg
 		rename			s5q08f_* emp_saf*
+		rename 			emp_saf_n96 emp_saf_96
 		rename 			s5q08g emp_saf_fol
 		rename 			s5q08g emp_saf_fol_per
 		rename			s5q09 emp_hh

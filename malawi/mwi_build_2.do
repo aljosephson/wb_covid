@@ -220,10 +220,9 @@
 	rename			s6q1a rtrn_emp
 	rename 	 		s6q2_1 emp_pre
 	rename			s6q3a_1 emp_pre_why
-	rename			s6q3b_1 emp_pre_act
 	rename			s6q4a_1 emp_same
 	rename			s6q4b_1 emp_chg_why
-	rename			s6q4c_1 emp_pre_actc
+	rename			s6q4c_1 emp_pre_act
 	rename			s6q6_1 emp_stat
 	rename			s6q7_1 emp_able
 	rename			s6q8_1 emp_unable

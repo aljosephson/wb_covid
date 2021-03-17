@@ -658,6 +658,8 @@
 	rename			s6q8e_1 emp_hrs_chg
 	rename			s6q3a_1a find_job
 	rename			s6q3a_2a find_job_do
+	gen 			emp_nowork_pay = s6q3b
+	replace 		emp_nowork_pay = s6q3b_1 if emp_nowork_pay == .
 	rename			s6q4_1 find_job_act
 	rename 			working_last emp_last
 	

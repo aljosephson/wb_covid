@@ -319,9 +319,9 @@
 		rename			s5q02 emp_pre
 		rename			s5q03 emp_pre_why
 		rename			s504 emp_pre_act
+		replace 		emp_pre_act = s504c if s504c != . & emp_pre_act == .
 		rename			s5q04a emp_same
 		rename			s5q04b emp_chg_why
-		rename			s504c emp_pre_actc
 		rename			s5q05 emp_act
 		rename			s5q06 emp_stat
 		rename			s5q07 emp_able
@@ -353,7 +353,7 @@
 		rename			s7q07 fies_2
 		lab var			fies_2 "Hungry but did not eat"
 		rename			s7q08 fies_3
-		lab var			fies_3 "Went without eating for a whole dat"
+		lab var			fies_3 "Went without eating for a whole day"
 	* rename concerns
 		rename			s8q01 concern_1
 		rename			a8q02 concern_2

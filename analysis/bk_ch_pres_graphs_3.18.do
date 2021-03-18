@@ -120,7 +120,66 @@
 	graph export 		"$output/cur_emp.png", as(png) replace
 	graph export 		"$output/cur_emp.emf", as(emf) replace
 	
-
+	mean 				emp [pweight = hhw] if country == 1 & wave == 4
+		local 			c1w4 = el(e(b),1,1)
+	mean 				emp [pweight = hhw] if country == 1 & wave == 5
+		local 			c1w5 = el(e(b),1,1)
+	mean 				emp [pweight = hhw] if country == 1 & wave == 6
+		local 			c1w6 = el(e(b),1,1)
+		local 			c1w7 = 0
+	mean 				emp [pweight = hhw] if country == 1 & wave == 8
+		local 			c1w8 = el(e(b),1,1)
+	mean 				emp [pweight = hhw] if country == 1 & wave == 9
+		local 			c1w9 = el(e(b),1,1)
+	
+		local 			c2w4 = 0
+		local 			c2w5 = 0
+	mean 				emp [pweight = hhw] if country == 2 & wave == 6
+		local 			c2w6 = el(e(b),1,1)
+	mean 				emp [pweight = hhw] if country == 2 & wave == 7
+		local 			c2w7 = el(e(b),1,1)
+	mean 				emp [pweight = hhw] if country == 2 & wave == 8
+		local 			c2w8 = el(e(b),1,1)
+	mean 				emp [pweight = hhw] if country == 2 & wave == 9
+		local 			c2w9 = el(e(b),1,1)
+		
+		local 			c3w4 = 0
+	mean 				emp [pweight = hhw] if country == 3 & wave == 5
+		local 			c3w5 = el(e(b),1,1)
+	mean 				emp [pweight = hhw] if country == 3 & wave == 6
+		local 			c3w6 = el(e(b),1,1)
+	mean 				emp [pweight = hhw] if country == 3 & wave == 7
+		local 			c3w7 = el(e(b),1,1)
+	mean 				emp [pweight = hhw] if country == 3 & wave == 8
+		local 			c3w8 = el(e(b),1,1)
+	mean 				emp [pweight = hhw] if country == 3 & wave == 9
+		local 			c3w9 = el(e(b),1,1)
+		
+		local 			c4w4 = 0
+		local 			c4w5 = 0
+	mean 				emp [pweight = hhw] if country == 4 & wave == 6
+		local 			c4w6 = el(e(b),1,1)
+		local 			c4w7 = 0
+	mean 				emp [pweight = hhw] if country == 4 & wave == 8
+		local 			c4w8 = el(e(b),1,1)
+	mean 				emp [pweight = hhw] if country == 4 & wave == 9
+		local 			c4w9 = el(e(b),1,1)
+		
+	//preserve
+		clear
+		set obs 9
+		gen month = _n
+		drop in 1/3
+		foreach c in c1 c2 c3 c4{
+			gen `c' = .
+		}
+		forval c = 1/4 {
+			forval m = 4/9 {
+				replace c`c' = `c`c'w`m'' if month == `m'
+			}
+		}
+		
+	
 * **********************************************************************
 * Employed before outbreak but not working in round 1
 * **********************************************************************
@@ -137,6 +196,11 @@
 					
 	graph export 		"$output/emp_pre.png", as(png) replace	
 	graph export 		"$output/emp_pre.emf", as(emf) replace
+
+	mean 				emp_pre [pweight = hhw] if country == 1 & wave_orig == 1
+	mean 				emp_pre [pweight = hhw] if country == 2 & wave_orig == 1
+	mean 				emp_pre [pweight = hhw] if country == 3 & wave_orig == 1
+	mean 				emp_pre [pweight = hhw] if country == 4 & wave_orig == 1
 
 	
 * **********************************************************************

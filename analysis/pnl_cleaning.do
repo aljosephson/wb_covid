@@ -703,7 +703,8 @@
 * 9 - clean employment variables 
 * **********************************************************************
 	
-	foreach 			var in emp_pre emp emp_same {
+	foreach 			var in emp_pre emp emp_same emp_cont_1 ///
+							emp_cont_2 emp_cont_3 emp_cont_4 {
 		replace 			`var' = . if `var' < 0
 		replace 			`var' = 0 if `var' == 2
 		lab val 			`var' yesno

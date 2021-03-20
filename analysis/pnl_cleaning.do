@@ -727,11 +727,27 @@
 							6 "Employee for the government" -96 "Other"
 	lab val 			emp_stat emp_stat
 	
-	
 	foreach 			var in emp_able bus_emp farm_emp farm_norm {
 		replace 			`var' = 0 if `var' == 2
 		replace 			`var'= . if `var '< 0
 	}
+	
+	replace 			emp_chg_why = 96 if emp_chg_why == -96
+	replace 			emp_chg_why = 96 if emp_chg_why == 13 & country == 2
+	replace 			emp_chg_why = 15 if emp_chg_why == 13 & country == 3
+	replace 			emp_chg_why = 16 if emp_chg_why == 14 & country == 3	
+	lab def 			emp_chg_why 1 "Bus closed due to COVID restrictions" ///
+							2 "Bus closed not due to COVID restrictions" ///
+							3 "Laid off" 4 "Furlough" 5 "Vacation" 6 "Ill/quarentined" ///
+							7 "Cared for ill relative" 8 "Seasonal worker" ///
+							9 "Retired" 10 "Not able to farm due to movt restrictions" ///
+							11 "Not able to farm due to lack of inputs" ///
+							12 "Not farm season" 13 "Lack of transportation" ///
+							14 "Do not want to be exposed to the virus" ///
+							15 "focus on secondary activity" 16 "Better opportunity" ///
+							96 "Other", replace
+	lab val				emp_chg_why emp_chg_why 
+	
 							
 * **********************************************************************
 * 10 - end matter, clean up to save
@@ -767,7 +783,7 @@
 * close the log
 	log	close	
 	
-
+/*
 * *********************************************************************
 * 9 - generate variable-country-wave crosswalk
 * **********************************************************************	

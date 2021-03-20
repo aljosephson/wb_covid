@@ -304,7 +304,7 @@
 	rename			em7_work_cur_status emp_stat
 	rename			em7_work_cur_status_other emp_stat_other
 	rename			em8_work_cur_same emp_same
-	rename			em9_work_change_why emp_chg_why
+	rename			em9_work_change_why emp_chg_why_eth
 	rename			em2_work_pre emp_pre
 	rename			em3_work_no_why emp_pre_why
 	rename			em4_work_pre_act emp_pre_act

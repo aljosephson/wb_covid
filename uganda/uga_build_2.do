@@ -312,7 +312,7 @@
 	* rename employment
 		rename			s5q01 emp
 		rename			s5q01a rtrn_emp
-		rename			s5q01b rtrn_when
+		rename			s5q01b rtrn_emp_when
 		rename			s5q01c rtrn_emp_why
 		replace			rtrn_emp_why = s5q03 if rtrn_emp_why == .
 		rename			s5q03a find_job

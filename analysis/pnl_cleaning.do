@@ -703,8 +703,8 @@
 * 9 - clean employment variables 
 * **********************************************************************
 	
-	foreach 			var in emp_pre emp emp_same emp_cont_1 ///
-							emp_cont_2 emp_cont_3 emp_cont_4 {
+	foreach 			var in emp_pre emp emp_same contrct emp_cont_1 ///
+							emp_cont_2 emp_cont_3 emp_cont_4 rtrn_emp {
 		replace 			`var' = . if `var' < 0
 		replace 			`var' = 0 if `var' == 2
 		lab val 			`var' yesno
@@ -748,7 +748,22 @@
 							96 "Other", replace
 	lab val				emp_chg_why emp_chg_why 
 	
-							
+	replace 			emp_unable = . if emp_unable == 4 | emp_unable == -98 
+	replace 			emp_unable = 3 if emp_unable == 0
+	lab def 			emp_unable 1 "Full normal payment" 2 "Partial payment" ///
+							3 "No payment", replace
+	lab val 			emp_unable emp_unable
+	
+	replace 			rtrn_emp_when = 0 if rtrn_emp_when > 97
+	replace 			rtrn_emp_when = 6 if rtrn_emp_when == 5 & country == 2 
+	* in mwi 4 there is a "just returned to job" option coded as 5 (inconsistent with nga) but no one selected it, this line included in case it is selected in future rounds 
+	lab def 			rtrn_emp_when 1 "Within one week" 2 "Within one month" ///
+							3 "Within 3 months" 4 "More than 3 months" ///
+							5 "When restrictions are lifted" 6 "Just returned to the job" ///
+							0 "Don't know"
+
+	
+	
 * **********************************************************************
 * 10 - end matter, clean up to save
 * **********************************************************************
@@ -783,7 +798,7 @@
 * close the log
 	log	close	
 	
-/*
+
 * *********************************************************************
 * 9 - generate variable-country-wave crosswalk
 * **********************************************************************	

@@ -656,15 +656,14 @@
 	replace			emp = s6q1_1 if emp == .
 	rename			s6q8d_1 emp_hrs
 	rename			s6q8e_1 emp_hrs_chg
-	rename			s6q3a_1a find_job
-	rename			s6q3a_2a find_job_do
-	gen 			emp_nowork_pay = s6q3b
+	rename			s6q3a_1a emp_search
+	rename			s6q3a_2a emp_search_how
 	replace 		emp_nowork_pay = s6q3b_1 if emp_nowork_pay == .
-	rename			s6q4_1 find_job_act
+	drop			s6q4_1 // duplicative of emp_pre_act
 	rename 			working_last emp_last
 	
  * same respondant employment
- 	rename			s6q1b rtrn_when
+ 	rename			s6q1b rtrn_emp_when
 	replace			emp_same = s6q4a_1b if s6q4a_1b != .
 	replace			emp_chg_why = s6q4b if s6q4b != .
 	replace			emp_act = s6q5 if s6q5 != .
@@ -681,37 +680,16 @@
 	replace			emp_cont_4 = s6q8d__4 if s6q8d__4 != .
 	replace			contrct = s6q8e__1 if s6q8e__1 != . & contrct == .
 	replace			emp_hh = s6q9 if s6q9 != .
-	replace			find_job = s6q3a if s6q3a != .
-	replace			find_job_do = s6q3b if s6q3b != .
-	gen				rtrn_emp_why = 1 if s6q1c__1 == 1
-	replace			rtrn_emp_why = 2 if s6q1c__2 == 1
-	replace			rtrn_emp_why = 3 if s6q1c__3 == 1
-	replace			rtrn_emp_why = 4 if s6q1c__4 == 1
-	replace			rtrn_emp_why = 5 if s6q1c__5 == 1
-	replace			rtrn_emp_why = 6 if s6q1c__6 == 1
-	replace			rtrn_emp_why = 7 if s6q1c__7 == 1
-	replace			rtrn_emp_why = 8 if s6q1c__8 == 1
-	replace			rtrn_emp_why = 9 if s6q1c__9 == 1
-	replace			rtrn_emp_why = 10 if s6q1c__10 == 1
-	replace			rtrn_emp_why = 11 if s6q1c__11 == 1
-	replace			rtrn_emp_why = 12 if s6q1c__12 == 1
-	replace			rtrn_emp_why = 13 if s6q1c__13 == 1
-	replace			rtrn_emp_why = 14 if s6q1c__96 == 1
-	replace			rtrn_emp_why = 1 if s6q3__1 == 1 & rtrn_emp_why == .
-	replace			rtrn_emp_why = 2 if s6q3__2 == 1 & rtrn_emp_why == .
-	replace			rtrn_emp_why = 3 if s6q3__3 == 1 & rtrn_emp_why == .
-	replace			rtrn_emp_why = 4 if s6q3__4 == 1 & rtrn_emp_why == .
-	replace			rtrn_emp_why = 5 if s6q3__5 == 1 & rtrn_emp_why == .
-	replace			rtrn_emp_why = 6 if s6q3__6 == 1 & rtrn_emp_why == .
-	replace			rtrn_emp_why = 7 if s6q3__7 == 1 & rtrn_emp_why == .
-	replace			rtrn_emp_why = 8 if s6q3__8 == 1 & rtrn_emp_why == .
-	replace			rtrn_emp_why = 9 if s6q3__9 == 1 & rtrn_emp_why == .
-	replace			rtrn_emp_why = 10 if s6q3__10 == 1 & rtrn_emp_why == .
-	replace			rtrn_emp_why = 11 if s6q3__11 == 1 & rtrn_emp_why == .
-	replace			rtrn_emp_why = 12 if s6q3__12 == 1 & rtrn_emp_why == .
-	replace			rtrn_emp_why = 13 if s6q3__13 == 1 & rtrn_emp_why == .
-	replace			rtrn_emp_why = 14 if s6q3__96 == 1 & rtrn_emp_why == .
-	lab def			rtrn_emp_why 1 "Business closed due to legal restrictions" ///
+	replace			emp_search = s6q3a if s6q3a != .
+	replace			emp_search_how = s6q3b if s6q3b != .
+	gen				emp_why = .
+	forval 			x = 1/13 {
+					replace emp_why = `x' if s6q1c__`x' == 1
+					replace	emp_why = `x' if s6q3__`x' == 1 & emp_why == .
+	}
+	replace			emp_why = 14 if s6q1c__96 == 1
+	replace			emp_why = 14 if s6q3__96 == 1 & emp_why == .
+	lab def			emp_why 1 "Business closed due to legal restrictions" ///
 								 2 "Business closed for other reasons" 3 "Laid off" ///
 								 4 "Furloughed" 5 "Vacation" 6 "Ill/Quarantined" ///
 								 7 "Caregiving" 8 "Seasonal worker" 9 "Retired" ///
@@ -719,9 +697,8 @@
 								 11 "Unable to farm due to lack of inputs" ///
 								 12 "Not farming season" 13 "COVID rotation" ///
 								 14 "Other"
-	lab val			rtrn_emp_why rtrn_emp_why
-	lab var 		rtrn_emp_why "Why did you not work last week"
-	order			rtrn_emp_why, after(rtrn_when)
+	lab val			emp_why emp_why
+	lab var 		emp_why "Why did you not work last week"
 
 	rename			s6bq11a_1 bus_stat
 	replace			bus_stat = s6bq11a_2 if bus_stat == .
@@ -925,7 +902,7 @@
 						s6qe6__95 s6qe6_ot s6qe2_ot s6qe3_ot s6qe4__95 s6qe4_ot ///
 						s6qf1 s6qf2__95 s6qf2_ot s6qf3 s6qf6__95 s6qf6_ot s6qf7__95 ///
 						s6qf7_ot s6qf10__95 s6qf10_ot s6qf4__95 s6qf4_ot s6qf5__95 ///
-						s6qf5_ot s6dq10_ot weight s2q9
+						s6qf5_ot s6dq10_ot weight s2q9 s6q3b_1 
 
 * regional and sector information
 	gen				sector = 2 if urb_rural == 1

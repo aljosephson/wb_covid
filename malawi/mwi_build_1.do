@@ -174,6 +174,7 @@
 * rename variables inconsistent with other waves
 	rename			s6q2 emp_pre
 	rename			s6q3a emp_pre_why	
+	rename 			s6q3b emp_nowork_pay
 	rename			s6q4a emp_same
 	rename			s6q4b emp_chg_why
 	rename			s6q4c emp_pre_act

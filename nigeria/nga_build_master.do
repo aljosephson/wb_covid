@@ -517,10 +517,10 @@
 	rename			s6q17__6 farm_why_6
 	rename			s6q17__96 farm_why_7	 
 	rename 			s6q1a rtrn_emp
-	rename 			s6q1b rtrn_when 
+	rename 			s6q1b rtrn_emp_when 
 	rename 			s6q1c rtrn_emp_why
-	rename 			s6q3a emp_search_month
-	rename 			s6q3b emp_search 
+	rename 			s6q3a emp_search
+	rename 			s6q3b emp_search_how
 	rename			s6q4a emp_same
 	rename			s6q4b emp_chg_why 
 	rename 			s6q8b emp_hrs

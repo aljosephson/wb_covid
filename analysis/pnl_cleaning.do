@@ -362,6 +362,8 @@
 	replace 			ac_clean = 0 if ac_clean == 2
  
 * access to bank 
+	replace 			ac_bank = 1 if ac_bank_need == 1 & country == 1
+	replace 			ac_bank = 0 if ac_bank_need == 2 & country == 1
 	replace 			ac_bank_need = 1 if country == 1 & (ac_bank_need == 1 | ac_bank_need == 2)
 	replace 			ac_bank_need = 0 if ac_bank_need == 2
 	replace 			ac_bank_need = . if ac_bank_need < 0
@@ -369,7 +371,7 @@
 	replace 			ac_bank = 0 if ac_bank == 2
 	replace 			ac_bank_why = . if ac_bank_why < 0 | ac_bank_why > 95
 	replace 			ac_bank_why = 4 if ac_bank_why == 3 & country == 4
- 	
+	
 * access to credit
 	replace 			ac_cr_need = 0 if ac_cr_need == 2
 	
@@ -616,9 +618,7 @@
 	replace 			dwn = 0 if dwn_count == 0 
 	lab var 			dwn "=1 if household experience any type of income loss"
 		
-	replace				edu_cont = 0 if edu_cont == 2
-	lab val				edu_cont yesno
- 	
+
 	* generate remittance income variable 
 	replace 			rem_dom = 2 if rem_dom == 0
 	replace 			rem_for = 2 if rem_for == 0
@@ -653,7 +653,12 @@
 * **********************************************************************
 * 7 - clean education questions
 * **********************************************************************
-
+ 	
+	replace				edu_cont = 0 if edu_cont == 2
+	lab val				edu_cont yesno
+ 	
+	lab val 			edu_cont_9 "Going to school to pick holiday package"
+	
 	replace 			edu_act = 0 if edu_act == 2
 	replace				edu_act = . if edu_act == -99 | edu_act == -98 
 	
@@ -798,7 +803,7 @@
 * close the log
 	log	close	
 	
-
+/*
 * *********************************************************************
 * 9 - generate variable-country-wave crosswalk
 * **********************************************************************	

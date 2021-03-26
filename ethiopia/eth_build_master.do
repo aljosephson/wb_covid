@@ -218,8 +218,7 @@
 		rename 			ac5a_pri_edu_type_2 edu_2_prim  
 		rename 			ac5a_pri_edu_type_3 edu_3_prim 
 		rename 			ac5a_pri_edu_type_4 edu_4_prim 
-		rename 			ac5a_pri_edu_type_5 edu_5_prim 
-		rename 			ac5a_pri_edu_type__96 edu_other_prim 	
+		rename 			ac5a_pri_edu_type_5 edu_5_prim 	
 
 		rename 			ac4b_sec_child edu_act_sec 
 		drop 			ac5b_sec_edu_type ac5b_sec_edu_type__98 ac5b_sec_edu_type__99 ///
@@ -229,10 +228,9 @@
 		rename 			ac5b_sec_edu_type_3 edu_3_sec 
 		rename 			ac5b_sec_edu_type_4 edu_4_sec 
 		rename 			ac5b_sec_edu_type_5 edu_5_sec 
-		rename 			ac5b_sec_edu_type__96 edu_other_sec 
 
 		drop 			ac5_edu_type__98 ac5_edu_type__99 ac5_edu_type__96 ///
-							ac5_edu_type_other edu_other_sec
+							ac5_edu_type_other ac5a_pri_edu_type__96 ac5b_sec_edu_type__96
 							
 	* water and soap
 	 * only in round 4

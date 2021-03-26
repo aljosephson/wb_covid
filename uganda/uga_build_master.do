@@ -280,7 +280,7 @@
 	rename 			s4q17__5 edu_cont_5
 	rename 			s4q17__6 edu_cont_6
 	rename 			s4q17__7 edu_cont_7
-	rename 			s4q17__8 edu_cont_8
+	rename 			s4q17__8 edu_cont_9
 	rename 			s4q18 ac_bank_need 
 	rename 			s4q19 ac_bank
 	rename 			s4q20 ac_bank_why

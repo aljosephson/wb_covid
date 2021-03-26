@@ -230,7 +230,7 @@
 
 * load data since last interview
 	use 			"$root/wave_0`w'/SEC7A_2.dta", clear	
-
+ 
 * reshape wide
 	reshape 		wide s7aq*, i(HHID) j(loan_roster)
 	rename 			*101 *_l1

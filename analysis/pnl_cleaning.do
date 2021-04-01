@@ -657,7 +657,7 @@
 	replace				edu_cont = 0 if edu_cont == 2
 	lab val				edu_cont yesno
  	
-	lab val 			edu_cont_9 "Going to school to pick holiday package"
+	lab var				edu_cont_9 "Going to school to pick holiday package"
 	
 	replace 			edu_act = 0 if edu_act == 2
 	replace				edu_act = . if edu_act == -99 | edu_act == -98 

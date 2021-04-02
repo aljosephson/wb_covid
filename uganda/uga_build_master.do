@@ -287,16 +287,8 @@
 	replace 		ac_bank_why = 3 if ac_bank_why == 2
 	
 * rename agriculture (R1&3)
-	rename			s5aq16 ag_crop
-	replace 		ag_crop = s5bq16 if ag_crop == . & s5bq16 != . & s5bq16 != .a
 	rename			s5aq17 ag_plan
-	rename			s5qaq17_1 ag_plan_why
-	rename			s5aq18__0 ag_crop_1
-	replace 		ag_crop_1 = s5bq18_1 if ag_crop_1 == . & s5bq18_1 != . & s5bq18_1 != .a
-	rename			s5aq18__1 ag_crop_2
-	replace 		ag_crop_2 = s5bq18_2 if ag_crop_2 == . & s5bq18_2 != . & s5bq18_2 != .a
-	rename			s5aq18__2 ag_crop_3
-	replace 		ag_crop_3 = s5bq18_3 if ag_crop_3 == . & s5bq18_3 != . & s5bq18_3 != .a	 
+	rename			s5qaq17_1 ag_plan_why 
 	rename			s5aq19 ag_chg
 	rename			s5aq20__1 ag_chg_1
 	rename			s5aq20__2 ag_chg_2
@@ -354,8 +346,6 @@
 	rename 			s5bq24 ag_sell_expect
 	
 * rename crop harvest (R2)
-	rename 			s5bq01 harv_grew
-	rename 			s5bq02* harv_crop*
 	rename 			s5bq03 harv_stat
 	rename 			s5bq04 harv_cov
 	rename 			s5bq05_* harv_cov_why*
@@ -644,8 +634,9 @@
 						DistrictCode2 DistrictName2 ParishCode2 ParishName2 ///
 						SubcountyCode2 SubcountyName2 VillageCode2 VillageName2 ///
 						ac_mask_srce_n96 harv_cov_why_n96 Sq02 PID baseline_hhid ///
-						s5bq16 s5bq25 s5bq26 ag_sell_where_n96 Sq01 s5aq11b__0 ///
-						s5bq18_1 s5bq18_2 s5bq18_3 *_interview_ID *_hh_weight weight
+						s5bq25 s5bq26 ag_sell_where_n96 Sq01 s5aq11b__0 ///
+						weight harv_saf_5 *_interview_ID *_hh_weight ///
+						
 						
 * rename basic information
 	gen				sector = 2 if urban == 1
@@ -654,7 +645,8 @@
 	lab def			sector 1 "Rural" 2 "Urban"
 	lab val			sector sector
 	drop			urban
-
+	rename 			survey_respondent resp_id
+	
 	gen				Region = 4012 if region == "Central"
 	replace			Region = 4013 if region == "Eastern"
 	replace			Region = 4014 if region == "Kampala"

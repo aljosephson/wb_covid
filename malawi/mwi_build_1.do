@@ -130,7 +130,7 @@
 	lab var 	hhsize_adult "Household size - only adults"
 	lab var 	hhsize_child "Household size - children 0 - 18"
 	lab var 	hhsize_schchild "Household size - school-age children 5 - 18"
-
+ 
 * save temp file
 	tempfile		tempd
 	save			`tempd'

@@ -785,27 +785,13 @@
 	rename			s13q2b ag_crop_2
 	rename			s13q2c ag_crop_3
 	rename			s13q3 ag_prog
-	rename 			s13q4 ag_chg
-	rename			s13q5__1 ag_chg_8
-	lab var 		ag_chg_8 "activities affected - covid measures"
-	rename			s13q5__2 ag_chg_9
-	lab var 		ag_chg_9 "activities affected - could not hire"
-	rename			s13q5__3 ag_chg_10
-	lab var   		ag_chg_10 "activities affected - hired fewer workers"
-	rename			s13q5__4 ag_chg_11
-	lab var 		ag_chg_11 "activities affected - abandoned crops"
-	rename			s13q5__5 ag_chg_7
-	lab var 		ag_chg_7 "activities affected - delayed harvest"
-	rename			s13q5__7 ag_chg_12
-	lab var 		ag_chg_12 "activities affected - early harvest"
-	rename			s13q6__1 ag_covid_chg_why_1
-	rename 			s13q6__2 ag_covid_chg_why_2
-	rename 			s13q6__3 ag_covid_chg_why_3
-	rename			s13q6__4 ag_covid_chg_why_4
-	rename			s13q6__5 ag_covid_chg_why_5
-	rename 			s13q6__6 ag_covid_chg_why_6
-	rename 			s13q6__7 ag_covid_chg_why_7
-	rename 			s13q6__8 ag_covid_chg_why_8
+	rename 			s13q4 harv_cov
+	rename			s13q5__* harv_cov_why_* 
+	rename			s13q6__1 harv_saf_5
+	rename 			s13q6__2 harv_saf_1
+	rename 			s13q6__3 harv_saf_2
+	rename			s13q6__4 harv_saf_3
+	rename			s13q6__5 harv_saf_4
 	rename 			s13q7 ag_hire_chg_why
 	rename 			s13q8 ag_ext_need
 	rename 			s13q9 ag_ext
@@ -902,7 +888,8 @@
 						s6qe6__95 s6qe6_ot s6qe2_ot s6qe3_ot s6qe4__95 s6qe4_ot ///
 						s6qf1 s6qf2__95 s6qf2_ot s6qf3 s6qf6__95 s6qf6_ot s6qf7__95 ///
 						s6qf7_ot s6qf10__95 s6qf10_ot s6qf4__95 s6qf4_ot s6qf5__95 ///
-						s6qf5_ot s6dq10_ot weight s2q9 s6q3b_1 
+						s6qf5_ot s6dq10_ot weight s2q9 s6q3b_1 harv_cov_why_6 ///
+						harv_cov_why_7 s13q6_*
 
 * regional and sector information
 	gen				sector = 2 if urb_rural == 1

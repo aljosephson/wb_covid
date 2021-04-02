@@ -464,11 +464,11 @@
 	rename 			ag3_crops_reas_9 ag_nocrop_8
 	rename 			ag3_crops_reas__96 ag_nocrop_9 
 
-	generate		ag_seed_01 = 1 if ag5_crops_reas_seeds == 1
-	generate		ag_seed_02 = 1 if ag5_crops_reas_seeds == 2 
-	generate		ag_seed_03 = 1 if ag5_crops_reas_seeds == 3
-	generate		ag_seed_05 = 1 if ag5_crops_reas_seeds == 4
-	generate		ag_seed_06 = 1 if ag5_crops_reas_seeds == 5
+	generate		ag_seed_1 = 1 if ag5_crops_reas_seeds == 1
+	generate		ag_seed_2 = 1 if ag5_crops_reas_seeds == 2 
+	generate		ag_seed_3 = 1 if ag5_crops_reas_seeds == 3
+	generate		ag_seed_5 = 1 if ag5_crops_reas_seeds == 4
+	generate		ag_seed_6 = 1 if ag5_crops_reas_seeds == 5
 
 	rename			ag4_crops_reas_fert ag_fert
 	rename 			ag6_ext_need ag_ext_need 
@@ -548,7 +548,8 @@
 						cr8_before_who cr8_before_who__96 cr8_before_who_other ///
 						fi1_outoffood fi2_hungrynoteat fi3_noteatfullday lo3_impact ///
 						weight *why_other ea_id ac5_edu_type emp_act_other emp_stat_other ///
-						farm_why ag_live_other submission_date round attempt em19_*
+						farm_why ag_live_other submission_date round attempt em19_* ///
+						ag_live__96
 						
 * rename regions
 	replace 		region = 1001 if region == 1

@@ -374,6 +374,10 @@
 		rename 			s4q15__n96 edu_other	
 	* rename agriculture
 		rename 			s5aq26 ag_live
+		rename			s5aq16 ag_crop
+		rename 			s5aq18__0 ag_crop_1
+		rename 			s5aq18__1 ag_crop_2
+		rename 			s5aq18__2 ag_crop_3
 * save panel
 	* gen wave data
 		rename			wfinal phw

@@ -703,6 +703,13 @@
 	replace 			ag_live = 0 if ag_live == 2
 	lab val 			ag_crop ag_live yesno
 	
+	* ag_chg invert ethiopia, change other for consistency
+		replace 		ag_chg = . if country == 1 & (ag_chg < 0 | ag_chg == 2)
+		replace 		ag_chg = 0 if country == 1 & ag_chg == 1
+		replace 		ag_chg = 1 if country == 1 & ag_chg == 3
+		replace 		ag_chg = 0 if (country == 3 | country == 4) & ag_chg == 3
+		replace			ag_chg = . if (country == 3 | country == 4) & ag_chg == 2
+	
 	
 * **********************************************************************
 * 9 - clean employment variables 
@@ -777,7 +784,6 @@
 	order 				know* curb* gov* satis* info* bh* ac_cr* ac_*  sch* edu_c* edu* emp* ///
 						bus* farm* wage* rem* *_inc *_chg *dwn cope* fies* ag* harv* ag_live* ///
 						shock* concern* symp*, after(neighborhood_id) alpha
-	order				ag_chg_10 ag_chg_11 ag_chg_12 ag_chg_13, after (ag_chg_9)
 	order 				ac_cr_lend_10 ac_cr_lend_11 ac_cr_lend_12 ac_cr_lend_13 ac_cr_lend_14 ///
 						ac_cr_lend_15, after(ac_cr_lend_9)
 	order				ag_crop_pl_10 ag_crop_pl_11 ag_crop_pl_12, after(ag_crop_pl_9)
@@ -803,7 +809,7 @@
 * close the log
 	log	close	
 	
-/*
+
 * *********************************************************************
 * 9 - generate variable-country-wave crosswalk
 * **********************************************************************	

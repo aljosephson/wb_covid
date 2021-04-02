@@ -568,15 +568,14 @@
 	rename			s6q20__6 ag_chg_6
 	rename			s6q20__7 ag_chg_7
 	rename 			s6q20__96 ag_chg_13
-	rename			s6q21a__1 ag_covid_chg_why_1 
-	rename 			s6q21a__2 ag_covid_chg_why_2
-	rename 			s6q21a__3 ag_covid_chg_why_3
-	rename			s6q21a__4 ag_covid_chg_why_4
-	rename			s6q21a__5 ag_covid_chg_why_5	 
-	rename 			s6q21a__6 ag_covid_chg_why_6
-	rename 			s6q21a__7 ag_covid_chg_why_7
-	rename 			s6q21a__8 ag_covid_chg_why_8	
-	rename 			s6q21a__96 ag_covid_chg_why_9 
+	rename			s6q21a__1 ag_covid_1 
+	rename 			s6q21a__2 ag_covid_2
+	rename 			s6q21a__3 ag_covid_3
+	rename			s6q21a__4 ag_covid_4	
+	rename			s6q21a__5 ag_covid_6	 
+	rename 			s6q21a__6 ag_covid_7
+	rename 			s6q21a__7 ag_covid_8
+	rename 			s6q21a__8 ag_covid_9		
 	rename 			s6q21b__1 ag_nocrop_1 
 	rename 			s6q21b__2 ag_nocrop_2 
 	rename 			s6q21b__3 ag_nocrop_3 
@@ -609,16 +608,16 @@
 	rename 			s6aq3d ag_ac_lab
 	rename 			s6aq3e ag_ac_anim
 	forval 			x = 1/6 {
-	    rename 		s6aq4__`x' ag_infert_why_`x'
-		rename 		s6aq5__`x' ag_orfert_why_`x'
-		rename 		s6aq6__`x' ag_pest_why_`x'		
+	    rename 		s6aq4__`x' ag_ac_infert_why_`x'
+		rename 		s6aq5__`x' ag_ac_orfert_why_`x'
+		rename 		s6aq6__`x' ag_ac_pest_why_`x'		
 	}
 	forval 			x = 1/5 {
-	    rename 		s6aq7__`x' ag_lab_why_`x'
-		rename 		s6aq8__`x' ag_anim_why_`x'
+	    rename 		s6aq7__`x' ag_ac_lab_why_`x'
+		rename 		s6aq8__`x' ag_ac_anim_why_`x'
 	}
 	forval 			x = 1/5 {
-	    rename 		s6bq2__`x' ag_live_`x'
+	    rename 		s6bq2__`x' ag_ac_live_`x'
 	}
 	rename 			s6bq3 ag_live_cov
 	foreach 		x in 1 3 4 {
@@ -674,7 +673,7 @@
 						s12q5 s12q9 s12q10 s12q10_os s12q11 s12q14 baseline_date ///
 						s12q10a s5* s6q11c s6bq4__96 s6aq8__96 s6aq7__96 s6aq6__96 ///
 						s6aq5__96 s6aq4__96 s6q8b1 s6bq6a lga filter ///
-						PID s2q0a s2q0b s12q4a s12q4b s9q3__96
+						PID s2q0a s2q0b s12q4a s12q4b s9q3__96 ag_chg_13
 	drop if			wave ==  .
 	
 * reorder variables
@@ -830,7 +829,7 @@
 	lab val			asst_any assist
 
 * drop variables
-	drop			s11q11 s11q12 s11q13
+	drop			s11q11 s11q12 s11q13 s6q21a__96
 	
 	gen 			region = 3000 + state
 

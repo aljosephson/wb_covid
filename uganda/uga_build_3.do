@@ -412,6 +412,10 @@
 		rename			s9q09 concern_7
 	* rename agriculture
 		rename 			s5cq01 ag_live
+		rename			s5bq16 ag_crop
+		rename 			s5bq18_1 ag_crop_1
+		rename 			s5bq18_2 ag_crop_2
+		rename 			s5bq18_3 ag_crop_3
 * save panel
 	* gen wave data
 		rename			wfinal phw

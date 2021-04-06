@@ -14,7 +14,6 @@
 	* cleaned country data
 
 * TO DO:
-	* automate line ~432 income and waves in nga so do not have to update manually
 	* finish cleaning credit variables
 	* add more notes and annotation
 	* search "NOTE" and review
@@ -787,7 +786,6 @@
 	order 				ac_cr_lend_10 ac_cr_lend_11 ac_cr_lend_12 ac_cr_lend_13 ac_cr_lend_14 ///
 						ac_cr_lend_15, after(ac_cr_lend_9)
 	order				ag_crop_pl_10 ag_crop_pl_11 ag_crop_pl_12, after(ag_crop_pl_9)
-	order 				ag_live_10, after(ag_live_9)
 	order 				ag_sold_10 ag_sold_11 ag_sold_12, after(ag_sold_9)
 	order 				cope_10 cope_11 cope_12 cope_13 cope_14 cope_15, after(cope_9)
 	order				gov_10 gov_11 gov_12 gov_13 gov_14 gov_15 gov_16, after(gov_9)

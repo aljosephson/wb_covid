@@ -797,9 +797,15 @@
 	rename 			s13q9 ag_ext
 	rename			s13q10 ag_live
 	replace 		ag_live = s6qf1 if ag_live == . & s6qf1 != .
-	forval 			x = 1/11 {
-		rename 		s6qf2__`x' ag_live_`x'
-	}
+	gen 			ag_live_1 = 1 if s6qf2__1 == 1 | s6qf2__2 == 1
+	gen 			ag_live_2 = 1 if s6qf2__3 == 1 | s6qf2__4 == 1 | s6qf2__6 == 1
+	gen 			ag_live_3 = 1 if s6qf2__7 == 1 | s6qf2__8 == 1 | s6qf2__9 == 1 ///
+						| s6qf2__10 == 1 | s6qf2__11 == 1 
+	gen 			ag_live_7 = 1 if s6qf2__5 == 1 
+	lab var			ag_live_1 "Large ruminants" 
+	lab var			ag_live_2 "Small ruminants" 
+	lab var			ag_live_3 "Poultry/birds"
+	lab var			ag_live_7 "Pigs"
 	rename			s13q11 ag_live_chg
 	replace 		ag_live_chg = s6qf3 if ag_live_chg == . & s6qf3 != . 
 	rename			s13q12__1 ag_live_chg_1
@@ -826,23 +832,23 @@
 	}
 	rename 			s6qe7 ag_sell_rev
 	forval 			x = 1/6 {
-		rename 		s6qf4__`x' ag_live_chg2_`x'
+		rename 		s6qf4__`x' ag_live_affect_`x'
 	}
 	forval 			x = 1/3 {
-		rename 			s6qf5__`x' ag_live_chg2_1_cope`x'
+		rename 			s6qf5__`x' ag_live_affect_1_cope`x'
 	}
 	forval 			x = 1/3 {
-		rename 			s6qf6__`x' ag_live_chg2_2_cope`x'
+		rename 			s6qf6__`x' ag_live_affect_2_cope`x'
 	}
 	forval 			x = 1/4 {
-		rename 			s6qf7__`x' ag_live_chg2_3_cope`x'
+		rename 			s6qf7__`x' ag_live_affect_3_cope`x'
 	}
-	rename 			s6qf8 ag_sell_live_want
-	rename 			s6qf9 ag_sell_live_able
+	rename 			s6qf8 ag_live_sell_want
+	rename 			s6qf9 ag_live_sell_able
 	forval 			x = 1/5 {
-		rename 			s6qf10__`x' ag_sell_live_nowhy`x'
+		rename 			s6qf10__`x' ag_live_sell_nowhy`x'
 	}
-	rename 			s6qf11 ag_sell_live_rev
+	rename 			s6qf11 ag_live_sell_rev
 	
 * fies
 	rename			s8q1 fies_4
@@ -889,7 +895,7 @@
 						s6qf1 s6qf2__95 s6qf2_ot s6qf3 s6qf6__95 s6qf6_ot s6qf7__95 ///
 						s6qf7_ot s6qf10__95 s6qf10_ot s6qf4__95 s6qf4_ot s6qf5__95 ///
 						s6qf5_ot s6dq10_ot weight s2q9 s6q3b_1 harv_cov_why_6 ///
-						harv_cov_why_7 s13q6_*
+						harv_cov_why_7 s13q6_* s6qf2__*
 
 * regional and sector information
 	gen				sector = 2 if urb_rural == 1

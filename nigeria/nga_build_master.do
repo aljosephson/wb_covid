@@ -585,13 +585,12 @@
 	rename 			s6q21b__7 ag_nocrop_7 
 	rename 			s6q21b__8 ag_nocrop_8 
 	rename 			s6q21b__96 ag_nocrop_9 
-	rename			s6q22__1 ag_seed_1
-	rename			s6q22__2 ag_seed_2
-	rename			s6q22__3 ag_seed_3
-	rename			s6q22__4 ag_seed_4
-	rename			s6q22__5 ag_seed_5
-	rename			s6q22__6 ag_seed_6
-	rename 			s6q22__96 ag_seed_7 
+	rename			s6q22__1 ag_ac_seed_why_1
+	rename			s6q22__2 ag_ac_seed_why_2
+	rename			s6q22__3 ag_ac_seed_why_3
+	rename			s6q22__4 ag_ac_seed_why_4
+	rename			s6q22__5 ag_ac_seed_why_5
+	rename			s6q22__6 ag_ac_seed_why_6
 	rename 			s6aq9 ag_harv_exp
 	rename 			s6aq10 ag_sell_harv
 	rename 			s6aq11 ag_sell_harv_chg
@@ -616,14 +615,14 @@
 	    rename 		s6aq7__`x' ag_ac_lab_why_`x'
 		rename 		s6aq8__`x' ag_ac_anim_why_`x'
 	}
-	forval 			x = 1/5 {
-	    rename 		s6bq2__`x' ag_ac_live_`x'
+	forval 			x = 1/4 {
+	    rename 		s6bq2__`x' ag_live_`x'
 	}
-	rename 			s6bq3 ag_live_cov
-	foreach 		x in 1 3 4 {
+	rename 			s6bq2__5 ag_live_7
+	rename 			s6bq3 ag_live_affect
+	foreach 		x in 1 3 4 7 {
 	    rename 		s6bq4__`x' ag_live_chg_`x'
 	}
-	rename 			s6bq4__7 ag_live_chg_5 // to match uga
 	rename 			s6bq6 ag_live_sell
 	rename 			s6bq7 ag_live_sell_chg
 	rename 			s6bq8 ag_live_sell_want
@@ -829,7 +828,7 @@
 	lab val			asst_any assist
 
 * drop variables
-	drop			s11q11 s11q12 s11q13 s6q21a__96
+	drop			s11q11 s11q12 s11q13 s6q21a__96 s6q22__96 
 	
 	gen 			region = 3000 + state
 

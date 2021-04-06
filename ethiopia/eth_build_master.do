@@ -464,17 +464,18 @@
 	rename 			ag3_crops_reas_9 ag_nocrop_8
 	rename 			ag3_crops_reas__96 ag_nocrop_9 
 
-	generate		ag_seed_1 = 1 if ag5_crops_reas_seeds == 1
-	generate		ag_seed_2 = 1 if ag5_crops_reas_seeds == 2 
-	generate		ag_seed_3 = 1 if ag5_crops_reas_seeds == 3
-	generate		ag_seed_5 = 1 if ag5_crops_reas_seeds == 4
-	generate		ag_seed_6 = 1 if ag5_crops_reas_seeds == 5
+	generate		ag_ac_seed_why_1 = 1 if ag5_crops_reas_seeds == 1
+	generate		ag_ac_seed_why_2 = 1 if ag5_crops_reas_seeds == 2 
+	generate		ag_ac_seed_why_3 = 1 if ag5_crops_reas_seeds == 3
+	generate		ag_ac_seed_why_4 = 1 if ag5_crops_reas_seeds == 4
+	generate		ag_ac_seed_why_5 = 1 if ag5_crops_reas_seeds == 5
+	generate		ag_ac_seed_why_6 = 1 if ag5_crops_reas_seeds == 6
 
 	rename			ag4_crops_reas_fert ag_fert
 	rename 			ag6_ext_need ag_ext_need 
 	rename 			ag7_ext_receive ag_ext
-	rename 			ag8_travel_norm ag_labor_normal
-	rename 			ag9_travel_curr ag_labor 
+	rename 			ag8_travel_norm ag_trav_lab_norm
+	rename 			ag9_travel_curr ag_trav_lab
   
 * livestock 
 	drop 			ls2_type ls4_covid_impact ls4_covid_impact__96 ls4_covid_impact_other ///
@@ -482,11 +483,11 @@
 	rename 			ls1_livestock ag_live
 	rename 			ls2_type_5 ls2_type_7
 	rename 			ls2_type* ag_live*
-	rename 			ls3_covid ag_live_cov
-	rename 			ls4_covid_impact_1 ag_live_chg_1
-	rename 			ls4_covid_impact_2 ag_live_chg_3
-	rename 			ls4_covid_impact_3 ag_live_chg_4
-	rename 			ls4_covid_impact_4 ag_live_chg_5
+	rename 			ls3_covid ag_live_affect
+	rename 			ls4_covid_impact_1 ag_live_affect_1
+	rename 			ls4_covid_impact_2 ag_live_affect_3
+	rename 			ls4_covid_impact_3 ag_live_affect_4
+	rename 			ls4_covid_impact_4 ag_live_affect_7
 	rename 			ls5_usual ag_live_sell
 	rename 			ls6_revenue_chg ag_live_sell_chg
 	rename 			ls7_since_covid ag_live_sell_want

@@ -306,23 +306,23 @@
 	rename			s5aq21__7 ag_covid_7
 	rename			s5aq21__8 ag_covid_8
 	rename			s5aq21__9 ag_covid_9
-	rename			s5aq22__1 ag_seed_1
-	rename			s5aq22__2 ag_seed_2
-	rename			s5aq22__3 ag_seed_3
-	rename			s5aq22__4 ag_seed_4
-	rename			s5aq22__5 ag_seed_5
-	rename			s5aq22__6 ag_seed_6
-	rename			s5aq23 ag_fert
-	rename			s5aq24 ag_input
+	rename			s5aq22__1 ag_ac_seed_why_1
+	rename			s5aq22__2 ag_ac_seed_why_2
+	rename			s5aq22__3 ag_ac_seed_why_3
+	rename			s5aq22__4 ag_ac_seed_why_4
+	rename			s5aq22__5 ag_ac_seed_why_5
+	rename			s5aq22__6 ag_ac_seed_why_6
+	rename			s5aq23 ag_ac_fert
+	rename			s5aq24 ag_ac_oth_inp
 	rename			s5aq25 ag_crop_lost
 	rename			s5aq27 ag_live_chg
-	rename			s5aq28__1 ag_live_chg_3
-	rename			s5aq28__2 ag_live_chg_3a
-	rename			s5aq28__3 ag_live_chg_3b
-	rename			s5aq28__4 ag_live_chg_2
-	rename			s5aq28__5 ag_live_chg_1
-	rename			s5aq28__6 ag_live_chg_8
-	rename			s5aq28__7 ag_live_chg_9
+	rename			s5aq28__1 ag_live_chg_1
+	rename			s5aq28__2 ag_live_chg_2
+	rename			s5aq28__3 ag_live_chg_3
+	rename			s5aq28__4 ag_live_chg_4
+	rename			s5aq28__5 ag_live_chg_5
+	rename			s5aq28__6 ag_live_chg_6
+	rename			s5aq28__7 ag_live_chg_7
 	rename			s5aq29 ag_locust
 	rename			s5aq30 ag_sell_need
 	replace 		ag_sell_need = s5bq25 if ag_sell_need == .
@@ -354,21 +354,23 @@
 	rename 			s5bq08 harv_sell_need
 	rename 			s5bq09 harv_sell
 	
-* rename livestock type to match Nigeria
-	rename 			s5cq02__1 ag_live_1
-	rename 			s5cq02__2 ag_live_1a
-	rename 			s5cq02__3 ag_live_2
-	rename 			s5cq02__4 ag_live_2a
-	rename 			s5cq02__5 ag_live_3
-	rename 			s5cq02__6 ag_live_3a
-	rename 			s5cq02__7 ag_live_5
+* rename livestock
+	gen 			ag_live_1 = 1 if s5cq02__1 == 1 | s5cq02__2 == 1
+	gen 			ag_live_2 = 1 if s5cq02__3 == 1 | s5cq02__4 == 1	
+	gen 			ag_live_3 = 1 if s5cq02__5 == 1 | s5cq02__6 == 1
 	rename 			s5cq02__8 ag_live_4
-	rename 			s5cq03 ag_live_cov
-	replace 		ag_live_chg_1 = s5cq04__1 if ag_live_chg_1 == .
-	replace 		ag_live_chg_2 = s5cq04__2 if ag_live_chg_2 == .
-	replace 		ag_live_chg_3 = s5cq04__3 if ag_live_chg_3 == .
-	drop 			s5cq04__1 s5cq04__2 s5cq04__3
-	rename 			s5cq04_* ag_live_chg* // cannot tell what live_chg_7 is, not in survey
+	rename 			s5cq02__7 ag_live_7
+	lab var			ag_live_1 "Large ruminants" 
+	lab var			ag_live_2 "Small ruminants" 
+	lab var			ag_live_3 "Poultry/birds"
+	lab var 		ag_live_4 "Equines"
+	lab var			ag_live_7 "Pigs"
+	rename 			s5cq03 ag_live_affect
+	rename 			s5cq04__* ag_live_affect_*
+	rename 			ag_live_affect_7 temp
+	rename 			ag_live_affect_5 ag_live_affect_7
+	rename 			ag_live_affect_6 ag_live_affect_5
+	rename 			temp ag_live_affect_6
 	rename 			s5cq08 ag_live_sell_want
 	rename 			s5cq09 ag_live_sell_able
 	rename 			s5cq11_* ag_live_sell_nowhy*

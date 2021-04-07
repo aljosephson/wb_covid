@@ -592,9 +592,9 @@
 	rename			s6q22__5 ag_ac_seed_why_5
 	rename			s6q22__6 ag_ac_seed_why_6
 	rename 			s6aq9 ag_harv_exp
-	rename 			s6aq10 ag_sell_harv
-	rename 			s6aq11 ag_sell_harv_chg
-	rename 			s6aq12 ag_sell_harv_plan
+	rename 			s6aq10 harv_sell_norm
+	rename 			s6aq11 harv_sell_chg
+	rename 			s6aq12 harv_sell_plan
 	rename 			s6aq1b ag_crop_who
 	rename 			s6q2a ag_use_infert
 	rename 			s6q2b ag_use_orfert

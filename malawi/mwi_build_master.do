@@ -845,9 +845,10 @@
 	}
 	rename 			s6qf8 ag_live_sell_want
 	rename 			s6qf9 ag_live_sell_able
-	forval 			x = 1/5 {
-		rename 			s6qf10__`x' ag_live_sell_nowhy`x'
+	forval 			x = 1/4 {
+		rename 			s6qf10__`x' ag_live_sell_nowhy_`x'
 	}
+	rename	 		s6qf10__5 ag_live_sell_nowhy_96
 	rename 			s6qf11 ag_live_sell_rev
 	
 * fies

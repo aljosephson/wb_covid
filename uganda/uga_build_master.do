@@ -288,7 +288,15 @@
 	
 * rename agriculture (R1&3)
 	rename			s5aq17 ag_plan
-	rename			s5qaq17_1 ag_plan_why 
+	gen 			ag_nocrop_1 = 1 if s5qaq17_1 == 1
+	gen 			ag_nocrop_2 = 1 if s5qaq17_1 == 2
+	gen 			ag_nocrop_3 = 1 if s5qaq17_1 == 3
+	gen 			ag_nocrop_4 = 1 if s5qaq17_1 == 4
+	gen 			ag_nocrop_10 = 1 if s5qaq17_1 == 5
+	gen 			ag_nocrop_5 = 1 if s5qaq17_1 == 6
+	gen 			ag_nocrop_6 = 1 if s5qaq17_1 == 7
+	gen 			ag_nocrop_7 = 1 if s5qaq17_1 == 8
+	gen 			ag_nocrop_9 = 1 if s5qaq17_1 == -96
 	rename			s5aq19 ag_chg
 	rename			s5aq20__1 ag_chg_1
 	rename			s5aq20__2 ag_chg_2
@@ -324,10 +332,12 @@
 	rename			s5aq28__6 ag_live_chg_6
 	rename			s5aq28__7 ag_live_chg_7
 	rename			s5aq29 ag_locust
-	rename			s5aq30 ag_sell_need
-	replace 		ag_sell_need = s5bq25 if ag_sell_need == .
-	rename			s5aq31 ag_sell	
-	replace			ag_sell = s5bq26 if ag_sell == .
+	rename			s5aq30 harv_sell_need
+	replace 		harv_sell_need = s5bq25 if harv_sell_need == .
+	replace 		harv_sell_need = s5bq08 if harv_sell_need == .
+	rename			s5aq31 harv_sell	
+	replace			harv_sell = s5bq26 if harv_sell == .
+	replace			harv_sell = s5bq09 if harv_sell == .
 	rename 			s5bq27_* ag_sell_where*
 	rename 			s5bq19 ag_expect
 	rename 			s5bq20 ag_quant
@@ -351,8 +361,6 @@
 	rename 			s5bq05_* harv_cov_why*
 	rename 			s5bq06_* harv_saf*
 	rename 			s5bq07 harv_nohire_why
-	rename 			s5bq08 harv_sell_need
-	rename 			s5bq09 harv_sell
 	
 * rename livestock
 	gen 			ag_live_1 = 1 if s5cq02__1 == 1 | s5cq02__2 == 1
@@ -637,7 +645,7 @@
 						SubcountyCode2 SubcountyName2 VillageCode2 VillageName2 ///
 						ac_mask_srce_n96 harv_cov_why_n96 Sq02 PID baseline_hhid ///
 						s5bq25 s5bq26 ag_sell_where_n96 Sq01 s5aq11b__0 ///
-						weight harv_saf_5 *_interview_ID *_hh_weight ///
+						weight harv_saf_5 *_interview_ID *_hh_weight s5qaq17_1 
 						
 						
 * rename basic information

@@ -461,7 +461,7 @@
 	rename 			ag3_crops_reas_6 ag_nocrop_5
 	rename 			ag3_crops_reas_7 ag_nocrop_6
 	rename 			ag3_crops_reas_8 ag_nocrop_7	
-	rename 			ag3_crops_reas_9 ag_nocrop_8
+	rename 			ag3_crops_reas_9 ag_nocrop_11
 	rename 			ag3_crops_reas__96 ag_nocrop_9 
 
 	generate		ag_ac_seed_why_1 = 1 if ag5_crops_reas_seeds == 1
@@ -499,8 +499,8 @@
 	 
 * locusts
  * first addition in R4 (only in r4)
-	rename 			lo1_keb	any_loc_keb
-	rename 			lo2_farm any_loc_farm
+	rename 			lo1_keb	loc_keb_any
+	rename 			lo2_farm loc_farm_any
 	rename			lo3_impact_1 loc_imp_1
 	rename			lo3_impact_2 loc_imp_2
 	rename			lo3_impact_3 loc_imp_3

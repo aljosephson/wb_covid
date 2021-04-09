@@ -245,13 +245,13 @@
 	rename			s6q17_1__4 farm_why_4
 	rename			s6q17_1__5 farm_why_5
 	rename			s6q17_1__6 farm_why_6
-	rename			s6q17_1__96 farm_why_7
 	rename			s6q17_1__7 farm_why_8
+	drop 			s6q17_1__96
 	rename 			s5q6__5 temp
 	rename 			s5q6__7 s5q6__5 
 	rename 			s5q6__6 s5q6__7
 	rename 			temp s5q6__6
-
+	
 * edit employment activity vars which are inconsistent across 
 	* rounds and across sections within rounds
 	rename			s6q5_1 emp_act

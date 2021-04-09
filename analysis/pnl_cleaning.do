@@ -692,10 +692,7 @@
 * **********************************************************************
 * 8 - clean agriculture and livestock variables
 * **********************************************************************
-	
-	gen					farm_no_work = 1 if ag_crop == 2
-	lab var 			farm_no_work ""
-	replace 			ag_crop = 2 if ag_crop == 3
+
 	replace 			ag_crop = 0 if ag_crop == 2 | ag_crop == 3
 	replace 			ag_crop = . if ag_crop < 0
 	

@@ -815,17 +815,18 @@
 	rename			s13q12__5 ag_live_chg_5
 	rename			s13q12__6 ag_live_chg_6
 	rename			s13q12__7 ag_live_chg_7
-	rename			s13q13 ag_sold
-	rename			s13q14 ag_sell_wk
+	rename			s13q13 harv_sell_need
+	rename			s13q14 harv_sell
 	rename 			s13q15 ag_price	
-	rename			s6qe1 ag_sell_seas
+	rename			s6qe1 harv_sell_plan
 	forval 			x = 1/12 {
 		rename 		s6qe2__`x' ag_sold_`x'
 	}
 	rename 			s6qe3 ag_sold_why
-	forval 			x = 1/4 {
-		rename 		s6qe4__`x' ag_sold_where_`x'
-	}
+	rename 			s6qe4__1 ag_sell_where_5
+	rename 			s6qe4__2 ag_sell_where_2
+	rename 			s6qe4__3 ag_sell_where_3
+	rename 			s6qe4__4 ag_sell_where_4
 	rename 			s6qe5 ag_dimba
 	forval 			x = 1/12 {
 		rename 		s6qe6__`x' ag_crop_pl_`x'

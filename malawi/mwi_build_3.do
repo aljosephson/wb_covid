@@ -243,9 +243,8 @@
 	rename			s6q17_1__4 farm_why_4
 	rename			s6q17_1__5 farm_why_5
 	rename			s6q17_1__6 farm_why_6
-	rename			s6q17_1__96 farm_why_7
 	rename			s6q17_1__7 farm_why_8
-	
+	drop 			s6q17_1__96
 * edit employment activity
 	rename			s6q5_1 emp_act
 	replace 		emp_act = 11 if emp_act == 4

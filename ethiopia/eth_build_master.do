@@ -318,7 +318,7 @@
 	rename			em17_bus_inc bus_emp_inc
 	rename			em18_bus_inc_low_amt bus_amt
 	rename			em20_farm farm_emp
-	rename			em21_farm_norm farm_norm
+	rename			em21_farm_norm farm_norm 
 	rename			em22_farm_norm_why farm_why
 	forval 			x = 1/7 {
 	    rename 		em22_farm_norm_why_`x' farm_why_`x'

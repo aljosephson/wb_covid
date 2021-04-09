@@ -515,7 +515,7 @@
 	rename			s6q17__4 farm_why_4
 	rename			s6q17__5 farm_why_5
 	rename			s6q17__6 farm_why_6
-	rename			s6q17__96 farm_why_7	 
+	drop			s6q17__96  
 	rename 			s6q1a rtrn_emp
 	rename 			s6q1b rtrn_emp_when 
 	rename 			s6q1c rtrn_emp_why
@@ -555,6 +555,9 @@
 	rename 			s6q15b__96 bus_beh_7 
 
 * agriculture
+	replace 		crop_filter1 = . if crop_filter1 == 3
+	replace 		ag_crop = crop_filter1 if ag_crop == .
+	drop 			crop_filter1
 	rename			s6q17 ag_plan
 	rename			s6q18_1 ag_crop_1
 	rename			s6q18_2 ag_crop_2
@@ -593,6 +596,9 @@
 	rename			s6q22__6 ag_ac_seed_why_6
 	rename 			s6aq9 ag_harv_exp
 	rename 			s6aq10 harv_sell_norm
+	replace 		harv_sell_norm = crop_filter2 if harv_sell_norm == .
+	replace 		harv_sell_norm = . if harv_sell_norm > 2
+	drop 			crop_filter2
 	rename 			s6aq11 harv_sell_chg
 	rename 			s6aq12 harv_sell_plan
 	rename 			s6aq1b ag_crop_who
@@ -615,6 +621,9 @@
 	    rename 		s6aq7__`x' ag_ac_lab_why_`x'
 		rename 		s6aq8__`x' ag_ac_anim_why_`x'
 	}
+	replace 		ag_live = livest_filter3 if ag_live == .
+	replace 		ag_live = . if ag_live == 3
+	drop 			livest_filter3
 	forval 			x = 1/4 {
 	    rename 		s6bq2__`x' ag_live_`x'
 	}
@@ -624,6 +633,9 @@
 	    rename 		s6bq4__`x' ag_live_chg_`x'
 	}
 	rename 			s6bq6 ag_live_sell
+	replace 		ag_live_sell = livest_filter4 if ag_live_sell == .
+	replace 		ag_live_sell = . if ag_live_sell == 3
+	drop 			livest_filter4
 	rename 			s6bq7 ag_live_sell_chg
 	rename 			s6bq8 ag_live_sell_want
 	rename 			s6bq9 ag_live_sell_why

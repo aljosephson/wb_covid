@@ -200,7 +200,7 @@
 	rename			s6q17__4 farm_why_4
 	rename			s6q17__5 farm_why_5
 	rename			s6q17__6 farm_why_6
-	rename			s6q17__7 farm_why_7
+	drop			s6q17__7 
 
 * edit employment activity	
 	rename			s6q5 emp_act

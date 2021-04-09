@@ -352,8 +352,8 @@
 	rename 			s5bq21_7 ag_pr_bean_dry
 	rename 			s5bq21_9 ag_pr_bean_fr
 	rename 			s5bq21_8 ag_pr_maize
-	rename 			s5bq23 ag_sell_typ
-	rename 			s5bq24 ag_sell_expect
+	rename 			s5bq23 ag_sell_norm
+	rename 			s5bq24 ag_sell_rev_exp
 	
 * rename crop harvest (R2)
 	rename 			s5bq03 harv_stat

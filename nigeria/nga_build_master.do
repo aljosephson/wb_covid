@@ -225,7 +225,7 @@
 	lab var 		ac_drink "Had Enough Drinking Water in Last 7 Days"
 	lab def			yesno 1 "Yes" 2 "No"
 	lab val 		ac_drink yesno
-	rename 			s5q1f ac_drink_why
+	rename 			s5q1f ac_drink_why 
 	lab def 		ac_drink_why 1 "water supply not available" 2 "water supply reduced" ///
 					3 "unable to access communal supply" 4 "unable to access water tanks" ///
 					5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
@@ -236,7 +236,7 @@
 	
 	lab var 		ac_drink_why "Main Reason Not Enough Drinking Water in Last 7 Days"
 	drop 			s5q1e
-		
+ 		
 	rename 			s5q1a ac_soap
 	lab var 		ac_soap "Had Enough Handwashing Soap in Last 7 Day"
 	gen 			ac_soap_why = cond(wave == 2, s5q1a1, . )

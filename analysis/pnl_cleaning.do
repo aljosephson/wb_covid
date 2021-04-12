@@ -286,9 +286,16 @@
 	
 * access to staples
 	* Ethiopia
-		foreach 		var in ac_oil ac_teff ac_wheat ac_maize {
+		foreach 		var in ac_oil ac_teff ac_wheat {
 			replace 	`var' = . if `var' < 0
+			gen 		`var'_need = 0 if country == 1 & `var' == .
+			replace 	`var'_need = 1 if country == 1 & `var'_need == .
 		}
+		foreach 		var in ac_maize ac_med {
+			replace 	`var' = . if `var' < 0	
+			replace 	`var'_need = 0 if country == 1 & `var' == .
+			replace 	`var'_need = 1 if country == 1 & `var'_need == .
+		}	
 		// change not applicable/did not need to buy to not needed (2)
 		replace			ac_staple_need = 2 if country == 1 & (ac_oil == . & ac_teff == . & ///
 						ac_wheat == . & ac_maize == .)
@@ -401,9 +408,9 @@
 	* NOTE: dropped because very inconsistent across countries - can add back and clean if needed
 	
 	replace 			ac_cr_due = 7 if ac_cr_due == -97
-	lab def 			ac_cr_due 1 "Already Due" 2 "Within One Month" 3 "Within 2-3 Months" ///
-							4 "Within 4-6 Months" 5 "Within 7-12 Months" 6 "More Than 12 Months" ///
-							7 "Already Repaid"
+	lab def 			ac_cr_due 1 "Already Due" 2 "Within One Month" ///
+							3 "Within 2-3 Months" 4 "Within 4-6 Months" 5 "Within 7-12 Months" ///
+							6 "More Than 12 Months" 7 "Already Repaid"
 	lab val 			ac_cr_due ac_cr_due 
 	
 	replace 			ac_cr_bef = . if ac_cr_bef < 0
@@ -432,7 +439,7 @@
 	others just ask if took out loan, not if able to access loan) */
 	foreach 			var in ac_soap ac_med ac_medserv ac_nat ac_vac ac_oil ac_teff ///
 						ac_wheat ac_maize ac_rice ac_beans ac_cass ac_yam ac_sorg ///
-						ac_staple ac_sauce ac_clean ac_nat ac_bank ac_water ac_drink {
+						ac_staple ac_clean ac_nat ac_bank ac_water ac_drink {
 		replace 		`var' = 2 if `var' == 1
 		replace 		`var' = 1 if `var' == 0
 		replace 		`var' = 0 if `var' == 2

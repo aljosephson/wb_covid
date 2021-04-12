@@ -230,7 +230,7 @@
 						14 "Finance/insurance/real estate" 15 "Tourism" 16 "Food processing" 
 	lab val 		emp_act emp_act
 		
-* rename access credit variables inconsistent with wave 3
+* rename access credit variables inconsistent with wave 3 
 	rename 			s6dq1 ac_cr_loan
 	replace 		ac_cr_loan = 2 if ac_cr_loan == 3
 	lab def 		ac_cr_loan 1 "Yes" 2 "Unable or did not try" 

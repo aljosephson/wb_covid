@@ -251,6 +251,8 @@
 	rename 			s5q6__7 s5q6__5 
 	rename 			s5q6__6 s5q6__7
 	rename 			temp s5q6__6
+
+	rename 			s5q1a1 ac_soap
 	
 * edit employment activity vars which are inconsistent across 
 	* rounds and across sections within rounds

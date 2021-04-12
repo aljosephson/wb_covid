@@ -241,7 +241,6 @@
 	tempfile		temp7
 	save			`temp7'
 	
-	
 * load data since march	
 	use 			"$root/wave_0`w'/SEC7B_2.dta", clear
 	

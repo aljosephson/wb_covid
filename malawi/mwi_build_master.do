@@ -426,8 +426,6 @@
 	 
 * access
  * soap
-	rename 			s5q1a1 ac_soap_need
-	rename 			s5q1b1 ac_soap
 	gen				ac_soap_why = .
 	replace			ac_soap_why = 1 if s5q1c1__1 == 1 | s5q1b1__1 == 1
 	replace 		ac_soap_why = 2 if s5q1c1__2 == 1 | s5q1b1__2 == 1

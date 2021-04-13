@@ -206,7 +206,7 @@
 		drop 				sch_age
 
 *** Summary stats & graphics *** (ADD WEIGHTS????)
-
+/*
 	* school engagement before and after by gender
 		
 		catplot 			sch_bef, over(sex, label(labsize(vlarge))) percent(sex) stack l1title("") ///
@@ -318,7 +318,7 @@
 				replace 		`var' = `sd_`var'' in 2
 			}
 		restore		
-	
+*/
 	
 *** generate panel ***
  
@@ -338,7 +338,7 @@
 		gen 				cov = 1
 		append 				using `temp_pre'
 		sort 				cov
-		order 				hhid* hh_roster cov age sex relate_hoh hh* sexhh sector region zone
+		order 				hhid* hh_roster cov age sex relate_hoh hh* sex_hoh sector region zone
 		drop 				sch_aft* edu_act_* edu_chall* p_mod lost_inc
 		
 	* export data to excel

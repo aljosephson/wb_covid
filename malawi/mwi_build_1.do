@@ -205,6 +205,15 @@
 	rename 			s5q1a1 ac_soap_need
 	rename 			s5q1b1 ac_soap
 
+* behavior
+	rename			s4q1 bh_1
+	rename			s4q2a bh_2
+	rename			s4q3a bh_3
+	rename			s4q3b bh_nogath
+	drop 			s4q4 //questions inconsistent from survey to data, usually go with data but this one seems incompatible with other responses
+	rename			s4q5 bh_4
+	rename			s4q6 bh_5
+	
 * edit employment activity	
 	rename			s6q5 emp_act
 	replace 		emp_act = -96 if emp_act == 16
@@ -231,7 +240,6 @@
 						12 "Electic/water/gas/waste" 13 "Buying/selling" ///
 						14 "Finance/insurance/real estate" 15 "Tourism" 16 "Food processing" 
 	lab val 		emp_act emp_act
-	
 		
 * generate round variables
 	gen				wave = `w'

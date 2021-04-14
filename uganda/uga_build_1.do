@@ -305,7 +305,7 @@
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC8.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC9A.dta", nogen
 	merge 1:1 		HHID using "$export/wave_0`w'/fies_r1.dta", nogen
-
+ 
 * rename variables inconsistent with other waves
 	* rename behavioral changes
 		rename			s3q01 bh_1

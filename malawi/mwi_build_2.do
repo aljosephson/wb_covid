@@ -253,6 +253,16 @@
 	rename 			temp s5q6__6
 
 	rename 			s5q1a1 ac_soap
+ 
+* behavior
+	rename			s4q1 bh_1
+	rename			s4q2a bh_2
+	rename			s4q3a bh_3
+	rename			s4q4 bh_canc_trav
+	rename			s4q5 bh_4
+	rename			s4q6 bh_5
+	rename 			s4q7 bh_freq_wash
+	rename 			s4q8 bh_freq_mask
 	
 * edit employment activity vars which are inconsistent across 
 	* rounds and across sections within rounds

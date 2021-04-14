@@ -351,10 +351,10 @@
 		rename			s3q03 bh_3
 		rename			s3q04 bh_4
 		rename			s3q05 bh_5
-		rename			s3q06 bh_7
-		rename			s3q07 bh_8
-		rename			s3q07_1 bh_8a
-		rename 			s3q08 bh_9
+		rename			s3q06 bh_freq_wash
+		rename			s3q07 bh_freq_mask
+		rename			s3q07_1 bh_freq_mask_oth
+		rename 			s3q08 bh_freq_gath
 	* rename employment
 		rename			s5q01 emp
 		rename			s5q01a rtrn_emp

@@ -193,10 +193,9 @@
 	replace 			bh_3 = 0 if bh_3 == 2
 	replace 			bh_4 = 0 if bh_4 == 2
 	replace 			bh_5 = 0 if bh_5 == 2
-	replace 			bh_7 = . if bh_7 < 0
-	replace 			bh_8 = . if bh_8 < 0 | bh_8 == 6
-	replace 			bh_8 = 0 if bh_8 == 5
-	replace 			bh_8 = 1 if bh_8 == 1 | bh_8 == 2 | bh_8 == 3 | bh_8 == 4
+	gen 				bh_8 = . if bh_freq_mask < 0 | bh_freq_mask == 6
+	replace 			bh_8 = 0 if bh_freq_mask == 5
+	replace				bh_8 = 1 if bh_freq_mask == 1 | bh_freq_mask == 2 | bh_freq_mask == 3 | bh_freq_mask == 4
 	lab var 			bh_8 "Wore mask in public in last 7 days"
 	lab val 			bh_8 yesno
 

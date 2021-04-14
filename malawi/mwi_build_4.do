@@ -229,7 +229,16 @@
 						12 "Electic/water/gas/waste" 13 "Buying/selling" ///
 						14 "Finance/insurance/real estate" 15 "Tourism" 16 "Food processing" 
 	lab val 		emp_act emp_act
-		
+	
+* behavior
+	rename			s4q1 bh_1
+	rename			s4q2a bh_2
+	rename			s4q3a bh_3a
+	rename			s4q3b bh_3b
+	rename			s4q3c bh_3c
+	rename			s4q6 bh_5
+	rename			s4q8 bh_freq_mask
+	
 * rename access credit variables inconsistent with wave 3 
 	rename 			s6dq1 ac_cr_loan
 	replace 		ac_cr_loan = 2 if ac_cr_loan == 3

@@ -176,8 +176,8 @@
 	rename			bh1_handwash bh_1
 	rename			bh2_handshake bh_2
 	rename			bh3_gatherings bh_3
-	rename 			bh1_handwash_freq bh_7
-	rename 			bh2_mask_freq bh_8 
+	rename 			bh1_handwash_freq bh_freq_wash
+	rename 			bh2_mask_freq bh_freq_mask 
 	rename 			bh3_cov_fear concern_1 
 	rename 			bh4_cov_fin concern_2 
 	
@@ -376,7 +376,7 @@
 	rename			fi5_ateless fies_8
 	lab def 		yn 1 "Yes" 2 "No"
 	lab val			fies* yn
-	
+ 	
 * assistance variables - updated via convo with Talip 9/1
 	gen				asst_food = as1_assist_type_1
 	replace			as3_forwork_value_food = . if as3_forwork_value_food < 0

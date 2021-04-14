@@ -405,25 +405,15 @@
 	rename 			s3q15 comm_lead
 	
 * behavior
-	rename			s4q1 bh_1
-	rename			s4q2a bh_2
-	rename			s4q3a bh_6
-	rename 			s4q3b bh_6a
-	rename 			s4q3c bh_6b
-	rename 			s4q4 bh_3
-	rename			s4q5 bh_4
-	rename			s4q6 bh_5
+	replace 		bh_1 = 0 if bh_1 > 1 & bh_1 != .
+	replace 		bh_3 = 0 if bh_3 == 1
+	replace 		bh_3 = 1 if bh_3 > 1 & (wave == 1 | wave == 2 )
 	replace 		bh_5 = 7 if bh_5 == 1 & wave > 2
-	replace 		bh_5 = 1 if (bh_5 == 2 | bh_5 == 3) & wave > 2
+	replace 		bh_5 = 1 if bh_5 == 2 | bh_5 == 3
 	replace 		bh_5 = 2 if bh_5 == 7
 	replace 		bh_5 = . if bh_5 == 4
-	rename			s4q7 bh_7
-	rename			s4q8 bh_8
-	rename 			s4q9 bh_comply_1
-	rename 			s4q10 bh_comply_2
-	rename 			s4q11 bh_comply_3
-	rename 			s4q12 bh_comply_4
-	 
+	replace 		bh_5 = 0 if bh_5 == 2
+	
 * access
  * soap
 	gen				ac_soap_why = .

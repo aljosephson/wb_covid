@@ -299,7 +299,7 @@
 	
 * reformat HHID
 	format 			%12.0f HHID
-
+ 
 * rename variables inconsistent with other waves
 	* rename behavioral changes
 		rename			s3q01 bh_1
@@ -307,8 +307,8 @@
 		rename			s3q03 bh_3
 		rename			s3q04 bh_4
 		rename			s3q05 bh_5
-		rename			s3q06 bh_7
-		rename			s3q07 bh_8
+		rename			s3q06 bh_freq_wash
+		rename			s3q07 bh_freq_mask
 	* rename employment
 		rename			s5q01 emp
 		rename			s5q01a rtrn_emp

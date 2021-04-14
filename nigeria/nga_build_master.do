@@ -215,11 +215,11 @@
 						7 "cannot afford" 8 "afraid to get virus" 
 						
  * split out overlapping question numbers (but different questions) across waves - CHECK THAT OTHER WAVES DO NOT OVERLAP
-	gen 			num_gath = .
-	lab var			num_gath "In the last 7 days, how many religious or social gatherings have you attended?"
-	lab def			num_gath 1 "1" 2 "2" 3 "3" 4 "4" 5 "5 or more"
-	lab val			num_gath num_gath
-	replace 		num_gath = s5q1e if wave == 3 | wave == 4
+	gen 			bh_freq_gath = .
+	lab var			bh_freq_gath "In the last 7 days, how many religious or social gatherings have you attended?"
+	lab def			bh_freq_gath 1 "1" 2 "2" 3 "3" 4 "4" 5 "5 or more"
+	lab val			bh_freq_gath bh_freq_gath
+	replace 		bh_freq_gath = s5q1e if wave == 3 | wave == 4
 	replace 		s5q1e = . if wave == 3 | wave == 4
 	gen 			ac_drink = cond(s5q1e == 2, 1, cond(s5q1e == 1, 2,.))
 	lab var 		ac_drink "Had Enough Drinking Water in Last 7 Days"
@@ -261,8 +261,8 @@
 	
  * format access variables
   * frequnecy wash and mask
-	rename 			s5q1c freq_wash_soap 
-	rename 			s5q1d freq_mask
+	rename 			s5q1c bh_freq_wash
+	rename 			s5q1d bh_freq_mask
   * medicine
 	rename 			s5q1a1 ac_med_need
 	rename 			s5q1b1 ac_med

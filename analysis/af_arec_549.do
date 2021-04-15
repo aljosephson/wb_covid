@@ -32,7 +32,8 @@
 		rename 				HHID hhid_uga1
 		rename 				s1q02a hh_mem_stat
 		rename 				s1q05 sex
-		lab def 			sex 1 "Male" 2 "Female"
+		replace 			sex = sex - 1
+		lab def 			sex 0 "Male" 1"Female"
 		lab val 			sex sex 
 		rename 				s1q06 age
 		rename 				s1q07 relate_hoh
@@ -123,13 +124,23 @@
 			keep 			hhid emp_pre edu
 			rename 			emp_pre emp_pre_hoh
 			rename 			edu edu_hoh
+			* HOH education to years (https://www.nuffic.nl/sites/default/files/2020-08/education-system-uganda.pdf)
+				gen 				hoh_yrs_ed = 3.5 if edu_hoh == 1 // assume 1/2
+				replace 			hoh_yrs_ed = 7 if edu_hoh == 2
+				replace 			hoh_yrs_ed = 11 if edu_hoh == 3 // assume some secondary = lower secondary
+				replace 			hoh_yrs_ed = 13 if edu_hoh == 4 // lower and upper secondary
+				replace 			hoh_yrs_ed = 19 if edu_hoh == 5 // 4 year bachelor program
+				replace 			hoh_yrs_ed = 21 if edu_hoh == 6 // 2-year masters
+				replace 			hoh_yrs_ed = 0 if edu_hoh == 8
+				replace 			hoh_yrs_ed = 12 if edu_hoh == 10 // assume 1 year for certificate
+				replace 			hoh_yrs_ed = 15 if edu_hoh == 9 // assume 3 years for diploma
 			tempfile 		hoh_data
 			save 			`hoh_data'
 		restore	
 	
 	* subset panel data	
 		keep 				if country == 4 & wave == 2
-		keep 				if relate_hoh == 1
+		keep 				if relate_hoh == 1 //keeping only hh where respondant is HOH
 		keep 				hhid region zone p_mod sexhh sector emp credit_cvd
 		rename 				sexhh sex_hoh
 
@@ -320,7 +331,15 @@
 		restore		
 */
 	
-*** generate panel ***
+*** generate panel ***	
+	* regions
+		replace 			region = 4012 if region == 4014 //put kampala obs in central region
+		gen 				region_1 = cond(region == 4015, 1, 0)
+		lab var 			region_1 "Northern"
+		gen 				region_2 = cond(region == 4013, 1, 0)
+		lab var 			region_2 "Eastern"
+		gen 				region_3 = cond(region == 4016, 1, 0)
+		lab var 			region_3 "Western"
  
 	* pre-covid
 		preserve
@@ -341,15 +360,32 @@
 		order 				hhid* hh_roster cov age sex relate_hoh hh* sex_hoh sector region zone
 		drop 				sch_aft* edu_act_* edu_chall* p_mod lost_inc
 		
+	* functional forms & dummy var formatting
+		gen 				age_sq = age * age
+		replace 			credit_cvd = 0 if credit_cvd == 2
+		replace 			sex_hoh = sex_hoh - 1
+		lab val 			sex_hoh sex
+		gen 				rural = cond(sector == 1,1,0)
+		drop 				sector
+
+	* set panel 
+		sort 				hhid hh_roster__id 
+		egen 				id = group(hhid hh_roster__id)
+		xtset 				id  cov
+		
+	/*	
 	* export data to excel
 		export 				excel "G:\My Drive\AF\SAS\SASUniversityEdition\myfolders\AREC_549\term_paper\data.xls", ///
-								first(var) replace missing(".")		 							
-									
-									
-	probit sch age sex hh_child sex_hoh sector if cov == 0								
-									
-	probit sch age sex hh_child sex_hoh sector if cov == 1								
-									
+								first(var) replace missing(".")		
+	*/
+
+*** testing for heteroscedasticity ***	
+	global 					ylist sch
+	global 					xlist age age_sq sex sex_hoh rural emp hh_child hoh_yrs_ed region_1 region_2 region_3 
+	
+	xtprobit 				$ylist $xlist i.cov, re dif tech(nr) vce(cluster id)
+	margins, 				dydx(*) atmeans
+
 									
 									
 									

@@ -7,6 +7,7 @@
 * Notes: 
 	
 * TO DO: 
+	* check why emp data more post-cov
 	* pull data from update_new_data and rerun 
 */
 	
@@ -372,34 +373,41 @@
 		sort 				hhid hh_roster__id 
 		egen 				id = group(hhid hh_roster__id)
 		xtset 				id  cov
-		
-	/*	
-	* export data to excel
-		export 				excel "G:\My Drive\AF\SAS\SASUniversityEdition\myfolders\AREC_549\term_paper\data.xls", ///
-								first(var) replace missing(".")		
-	*/
 
-*** testing for heteroscedasticity ***	
-	global 					ylist sch
-	global 					xlist age age_sq sex sex_hoh rural emp hh_child hoh_yrs_ed region_1 region_2 region_3 
 	
-	xtprobit 				$ylist $xlist i.cov, re dif tech(nr) vce(cluster id)
-	margins, 				dydx(*) atmeans
-
-									
-									
-									
-									
-									
-									
-									
-									
-									
-									
-									
-									
-									
-									
-									
+*** regressions	 ***	
+	global 					ylist sch
+	global 					xlist_temp age age_sq sex sex_hoh emp hh_child hoh_yrs_ed region_1 region_2 region_3 
+		
+	foreach 				var in $xlist {
+		gen 				`var'_cov = `var'*cov
+	}
+	
+	global 					xlist age age_sq sex sex_hoh emp hh_child hoh_yrs_ed region_1 region_2 region_3 ///
+								age_cov age_sq_cov sex_cov sex_hoh_cov emp_cov hh_child_cov hoh_yrs_ed_cov region_1_cov region_2_cov region_3_cov
+							
+	eststo 					clear
+	
+	xtprobit 				$ylist $xlist i.cov if rural == 0, re dif tech(nr) vce(cluster id) 
+	margins, 				dydx(*) atmeans post
+	
+	eststo					urb 
+	
+	outreg2 				[urb] using "G:\My Drive\AF\Sem 2 Spring\AREC 549 Econometrics\Term Paper\results.xls", ///
+							dec(3) nocons replace ctitle(urban) 
+	
+	xtprobit 				$ylist $xlist i.cov if rural == 1, re dif tech(nr) vce(cluster id) 
+	margins, 				dydx(*) atmeans post
+	
+	eststo			 		rur
+	
+	outreg2 				[rur] using "G:\My Drive\AF\Sem 2 Spring\AREC 549 Econometrics\Term Paper\results.xls", ///
+							dec(3) nocons append ctitle(rural)						
+				
+				
+				
+				
+				
+							
 									
 									

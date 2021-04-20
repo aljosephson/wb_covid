@@ -312,7 +312,19 @@
 	rename			em14_work_cur_notable_why emp_unable_why
 	rename			em15_bus bus_emp
 	rename			em15a_bus_prev bus_prev
-	rename			em15b_bus_prev_closed bus_prev_close
+	rename 			em15b_bus_prev_closed bus_closed
+	replace 		bus_closed = 9 if bus_closed == 3
+	replace 		bus_closed = 3 if bus_closed == 4
+	replace 		bus_closed = 4 if bus_closed == 5
+	replace 		bus_closed = 5 if bus_closed == 6
+	replace 		bus_closed = . if bus_closed < 0
+	lab def 		clsd 1 "USUAL PLACE OF BUSINESS CLOSED DUE TO CORONAVIRUS LEGAL RESTRICTIONS" ///
+						2 "USUAL PLACE OF BUSINESS CLOSED FOR ANOTHER REASON" ///
+						3 "NO COSTUMERS / FEWER CUSTOMERS" 4 "CAN'T GET INPUTS" ///
+						5 "CAN'T TRAVEL / TRANSPORT GOODS FOR TRADE" ///
+						7 "ILLNESS IN THE HOUSEHOLD" 8 "NEED TO TAKE CARE OF A FAMILY MEMBER" ///
+						9 "SEASONAL CLOSURE" 10 "VACATION" 
+	lab val 		bus_closed clsd
 	rename			em15c_bus_new bus_new
 	rename			em16_bus_sector bus_sect
 	rename			em17_bus_inc bus_emp_inc

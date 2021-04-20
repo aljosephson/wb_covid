@@ -490,9 +490,9 @@
 	rename			s2q02__3 know_2
 	lab var			know_2 "Avoiding Handshakes/Physical Greetings Reduces Risk of Coronavirus Contract"
 	rename			s2q02__4 know_3
+	replace 		know_3 = 1 if s2q02__5 == 1
+	replace 		know_3 = 0 if s2q02__5 == 0 & know_3 == .
 	lab var			know_3 "Using Masks and/or Gloves Reduces Risk of Coronavirus Contraction"
-	rename			s2q02__5 know_10
-	lab var			know_10 "Using Gloves Reduces Risk of Coronavirus Contraction"
 	rename			s2q02__6 know_4
 	lab var			know_4 "Avoiding Travel Reduces Risk of Coronavirus Contraction"
 	rename			s2q02__7 know_5
@@ -532,43 +532,16 @@
 	
 	rename 			s5a11c bus_act
 	replace			bus_why = s5aq14_2 if bus_why == .
-	
-	gen				bus_chlng_fce = 1 if s5aq15__1 == 1
-	replace			bus_chlng_fce = 2 if s5aq15__2 == 1
-	replace			bus_chlng_fce = 3 if s5aq15__3 == 1
-	replace			bus_chlng_fce = 4 if s5aq15__4 == 1
-	replace			bus_chlng_fce = 5 if s5aq15__5 == 1
-	replace			bus_chlng_fce = 6 if s5aq15__6 == 1
-	replace			bus_chlng_fce = 7 if s5aq15__n96 == 1
-	lab def			bus_chlng_fce 1 "Difficulty buying and receiving supplies and inputs" ///
-								  2 "Difficulty raising money for the business" ///
-								  3 "Difficulty repaying loans or other debt obligations" ///
-								  4 "Difficulty paying rent for business location" ///
-								  5 "Difficulty paying workers" ///
-								  6 "Difficulty selling goods or services to customers" ///
-								  7 "Other"
-	lab val			bus_chlng_fce bus_chlng_fce
-	lab var			bus_chlng_fce "Business challanges faced"
-	order			bus_chlng_fce, after(bus_why)
+	forval 			x = 1/6 {
+		rename 			s5aq15__`x' bus_chal_`x'
+	}
+	rename 			s5aq15__n96 bus_chal_7
  	
-	rename			s5aq15a bus_cndct
-	gen				bus_cndct_how = 1 if s5aq15b__1 == 1
-	replace			bus_cndct_how = 1 if s5aq15b__2 == 1
-	replace			bus_cndct_how = 1 if s5aq15b__3 == 1
-	replace			bus_cndct_how = 1 if s5aq15b__4 == 1
-	replace			bus_cndct_how = 1 if s5aq15b__5 == 1
-	replace			bus_cndct_how = 1 if s5aq15b__6 == 1
-	replace			bus_cndct_how = 1 if s5aq15b__n96 == 1
-	lab def			bus_cndct_how 1 "Requiring customers to wear masks" ///
-								  2 "Keeping distance between customers" ///
-								  3 "Allowing a reduced number of customers" ///
-								  4 "Use of phone and or social media to market" ///
-								  5 "Switched to delivery services only" ///
-								  6 "Switched product/service offering" ///
-								  7 "Other"
-	lab val			bus_cndct_how bus_cndct_how
-	lab var			bus_cndct_how "Changed the way you conduct business due to the corona virus?"
-	order			bus_cndct_how, after(bus_cndct)
+	rename			s5aq15a bus_beh
+	forval 			x = 1/6 {
+		rename 			s5aq15b__`x' bus_beh_`x'
+	}
+	rename			s5aq15b__n96 bus_beh_7
 	rename 			s5q15a bus_other
 	rename 			s5q15b bus_num
 	
@@ -636,17 +609,14 @@
 						s5q10__2 s5q10__3 s5q10__4 s5q10__5 business_case_filter ///
 						s5aq11b__1 s5aq11b__2 s5aq11b__3 s5aq11b__4 s5aq11b__5 ///
 						s5aq11b__6 s5aq11b__7 s5aq11b__8 s5aq11b__9 s5aq11b__10 ///
-						s5aq11b__n96 s5aq14_2 s5aq15__1 s5aq15__2 s5aq15__3 ///
-						s5aq15__4 s5aq15__5 s5aq15__6 s5aq15__n96 s5aq15b__1 ///
-						s5aq15b__2 s5aq15b__3 s5aq15b__4 s5aq15b__5 s5aq15b__6 ///
-						s5aq15b__n96 s4q01f_Other s4q02_Other s4q04_Other ///
+						s5aq11b__n96 s5aq14_2 s4q01f_Other s4q02_Other s4q04_Other ///
 						s4q11_Other case_filter CountyCode2 CountyName2 ///
 						DistrictCode2 DistrictName2 ParishCode2 ParishName2 ///
 						SubcountyCode2 SubcountyName2 VillageCode2 VillageName2 ///
 						ac_mask_srce_n96 harv_cov_why_n96 Sq02 PID baseline_hhid ///
 						s5bq25 s5bq26 ag_sell_where_n96 Sq01 s5aq11b__0 ///
-						weight harv_saf_5 *_interview_ID *_hh_weight s5qaq17_1 
-						
+						weight harv_saf_5 *_interview_ID *_hh_weight s5qaq17_1 ///
+						s2q02__5	
 						
 * rename basic information
 	gen				sector = 2 if urban == 1

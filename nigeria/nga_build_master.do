@@ -150,9 +150,9 @@
 	rename			s3q2__3 know_2
 	lab var			know_2 "Avoiding Handshakes/Physical Greetings Reduces Risk of Coronavirus Contract"
 	rename 			s3q2__4 know_3 
+	replace 		know_3 = 1 if s3q2__5 == 1
+	replace 		know_3 = 0 if s3q2__5 == 0 & know_3 == .
 	lab var			know_3 "Using Masks and/or Gloves Reduces Risk of Coronavirus Contraction"
-	rename			s3q2__5 know_10
-	lab var			know_10 "Using Gloves Reduces Risk of Coronavirus Contraction"
 	rename			s3q2__6 know_4
 	lab var			know_4 "Avoiding Travel Reduces Risk of Coronavirus Contraction"
 	rename			s3q2__7 know_5
@@ -536,6 +536,14 @@
 	rename 			s6q8g emp_saf_fol
 	rename 			s6q11a bus_status 
 	rename 			s6q11b bus_closed 
+	replace 		bus_closed = 7 if bus_closed == 6
+	lab def 		clsd 1 "USUAL PLACE OF BUSINESS CLOSED DUE TO CORONAVIRUS LEGAL RESTRICTIONS" ///
+						2 "USUAL PLACE OF BUSINESS CLOSED FOR ANOTHER REASON" ///
+						3 "NO COSTUMERS / FEWER CUSTOMERS" 4 "CAN'T GET INPUTS" ///
+						5 "CAN'T TRAVEL / TRANSPORT GOODS FOR TRADE" ///
+						7 "ILLNESS IN THE HOUSEHOLD" 8 "NEED TO TAKE CARE OF A FAMILY MEMBER" ///
+						9 "SEASONAL CLOSURE" 10 "VACATION" 
+	lab val 		bus_closed clsd
 	rename 			s6q11b1 bus_other
 	rename 			s6q15__1 bus_chal_1	
 	rename 			s6q15__2 bus_chal_2 
@@ -543,8 +551,7 @@
 	rename 			s6q15__4 bus_chal_4 
 	rename 			s6q15__5 bus_chal_5 
 	rename 			s6q15__6 bus_chal_6 
-	rename 			s6q15__96 bus_chal_7 
-	rename 			s6q15a bus_beh
+	rename 			s6q15__96 bus_chal_7 	
 	rename 			s6q15b bus_num
 	rename 			s6q15b__1 bus_beh_1 
 	rename 			s6q15b__2 bus_beh_2 
@@ -840,7 +847,7 @@
 	lab val			asst_any assist
 
 * drop variables
-	drop			s11q11 s11q12 s11q13 s6q21a__96 s6q22__96 
+	drop			s11q11 s11q12 s11q13 s6q21a__96 s6q22__96 s3q2__5 
 	
 	gen 			region = 3000 + state
 

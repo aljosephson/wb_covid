@@ -290,12 +290,11 @@
 	lab var			know_9 "Use of Sanitizer Reduces Risk of Coronavirus Contraction"
 	rename			s3q2__3 know_2
 	lab var			know_2 "Avoiding Handshakes/Physical Greetings Reduces Risk of Coronavirus Contract"
-	rename 			s3q2__11 know_11
-	label var 		know_11 "Cough Etiquette Reduces Risk of Coronavirus Contract"
+	rename 			s3q2__11 know_10
+	label var 		know_10 "Cough Etiquette Reduces Risk of Coronavirus Contract"
 	rename 			s3q2__4 know_3
+	replace 		know_3 = 1 if s3q2__5 == 1
 	lab var			know_3 "Using Masks and/or Gloves Reduces Risk of Coronavirus Contraction"
-	rename			s3q2__5 know_10
-	lab var			know_10 "Using Gloves Reduces Risk of Coronavirus Contraction"
 	rename			s3q2__6 know_4
 	lab var			know_4 "Avoiding Travel Reduces Risk of Coronavirus Contraction"
 	rename			s3q2__7 know_5
@@ -692,48 +691,17 @@
 	replace			bus_stat = s6bq11a_2 if bus_stat == .
 	replace			bus_stat = s6bq11a_3 if bus_stat == .
 	rename			s6bq11b bus_stat_why
-	gen				bus_chlng_fce = 1 if s6qb15__1 == 1
-	replace			bus_chlng_fce = 2 if s6qb15__2 == 1
-	replace			bus_chlng_fce = 3 if s6qb15__3 == 1
-	replace			bus_chlng_fce = 4 if s6qb15__4 == 1
-	replace			bus_chlng_fce = 5 if s6qb15__5 == 1
-	replace			bus_chlng_fce = 6 if s6qb15__6 == 1
-	replace			bus_chlng_fce = 7 if s6qb15__7 == 1
-	lab def			bus_chlng_fce 1 "Difficulty buying and receiving supplies and inputs" ///
-								  2 "Difficulty raising money for the business" ///
-								  3 "Difficulty repaying loans or other debt obligations" ///
-								  4 "Difficulty paying rent for business location" ///
-								  5 "Difficulty paying workers" ///
-								  6 "Difficulty selling goods or services to customers" ///
-								  7 "Other"
-	lab val			bus_chlng_fce bus_chlng_fce
-	order			bus_chlng_fce, after(bus_why)
-
-	drop			s6bq11a_2 s6bq11a_3 s6q14b_os s6qb15__1 s6qb15__2 ///
-						s6qb15__3 s6qb15__4 s6qb15__5 s6qb15__6 s6qb15__7 ///
-						s6bq15_ot
-	rename			s6bq15a bus_cndct
-	gen				bus_cndct_how = 1 if s6bq15b__1 == 1
-	replace			bus_cndct_how = 1 if s6bq15b__2 == 1
-	replace			bus_cndct_how = 1 if s6bq15b__3 == 1
-	replace			bus_cndct_how = 1 if s6bq15b__4 == 1
-	replace			bus_cndct_how = 1 if s6bq15b__5 == 1
-	replace			bus_cndct_how = 1 if s6bq15b__6 == 1
-	replace			bus_cndct_how = 1 if s6bq15b__96 == 1
-	lab def			bus_cndct_how 1 "Requiring customers to wear masks" ///
-								  2 "Keeping distance between customers" ///
-								  3 "Allowing a reduced number of customers" ///
-								  4 "Use of phone and or social media to market" ///
-								  5 "Switched to delivery services only" ///
-								  6 "Switched product/service offering" ///
-								  7 "Other"
-	lab val			bus_cndct_how bus_cndct_how
-	lab var			bus_cndct_how "Changed the way you conduct business due to the corona virus?"
-	order			bus_cndct_how, after(bus_cndct)
-	drop			s6bq15b__1 s6bq15b__2 s6bq15b__3 s6bq15b__4 s6bq15b__5 ///
-						s6bq15b__6 s6bq15b__96
+	forval 			x = 1/7 {
+		rename 			s6qb15__`x' bus_chal_`x'
+	}
+	drop			s6bq11a_2 s6bq11a_3 s6q14b_os 
+	rename			s6bq15a bus_beh
+	forval 			x = 1/6 {
+		rename 		s6bq15b__`x' bus_beh_`x'
+	}
+	rename 			s6bq15b__96 bus_beh_7
 	rename 			s6bq15c bus_oth_curr
-	rename 			s6bq15d bus_num_curr
+	rename 			s6bq15d bus_num
 	rename			s6cq1 oth_inc_1
 	lab var 		oth_inc_1 "Other Income: Remittances from abroad"
 	rename			s6cq2 oth_inc_2
@@ -885,7 +853,7 @@
 						s6qf1 s6qf2__95 s6qf2_ot s6qf3 s6qf6__95 s6qf6_ot s6qf7__95 ///
 						s6qf7_ot s6qf10__95 s6qf10_ot s6qf4__95 s6qf4_ot s6qf5__95 ///
 						s6qf5_ot s6dq10_ot weight s2q9 s6q3b_1 harv_cov_why_6 ///
-						harv_cov_why_7 s13q6_* s6qf2__*
+						harv_cov_why_7 s13q6_* s6qf2__* s3q2__5
 
 * regional and sector information
 	gen				sector = 2 if urb_rural == 1

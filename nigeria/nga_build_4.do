@@ -197,6 +197,7 @@
 * clean variables inconsistent with other rounds	
 	rename			s6q16 ag_crop
 	rename 			s6bq1 ag_live
+	rename 			s6q11b1 bus_other
 	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace

@@ -183,15 +183,14 @@
 	drop			shock_cd_os s10q3_os
 	
 * generate shock variables
-	forval 			i = 1/9 {
+	levelsof(shock_cd), local(id)
+	foreach 			i in `id' {
 		gen				shock_`i' = 1 if s10q1 == 1 & shock_cd == `i'
-		replace			shock_`i' = 1 if s10q1 == 1 & shock_cd == `i'
-		replace			shock_`i' = 1 if s10q1 == 1 & shock_cd == `i'
-		replace			shock_`i' = 1 if s10q1 == 1 & shock_cd == `i'
+		replace			shock_`i' = 0 if s10q1 == 2 & shock_cd == `i'
 		}
 
 * collapse to household level
-	collapse 		(max) s10q3__1- shock_9, by(hhid)
+	collapse 		(max) s10q3__1- shock_96, by(hhid)	
 	
 * save temp file
 	tempfile		tempe
@@ -222,7 +221,7 @@
 * clean variables inconsistent with other rounds	
 	rename 			s6aq1 ag_crop
 	drop			s6q16a 
-	rename 			s6q15a bus_oth_curr
+	rename 			s6q15a bus_other
 	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace

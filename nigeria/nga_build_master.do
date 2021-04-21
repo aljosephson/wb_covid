@@ -534,7 +534,7 @@
 	rename			s6q8e contrct
 	rename 			s6q8f_* emp_saf*
 	rename 			s6q8g emp_saf_fol
-	rename 			s6q11a bus_status 
+	rename 			s6q11a bus_stat 
 	rename 			s6q11b bus_closed 
 	replace 		bus_closed = 7 if bus_closed == 6
 	lab def 		clsd 1 "USUAL PLACE OF BUSINESS CLOSED DUE TO CORONAVIRUS LEGAL RESTRICTIONS" ///
@@ -544,7 +544,6 @@
 						7 "ILLNESS IN THE HOUSEHOLD" 8 "NEED TO TAKE CARE OF A FAMILY MEMBER" ///
 						9 "SEASONAL CLOSURE" 10 "VACATION" 
 	lab val 		bus_closed clsd
-	rename 			s6q11b1 bus_other
 	rename 			s6q15__1 bus_chal_1	
 	rename 			s6q15__2 bus_chal_2 
 	rename 			s6q15__3 bus_chal_3 
@@ -746,18 +745,26 @@
 	lab var 		tot_inc_chg "Change in income from other source since covid"	
 	drop			s7q199
 
-*shocks
-* need to make shock variables match uganda 
-* shock 2 - 9 need to be change
-* shock 1 is okay
-	rename 			shock_8 shock_12 
-	rename 			shock_9 shock_14 
-	rename 			shock_5 shock_8 
-	rename			shock_6 shock_10
-	rename 			shock_7 shock_11 
-	rename 			shock_2 shock_5
-	rename			shock_3 shock_6
-	rename 			shock_4 shock_7
+* shocks
+	rename 			shock_8 shock_15 
+	rename 			shock_96 shock_14
+	lab var			shock_1 "Death or disability of an adult working member of the household"
+	lab var			shock_5 "Job loss"
+	lab var			shock_6 "Non-farm business failure"
+	lab var			shock_7 "Theft of crops, cash, livestock or other property"
+	lab var			shock_10 "Increase in price of inputs"
+	lab var			shock_11 "Fall in the price of output"
+	lab var			shock_12 "Increase in price of major food items consumed"
+	lab var			shock_14 "Other shock"
+	lab var 		shock_15 "Disruption of farming, livestock, fishing activities"
+	
+* generate any shock variable
+	gen				shock_any = 1 if shock_1 == 1 | shock_5 == 1 | ///
+						shock_6 == 1 | shock_7 == 1 | shock_15 == 1 | ///
+						shock_10 == 1 | shock_11 == 1 | shock_12 == 1 | ///
+						shock_14 == 1
+	replace			shock_any = 0 if shock_any == . & (wave == 1 | wave == 3)
+	lab var			shock_any "Experience some shock"
 	
 * rename cope variables
 	rename			s10q3__1 cope_1
@@ -777,31 +784,7 @@
 	rename			s10q3__20 cope_15
 	rename			s10q3__21 cope_16
 	rename			s10q3__96 cope_17
-	
-* label variables
-	lab var			shock_1 "Death of disability of an adult working member of the household"
-	lab var			shock_5 "Job loss"
-	lab var			shock_6 "Non-farm business failure"
-	lab var			shock_7 "Theft of crops, cash, livestock or other property"
-	lab var			shock_8 "Destruction of harvest by insufficient labor"
-	lab var			shock_10 "Increase in price of inputs"
-	lab var			shock_11 "Fall in the price of output"
-	lab var			shock_12 "Increase in price of major food items c"
-	lab var			shock_14 "Other shock"
-	* differs from uganda (other country with shock questions) - asked binary here
-	
-	foreach 		var of varlist shock_1-shock_14 {
-		lab val		`var' shock 
-	}
-		
-* generate any shock variable (only avaiable waves 1 and 3 - ADD OTHER WAVES HERE IF SHOCK DATA AVAILABLE)
-	gen				shock_any = 1 if shock_1 == 1 | shock_5 == 1 | ///
-						shock_6 == 1 | shock_7 == 1 | shock_8 == 1 | ///
-						shock_10 == 1 | shock_11 == 1 | shock_12 == 1 | ///
-						shock_14 == 1
-	replace			shock_any = 0 if shock_any == . & (wave == 1 | wave == 3)
-	lab var			shock_any "Experience some shock"
-	
+
 	lab var			cope_1 "Sale of assets (Agricultural and Non_agricultural)"
 	lab var			cope_2 "Engaged in additional income generating activities"
 	lab var			cope_3 "Received assistance from friends & family"

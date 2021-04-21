@@ -170,17 +170,17 @@
 
 * load data
 	use				"$root/wave_0`w'/sect10_Coping_r`w'", clear
-	
+
 * drop other shock
 	drop			shock_id_os s10q3_os
 
 * generate shock variables
-	forval i = 1/9 {
+	foreach 		i in 5 6 7 8 10 11 12 13 96 {
 		gen				shock_`i' = 1 if s10q1 == 1 & shock_id == `i'
 	}
 
 * collapse to household level	
-	collapse (max) s10q2__1- shock_9, by(HHID y4_hhid)
+	collapse (max) s10q2__1- shock_96, by(HHID y4_hhid)
 	
 * save temp file
 	tempfile		tempf
@@ -231,7 +231,18 @@
 	rename			s6q8b_1__2 emp_cont_2
 	rename			s6q8b_1__3 emp_cont_3
 	rename			s6q8b_1__4 emp_cont_4
+
 	rename			s6q8c_1__1 contrct
+	replace 		s6q8c_1__2 = 7 if s6q8c_1__2 == 1
+	replace 		s6q8c_1__2 = 1 if s6q8c_1__2  == 0
+	replace 		s6q8c_1__2  = 0 if s6q8c_1__2 == 1
+	replace 		contrct = s6q8c_1__2 if contrct == .
+	replace			contrct = s6q8e__1 if s6q8e__1 != . & contrct == .
+	replace 		s6q8e__2 = 7 if s6q8e__2 == 1
+	replace 		s6q8e__2 = 1 if s6q8e__2  == 0
+	replace 		s6q8e__2  = 0 if s6q8e__2 == 1
+	replace 		contrct = s6q8e__2 if contrct == .
+	
 	rename			s6bq11 bus_emp
 	rename			s6qb12 bus_sect
 	rename			s6qb13 bus_emp_inc

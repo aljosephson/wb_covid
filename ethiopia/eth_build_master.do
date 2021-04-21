@@ -522,19 +522,19 @@
 	rename 			lo5_sprayed	loc_sprayed
 		
 * generate any shock variable
-	gen				shock_any = 1 if farm_inc == 1 & farm_chg == 3 | farm_chg == 4
-	replace			shock_any = 1 if bus_inc == 1 & bus_chg == 3 | bus_chg == 4
-	replace			shock_any = 1 if wage_inc == 1 & wage_chg == 3 | wage_chg == 4
-	replace			shock_any = 1 if rem_dom == 1 & rem_dom_chg == 3 | rem_dom_chg == 4
-	replace			shock_any = 1 if rem_for == 1 & rem_for_chg == 3 | rem_for_chg == 4
-	replace			shock_any = 1 if isp_inc == 1 & isp_chg == 3 | isp_chg == 4
-	replace			shock_any = 1 if pen_inc == 1 & pen_chg == 3 | pen_chg == 4
-	replace			shock_any = 1 if gov_inc == 1 & gov_chg == 3 | gov_chg == 4
-	replace			shock_any = 1 if ngo_inc == 1 & ngo_chg == 3 | ngo_chg == 4
-	replace			shock_any = 1 if oth_inc == 1 & oth_chg == 3 | oth_chg == 4
+	gen				shock_any = 1 if farm_inc == 1 & (farm_chg == 3 | farm_chg == 4)
+	replace			shock_any = 1 if bus_inc == 1 & (bus_chg == 3 | bus_chg == 4)
+	replace			shock_any = 1 if wage_inc == 1 & (wage_chg == 3 | wage_chg == 4)
+	replace			shock_any = 1 if rem_dom == 1 & (rem_dom_chg == 3 | rem_dom_chg == 4)
+	replace			shock_any = 1 if rem_for == 1 & (rem_for_chg == 3 | rem_for_chg == 4)
+	replace			shock_any = 1 if isp_inc == 1 & (isp_chg == 3 | isp_chg == 4)
+	replace			shock_any = 1 if pen_inc == 1 & (pen_chg == 3 | pen_chg == 4)
+	replace			shock_any = 1 if gov_inc == 1 & (gov_chg == 3 | gov_chg == 4)
+	replace			shock_any = 1 if ngo_inc == 1 & (ngo_chg == 3 | ngo_chg == 4)
+	replace			shock_any = 1 if oth_inc == 1 & (oth_chg == 3 | oth_chg == 4)
 	replace			shock_any = 0 if shock_any == .
 	lab var			shock_any "Experience some shock"
-	
+
 * drop unnecessary variables
 	drop			kn3_gov kn3_gov_0 kn3_gov__98 kn3_gov__99 kn3_gov__96 ///
 						kn3_gov_other ac2_atb_med_why_other ac2_atb_teff_why_other ///

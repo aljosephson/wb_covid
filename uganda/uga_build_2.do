@@ -299,7 +299,7 @@
 	
 * reformat HHID
 	format 			%12.0f HHID
- 
+
 * rename variables inconsistent with other waves
 	* rename behavioral changes
 		rename			s3q01 bh_1

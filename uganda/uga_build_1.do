@@ -90,7 +90,7 @@
 	replace			shock_14 = 3 if s9q02 == 1 & shocks__id == 96
 
 * format shock variables
-	lab var			shock_1 "Death of disability of an adult working member of the household"
+	lab var			shock_1 "Death or disability of an adult working member of the household"
 	lab var			shock_2 "Death of someone who sends remittances to the household"
 	lab var			shock_3 "Illness of income earning member of the household"
 	lab var			shock_4 "Loss of an important contact"
@@ -101,7 +101,7 @@
 	lab var			shock_9 "Disease/Pest invasion that caused harvest failure or storage loss"
 	lab var			shock_10 "Increase in price of inputs"
 	lab var			shock_11 "Fall in the price of output"
-	lab var			shock_12 "Increase in price of major food items c"
+	lab var			shock_12 "Increase in price of major food items consumed"
 	lab var			shock_13 "Floods"
 	lab var			shock_14 "Other shock"
 

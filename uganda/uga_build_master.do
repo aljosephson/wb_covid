@@ -516,20 +516,18 @@
 * rename business variables
 	lab def			bus_emp_inc 1 "Higher" 2 "The same" 3 "Less" 4 "No Revenue"
 	lab val			bus_emp_inc bus_emp_inc 
-	gen				bus_stat_why = 1 if s5aq11b__1 == 1
-	replace			bus_stat_why = 2 if s5aq11b__2 == 1
-	replace			bus_stat_why = 3 if s5aq11b__3 == 1
-	replace			bus_stat_why = 4 if s5aq11b__4 == 1
-	replace			bus_stat_why = 5 if s5aq11b__5 == 1
-	replace			bus_stat_why = 6 if s5aq11b__6 == 1
-	replace			bus_stat_why = 7 if s5aq11b__7 == 1
-	replace			bus_stat_why = 8 if s5aq11b__8 == 1
-	replace			bus_stat_why = 9 if s5aq11b__9 == 1
-	replace			bus_stat_why = 10 if s5aq11b__10 == 1
-	replace			bus_stat_why = 11 if s5aq11b__n96 == 1
-	lab var			bus_stat_why "Why is your family business closed?"
-	order			bus_stat_why, after(bus_stat)
-	
+	gen				bus_closed  = 1 if s5aq11b__1 == 1
+	forval 			x = 2/10{
+	    replace 	bus_closed = `x' if s5aq11b__`x' == 1
+	}
+	replace 		bus_closed = 7 if bus_closed == 6	
+	lab def 		clsd 1 "USUAL PLACE OF BUSINESS CLOSED DUE TO CORONAVIRUS LEGAL RESTRICTIONS" ///
+						2 "USUAL PLACE OF BUSINESS CLOSED FOR ANOTHER REASON" ///
+						3 "NO COSTUMERS / FEWER CUSTOMERS" 4 "CAN'T GET INPUTS" ///
+						5 "CAN'T TRAVEL / TRANSPORT GOODS FOR TRADE" ///
+						7 "ILLNESS IN THE HOUSEHOLD" 8 "NEED TO TAKE CARE OF A FAMILY MEMBER" ///
+						9 "SEASONAL CLOSURE" 10 "VACATION" 
+	lab val 		bus_closed clsd
 	rename 			s5a11c bus_act
 	replace			bus_why = s5aq14_2 if bus_why == .
 	forval 			x = 1/6 {

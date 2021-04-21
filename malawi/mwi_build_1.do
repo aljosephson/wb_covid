@@ -186,7 +186,13 @@
 	rename			s6q8b__2 emp_cont_2
 	rename			s6q8b__3 emp_cont_3
 	rename			s6q8b__4 emp_cont_4
+	
 	rename			s6q8c__1 contrct
+	replace 		s6q8c__2 = 7 if s6q8c__2 == 1
+	replace 		s6q8c__2 = 1 if s6q8c__2  == 0
+	replace 		s6q8c__2  = 0 if s6q8c__2 == 1
+	replace 		contrct = s6q8c__2 if contrct == .
+	
 	rename			s6q9 emp_hh
 	rename			s6q11 bus_emp
 	rename			s6q12 bus_sect

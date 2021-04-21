@@ -178,10 +178,12 @@
 	rename			s6q8b_1__2 emp_cont_2
 	rename			s6q8b_1__3 emp_cont_3
 	rename			s6q8b_1__4 emp_cont_4
+
 	rename			s6q8c_1 contrct
 	replace 		contrct = s6q8e if contrct == .
 	drop 			s6q8e
 	replace 		contrct = 0 if contrct == 2
+	
 	rename			s6bq11 bus_emp
 	rename			s6qb12 bus_sect
 	rename			s6qb13 bus_emp_inc

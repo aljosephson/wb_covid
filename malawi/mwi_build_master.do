@@ -208,28 +208,23 @@
 
 * shock variables	
  * need to make shock variables match uganda
-	rename 			shock_9 shock_14
-	rename 			shock_7 shock_12
-	rename 			shock_3 shock_7
-	rename 			shock_8 shock_3
-	rename			shock_6 shock_11
-	rename 			shock_5 shock_10
-	rename 			shock_4 shock_16
-	rename 			shock_2 shock_6
-	rename 			shock_1 shock_5
+	rename 			shock_8 shock_15 
+	rename 			shock_13 shock_3
+	rename 			shock_95 shock_14
+	replace 		shock_14 = shock_96 if shock_96 != . & shock_14 == .
+ 	lab var			shock_3 "Illness of income earning member of the household"
 	lab var			shock_5 "Job loss"
-	lab var 		shock_3 "Injury or death of income earner"
 	lab var			shock_6 "Non-farm business failure"
 	lab var			shock_7 "Theft of crops, cash, livestock or other property"
 	lab var			shock_10 "Increase in price of inputs"
 	lab var			shock_11 "Fall in the price of output"
-	lab var			shock_12 "Increase in price of major food items"
+	lab var			shock_12 "Increase in price of major food items consumed"
 	lab var			shock_14 "Other shock"
-	lab var 		shock_16 "Disruption of farming, livestock, fishing, etc."
-	gen				shock_any = 1 if shock_5 == 1 | shock_6 == 1 | ///
-					shock_7 == 1 | shock_16 == 1 | shock_10 == 1 | ///
-					shock_11 == 1 | shock_12 == 1 | shock_3 == 1 | ///
-					shock_14 == 1
+	lab var 		shock_15 "Disruption of farming, livestock, fishing activities"	
+
+	gen				shock_any = 1 if shock_3 == 1 | shock_5 == 1 | shock_6 == 1 | ///
+					shock_7 == 1 |  shock_10 == 1 | shock_11 == 1 | shock_12 == 1 | ///
+					shock_14 == 1 |  shock_15 == 1
 	replace			shock_any = 0 if shock_any == . & (wave == 2 | wave == 3)
 	lab var			shock_any "Experience some shock"
 	
@@ -665,7 +660,6 @@
 	replace			emp_cont_2 = s6q8d__2 if s6q8d__2 != .
 	replace			emp_cont_3 = s6q8d__3 if s6q8d__3 != .
 	replace			emp_cont_4 = s6q8d__4 if s6q8d__4 != .
-	replace			contrct = s6q8e__1 if s6q8e__1 != . & contrct == .
 	replace			emp_hh = s6q9 if s6q9 != .
 	replace			emp_search = s6q3a if s6q3a != .
 	replace			emp_search_how = s6q3b if s6q3b != .
@@ -690,7 +684,15 @@
 	rename			s6bq11a_1 bus_stat
 	replace			bus_stat = s6bq11a_2 if bus_stat == .
 	replace			bus_stat = s6bq11a_3 if bus_stat == .
-	rename			s6bq11b bus_stat_why
+	rename 			s6bq11b bus_closed 
+	replace 		bus_closed = 7 if bus_closed == 6
+	lab def 		clsd 1 "USUAL PLACE OF BUSINESS CLOSED DUE TO CORONAVIRUS LEGAL RESTRICTIONS" ///
+						2 "USUAL PLACE OF BUSINESS CLOSED FOR ANOTHER REASON" ///
+						3 "NO COSTUMERS / FEWER CUSTOMERS" 4 "CAN'T GET INPUTS" ///
+						5 "CAN'T TRAVEL / TRANSPORT GOODS FOR TRADE" ///
+						7 "ILLNESS IN THE HOUSEHOLD" 8 "NEED TO TAKE CARE OF A FAMILY MEMBER" ///
+						9 "SEASONAL CLOSURE" 10 "VACATION" 
+	lab val 		bus_closed clsd										
 	forval 			x = 1/7 {
 		rename 			s6qb15__`x' bus_chal_`x'
 	}
@@ -700,7 +702,7 @@
 		rename 		s6bq15b__`x' bus_beh_`x'
 	}
 	rename 			s6bq15b__96 bus_beh_7
-	rename 			s6bq15c bus_oth_curr
+	rename 			s6bq15c bus_other
 	rename 			s6bq15d bus_num
 	rename			s6cq1 oth_inc_1
 	lab var 		oth_inc_1 "Other Income: Remittances from abroad"
@@ -722,8 +724,8 @@
 						s9q3__7 == 1 | s9q3__8 == 1, 1, cond( ///
 						s9q3__1 == 0 & s9q3__2 == 0 & s9q3__3 == 0 & ///
 						s9q3__4 == 0 & s9q3__5 == 0 & s9q3__6 == 0 & ///
-						s9q3__7 == 0 & s9q3__8 == 0, 2, .)) if have_symp !=.
-		lab var			have_symp "Has anyone in your hh experienced covid symptoms?:cough/shortness of breath etc."
+						s9q3__7 == 0 & s9q3__8 == 0, 2, .)) if have_symp == .
+		lab var			have_symp "Has anyone in your hh experienced covid symptoms?"
 	drop			s9q3__1 s9q3__2 s9q3__3 s9q3__4 s9q3__5 s9q3__6 s9q3__7 s9q3__8
 	rename 			s9q4 have_test
 	rename 			s9q5 concern_3
@@ -853,7 +855,7 @@
 						s6qf1 s6qf2__95 s6qf2_ot s6qf3 s6qf6__95 s6qf6_ot s6qf7__95 ///
 						s6qf7_ot s6qf10__95 s6qf10_ot s6qf4__95 s6qf4_ot s6qf5__95 ///
 						s6qf5_ot s6dq10_ot weight s2q9 s6q3b_1 harv_cov_why_6 ///
-						harv_cov_why_7 s13q6_* s6qf2__* s3q2__5
+						harv_cov_why_7 s13q6_* s6qf2__* s3q2__5 s6bq15_ot
 
 * regional and sector information
 	gen				sector = 2 if urb_rural == 1

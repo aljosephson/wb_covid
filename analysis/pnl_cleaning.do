@@ -172,7 +172,7 @@
 * **********************************************************************
 	
 * know 
-	forval 				x = 1/11 {
+	forval 				x = 1/10 {
 		replace 		know_`x' = 0 if know_`x' == 2
 		lab val 		know_`x' yesno
 	}
@@ -767,15 +767,15 @@
 	lab def 			emp_unable 1 "Full normal payment" 2 "Partial payment" ///
 							3 "No payment", replace
 	lab val 			emp_unable emp_unable
-	
-	replace 			rtrn_emp_when = 0 if rtrn_emp_when > 97
+	 
+	replace 			rtrn_emp_when = 0 if rtrn_emp_when > 97 & rtrn_emp_when != .
 	replace 			rtrn_emp_when = 6 if rtrn_emp_when == 5 & country == 2 
 	* in mwi 4 there is a "just returned to job" option coded as 5 (inconsistent with nga) but no one selected it, this line included in case it is selected in future rounds 
 	lab def 			rtrn_emp_when 1 "Within one week" 2 "Within one month" ///
 							3 "Within 3 months" 4 "More than 3 months" ///
 							5 "When restrictions are lifted" 6 "Just returned to the job" ///
 							0 "Don't know"
-
+	lab val				rtrn_emp_when rtrn_emp_when
 	
 	
 * **********************************************************************
@@ -796,9 +796,9 @@
 	order 				sch_att_why_10 sch_att_why_11 sch_att_why_12 sch_att_why_13 ///
 						sch_att_why_14, after(sch_att_why_9)
 	order 				sch_prec_10 sch_prec_11, after(sch_prec_9)
-	order 				shock_10 shock_11 shock_12 shock_13 shock_14, after(shock_9)
+	order 				shock_10 shock_11 shock_12 shock_13 shock_14 shock_15, after(shock_9)
 	order 				symp_10 symp_11 symp_12 symp_13 symp_14 symp_15, after(symp_9)
-	order 				know_10 know_11, after(know_9)
+	order 				know_10, after(know_9)
 
 	compress
 	describe
@@ -810,7 +810,7 @@
 * close the log
 	log	close	
 	
-
+/*
 * *********************************************************************
 * 9 - generate variable-country-wave crosswalk
 * **********************************************************************	

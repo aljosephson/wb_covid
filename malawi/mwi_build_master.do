@@ -855,7 +855,7 @@
 						s6qf1 s6qf2__95 s6qf2_ot s6qf3 s6qf6__95 s6qf6_ot s6qf7__95 ///
 						s6qf7_ot s6qf10__95 s6qf10_ot s6qf4__95 s6qf4_ot s6qf5__95 ///
 						s6qf5_ot s6dq10_ot weight s2q9 s6q3b_1 harv_cov_why_6 ///
-						harv_cov_why_7 s13q6_* s6qf2__* s3q2__5 s6bq15_ot
+						harv_cov_why_7 s13q6_* s6qf2__* s3q2__5 s6bq15_ot shock_96
 
 * regional and sector information
 	gen				sector = 2 if urb_rural == 1

@@ -320,6 +320,7 @@
 		rename			s5q03 emp_pre_why
 		rename			s504 emp_pre_act
 		replace 		emp_pre_act = s504c if s504c != . & emp_pre_act == .
+		drop 			s504c
 		rename			s5q04a emp_same
 		rename			s5q04b emp_chg_why
 		rename			s5q05 emp_act

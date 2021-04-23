@@ -320,7 +320,7 @@
 	rename			s5aq22__4 ag_ac_seed_why_4
 	rename			s5aq22__5 ag_ac_seed_why_5
 	rename			s5aq22__6 ag_ac_seed_why_6
-	rename			s5aq23 ag_ac_fert
+	rename			s5aq23 ag_ac_fert_why
 	rename			s5aq24 ag_ac_oth_inp
 	rename			s5aq25 ag_crop_lost
 	rename			s5aq27 ag_live_chg
@@ -614,7 +614,7 @@
 						ac_mask_srce_n96 harv_cov_why_n96 Sq02 PID baseline_hhid ///
 						s5bq25 s5bq26 ag_sell_where_n96 Sq01 s5aq11b__0 ///
 						weight harv_saf_5 *_interview_ID *_hh_weight s5qaq17_1 ///
-						s2q02__5	
+						s2q02__5 s5bq08	s5bq09 s5cq02__*
 						
 * rename basic information
 	gen				sector = 2 if urban == 1

@@ -518,7 +518,7 @@
 	drop			s6q17__96  
 	rename 			s6q1a rtrn_emp
 	rename 			s6q1b rtrn_emp_when 
-	rename 			s6q1c rtrn_emp_why
+	rename 			s6q1c emp_why
 	rename 			s6q3a emp_search
 	rename 			s6q3b emp_search_how
 	rename			s6q4a emp_same
@@ -830,7 +830,8 @@
 	lab val			asst_any assist
 
 * drop variables
-	drop			s11q11 s11q12 s11q13 s6q21a__96 s6q22__96 s3q2__5 
+	drop			s11q11 s11q12 s11q13 s6q21a__96 s6q22__96 s3q2__5 wt_r3panel ///
+						wt_r4panel wt_r5panel
 	
 	gen 			region = 3000 + state
 

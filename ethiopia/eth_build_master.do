@@ -100,7 +100,7 @@
 			append 	using "$export/wave_0`r'/r`r'"
 		}
 	}
-	
+
 * merge in consumption aggregate
 	merge m:1		household_id using "$root/wave_00/Ethiopia ESS 2018-19 Quintiles.dta", nogenerate
 	rename 			quintile quints
@@ -483,7 +483,7 @@
 	generate		ag_ac_seed_why_5 = 1 if ag5_crops_reas_seeds == 5
 	generate		ag_ac_seed_why_6 = 1 if ag5_crops_reas_seeds == 6
 
-	rename			ag4_crops_reas_fert ag_fert
+	rename			ag4_crops_reas_fert ag_ac_fert_why
 	rename 			ag6_ext_need ag_ext_need 
 	rename 			ag7_ext_receive ag_ext
 	rename 			ag8_travel_norm ag_trav_lab_norm
@@ -493,7 +493,6 @@
 	drop 			ls2_type ls4_covid_impact ls4_covid_impact__96 ls4_covid_impact_other ///
 					ls12_sell_notable ls12_sell_notable__96 ls12_sell_notable_other 
 	rename 			ls1_livestock ag_live
-	rename 			ls2_type_5 ls2_type_7
 	rename 			ls2_type* ag_live*
 	rename 			ls3_covid ag_live_affect
 	rename 			ls4_covid_impact_1 ag_live_affect_1

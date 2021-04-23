@@ -359,10 +359,10 @@
 		rename			s5q01 emp
 		rename			s5q01a rtrn_emp
 		rename			s5q01b rtrn_emp_when
-		rename			s5q01c rtrn_emp_why
-		replace			rtrn_emp_why = s5q03 if rtrn_emp_why == .
-		rename			s5q03a find_job
-		rename			s5q03b find_job_do
+		rename			s5q01c emp_why
+		replace			emp_why = s5q03 if emp_why == .
+		rename			s5q03a emp_search
+		rename			s5q03b emp_search_how
 		rename			s5q04a_1 emp_same
 		rename			s5q04b emp_chg_why
 		rename			s5q05 emp_act

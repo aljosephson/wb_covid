@@ -100,7 +100,8 @@
 			append 	using "$export/wave_0`r'/r`r'"
 		}
 	}
-
+	compress 
+	
 * merge in consumption aggregate
 	merge m:1		household_id using "$root/wave_00/Ethiopia ESS 2018-19 Quintiles.dta", nogenerate
 	rename 			quintile quints

@@ -99,7 +99,8 @@
 			append 	using "$export/wave_0`r'/r`r'"
 		}
 	}
-
+	compress 
+	
 * merge in consumption aggregate
 	merge m:1		y4_hhid using "$root/wave_00/Malawi IHPS 2019 Quintiles.dta"
 	keep if			_merge == 3

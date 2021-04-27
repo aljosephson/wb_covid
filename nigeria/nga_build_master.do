@@ -13,7 +13,6 @@
 
 * TO DO:
 	* add round 6
-	* investigate inconsistencies flagged in QC 
 	* figure out log close error
 	* when new waves available:
 		* create build for new wave based on previous ones
@@ -21,6 +20,7 @@
 		* check variable crosswalk for differences/new variables & update code if needed
 		* check QC flags for issues/discrepancies
 
+		
 * **********************************************************************
 * 0 - setup
 * **********************************************************************
@@ -97,13 +97,14 @@
 			append 	using "$export/wave_0`r'/r`r'"
 		}
 	}
-
+	compress 
+	
 * adjust household id
 	recast 			long hhid
 	format 			%12.0g hhid
 	
 * merge in baseline data 
-	merge m:1		hhid using "$root/wave_00/Nigeria GHS-Panel 2018-19 Quintiles", nogenerate
+	merge m:1		hhid using "$root/wave_00/Nigeria GHS-Panel 2018-19 Quintiles", nogen
 
 * rename quintile variable
 	rename 			quintile quints

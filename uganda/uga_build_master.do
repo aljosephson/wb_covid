@@ -98,7 +98,8 @@
 			append 	using "$export/wave_0`r'/r`r'"
 		}
 	}
-
+	compress 
+	
 * merge in consumption aggregate
 	preserve
 	* load data

@@ -68,7 +68,7 @@
 	append using 		"$nga/nga_panel"
 	append using		"$uga/uga_panel"
 	
-	lab def				country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda", replace
+	lab def				country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda" 5 "Burkina Faso", replace
 	lab val				country country	
 	lab var				country "Country"
 	

@@ -180,7 +180,7 @@
 	}
 
 * collapse to household level	
-	collapse (max) s10q2__1- shock_96, by(HHID y4_hhid)
+	collapse 		(max) s10q2__1- shock_96, by(HHID y4_hhid)
 	
 * save temp file
 	tempfile		tempf

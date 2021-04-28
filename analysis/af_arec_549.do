@@ -118,7 +118,7 @@
 			save 			`lost_inc'
 		restore
 	
-	* HOH employment before covid & education level & emp & shock (from wave 1) 
+	* HOH employment before covid & education level & emp & shock & cons per cap (from wave 1) 
 		preserve
 			keep 			if country == 4 & wave == 1
 			replace 		emp_pre = 1 if emp == 1 // assume employed bef covid if currently employed
@@ -143,7 +143,9 @@
 	* subset panel data	
 		keep 				if country == 4 & wave == 2
 		keep 				if relate_hoh == 1 //keeping only hh where respondant is HOH
-		keep 				hhid region zone p_mod sexhh sector credit_cvd shw ag_live
+		keep 				hhid region zone p_mod sexhh sector credit_cvd shw pcrexpagg
+		rename 				pcrexpagg temp
+		gen 				pcrexpagg = ln(temp)
 		rename 				sexhh sex_hoh
 
 	* combine subset with generated variable
@@ -213,12 +215,12 @@
 		merge 				m:1 hhid using `hoh_data'
 		keep 				if _m == 3 // keep only if HOH is respondant
 		drop 				_m
-  		
+ 		
 	* keep only school aged children	
 		keep 				if sch_age == 1
 		drop 				sch_age
-
-*** Summary stats & graphics *** 
+/*
+*** graphics *** 
 
 	* school engagement before and after by gender
 		
@@ -302,10 +304,12 @@
 	
 		graph export 		"G:\My Drive\AF\Sem 2 Spring\AREC 549 Econometrics\Term Paper\sector.png", replace
 			
-	
+*/	
 *** generate panel ***	
 	* regions
 		replace 			region = 4012 if region == 4014 //put kampala obs in central region
+		rename 				region region_old
+		gen 				region = cond(region == 4015, 1, cond(region == 4013, 2, cond(region == 4016, 3, 4))) //compared to northern region
 		gen 				region_1 = cond(region == 4015, 1, 0)
 		lab var 			region_1 "Northern"
 		gen 				region_2 = cond(region == 4013, 1, 0)
@@ -345,7 +349,7 @@
 		sort 				hhid hh_roster__id 
 		egen 				id = group(hhid hh_roster__id)
 		xtset 				id  cov
-
+/*
 *** regressions	 ***	
  ** PANEL ** 
 	global 					ylist sch
@@ -392,16 +396,20 @@
 	local 					urb_test = `r(p)'
 	outreg2 				[urb] using "G:\My Drive\AF\Sem 2 Spring\AREC 549 Econometrics\Term Paper\results.xls", ///
 							dec(3) nocons append ctitle(urban) 			
-
+*/
  ** POST-COVID **
 
 	keep if cov == 1
  
 	global 					p_ylist sch
-	global 					p_xlist age age_sq sex sex_hoh hoh_yrs_ed emp hh_child p_mod shock_any ag_live own_child region_1 region_2 region_3 
+	global 					p_xlist age hoh_yrs_ed hh_child p_mod pcrexpagg
+	foreach 				var in $p_xlist_dum {
+		local 			
+	}
 	
 	* all 
-	probit					$p_ylist $p_xlist rural [pweight = shw], vce(robust)
+	probit					$p_ylist $p_xlist c.age#c.age i.sex i.sex_hoh i.emp i.shock_any i.own_child ///
+								i.region i.rural [pweight = shw], vce(robust)
 	predict 				ihat1, index
 	sum 					ihat1
 	local 					all_pp = normprob(_result(3))
@@ -411,7 +419,8 @@
 							dec(3) nocons replace ctitle(post_all)	
 							
 	* rural	
-	probit					$p_ylist $p_xlist [pweight = shw] if rural == 1, vce(robust)
+	probit					$p_ylist $p_xlist c.age#c.age i.sex i.sex_hoh i.emp i.shock_any i.own_child ///
+								i.region [pweight = shw] if rural == 1, vce(robust)
 	predict 				ihat2, index
 	sum 					ihat2
 	local 					rur_pp = normprob(_result(3))
@@ -421,15 +430,17 @@
 							dec(3) nocons append ctitle(post_rural)	
 								
 	* urban
-	probit					$p_ylist $p_xlist [pweight = shw] if rural == 0, vce(robust)
+	probit					$p_ylist $p_xlist c.age#c.age i.sex i.sex_hoh i.emp i.shock_any i.own_child ///
+								i.region [pweight = shw] if rural == 0, vce(robust)
 	predict 				ihat3, index
 	sum 					ihat3
 	local 					urb_pp = normprob(_result(3))
 	margins, 				dydx(*) atmeans post					
 	eststo					p_urb								
 	outreg2 				[p_urb] using "G:\My Drive\AF\Sem 2 Spring\AREC 549 Econometrics\Term Paper\results_post.xls", ///
-							dec(3) nocons append ctitle(post_urban)									
-	* pseudo r-square
+							dec(3) nocons append ctitle(post_urban)			
+							
+	* predicted probs
 		preserve
 			clear
 			set obs 3
@@ -440,11 +451,40 @@
 			export excel 		using "G:\My Drive\AF\Sem 2 Spring\AREC 549 Econometrics\Term Paper\sumstats_post.xls", sheetreplace sheet(pp) first(var)
 		restore		
 
- * summary stats *
+ ** CHOW TEST **	
+	* all interaction
+	probit					$p_ylist c.age#i.rural c.age#c.age#i.rural c.hoh_yrs_ed#i.rural c.hh_child#i.rural c.p_mod#i.rural i.sex#i.rural ///
+								i.sex_hoh#i.rural i.emp#i.rural i.shock_any#i.rural c.pcrexpagg#i.rural i.own_child#i.rural ///
+								i.region#i.rural [pweight = shw], vce(robust)
+								
+	test 					0.rural#c.age = 1.rural#c.age, notest
+	test 					0.rural#c.age#c.age = 1.rural#c.age#c.age, accum notest
+	test 					0.rural#c.hoh_yrs_ed = 1.rural#c.hoh_yrs_ed, accum notest
+	test 					0.rural#c.hh_child  = 1.rural#c.hh_child, accum notest
+	test 					0.rural#c.p_mod = 1.rural#c.p_mod, accum notest
+	test 					0.rural#c.pcrexpagg = 1.rural#c.pcrexpagg, accum notest
+	test 					0.sex_hoh#1.rural =  0.sex_hoh#0.rural, accum notest
+	test 					1.sex_hoh#1.rural =  1.sex_hoh#0.rural, accum notest
+	test 					0.emp#1.rural = 0.emp#0.rural, accum notest
+	test 					1.emp#1.rural = 1.emp#0.rural, accum notest
+	test 					0.shock_any#1.rural = 0.shock_any#0.rural, accum notest
+	test 					1.shock_any#1.rural = 1.shock_any#0.rural, accum notest
+	test 					0.own_child#1.rural = 0.own_child#0.rural, accum notest
+	test 					1.own_child#1.rural = 1.own_child#0.rural, accum notest
+	test 					0.own_child#1.rural = 0.own_child#0.rural, accum notest
+	test 					1.own_child#1.rural = 1.own_child#0.rural, accum notest
+	test 					1.region#1.rural = 1.region#0.rural, accum notest
+	test 					2.region#1.rural = 2.region#0.rural, accum notest
+	test 					3.region#1.rural = 3.region#0.rural, accum notest
+	test 					4.region#1.rural = 4.region#0.rural, accum 
+		
+		
+ ** summary stats **
 	* all post cov
+	keep if cov == 1
 			* individual level
 			foreach 			var of varlist sch age sex own_child {
-				mean 				`var'
+				mean 				`var' [pweight = shw]
 				local 				m_`var' = el(e(b),1,1)
 				local 				sd_`var' = sqrt(el(e(V),1,1))
 			}
@@ -453,10 +493,10 @@
 			duplicates 			drop hhid, force
 			tempfile 			temp
 			save 				`temp'
-			foreach 			var of varlist sex_hoh hoh_yrs_ed emp hh_child p_mod shock_any ag_live {
+			foreach 			var of varlist sex_hoh hoh_yrs_ed emp hh_child p_mod shock_any pcrexpagg {
 				use 				`temp', clear
 				drop 				if `var' == . | `var' == .a
-				mean 				`var'
+				mean 				`var' [pweight = shw]
 				local 				m_`var' = el(e(b),1,1)
 				local 				sd_`var' = sqrt(el(e(V),1,1))
 			}
@@ -465,7 +505,7 @@
 			preserve
 				clear
 				set 			obs 2
-				foreach 		var in sch age sex own_child sex_hoh hoh_yrs_ed emp hh_child p_mod shock_any ag_live {
+				foreach 		var in sch age sex own_child sex_hoh hoh_yrs_ed emp hh_child p_mod shock_any pcrexpagg {
 					gen 			`var' = `m_`var''
 					replace 		`var' = `sd_`var'' in 2
 				}
@@ -474,7 +514,7 @@
 	* rural
 			* individual level
 			foreach 			var of varlist sch age sex own_child {
-				mean 				`var' if rural == 1
+				mean 				`var' [pweight = shw] if rural == 1
 				local 				m_`var' = el(e(b),1,1)
 				local 				sd_`var' = sqrt(el(e(V),1,1))
 			}
@@ -483,10 +523,10 @@
 			duplicates 			drop hhid, force
 			tempfile 			temp
 			save 				`temp'
-			foreach 			var of varlist sex_hoh hoh_yrs_ed emp hh_child p_mod shock_any ag_live {
+			foreach 			var of varlist sex_hoh hoh_yrs_ed emp hh_child p_mod shock_any pcrexpagg {
 				use 				`temp', clear
 				drop 				if `var' == . | `var' == .a
-				mean 				`var' if rural == 1
+				mean 				`var' [pweight = shw] if rural == 1
 				local 				m_`var' = el(e(b),1,1)
 				local 				sd_`var' = sqrt(el(e(V),1,1))
 			}
@@ -495,7 +535,7 @@
 			preserve
 				clear
 				set 			obs 2
-				foreach 		var in sch age sex own_child sex_hoh hoh_yrs_ed emp hh_child p_mod shock_any ag_live {
+				foreach 		var in sch age sex own_child sex_hoh hoh_yrs_ed emp hh_child p_mod shock_any pcrexpagg {
 					gen 			`var' = `m_`var''
 					replace 		`var' = `sd_`var'' in 2
 				}
@@ -514,10 +554,10 @@
 			duplicates 			drop hhid, force
 			tempfile 			temp
 			save 				`temp'
-			foreach 			var of varlist sex_hoh hoh_yrs_ed emp hh_child p_mod shock_any ag_live {
+			foreach 			var of varlist sex_hoh hoh_yrs_ed emp hh_child p_mod shock_any pcrexpagg {
 				use 				`temp', clear
 				drop 				if `var' == . | `var' == .a
-				mean 				`var' if rural == 0
+				mean 				`var' [pweight = shw] if rural == 0
 				local 				m_`var' = el(e(b),1,1)
 				local 				sd_`var' = sqrt(el(e(V),1,1))
 			}
@@ -526,25 +566,59 @@
 			preserve
 				clear
 				set 			obs 2
-				foreach 		var in sch age sex own_child sex_hoh hoh_yrs_ed emp hh_child p_mod shock_any ag_live {
+				foreach 		var in sch age sex own_child sex_hoh hoh_yrs_ed emp hh_child p_mod shock_any pcrexpagg {
 					gen 			`var' = `m_`var''
 					replace 		`var' = `sd_`var'' in 2
 				}
 			export excel 		using "G:\My Drive\AF\Sem 2 Spring\AREC 549 Econometrics\Term Paper\sumstats_post.xls", sheetreplace sheet(means_urb) first(var)
 			restore	
+		
+	* t-test for urban rural
+	preserve
+		keep 					if cov == 1
+		foreach 				var in sch age sex own_child sex_hoh hoh_yrs_ed emp hh_child p_mod shock_any pcrexpagg {
+			ttest 				`var', by(rural)
+			local 				t_`var' = `r(p)'
+		}
+	restore
+	
+	preserve
+		clear
+		set 					obs 1
+		foreach 				var in sch age sex own_child sex_hoh hoh_yrs_ed emp hh_child p_mod shock_any pcrexpagg {
+			gen 				`var' = .
+			replace 			`var' = `t_`var''
+		}
+		export excel 			using "G:\My Drive\AF\Sem 2 Spring\AREC 549 Econometrics\Term Paper\sumstats_post.xls", sheetreplace sheet(means_rur_urb_pval) first(var)
+	restore
+
+
+
+
+
+
+
+
 			
-
-
-
-
-
-
-
-
-
-
-
-
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 
 					
 									

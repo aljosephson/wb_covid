@@ -144,8 +144,7 @@
 		keep 				if country == 4 & wave == 2
 		keep 				if relate_hoh == 1 //keeping only hh where respondant is HOH
 		keep 				hhid region zone p_mod sexhh sector credit_cvd shw pcrexpagg
-		rename 				pcrexpagg temp
-		gen 				pcrexpagg = ln(temp)
+		replace 			pcrexpagg = pcrexpagg/1000000 // millions
 		rename 				sexhh sex_hoh
 
 	* combine subset with generated variable
@@ -328,7 +327,7 @@
 		restore
 		
 	* post-covid
-		drop 				sch_bef emp_pre_hoh
+		drop 				emp_pre_hoh
 		rename 				sch_aft sch
 		gen 				cov = 1
 		append 				using `temp_pre'
@@ -349,6 +348,7 @@
 		sort 				hhid hh_roster__id 
 		egen 				id = group(hhid hh_roster__id)
 		xtset 				id  cov
+	
 /*
 *** regressions	 ***	
  ** PANEL ** 
@@ -399,8 +399,10 @@
 */
  ** POST-COVID **
 
-	keep if cov == 1
- 
+	keep 					if cov == 1
+	
+	replace 				sch = . if sch == .a 
+
 	global 					p_ylist sch
 	global 					p_xlist age hoh_yrs_ed hh_child p_mod pcrexpagg
 	foreach 				var in $p_xlist_dum {
@@ -408,7 +410,7 @@
 	}
 	
 	* all 
-	probit					$p_ylist $p_xlist c.age#c.age i.sex i.sex_hoh i.emp i.shock_any i.own_child ///
+	probit					$p_ylist $p_xlist c.age#c.age c.pcrexpagg#i.sex i.sex i.sex_hoh i.emp i.shock_any i.own_child ///
 								i.region i.rural [pweight = shw], vce(robust)
 	predict 				ihat1, index
 	sum 					ihat1
@@ -419,7 +421,7 @@
 							dec(3) nocons replace ctitle(post_all)	
 							
 	* rural	
-	probit					$p_ylist $p_xlist c.age#c.age i.sex i.sex_hoh i.emp i.shock_any i.own_child ///
+	probit					$p_ylist $p_xlist c.age#c.age c.pcrexpagg#i.sex i.sex i.sex_hoh i.emp i.shock_any i.own_child ///
 								i.region [pweight = shw] if rural == 1, vce(robust)
 	predict 				ihat2, index
 	sum 					ihat2
@@ -430,7 +432,7 @@
 							dec(3) nocons append ctitle(post_rural)	
 								
 	* urban
-	probit					$p_ylist $p_xlist c.age#c.age i.sex i.sex_hoh i.emp i.shock_any i.own_child ///
+	probit					$p_ylist $p_xlist c.age#c.age c.pcrexpagg#i.sex i.sex i.sex_hoh i.emp i.shock_any i.own_child ///
 								i.region [pweight = shw] if rural == 0, vce(robust)
 	predict 				ihat3, index
 	sum 					ihat3
@@ -454,7 +456,7 @@
  ** CHOW TEST **	
 	* all interaction
 	probit					$p_ylist c.age#i.rural c.age#c.age#i.rural c.hoh_yrs_ed#i.rural c.hh_child#i.rural c.p_mod#i.rural i.sex#i.rural ///
-								i.sex_hoh#i.rural i.emp#i.rural i.shock_any#i.rural c.pcrexpagg#i.rural i.own_child#i.rural ///
+								 i.sex_hoh#i.rural i.emp#i.rural i.shock_any#i.rural c.pcrexpagg#i.rural i.own_child#i.rural ///
 								i.region#i.rural [pweight = shw], vce(robust)
 								
 	test 					0.rural#c.age = 1.rural#c.age, notest
@@ -482,6 +484,7 @@
  ** summary stats **
 	* all post cov
 	keep if cov == 1
+	
 			* individual level
 			foreach 			var of varlist sch age sex own_child {
 				mean 				`var' [pweight = shw]

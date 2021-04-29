@@ -182,7 +182,7 @@
 	foreach 			var of varlist `myth' {
 		replace			`var' = 3 if `var' == -98
 	}
-	
+
 * behavior
 	replace 			bh_1 = 0 if bh_1 > 1 & bh_1 != .
 	replace 			bh_2 = 0 if bh_2 < 3 & country == 2
@@ -251,7 +251,13 @@
 	replace 			ac_med = 1 if ac_med == 2 & country == 4
 	replace 			ac_med_why = . if ac_med_why < 0
 	* note "decrease in reg income" and "no money" both coded as 6
- 	
+ 	lab def 			ac_med_why 1 "Shops have run out of stock" ///
+							2 "Local markets not operating / closed" ///
+							3 "Limited / no transportation" ///
+							4 "Restriction to go outside" 5 "Increase in price" ///
+							6 "Cannot afford"
+	lab val 			ac_med_why ac_med_why 
+	
 * access to medical services
 	replace				ac_medserv_need = . if ac_medserv_need < 0 | ac_medserv_need == 99
 	replace 			ac_medserv_need = 0 if ac_medserv_need == 2

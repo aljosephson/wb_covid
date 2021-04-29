@@ -192,6 +192,12 @@
 	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec7_securite_alimentaire", nogen
 	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec12_bilan_entretien", nogen
 
+* clean variables inconsistent with other rounds
+	rename 			s05q01a ac_med		
+	replace 		ac_med = 1 if ac_med == 2 | ac_med == 3
+	replace 		ac_med = 2 if ac_med == 4
+	replace 		ac_med = 3 if ac_med == 5
+	
 * generate round variables
 	gen				wave = `w'
 	lab var			wave "Wave number"

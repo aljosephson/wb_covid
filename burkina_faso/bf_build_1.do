@@ -118,6 +118,15 @@
 	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec6_emploi_revenue", nogen
 	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec12_bilan_entretien", nogen
 
+* clean variables inconsistent with other rounds
+	rename 			s05q01 ac_med	
+	
+	
+	
+	
+	
+	
+	
 	
 * generate round variables
 	gen				wave = `w'

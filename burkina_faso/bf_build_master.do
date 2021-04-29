@@ -132,26 +132,62 @@
 	
 * administrative variables 
 	rename 			milieu sector
+	drop 			langue strate grappe 
+	
+* knowledge & govt
+	rename 			s03q01 know
+	forval 			x = 1/8 {
+		rename 		s03q02__`x' know_`x'
+	}
+	forval 			x = 1/6 {
+		rename 		s03q03__`x' gov_`x'
+	}
+	replace 		gov_6 = 1 if s03q03__7 == 1
+	drop 			s03q03__7 s03q03_autre
+	rename 			s03q03__8 gov_17
+	rename 			s03q03__9 gov_18
+	rename 			s03q03__10 gov_19
+	rename 			s03q03__11 gov_10
+	rename 			s03q03__12 gov_16
+	
+* behavior
+	rename 			s04q01 bh_1	
+	rename 			s04q02 bh_2
+	rename 			s04q03 bh_3
+	replace 		bh_3 = . if bh_3 == 3
+	
+* access
+	gen 			ac_med_need = 0 if ac_med == 3
+	replace 		ac_med_need = 1 if ac_med < 3
+	replace 		ac_med = . if ac_med == 3
+	rename 			s05q01b ac_med_why
+	replace 		ac_med_why = 6 if ac_med_why == 7
+	drop 			s05q01b_autre s05q02*_autre
+	
+	rename 			s05q02_1 ac_staple_1_need
+	rename 			s05q02_2 ac_staple_2_need
+	rename 			s05q02_3 ac_staple_3_need
+	rename 			s05q02a ac_staple_1
+	rename 			s05q02b ac_staple_1_why
+	rename 			s05q02c ac_staple_2
+	rename 			s05q02d ac_staple_2_why
+	rename 			s05q02e ac_staple_3
+	rename 			s05q02f ac_staple_3_why
+	forval 			x = 1/3 {
+		replace 		ac_staple_`x'_need = 0 if ac_staple_`x' == 3
+		replace 		ac_staple_`x'_need = 1 if ac_staple_`x' < 3 & ac_staple_`x'_need == .
+		replace 		ac_staple_`x' = . if ac_staple_`x' == 3
+	}
+	
+	
+	asdf
+	
+	gen 			ac_staple = 1 if ac_staple_1 == 1 & ac_staple_2 == 1 & ac_staple_3 == 1
+	replace 		ac_staple = 0 if ac_staple_1 == 2 | ac_staple_2 == 2 | ac_staple_3 == 2
 	
 	
 	
-	
-	
-	
-drop 			langue strate 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	* gen access staple 1 2 & 3 and then gen ac_staple generic based on these 3
 	
 	
 	

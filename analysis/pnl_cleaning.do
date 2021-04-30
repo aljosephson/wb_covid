@@ -154,17 +154,19 @@
 	order 				country hhid resp_id hhid*
 
 * generate weights
-	rename				phw hhw
-	lab var				hhw "Household sampling weight"
-	gen					phw = hhw * hhsize
-	lab var				phw "Population weight"
-	gen 				ahw = hhw * hhsize_adult
-	lab var 			ahw "Household adult sampling weight"
-	gen 				chw = hhw * hhsize_child 
-	lab var 			chw "Household child sampling weight"
-	gen 				shw = hhw * hhsize_schchild
-	lab var 			shw "Household school child sampling weight"	
-	order				phw ahw chw shw, after(hhw)
+	foreach x in cs pnl {
+		rename				phw_`x' hhw_`x'
+		lab var				hhw_`x' "Household sampling weight- `x'"
+		gen					phw_`x' = hhw_`x' * hhsize
+		lab var				phw_`x' "Population weight- `x'"
+		gen 				ahw_`x' = hhw_`x' * hhsize_adult
+		lab var 			ahw_`x' "Household adult sampling weight- `x'"
+		gen 				chw_`x' = hhw_`x' * hhsize_child 
+		lab var 			chw_`x' "Household child sampling weight- `x'"
+		gen 				shw_`x' = hhw_`x' * hhsize_schchild
+		lab var 			shw_`x' "Household school child sampling weight- `x'"	
+	}	
+		order				hhw_pnl phw* ahw* chw* shw*, after(hhw_cs)
 
 	
 * **********************************************************************

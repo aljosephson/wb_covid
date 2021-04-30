@@ -170,8 +170,10 @@
 * generate round variables
 	gen				wave = `w'
 	lab var			wave "Wave number"
-	//rename 			hhwcovid_r`w' phw
-	//label var		phw "sampling weights"
+	rename 			hhwcovid_r`w'_s1s2 phw_cs
+	rename 			hhwcovid_r`w'_s1 phw_pnl
+	label var		phw_cs "sampling weights- cross section"
+	label var		phw_pnl "sampling weights- panel"
 	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace

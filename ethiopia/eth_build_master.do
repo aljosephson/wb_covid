@@ -120,12 +120,12 @@
 * ***********************************************************************
 
 * rationalize variables across waves
-	gen 			phw = .
+	gen 			phw_cs = .
 	foreach 		r in "$waves" {
-		replace 	phw = phw`r' if phw`r' != . & wave == `r'
+		replace 	phw_cs = phw`r' if phw`r' != . & wave == `r'
 		drop 		phw`r'
 	}
-	lab var			phw "sampling weights"
+	lab var			phw_cs "sampling weights - cross section"
 	
 * administrative variables 	
 	rename			ii4_resp_id resp_id

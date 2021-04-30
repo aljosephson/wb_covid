@@ -83,7 +83,7 @@
 	
 
 * ***********************************************************************
-* 2 - create nigeria panel 
+* 2 - create burkina faso panel 
 * ***********************************************************************
 
 * append round datasets to build master panel
@@ -118,17 +118,6 @@
 * ***********************************************************************
 * 3 - clean bukina faso panel
 * ***********************************************************************	
-	
-/*
-* rationalize variables across waves
-	gen 			phw = .
-	foreach 		r in "$waves" {
-		replace 	phw = phw`r' if phw`r' != . & wave == `r'
-		drop 		phw`r'
-	}
-	lab var			phw "sampling weights"	
-	
-*/	
 	
 * administrative variables 
 	rename 			milieu sector
@@ -174,26 +163,29 @@
 	rename 			s05q02e ac_staple_3
 	rename 			s05q02f ac_staple_3_why
 	forval 			x = 1/3 {
-		replace 		ac_staple_`x'_need = 0 if ac_staple_`x' == 3
+		replace 		ac_staple_`x'_need = 2 if ac_staple_`x' == 3
 		replace 		ac_staple_`x'_need = 1 if ac_staple_`x' < 3 & ac_staple_`x'_need == .
 		replace 		ac_staple_`x' = . if ac_staple_`x' == 3
+	}	
+	gen 			ac_staple = 1 if ac_staple_1 == 1 | ac_staple_2 == 1 | ac_staple_3 == 1 
+	replace 		ac_staple = 0 if (ac_staple_1 == 0 & ac_staple_1_need == 1) | ///
+						(ac_staple_2 == 0 & ac_staple_2_need == 1) | ///
+						(ac_staple_3 == 0 & ac_staple_3_need == 1) 
+	rename 			AlimBase1 staple_1
+	rename 			AlimBase2 staple_2
+	rename 			AlimBase3 staple_3
+	
+	rename 			s05q03a ac_medserv_need
+	forval 			x = 1/11 {
+		rename 		s05q03b__`x' ac_medserv_need_why_`x'
 	}
-	
-	
-	asdf
-	
-	gen 			ac_staple = 1 if ac_staple_1 == 1 & ac_staple_2 == 1 & ac_staple_3 == 1
-	replace 		ac_staple = 0 if ac_staple_1 == 2 | ac_staple_2 == 2 | ac_staple_3 == 2
-	
-	
-	
-	* gen access staple 1 2 & 3 and then gen ac_staple generic based on these 3
-	
-	
-	
-	
-	
-	
+	rename 			s05q03c ac_medserv_cvd
+	rename 			s05q03d ac_medserv_oth
+	gen 			ac_medserv = 0 if ac_medserv_cvd == 0 | ac_medserv_oth == 0
+	replace 		ac_medserv = 1 if ac_medserv_cvd == 1 | ac_medserv_oth == 1
+	rename 			s05q03e ac_medserv_why
+	replace 		ac_medserv_why = . if ac_medserv_why == 4
+	rename 			s05q04 med_ins
 	
 	
 	

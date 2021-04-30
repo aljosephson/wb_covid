@@ -417,8 +417,8 @@
 		rename 			s5bq18_3 ag_crop_3
 * save panel
 	* gen wave data
-		rename			wfinal phw
-		lab var			phw "sampling weights"	
+		rename			wfinal phw_cs
+		lab var			phw "sampling weights - cross section"	
 		gen				wave = `w'
 		lab var			wave "Wave number"
 		order			baseline_hhid wave phw, after(HHID)

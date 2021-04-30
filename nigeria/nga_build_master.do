@@ -121,15 +121,20 @@
 * ***********************************************************************	
 	
 * rationalize variables across waves
-	gen				phw = .
+	gen				phw_cs = .
 	rename 			wt_baseline wt_round1
-	foreach r in "$waves" {
-		replace		phw = wt_round`r' if wt_round`r' != . & wave == `r'
+	foreach 		r in "$waves" {
+		replace		phw_cs = wt_round`r' if wt_round`r' != . & wave == `r'
 	}	
-	lab var			phw "sampling weights"
-	order			phw, after(wt_round1)
+	lab var			phw_cs "sampling weights - cross section"
 	drop			wt_round* weight	
-	
+	gen 			phw_pnl = .
+	foreach 		r in 3 4 5 {
+		replace 	phw_pnl = wt_r`r'panel 
+	}
+	drop 			wt_r*panel
+	lab var			phw_pnl "sampling weights - panel"
+		
 * administrative variables 	
 	rename			sector urb_rural 
 	gen				sector = 2 if urb_rural == 1
@@ -138,7 +143,6 @@
 	lab def			nga_sec 1 "Rural" 2 "Urban"
 	lab val			sector nga_sec
 	drop			urb_rural
-	order			sector, after(phw)	
 	rename 			filter2 children05
 	
 * covid variables
@@ -831,8 +835,7 @@
 	lab val			asst_any assist
 
 * drop variables
-	drop			s11q11 s11q12 s11q13 s6q21a__96 s6q22__96 s3q2__5 wt_r3panel ///
-						wt_r4panel wt_r5panel
+	drop			s11q11 s11q12 s11q13 s6q21a__96 s6q22__96 s3q2__5 
 	
 	gen 			region = 3000 + state
 

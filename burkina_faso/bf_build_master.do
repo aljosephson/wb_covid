@@ -187,6 +187,49 @@
 	replace 		ac_medserv_why = . if ac_medserv_why == 4
 	rename 			s05q04 med_ins
 	
+	rename 			s05q09 ac_bank_need
+	rename 			s05q11 ac_bank
+	
+	forval 			x = 1/7 {
+	    rename 		s05q13__`x' exp_prob_`x'
+	}
+	drop 			s05q13__autre
+	
+* education 
+	rename 			s05q05 sch_child
+	rename 			s05q06__1 edu_1
+	replace 		edu_1 = 1 if s05q06__7 == 1
+	
+	rename 			s05q06__2 edu_other 
+	replace 		edu_other = 1 if s05q06__8 == 1
+	rename 			s05q06__3 edu_13
+	rename 			s05q06__4 edu_14
+	rename 			s05q06__5 edu_2
+	rename 			s05q06__6 edu_3
+	rename 			s05q06__9 edu_15
+	rename 			s05q06__10 edu_4
+	rename 			s05q06__11 edu_16
+	rename 			s05q06__12 edu_9
+	rename 			s05q06__13 edu_7
+	
+	gen 			edu_act = 1 if s05q06__14 == 0
+	replace 		edu_act = 0 if s05q06__14 == 1
+	
+	drop 			s05q06__7 s05q06__8 s05q06__14 
+	
+	rename 			s05q07 edu_cont
+	
+	forval 			x = 1/8 {
+		rename 		s05q07__`x' edu_cont_`x'
+	}
+	
+
+	
+	
+	
+	
+	
+	
 	
 	
 	

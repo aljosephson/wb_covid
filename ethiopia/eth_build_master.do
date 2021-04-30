@@ -212,6 +212,7 @@
 		rename			ac5_edu_type_3 edu_3
 		rename			ac5_edu_type_4 edu_4
 		rename			ac5_edu_type_5 edu_5
+		rename 			ac5_edu_type__96 edu_other
 
 		drop 			ac5a_pri_edu_type ac5a_pri_edu_type__98 ac5a_pri_edu_type__99 ///
 						ac5a_pri_edu_type_other 
@@ -230,7 +231,7 @@
 		rename 			ac5b_sec_edu_type_4 edu_4_sec 
 		rename 			ac5b_sec_edu_type_5 edu_5_sec 
 
-		drop 			ac5_edu_type__98 ac5_edu_type__99 ac5_edu_type__96 ///
+		drop 			ac5_edu_type__98 ac5_edu_type__99  ///
 							ac5_edu_type_other ac5a_pri_edu_type__96 ac5b_sec_edu_type__96
 							
 	* water and soap

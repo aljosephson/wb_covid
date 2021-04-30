@@ -692,7 +692,7 @@
 	lab var				edu_1 "Completed assignments provided by the teacher"
 	lab var				edu_2 "Used mobile learning apps"
 	lab var				edu_3 "Watched educational TV programs"
-	lab var				edu_4 "Listened to educational programs on radio"
+	lab var				edu_4 "Listened to educational programs & classroom teachings on radio"
 	lab var				edu_5 "Session/meeting with lesson teacher (Tutor)"
 	lab var				edu_6 "Studying/reading on their own"
 	lab var				edu_7 "Taught by parent or other household member"
@@ -701,7 +701,11 @@
 	lab var				edu_10 "Home school"
 	lab var				edu_11 "Revisions of textbooks/notes from past classes"
 	lab var				edu_12 "Newspaper"
-
+	lab var				edu_13 "Participated in virtual classes with their teacher"
+	lab var				edu_14 "Watched lessons pre-recorded by their online teacher"
+	lab var				edu_15 "Watching classroom instruction via television"
+	lab var				edu_16 "They continue to visit the Daara"
+	
 	
 * **********************************************************************
 * 8 - clean agriculture and livestock variables

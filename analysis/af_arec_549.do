@@ -144,7 +144,7 @@
 		keep 				if country == 4 & wave == 2
 		keep 				if relate_hoh == 1 //keeping only hh where respondant is HOH
 		keep 				hhid region zone p_mod sexhh sector credit_cvd shw pcrexpagg
-		replace 			pcrexpagg = pcrexpagg/1000000 // millions
+		replace 			pcrexpagg = ln(pcrexpagg)
 		rename 				sexhh sex_hoh
 
 	* combine subset with generated variable
@@ -308,14 +308,16 @@
 	* regions
 		replace 			region = 4012 if region == 4014 //put kampala obs in central region
 		rename 				region region_old
-		gen 				region = cond(region == 4015, 1, cond(region == 4013, 2, cond(region == 4016, 3, 4))) //compared to northern region
-		gen 				region_1 = cond(region == 4015, 1, 0)
+		gen 				region = cond(region_old == 4015, 1, cond(region_old == 4013, 2, cond(region_old == 4016, 3, 4))) //compared to northern region
+		gen 				region_1 = cond(region_old == 4015, 1, 0)
 		lab var 			region_1 "Northern"
-		gen 				region_2 = cond(region == 4013, 1, 0)
+		gen 				region_2 = cond(region_old == 4013, 1, 0)
 		lab var 			region_2 "Eastern"
-		gen 				region_3 = cond(region == 4016, 1, 0)
+		gen 				region_3 = cond(region_old == 4016, 1, 0)
 		lab var 			region_3 "Western"
- 
+ 		gen 				region_4 = cond(region_old == 4012, 1, 0)
+		lab var 			region_4 "Central"
+		
 	* pre-covid
 		preserve
 			drop 			sch_aft* edu_act_* edu_chall* lost_inc emp 
@@ -397,6 +399,7 @@
 	outreg2 				[urb] using "G:\My Drive\AF\Sem 2 Spring\AREC 549 Econometrics\Term Paper\results.xls", ///
 							dec(3) nocons append ctitle(urban) 			
 */
+
  ** POST-COVID **
 
 	keep 					if cov == 1
@@ -410,38 +413,118 @@
 	}
 	
 	* all 
-	probit					$p_ylist $p_xlist c.age#c.age c.pcrexpagg#i.sex i.sex i.sex_hoh i.emp i.shock_any i.own_child ///
-								i.region i.rural [pweight = shw], vce(robust)
-	predict 				ihat1, index
-	sum 					ihat1
-	local 					all_pp = normprob(_result(3))
-	margins, 				dydx(*) atmeans post	
-	eststo					p_all
-	outreg2 				[p_all] using "G:\My Drive\AF\Sem 2 Spring\AREC 549 Econometrics\Term Paper\results_post.xls", ///
+		probit					$p_ylist $p_xlist c.age#c.age c.pcrexpagg#i.sex i.sex i.sex_hoh i.emp i.shock_any i.own_child ///
+									i.region i.rural [pweight = shw], vce(robust)
+		predict 				ihat1, index
+		sum 					ihat1
+		local 					all_pp = normprob(_result(3))
+		eststo					p_all
+		outreg2 				[p_all] using "G:\My Drive\AF\Sem 2 Spring\AREC 549 Econometrics\Term Paper\results_post.xls", ///
 							dec(3) nocons replace ctitle(post_all)	
-							
+	
 	* rural	
-	probit					$p_ylist $p_xlist c.age#c.age c.pcrexpagg#i.sex i.sex i.sex_hoh i.emp i.shock_any i.own_child ///
-								i.region [pweight = shw] if rural == 1, vce(robust)
-	predict 				ihat2, index
-	sum 					ihat2
-	local 					rur_pp = normprob(_result(3))
-	margins, 				dydx(*) atmeans post		
-	eststo					p_rur
-	outreg2 				[p_rur] using "G:\My Drive\AF\Sem 2 Spring\AREC 549 Econometrics\Term Paper\results_post.xls", ///
-							dec(3) nocons append ctitle(post_rural)	
+		probit					$p_ylist $p_xlist c.age#c.age c.pcrexpagg#i.sex i.sex i.sex_hoh i.emp i.shock_any i.own_child ///
+									i.region [pweight = shw] if rural == 1, vce(robust)
+		predict 				ihat2, index
+		sum 					ihat2
+		local 					rur_pp = normprob(_result(3))		
+		eststo					p_rur
+		outreg2 				[p_rur] using "G:\My Drive\AF\Sem 2 Spring\AREC 549 Econometrics\Term Paper\results_post.xls", ///
+								dec(3) nocons append ctitle(post_rural)	
 								
+		//margins, 				dydx(age) at((means) _all sex = 1 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 1) ///
+		//								  at((means) _all sex = 0 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 1)
+
+		* 1-2 child gender across regions female HOH
+		margins 				sex, at((means) _all sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 2) ///
+									 at((means) _all sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 4) 							 
+		margins 				sex, at((means) _all sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 2) ///
+									 at((means) _all sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 4) contrast
+	
+		margins 				region, at((means) _all sex = 1 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 2) ///
+									    at((means) _all sex = 1 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 4) 
+		margins 				region, at((means) _all sex = 1 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 2) ///
+									    at((means) _all sex = 1 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 4) contrast
+		
+		margins 				region, at((means) _all sex = 0 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 2) ///
+									    at((means) _all sex = 0 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 4) 
+		margins 				region, at((means) _all sex = 0 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 2) ///
+									    at((means) _all sex = 0 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 4) contrast
+		
+		* 3-4 child gender across regions male HOH								
+		margins 				sex, at((means) _all sex_hoh = 0 emp = 1 shock_any = 1 own_child = 1 region = 2) ///
+									 at((means) _all sex_hoh = 0 emp = 1 shock_any = 1 own_child = 1 region = 4)
+		margins 				sex, at((means) _all sex_hoh = 0 emp = 1 shock_any = 1 own_child = 1 region = 2) ///
+									 at((means) _all sex_hoh = 0 emp = 1 shock_any = 1 own_child = 1 region = 4) contrast
+
+		* 5-6 HOH gender across child genders						 
+		margins 				sex_hoh, at((means) _all sex = 1 emp = 1 shock_any = 1 own_child = 1 region = 1) ///
+										 at((means) _all sex = 0 emp = 1 shock_any = 1 own_child = 1 region = 1)
+		margins 				sex_hoh, at((means) _all sex = 1 emp = 1 shock_any = 1 own_child = 1 region = 1) ///
+										 at((means) _all sex = 0 emp = 1 shock_any = 1 own_child = 1 region = 1) contrast	
+										 
+		* 7 HOH employment 
+		margins 				emp, at((means) _all sex = 1 sex_hoh = 1 shock_any = 1 own_child = 1 region = 1) 
+		margins 				emp, at((means) _all sex = 1 sex_hoh = 1 shock_any = 1 own_child = 1 region = 1) contrast	
+		
+		* 8 pmod
+		margins,				dydx(p_mod) at((means) _all sex = 1 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 1) 	
+		
+		* 9 own child
+		margins 				own_child, at((means) _all sex = 1 sex_hoh = 1 emp = 1 shock_any = 1 region = 1) 
+		margins 				own_child, at((means) _all sex = 1 sex_hoh = 1 emp = 1 shock_any = 1 region = 1) contrast
+		
+		
 	* urban
-	probit					$p_ylist $p_xlist c.age#c.age c.pcrexpagg#i.sex i.sex i.sex_hoh i.emp i.shock_any i.own_child ///
-								i.region [pweight = shw] if rural == 0, vce(robust)
-	predict 				ihat3, index
-	sum 					ihat3
-	local 					urb_pp = normprob(_result(3))
-	margins, 				dydx(*) atmeans post					
-	eststo					p_urb								
-	outreg2 				[p_urb] using "G:\My Drive\AF\Sem 2 Spring\AREC 549 Econometrics\Term Paper\results_post.xls", ///
+		probit					$p_ylist $p_xlist c.age#c.age c.pcrexpagg#i.sex i.sex i.sex_hoh i.emp i.shock_any i.own_child ///
+									i.region [pweight = shw] if rural == 0, vce(robust)
+		predict 				ihat3, index
+		sum 					ihat3
+		local 					urb_pp = normprob(_result(3))					
+		eststo					p_urb								
+		outreg2 				[p_urb] using "G:\My Drive\AF\Sem 2 Spring\AREC 549 Econometrics\Term Paper\results_post.xls", ///
 							dec(3) nocons append ctitle(post_urban)			
-							
+		
+		* 1-2 child gender across regions female HOH
+		margins 				sex, at((means) _all sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 2) ///
+									 at((means) _all sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 4) 							 
+		margins 				sex, at((means) _all sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 2) ///
+									 at((means) _all sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 4) contrast
+	
+		margins 				region, at((means) _all sex = 1 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 2) ///
+									    at((means) _all sex = 1 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 4) 
+		margins 				region, at((means) _all sex = 1 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 2) ///
+									    at((means) _all sex = 1 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 4) contrast
+		
+		margins 				region, at((means) _all sex = 0 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 2) ///
+									    at((means) _all sex = 0 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 4) 
+		margins 				region, at((means) _all sex = 0 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 2) ///
+									    at((means) _all sex = 0 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 4) contrast
+		
+		* 3-4 child gender across regions male HOH								
+		margins 				sex, at((means) _all sex_hoh = 0 emp = 1 shock_any = 1 own_child = 1 region = 2) ///
+									 at((means) _all sex_hoh = 0 emp = 1 shock_any = 1 own_child = 1 region = 4)
+		margins 				sex, at((means) _all sex_hoh = 0 emp = 1 shock_any = 1 own_child = 1 region = 2) ///
+									 at((means) _all sex_hoh = 0 emp = 1 shock_any = 1 own_child = 1 region = 4) contrast
+
+		* 5-6 HOH gender across child genders						 
+		margins 				sex_hoh, at((means) _all sex = 1 emp = 1 shock_any = 1 own_child = 1 region = 1) ///
+										 at((means) _all sex = 0 emp = 1 shock_any = 1 own_child = 1 region = 1)
+		margins 				sex_hoh, at((means) _all sex = 1 emp = 1 shock_any = 1 own_child = 1 region = 1) ///
+										 at((means) _all sex = 0 emp = 1 shock_any = 1 own_child = 1 region = 1) contrast	
+		
+		* 7 HOH employment 
+		margins 				emp, at((means) _all sex = 1 sex_hoh = 1 shock_any = 1 own_child = 1 region = 1) 
+		margins 				emp, at((means) _all sex = 1 sex_hoh = 1 shock_any = 1 own_child = 1 region = 1) contrast	
+		
+		* 8 pmod
+		margins,				dydx(p_mod) at((means) _all sex = 1 sex_hoh = 1 emp = 1 shock_any = 1 own_child = 1 region = 1) 
+		
+		* 9 own child
+		margins 				own_child, at((means) _all sex = 1 sex_hoh = 1 emp = 1 shock_any = 1 region = 1) 
+		margins 				own_child, at((means) _all sex = 1 sex_hoh = 1 emp = 1 shock_any = 1 region = 1) contrast			
+		
+		
 	* predicted probs
 		preserve
 			clear
@@ -453,7 +536,7 @@
 			export excel 		using "G:\My Drive\AF\Sem 2 Spring\AREC 549 Econometrics\Term Paper\sumstats_post.xls", sheetreplace sheet(pp) first(var)
 		restore		
 
- ** CHOW TEST **	
+ ** CHOW TEST ??**	
 	* all interaction
 	probit					$p_ylist c.age#i.rural c.age#c.age#i.rural c.hoh_yrs_ed#i.rural c.hh_child#i.rural c.p_mod#i.rural i.sex#i.rural ///
 								 i.sex_hoh#i.rural i.emp#i.rural i.shock_any#i.rural c.pcrexpagg#i.rural i.own_child#i.rural ///
@@ -479,7 +562,7 @@
 	test 					2.region#1.rural = 2.region#0.rural, accum notest
 	test 					3.region#1.rural = 3.region#0.rural, accum notest
 	test 					4.region#1.rural = 4.region#0.rural, accum 
-		
+	
 		
  ** summary stats **
 	* all post cov

@@ -193,7 +193,7 @@
 	forval 			x = 1/7 {
 	    rename 		s05q13__`x' exp_prob_`x'
 	}
-	drop 			s05q13__autre
+	drop 			s05q13_autre
 	
 * education 
 	rename 			s05q05 sch_child
@@ -220,10 +220,59 @@
 	rename 			s05q07 edu_cont
 	
 	forval 			x = 1/8 {
-		rename 		s05q07__`x' edu_cont_`x'
+		rename 		s05q08__`x' edu_cont_`x'
 	}
 	
-
+* employment 
+	rename 			s06q01 emp 
+	rename 			s06q02 emp_pre
+	rename 			s06q03 emp_pre_why
+	drop 			s06q03_autre
+	rename 			s06q03a emp_search
+	rename 			s06q03b emp_search_how
+	replace 		emp_search_how = 6 if emp_search_how == 7
+	forval 			x = 8/12 {
+	    replace 	emp_search_how = `x' - 1 if emp_search_how == `x'
+	}
+	replace			emp_search_how = 12 if emp_search_how == 14
+	replace 		emp_search_how = 14 if emp_search_how == 3
+	replace 		emp_search_how = 96 if emp_search_how == 15
+	rename 			s06q04a emp_act 
+	replace 		emp_act = -96 if emp_act == 15
+	replace 		emp_act = 15 if emp_act == 14
+	replace 		emp_act = 14 if emp_act == 9
+	replace 		emp_act = 9 if emp_act == 11 | emp_act == 12
+	replace 		emp_act = 12 if emp_act == 5
+	replace 		emp_act = 11 if emp_act == 10
+	replace 		emp_act = 10 if emp_act == 2
+	replace 		emp_act = 2 if emp_act == 3
+	drop 			s06q04a_autre
+	
+	rename 			s06q04b emp_stat
+	replace 		emp_stat = 100 if emp_stat == 5 & wave == 2
+	replace 		emp_stat = 5 if emp_stat == 6 & wave == 2
+	replace 		emp_stat = 6 if emp_stat == 100 & wave == 2
+	lab def 		emp_stat 1 "Own business" 2 "Family business" ///
+						3 "Family farm" 4 "Employee for someone else" ///
+						5 "Apprentice, trainee, intern" ///
+						6 "Employee for the government" -96 "Other"
+	lab val 		emp_stat emp_stat	
+	rename 			s06q04_1 emp_same
+	replace 		emp_same = s06q04_2 if s06q04_2 != .
+	drop 			s06q04_2 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

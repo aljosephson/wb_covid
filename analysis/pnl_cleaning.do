@@ -701,11 +701,12 @@
 	lab var				edu_10 "Home school"
 	lab var				edu_11 "Revisions of textbooks/notes from past classes"
 	lab var				edu_12 "Newspaper"
-	lab var				edu_13 "Participated in virtual classes with their teacher"
-	lab var				edu_14 "Watched lessons pre-recorded by their online teacher"
-	lab var				edu_15 "Watching classroom instruction via television"
-	lab var				edu_16 "They continue to visit the Daara"
+	//lab var				edu_13 "Participated in virtual classes with their teacher"
+	//lab var				edu_14 "Watched lessons pre-recorded by their online teacher"
+	//lab var				edu_15 "Watching classroom instruction via television"
+	//lab var				edu_16 "They continue to visit the Daara"
 	
+	* !!!! ADD BACK IN WHEN ADD BF DATA !!!!
 	
 * **********************************************************************
 * 8 - clean agriculture and livestock variables
@@ -789,6 +790,31 @@
 							0 "Don't know"
 	lab val				rtrn_emp_when rtrn_emp_when
 	
+	lab def 			emp_search_how 1 "APPLY TO PROSPECTIVE EMPLOYERS" ///
+							2 "PLACE OR ANSWER JOB ADVERTISEMENTS" ///
+							3 "STUDY OR READ JOB ADVERTISEMENTS" ///
+							4 "REGISTER WITH (EMPLOYMENT CENTER)" ///
+							5 "REGISTER WITH PRIVATE RECRUITMENT OFFICES" ///
+							6 "TAKE A TEST OR INTERVIEW" ///
+							7 "SEEK HELP FROM RELATIVES, FRIENDS, OTHERS" 
+							8 "CHECK AT FACTORIES, WORK SITES" ///
+							9 "WAIT ON THE STREET TO BE RECRUITED" ///
+							10 "SEEK FINANCIAL HELP TO START A BUSINESS" ///
+							11 "LOOK FOR LAND, BUILDING, EQUIPMENT, MATERIALS TO START A BUSINESS" ///
+							12 "APPLY FOR PERMIT OR LICENSE TO START A BUSINESS" ///
+							13 "developed a business plan" ///
+							14 "Post/Update CV on professional social media sites" ///
+							96 "Other"
+	lab val 			emp_search_how emp_search_how
+		
+	lab def 			emp_act -96 "Other" 1 "Agriculture" 2 "Industry/manufacturing" ///
+							3 "Wholesale/retail" 4 "Transportation services" ///
+							5 "Restaurants/hotels" 6 "Public Administration" ///
+							7 "Personal Services" 8 "Construction" 9 "Education/Health" ///
+							10 "Mining" 11 "Professional/scientific/technical activities" ///
+							12 "Electic/water/gas/waste" 13 "Buying/selling" ///
+							14 "Finance/insurance/real estate" 15 "Tourism" 16 "Food processing" 
+	lab val 			emp_act emp_act
 	
 * **********************************************************************
 * 10 - end matter, clean up to save

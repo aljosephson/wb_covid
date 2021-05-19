@@ -321,8 +321,13 @@
 	rename			s5aq22__4 ag_ac_seed_why_4
 	rename			s5aq22__5 ag_ac_seed_why_5
 	rename			s5aq22__6 ag_ac_seed_why_6
-	rename			s5aq23 ag_ac_fert_why
-	rename			s5aq24 ag_ac_oth_inp
+	forval 			x = 1/6 {
+	    gen 		ag_ac_fert_why_`x' = .
+		replace 	ag_ac_fert_why_`x' = 1 if s5aq23 == `x'
+		gen 		ag_ac_oth_why_`x' = .
+		replace 	ag_ac_oth_why_`x' = 1 if s5aq24 == `x'
+	}
+	drop			s5aq23 s5aq24 
 	rename			s5aq25 ag_crop_lost
 	rename			s5aq27 ag_live_chg
 	rename			s5aq28__1 ag_live_chg_1
@@ -332,7 +337,7 @@
 	rename			s5aq28__5 ag_live_chg_5
 	rename			s5aq28__6 ag_live_chg_6
 	rename			s5aq28__7 ag_live_chg_7
-	rename			s5aq29 ag_locust
+	rename			s5aq29 ag_live_loc
 	rename			s5aq30 harv_sell_need
 	replace 		harv_sell_need = s5bq25 if harv_sell_need == .
 	replace 		harv_sell_need = s5bq08 if harv_sell_need == .

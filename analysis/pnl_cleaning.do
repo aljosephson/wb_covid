@@ -704,8 +704,8 @@
 	//lab var				edu_13 "Participated in virtual classes with their teacher"
 	//lab var				edu_14 "Watched lessons pre-recorded by their online teacher"
 	//lab var				edu_15 "Watching classroom instruction via television"
-	//lab var				edu_16 "They continue to visit the Daara"
-	
+	//lab var				edu_16 "Continued to visit the Daara"
+	//lab var				edu_17 "Resumed school"
 	* !!!! ADD BACK IN WHEN ADD BF DATA !!!!
 	
 * **********************************************************************
@@ -796,7 +796,7 @@
 							4 "REGISTER WITH (EMPLOYMENT CENTER)" ///
 							5 "REGISTER WITH PRIVATE RECRUITMENT OFFICES" ///
 							6 "TAKE A TEST OR INTERVIEW" ///
-							7 "SEEK HELP FROM RELATIVES, FRIENDS, OTHERS" 
+							7 "SEEK HELP FROM RELATIVES, FRIENDS, OTHERS" ///
 							8 "CHECK AT FACTORIES, WORK SITES" ///
 							9 "WAIT ON THE STREET TO BE RECRUITED" ///
 							10 "SEEK FINANCIAL HELP TO START A BUSINESS" ///
@@ -815,6 +815,15 @@
 							12 "Electic/water/gas/waste" 13 "Buying/selling" ///
 							14 "Finance/insurance/real estate" 15 "Tourism" 16 "Food processing" 
 	lab val 			emp_act emp_act
+	
+	lab def 		clsd 1 "USUAL PLACE OF BUSINESS CLOSED DUE TO CORONAVIRUS LEGAL RESTRICTIONS" ///
+						2 "USUAL PLACE OF BUSINESS CLOSED FOR ANOTHER REASON" ///
+						3 "NO COSTUMERS / FEWER CUSTOMERS" 4 "CAN'T GET INPUTS" ///
+						5 "CAN'T TRAVEL / TRANSPORT GOODS FOR TRADE" ///
+						7 "ILLNESS IN THE HOUSEHOLD" 8 "NEED TO TAKE CARE OF A FAMILY MEMBER" ///
+						9 "SEASONAL CLOSURE" 10 "VACATION" 
+	lab val 		bus_closed clsd
+	
 	
 * **********************************************************************
 * 10 - end matter, clean up to save
@@ -847,7 +856,7 @@
 
 * close the log
 	log	close	
-	
+/*	
 
 * *********************************************************************
 * 9 - generate variable-country-wave crosswalk

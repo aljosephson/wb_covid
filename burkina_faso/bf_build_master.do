@@ -186,14 +186,17 @@
 	rename 			s05q03e ac_medserv_why
 	replace 		ac_medserv_why = . if ac_medserv_why == 4
 	rename 			s05q04 med_ins
+	drop 			s05q03e_autre
 	
 	rename 			s05q09 ac_bank_need
 	rename 			s05q11 ac_bank
 	
-	forval 			x = 1/7 {
+	forval 			x = 1/5 {
 	    rename 		s05q13__`x' exp_prob_`x'
 	}
-	drop 			s05q13_autre
+	rename 			s05q13__7 exp_prob_6
+	rename 			s05q13__8 exp_prob_7
+	drop 			s05q13__6 s05q13_autre
 	
 * education 
 	rename 			s05q05 sch_child
@@ -211,6 +214,7 @@
 	rename 			s05q06__11 edu_16
 	rename 			s05q06__12 edu_9
 	rename 			s05q06__13 edu_7
+	rename 			s05q06__15 edu_17
 	
 	gen 			edu_act = 1 if s05q06__14 == 0
 	replace 		edu_act = 0 if s05q06__14 == 1
@@ -222,9 +226,11 @@
 	forval 			x = 1/8 {
 		rename 		s05q08__`x' edu_cont_`x'
 	}
+	drop 			s05q08__9 s05q08_autre
 	
 * employment 
-	rename 			s06q01 emp 
+	rename 			s06q01 emp
+	rename 			s06q01a rtrn_emp
 	rename 			s06q02 emp_pre
 	rename 			s06q03 emp_pre_why
 	drop 			s06q03_autre
@@ -259,30 +265,107 @@
 	lab val 		emp_stat emp_stat	
 	rename 			s06q04_1 emp_same
 	replace 		emp_same = s06q04_2 if s06q04_2 != .
-	drop 			s06q04_2 
+	replace 		emp_same = s06q05 if s06q05 != . & emp_same == .
+	drop 			s06q04_2 s06q05
 	
+	gen 			emp_able = s06q06 if wave == 1
+	replace 		s06q06 = . if wave == 1
+	rename 			s06q06 emp_hrs_red
 	
+	rename 			s06q07a emp_unable
+	rename 			s06q07b emp_unable_why
+	drop 			s06q07b_autre
+	rename 			s06q07c_* emp_cont*
 	
+	gen  			emp_able_hh = s06q08 if wave == 1
+	replace 		s06q08 = . if wave == 1
+	rename 			s06q08 emp_hrs_red_hh
+	rename 			s06q08a emp_hrs_cov 
 	
+	forval 			x = 0/8 {
+		replace 		s06q09__`x' = 1 if s06q09__`x' != .
+	}
+	egen 			emp_hrs_cov_num = rowtotal(s06q09__*)
+	drop			s06q09*  				
+
+	rename 			s06q10 bus_emp
+	rename 			s06q10a_1 bus_stat
+	replace 		bus_stat = s06q10a_2 if s06q10a_2 != .
+	replace 		bus_stat = s06q10a_3 if s06q10a_3 != .	
+	drop 			s06q10a_*
+	rename 			s06q10b bus_closed
+	replace 		bus_closed = 7 if bus_closed == 6
+	drop 			s06q10b_autre
+	rename 			s06q11 bus_sect
+	rename 			s06q12 bus_emp_inc
+	rename 			s06q13 bus_why
+	replace 		bus_why = s06q13_1 if bus_why == . & s06q13_1 != .
+	replace 		bus_why = s06q13_2 if bus_why == . & s06q13_2 != .
+	drop 			s06q13_autre s06q13_1 s06q13_2 
 	
+	rename 			s06q13a__1 bus_chal_1
+	rename 			s06q13a__2 bus_chal_2
+	rename 			s06q13a__3 bus_chal_3
+	rename 			s06q13a__4 bus_chal_5
+	rename 			s06q13a__5 bus_chal_6
 	
+	rename 			s06q13b bus_beh
+	rename 			s06q13c__1 bus_beh_4
+	replace 		bus_beh_4 = s06q13c__2 if (bus_beh_4 == . | bus_beh_4 == 0) 
+	rename 			s06q13c__3 bus_beh_5
+	rename 			s06q13c__4 bus_beh_6
+	rename 			s06q13c__5 bus_beh_1
+	rename 			s06q13c__7 bus_beh_2
+	rename 			s06q13c__8 bus_beh_3
+	rename 			s06q13c__9 bus_beh_7
+	drop 			s06q13c_autre s06q13c__2
 	
+* agriculture 	
+	rename 			s06q14 farm_emp
+	gen 			ag_plan = s06q15 if wave == 3
+	replace 		s06q15 = . if wave == 3
+	rename 			s06q15 farm_norm
 	
+	rename 			s06q15_1__1 ag_nocrop_1
+	rename 			s06q15_1__2 ag_nocrop_2
+	rename 			s06q15_1__3 ag_nocrop_3
+	rename 			s06q15_1__4 ag_nocrop_4
+	rename 			s06q15_1__5 ag_nocrop_10
+	rename 			s06q15_1__6 ag_nocrop_5
+	rename 			s06q15_1__7 ag_nocrop_6
+	rename 			s06q15_1__8 ag_nocrop_7
+	rename 			s06q15_1__9 ag_nocrop_8
+
+	gen 			ag_chg = s06q17 if wave == 3
+	replace 		s06q17 = . if wave == 3
+	rename 			s06q17 harv_sell_need
+
+	rename 			s06q18 harv_sell
+	forval 			x = 1/7 {
+		rename 		s06q18__`x' ag_chg_`x'
+	}
+	drop 			s06q18__96 s06q18_autre
 	
+	rename 			s06q19 ag_price
+	forval 			x = 1/9 {
+	    rename 		s06q19__`x' ag_covid_`x'
+	}
+	drop 			s06q19__10
 	
+	rename 			s06q20 fam_asst
+	rename 			s06q21 fam_asst_amt
+	rename 			s06q22 fam_asst_freq
 	
+	forval 			x = 1/6 {
+	    rename 		s06q20__`x' ag_ac_seed_why_`x'
+		rename 		s06q21__`x' ag_ac_fert_why_`x'
+		rename 		s06q22__`x' ag_ac_oth_why_`x'
+	}
 	
+	replace 		ag_ac_seed_why_6 = 1 if s06q16a == 1
+	drop 			s06q16a s06q16a_autre	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+* drop 
+	drop  s06a_filtre s06q03b_autre s06c_filtre s06q26_autre 
 	
 	

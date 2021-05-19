@@ -119,14 +119,16 @@
 	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec12_bilan_entretien", nogen
 
 * clean variables inconsistent with other rounds
-	rename 			s05q01 ac_med	
+	rename 			s05q01 ac_med
 	
-	
-	
-	
-	
-	
-	
+	rename 			s06q16__1 farm_why_1
+	rename 			s06q16__2 farm_why_2
+	rename 			s06q16__3 farm_why_3
+	rename 			s06q16__4 farm_why_4
+	rename 			s06q16__5 farm_why_5
+	rename 			s06q16__6 farm_why_6
+	rename 			s06q16__7 farm_why_8
+	drop  			s06q16_autre 
 	
 * generate round variables
 	gen				wave = `w'

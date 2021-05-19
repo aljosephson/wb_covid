@@ -162,10 +162,34 @@
 	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec12_bilan_entretien", nogen
 
 * clean variables inconsistent with other rounds
+	* ac_med
 	rename 			s05q01a ac_med	
 	replace 		ac_med = 1 if ac_med == 2 | ac_med == 3
 	replace 		ac_med = 2 if ac_med == 4
 	replace 		ac_med = 3 if ac_med == 5
+	
+	* employment 
+	rename 			s06q05a emp_chg_why
+	drop 			s06q05a_autre 
+	replace 		emp_chg_why = 96 if emp_chg_why == 13
+	
+	* farm_why
+	rename 			s06q16__1 farm_why_1
+	rename 			s06q16__2 farm_why_2
+	rename 			s06q16__3 farm_why_3
+	rename 			s06q16__4 farm_why_4
+	replace 		farm_why_4 = 1 if s06q16__6 == 1
+	rename 			s06q16__7 farm_why_5
+	rename 			s06q16__8 farm_why_6
+	rename 			s06q16__9 farm_why_8
+	rename 			s06q16__11 farm_why_7
+	drop 			s06q16__6 s06q16__10 s06q16_autre
+	
+	* asst
+	rename 			s06q23 asst_any
+	rename 			s06q24 asst_amt
+	rename 			s06q25 asst_freq
+	drop			s06q26
 	
 * generate round variables
 	gen				wave = `w'

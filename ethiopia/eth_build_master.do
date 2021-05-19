@@ -485,7 +485,11 @@
 	generate		ag_ac_seed_why_5 = 1 if ag5_crops_reas_seeds == 5
 	generate		ag_ac_seed_why_6 = 1 if ag5_crops_reas_seeds == 6
 
-	rename			ag4_crops_reas_fert ag_ac_fert_why
+	forval 			x = 1/6 {
+	    gen 		ag_ac_fert_why_`x' = .
+		replace 	ag_ac_fert_why_`x' = 1 if ag4_crops_reas_fert == `x'
+	}
+	drop			ag4_crops_reas_fert
 	rename 			ag6_ext_need ag_ext_need 
 	rename 			ag7_ext_receive ag_ext
 	rename 			ag8_travel_norm ag_trav_lab_norm

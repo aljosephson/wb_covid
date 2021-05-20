@@ -660,7 +660,7 @@
 	
 * save file
 	customsave, 	idvar(hhid_eth) filename("eth_panel.dta") ///
-					path("$export") dofile(eth_build) user($user)
+					path("$export") dofile(eth_build_master) user($user)
 
 * close the log
 	log	close

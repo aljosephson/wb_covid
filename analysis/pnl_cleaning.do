@@ -44,12 +44,14 @@
 	run 			"$code/malawi/mwi_build_master"
 	run				"$code/nigeria/nga_build_master"
 	run 			"$code/uganda/uga_build_master"
+	run 			"$code/burkina_faso/bf_build_master"
 	
 * define
 	global	eth		=	"$data/ethiopia/refined" 
 	global	mwi		=	"$data/malawi/refined"
 	global	nga		=	"$data/nigeria/refined" 
 	global	uga		=	"$data/uganda/refined"
+	global	bf		=	"$data/burkina_faso/refined"
 	global	export	=	"$data/analysis"
 	global	logout	=	"$data/analysis/logs"
 
@@ -67,6 +69,7 @@
 	append using 		"$mwi/mwi_panel"	
 	append using 		"$nga/nga_panel"
 	append using		"$uga/uga_panel"
+	append using		"$bf/bf_panel"
 	
 	lab def				country 1 "Ethiopia" 2 "Malawi" 3 "Nigeria" 4 "Uganda" 5 "Burkina Faso", replace
 	lab val				country country	
@@ -98,7 +101,12 @@
 						"Rivers" 3033 "Sokoto" 3034 "Taraba" 3035 "Yobe" 3036 ///
 						"Zamfara" 3037 "FCT" 4012 "Central" 4013 ///
 						"Eastern" 4014 "Kampala" 4015 "Northern" 4016 ///
-						"Western" 4017 "North" 4018 "Central" 4019 "South", replace
+						"Western" 4017 "North" 4018 "Central" 4019 "South" ///
+						5001 "Boucle du Mouhoun" 5002 "Cascades" 5003 "Centre" ///
+						5004 "Centre-Est" 5005 "Centre-Nord" 5006 "Centre-Ouste" ///
+						5007 "Centre-Sur" 5008 "Est" 5009 "Hauts Bassins" ///
+						5010 "Nord" 5011 "Plateau-Central" 5012 "Sahel" ///
+						5013 "Sud-Ouest", replace
 	lab val				region region
 	
 	
@@ -143,13 +151,18 @@
 	tostring 			hhid_uga, replace 	
 	replace 			hhid_uga = "" if country != 4
 	replace 			hhid_uga = "u" + hhid_uga if hhid_uga != ""	
+	tostring			hhid_bf, replace
+	replace 			hhid_bf = "b" + hhid_bf if hhid_bf != "."
+	replace				hhid_bf = "" if hhid_bf == "."	
+	
 	gen					HHID = hhid_eth if hhid_eth != ""
 	replace				HHID = hhid_mwi if hhid_mwi != ""
 	replace				HHID = hhid_nga if hhid_nga != ""
 	replace				HHID = hhid_uga if hhid_uga != ""	
+	replace				HHID = hhid_bf if hhid_bf != ""	
 	sort				HHID
 	egen				hhid = group(HHID)
-	drop				HHID hhid_eth hhid_mwi hhid_nga hhid_uga*
+	drop				HHID hhid_eth hhid_mwi hhid_nga hhid_uga* hhid_bf
 	lab var				hhid "Unique household ID"
 	order 				country hhid resp_id hhid*
 
@@ -342,6 +355,13 @@
 		replace 		ac_staple = 1 if ac_staple == 2 & country == 4
 		replace 		ac_sauce = . if ac_sauce == 3
 		replace 		ac_sauce = 0 if ac_sauce == 2
+		
+	* Burkina Faso 
+		replace 		ac_staple = 1 if country == 5 & (ac_staple_1 == 1 | ///
+							ac_staple_2 == 1 | ac_staple_3 == 1)
+		replace 		ac_staple = 0 if country == 5 & ((ac_staple_1 == 2 & ac_staple_1_need == 1) | ///
+							(ac_staple_2 == 2 & ac_staple_2_need == 1) | ///
+							(ac_staple_3 == 2 & ac_staple_3_need == 1))	
 	* NOTE: does not include ac_staple_why for countries where ac_staple was generated
 	
 * access to drinking water
@@ -701,12 +721,12 @@
 	lab var				edu_10 "Home school"
 	lab var				edu_11 "Revisions of textbooks/notes from past classes"
 	lab var				edu_12 "Newspaper"
-	//lab var				edu_13 "Participated in virtual classes with their teacher"
-	//lab var				edu_14 "Watched lessons pre-recorded by their online teacher"
-	//lab var				edu_15 "Watching classroom instruction via television"
-	//lab var				edu_16 "Continued to visit the Daara"
-	//lab var				edu_17 "Resumed school"
-	* !!!! ADD BACK IN WHEN ADD BF DATA !!!!
+	lab var				edu_13 "Participated in virtual classes with their teacher"
+	lab var				edu_14 "Watched lessons pre-recorded by their online teacher"
+	lab var				edu_15 "Watching classroom instruction via television"
+	lab var				edu_16 "Continued to visit the Daara"
+	lab var				edu_17 "Resumed school"
+
 	
 * **********************************************************************
 * 8 - clean agriculture and livestock variables
@@ -813,7 +833,7 @@
 							7 "Personal Services" 8 "Construction" 9 "Education/Health" ///
 							10 "Mining" 11 "Professional/scientific/technical activities" ///
 							12 "Electic/water/gas/waste" 13 "Buying/selling" ///
-							14 "Finance/insurance/real estate" 15 "Tourism" 16 "Food processing" 
+							14 "Finance/insurance/real estate" 15 "Tourism" 16 "Food processing", replace
 	lab val 			emp_act emp_act
 	
 	lab def 		clsd 1 "USUAL PLACE OF BUSINESS CLOSED DUE TO CORONAVIRUS LEGAL RESTRICTIONS" ///
@@ -821,12 +841,32 @@
 						3 "NO COSTUMERS / FEWER CUSTOMERS" 4 "CAN'T GET INPUTS" ///
 						5 "CAN'T TRAVEL / TRANSPORT GOODS FOR TRADE" ///
 						7 "ILLNESS IN THE HOUSEHOLD" 8 "NEED TO TAKE CARE OF A FAMILY MEMBER" ///
-						9 "SEASONAL CLOSURE" 10 "VACATION" 
+						9 "SEASONAL CLOSURE" 10 "VACATION", replace
 	lab val 		bus_closed clsd
 	
+* **********************************************************************
+* 10 - shocks 
+* **********************************************************************
+
+	lab var 		shock_1 "Death or disability of an adult working member of the household"
+	lab var 		shock_2 "Death of someone who sends remittances to the household"
+	lab var 		shock_3 "Illness of an earning household member"
+	lab var 		shock_4 "Loss of important contact"
+	lab var 		shock_5 "Job Loss"
+	lab var 		shock_6 "Bankruptcy of a non-agricultural family business"
+	lab var 		shock_7 "Theft of crops, money, livestock or other property"
+	lab var 		shock_8 "Poor harvest due to lack of manpower"
+	lab var 		shock_9 "Disease/Pest invasion that caused harvest failure or storage loss"
+	lab var 		shock_10 "Increase in the price of inputs"
+	lab var 		shock_11 "Decrease in the selling price of production"
+	lab var 		shock_12 "Increase in the price of the main foods consumed"
+	lab var 		shock_13 "Floods"
+	lab var 		shock_14 "Other Shock"
+	lab var 		shock_15 "Disruption of farming, livestock, fishing activities"
+
 	
 * **********************************************************************
-* 10 - end matter, clean up to save
+* 11 - end matter, clean up to save
 * **********************************************************************
 
 	order 				wave, after(hhid)
@@ -856,7 +896,7 @@
 
 * close the log
 	log	close	
-/*	
+	
 
 * *********************************************************************
 * 9 - generate variable-country-wave crosswalk
@@ -871,7 +911,7 @@
 		collapse 		(sum) `var', by(country wave)
 		replace 		`var' = 1 if `var' != 0
 		gen 			country_s = cond(country == 1, "eth", cond(country == 2, ///
-						"mwi", cond(country == 3, "nga", "uga")))
+						"mwi", cond(country == 3, "nga", cond(country == 4, "uga","bf"))))
 		drop 			country
 		reshape 		wide `var', i(country) j(wave)
 		gen 			variable = _n
@@ -887,7 +927,7 @@
 		tostring 		variable, replace
 		replace 		variable = "`var'"
 		collapse 		(sum) `var'*, by(variable)
-		foreach 		c in eth mwi nga uga {
+		foreach 		c in eth mwi nga uga bf {
 			rename 		`var'*`c' `c'*
 		}
 		tempfile 		temp`var'

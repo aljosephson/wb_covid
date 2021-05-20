@@ -269,22 +269,42 @@
 	
 	
 * ***********************************************************************
-* 8 - education (NOTE: does not include why not in school and challenges to learning at home, could add)
+* 8 - education 
 * ***********************************************************************
  
 * generate edu_act = 1 if any child engaged in learning activities
 	use				"$root/wave_0`w'/SEC1.dta", clear
-	preserve
-		keep 			if s1q09 == 1
-		replace 		s1q10 = 0 if s1q10 == 2
-		collapse		(sum) s1q10, by(HHID)
-		gen 			edu_act = 1 if s1q10 > 0 
-		replace 		edu_act = 0 if edu_act == .
-		keep 			HHI edu_act
-		tempfile 		tempany
-		save 			`tempany'
-	restore 
+	keep 			if s1q09 == 1
+	replace 		s1q10 = 0 if s1q10 == 2
+	collapse		(sum) s1q10, by(HHID)
+	gen 			edu_act = 1 if s1q10 > 0 
+	replace 		edu_act = 0 if edu_act == .
+	keep 			HHI edu_act
+	tempfile 		tempany
+	save 			`tempany'
 
+* rename other variables 
+	use				"$root/wave_0`w'/SEC1.dta", clear
+	keep 			HHID hh_roster__id s1q11__* s1q13__*
+	forval 			x = 1/11 {
+	    replace 	s1q11__`x' = 0 if s1q11__`x' == 2
+	    rename 		s1q11__`x' edu_act_why_`x'
+	}
+	forval 			x = 1/13 {
+	    replace 	s1q13__`x' = 0 if s1q13__`x' == 2
+	    rename 		s1q13__`x' edu_chal_`x'
+	}
+	drop 			*__n96
+	collapse 		(sum) edu_act* edu_chal*, by(HHID)
+	forval 			x = 1/11 {
+	    replace 	edu_act_why_`x' = 1 if edu_act_why_`x' >= 1
+	}
+	forval 			x = 1/13 {
+	    replace 	edu_chal_`x' = 1 if edu_chal_`x' >= 1
+	}
+	tempfile 		tempoth
+	save 			`tempoth'
+	
 * generate educational engagement type variables  
 	use				"$root/wave_0`w'/SEC1.dta", clear
 	keep 			if s1q10 == 1
@@ -313,6 +333,7 @@
 
 * merge data together 
 	merge 1:1 HHID using `tempany', nogen
+	merge 1:1 HHID using `tempoth', nogen
 	
 * save temp file
 	tempfile		temp10

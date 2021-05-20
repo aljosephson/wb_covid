@@ -12,11 +12,7 @@
 	* raw Burkina Faso data
 
 * TO DO:
-	* when new waves available:
-		* create build for new wave based on previous ones
-		* update global list of waves below
-		* check variable crosswalk for differences/new variables & update code if needed
-		* check QC flags for issues/discrepancies
+	* CONSUMPTION AGGREGATES FROM TALIP
 
 		
 * **********************************************************************
@@ -114,7 +110,24 @@
 * create country variable
 	gen				country = 5	
 	
+	replace 		region = 5001 if region == 1
+	replace 		region = 5002 if region == 2
+	replace 		region = 5003 if region == 3
+	replace 		region = 5004 if region == 4
+	replace 		region = 5005 if region == 5
+	replace 		region = 5006 if region == 6
+	replace 		region = 5007 if region == 7
+	replace 		region = 5008 if region == 8
+	replace 		region = 5009 if region == 9
+	replace 		region = 5010 if region == 10
+	replace 		region = 5011 if region == 11
+	replace 		region = 5012 if region == 12
+	replace			region = 5013 if region == 13
 	
+	rename 			commune zone_id 
+	
+	drop 			village b40 echantillon resultat weight
+
 * ***********************************************************************
 * 3 - clean bukina faso panel
 * ***********************************************************************	
@@ -152,7 +165,7 @@
 	rename 			s05q01b ac_med_why
 	replace 		ac_med_why = 6 if ac_med_why == 7
 	drop 			s05q01b_autre s05q02*_autre
-	
+
 	rename 			s05q02_1 ac_staple_1_need
 	rename 			s05q02_2 ac_staple_2_need
 	rename 			s05q02_3 ac_staple_3_need
@@ -167,13 +180,24 @@
 		replace 		ac_staple_`x'_need = 1 if ac_staple_`x' < 3 & ac_staple_`x'_need == .
 		replace 		ac_staple_`x' = . if ac_staple_`x' == 3
 	}	
-	gen 			ac_staple = 1 if ac_staple_1 == 1 | ac_staple_2 == 1 | ac_staple_3 == 1 
-	replace 		ac_staple = 0 if (ac_staple_1 == 0 & ac_staple_1_need == 1) | ///
-						(ac_staple_2 == 0 & ac_staple_2_need == 1) | ///
-						(ac_staple_3 == 0 & ac_staple_3_need == 1) 
-	rename 			AlimBase1 staple_1
-	rename 			AlimBase2 staple_2
-	rename 			AlimBase3 staple_3
+	
+	gen 			staple_1 = 1 if AlimBase1 == "Maïs en grain"
+	replace 		staple_1 = 2 if AlimBase1 == "Riz importé"
+	gen 			staple_2 = 1 if AlimBase2 == "Maïs en grain"
+	replace 		staple_2 = 2 if AlimBase2 == "Riz importé"
+	replace 		staple_2 = 3 if AlimBase2 == "Sorgho"
+	gen 			staple_3 = 1 if AlimBase3 == "Maïs en grain"
+	replace  		staple_3 = 4 if AlimBase3 == "Farine de maïs"
+	replace  		staple_3 = 5 if AlimBase3 == "Mil"
+	replace  		staple_3 = 6 if AlimBase3 == "Riz local"
+	
+	lab def 		staple 1 "Maïs en grain" 2 "Riz importé" 3 "Sorgho" ///
+						4 "Farine de maïs" 5 "Mil" 6 "Riz local"
+	lab val 		staple_1 staple
+	lab val 		staple_2 staple
+	lab val 		staple_3 staple
+	
+	drop 			AlimBase*
 	
 	rename 			s05q03a ac_medserv_need
 	forval 			x = 1/11 {
@@ -365,7 +389,72 @@
 	replace 		ag_ac_seed_why_6 = 1 if s06q16a == 1
 	drop 			s06q16a s06q16a_autre	
 	
-* drop 
-	drop  s06a_filtre s06q03b_autre s06c_filtre s06q26_autre 
+	drop  			s06a_filtre s06q03b_autre s06c_filtre s06q26_autre 
+	
+* FIES
+	rename 			s07q01 fies_4
+	rename 			s07q02 fies_5
+	rename 			s07q03 fies_6
+	rename 			s07q04 fies_7
+	rename 			s07q05 fies_8
+	rename 			s07q06 fies_1
+	rename 			s07q07 fies_2
+	rename 			s07q08 fies_3
+
+* coping
+	rename 			s09q03__1 cope_1
+	forval 			x = 6/9 {
+		local 		z = `x' - 4
+		rename 		s09q03__`x' cope_`z'
+	}
+	forval 			x = 11/20 {
+		local 		z = `x' - 5
+		rename 		s09q03__`x' cope_`z'
+	}
+	drop 			s09q03__21 s09q03__22 
+	
+* fragility conflict violence
+	rename 			s11q01 security 
+	rename 			s11q02 trust
+	forval 			x = 1/7 {
+		rename 		s11q03__`x' tension_`x'
+	}
+	rename 			s11q04 move
+	rename 			s11q05 move_why
+	rename 			s11q06 hh_needs_met
+	drop 			s11q*_autre
+	
+* **********************************************************************
+* 4 - end matter, clean up to save
+* **********************************************************************
+
+* final clean 
+	compress	
+	describe
+	summarize 
+	rename 			hhid hhid_bf 
+	label 			var hhid_bf "household id unique - Burkina Faso"
+	
+* save file
+	customsave, 	idvar(hhid_bf) filename("bf_panel.dta") ///
+					path("$export") dofile(bf_build_master) user($user)
+
+* close the log
+	log	close
+
+/* END */	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	

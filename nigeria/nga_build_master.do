@@ -380,7 +380,6 @@
 	lab var 		ac_med_why "reason for unable to access medical services" 
   * education
 	rename 			filter1 children520
-	rename 			s5q5b sch_curr
 	rename 			s5q5c sch_open
 	rename 			s5q4a sch_child
 	rename 			s5q4b edu_act
@@ -413,7 +412,6 @@
 	    replace		edu_cont_`x' = s5cq9__`q' if edu_cont_`x' == . & s5cq9__`q' !=.
 	}
 	drop 			s5cq8 s5cq9__*
-	rename 			s5cq1 sch_att
 	forval 			x = 1/14 {
 	    rename 		s5cq2__`x' sch_att_why_`x'
 	}

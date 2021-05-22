@@ -149,17 +149,68 @@
 	rename 		s10q01103 asst_kind
 
 * save temp file
-	tempfile		tempd
-	save			`tempd'
+	tempfile	tempd
+	save		`tempd'
 	
 	
 * ***********************************************************************
 *  4 - education
 * ***********************************************************************		
 	
-	use 		"$root/wave_0`w'/r`w'_sec5e_education", clear
+	use 			"$root/wave_0`w'/r`w'_sec5e_education", clear
 	
-ann you are here - add education like in uga 2 and 3
+	rename 			s05eq01 sch_att
+	replace 		sch_att = 0 if sch_att == 2
+	forval 			x = 1/14 {
+	    gen 		sch_att_why_`x' = 0 if sch_att == 0
+		replace 	sch_att_why_`x' = 1 if s05eq02 == `x'
+	}		
+	drop 			s05eq02 s05eq02_autre
+	
+	rename 			s05eq05 sch_onsite
+	replace 		sch_onsite = 1 if sch_onsite == 2
+	replace 		sch_onsite = 0 if sch_onsite == 3
+	
+	forval 			x = 1/11 {
+	    rename 		s05eq07__`x' sch_prec_`x'
+	}	
+	
+	rename 			s05eq08 sch_online
+	replace 		sch_online = 0 if sch_online == 2
+	
+	rename 			s05eq09__* edu_act_why_*
+	
+	replace 		edu_act_why_1 = 1 if edu_act_why_2 == 1 
+	drop 			edu_act_why_2 edu_act_why_96 edu_act_why_13
+	forval 			x = 3/12 {
+	    local 		z = `x' - 1
+		rename 		edu_act_why_`x' edu_act_why_`z'
+	}
+	
+	rename 			s05eq12 sch_child 
+	replace 		sch_child = 0 if sch_child == 2
+	rename 			s05eq15 edu_act
+	replace 		edu_act = 0 if edu_act == 2
+	
+	
+	
+	
+	
+	collapse 		(sum) sch* edu* , by (hhid) 
+	
+	
+	
+	lab	def				yesno 0 "No" 1 "Yes", replace
+	tostring 		hhid, replace
+	ds,				has(type numeric)
+	foreach 		var in `r(varlist)' {
+	    replace 	`var' = 1 if `var' > 1
+		lab val 	`var' yesno
+	}
+	destring 		hhid, replace 
+	
+ann you are here - replace values that are no but should be missing with . 
+and check that this is done in UGA
 	
 * ***********************************************************************
 *  5 - FIES
@@ -187,8 +238,8 @@ ann you are here - add education like in uga 2 and 3
 	use 		"$root/wave_0`w'/r`w'_sec0_cover", clear
 	
 * merge formatted sections
-	foreach 		x in a b c d e {
-	    merge 		1:1 hhid using `temp`x'', nogen
+	foreach 	x in a b c d e {
+	    merge 	1:1 hhid using `temp`x'', nogen
 	}
 
 * merge in other sections

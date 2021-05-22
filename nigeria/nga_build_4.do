@@ -198,6 +198,7 @@
 	rename			s6q16 ag_crop
 	rename 			s6bq1 ag_live
 	rename 			s6q11b1 bus_other
+	rename 			s5q5b sch_att
 	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace

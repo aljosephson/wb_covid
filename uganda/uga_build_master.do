@@ -428,7 +428,8 @@
 	replace			ac_soap_why = . if ac_soap_why == 99
 	lab def			ac_soap_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
 								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
-								7 "cannot afford it" 8 "afraid to go out" 9 "other"
+								7 "cannot afford it" 8 "afraid to go out" 
+	replace 		ac_soap_why = . if ac_soap_why == 9
 	lab var 		ac_soap_why "reason for unable to purchase soap"
  * water wash
 	rename 			s4q03 ac_water

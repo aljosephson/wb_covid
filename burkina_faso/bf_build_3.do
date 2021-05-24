@@ -198,6 +198,9 @@
 	replace 		ac_med = 2 if ac_med == 4
 	replace 		ac_med = 3 if ac_med == 5
 	
+	rename 			s05q03e ac_medserv_why
+	replace 		ac_medserv_why = . if ac_medserv_why == 4
+	
 	* employment 
 	rename 			s06q04_0 emp_chg_why
 	replace 		emp_chg_why = 96 if emp_chg_why == 13

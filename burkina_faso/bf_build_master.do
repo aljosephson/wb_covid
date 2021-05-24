@@ -20,7 +20,7 @@
 * **********************************************************************
 
 * define list of waves
-	global 			waves "1" "2" "3" 
+	global 			waves "1" "2" "3" "4" "5" "6"
 	
 * define 
 	global	root	=	"$data/burkina_faso/raw"
@@ -151,12 +151,19 @@
 	rename 			s03q03__10 gov_19
 	rename 			s03q03__11 gov_10
 	rename 			s03q03__12 gov_16
+	rename 			s03q04 mask
 	
 * behavior
 	rename 			s04q01 bh_1	
 	rename 			s04q02 bh_2
 	rename 			s04q03 bh_3
 	replace 		bh_3 = . if bh_3 == 3
+	
+* COVID 
+	rename 			s04bq01 cov_test
+	rename 			s04bq02 cov_vac
+	rename 			s04bq03 cov_vac_no_why
+	rename 			s04bq04 cov_vac_dk_why
 	
 * access
 	gen 			ac_med_need = 0 if ac_med == 3
@@ -200,18 +207,22 @@
 	drop 			AlimBase*
 	
 	rename 			s05q03a ac_medserv_need
+	forval 			x = 1/7 {
+	    rename 		s05q03a_1__`x' ac_medserv_type_`x'
+	}
 	forval 			x = 1/11 {
 		rename 		s05q03b__`x' ac_medserv_need_why_`x'
 	}
 	rename 			s05q03c ac_medserv_cvd
+	rename 			s05q03c_1 ac_medserv_cvd_why
+		
 	rename 			s05q03d ac_medserv_oth
 	gen 			ac_medserv = 0 if ac_medserv_cvd == 0 | ac_medserv_oth == 0
 	replace 		ac_medserv = 1 if ac_medserv_cvd == 1 | ac_medserv_oth == 1
-	rename 			s05q03e ac_medserv_why
-	replace 		ac_medserv_why = . if ac_medserv_why == 4
+
 	rename 			s05q04 med_ins
-	drop 			s05q03e_autre
-	
+	drop 			s05q03b_autre s05q03c_1_autre  s05q03e_autre s05q03d_1_autre ///
+						s05q03_3__96 s05q03_6__96 s05q03_6_autre s05q03a_1_autre
 	rename 			s05q09 ac_bank_need
 	rename 			s05q11 ac_bank
 	
@@ -222,35 +233,74 @@
 	rename 			s05q13__8 exp_prob_7
 	drop 			s05q13__6 s05q13_autre
 	
-* education 
-	rename 			s05q05 sch_child
-	rename 			s05q06__1 edu_1
-	replace 		edu_1 = 1 if s05q06__7 == 1
+	rename 			s05q03_filtre ac_nat_filter
+	rename 			s05q03_1 ac_nat_need
+	rename 			s05q03_2 ac_nat
+	rename 			s05q03_3__1 ac_nat_why_1
+	rename 			s05q03_3__2 ac_nat_why_2
+	rename 			s05q03_3__3 ac_nat_why_3
+	rename 			s05q03_3__4 ac_nat_why_7
+	rename 			s05q03_3__5 ac_nat_why_8
+	rename 			s05q03_3__6 ac_nat_why_9
+	rename 			s05q03_3__7 ac_nat_why_10
+	drop 			s05q03_3_autre
+	rename 			s05q03_4 ac_prev_app
+	rename 			s05q03_5 ac_prev_canc
+	replace 		ac_prev_canc = 1 if ac_prev_canc == 2
+	replace 		ac_prev_canc = 0 if ac_prev_canc == 3
+	rename 			s05q03_6__1 ac_prev_why_1
+	rename 			s05q03_6__2 ac_prev_why_2
+	rename 			s05q03_6__3 ac_prev_why_3
+	rename 			s05q03_6__4 ac_prev_why_7
+	rename 			s05q03_6__5 ac_prev_why_10
+	rename 			s05q03_6__6 ac_prev_why_9
+	rename 			s05q03_6__7 ac_prev_why_8
 	
-	rename 			s05q06__2 edu_other 
-	replace 		edu_other = 1 if s05q06__8 == 1
-	rename 			s05q06__3 edu_13
-	rename 			s05q06__4 edu_14
-	rename 			s05q06__5 edu_2
-	rename 			s05q06__6 edu_3
-	rename 			s05q06__9 edu_15
-	rename 			s05q06__10 edu_4
-	rename 			s05q06__11 edu_16
-	rename 			s05q06__12 edu_9
-	rename 			s05q06__13 edu_7
-	rename 			s05q06__15 edu_17
+	rename 			s05q04_1 ac_drink
+	rename 			s05q04_2 ac_drink_why
+	replace 		ac_drink_why = 11 if ac_drink_why == 4 
+	replace 		ac_drink_why = 12 if ac_drink_why == 5
+	replace 		ac_drink_why = . if ac_drink_why == 6
 	
-	gen 			edu_act = 1 if s05q06__14 == 0
-	replace 		edu_act = 0 if s05q06__14 == 1
+	rename			s05q04_3 ac_water
+	rename	 		s05q04_4 ac_water_why
+	replace 		ac_water_why = . if ac_water_why == 12 | ac_water_why == 99
+	replace 		ac_water_why = 15 if ac_water_why == 9
+	replace 		ac_water_why = 9 if ac_water_why == 8
+	replace 		ac_water_why = 8 if ac_water_why == 7
+	replace 		ac_water_why = 7 if ac_water_why == 6
+	replace 		ac_water_why = 6 if ac_water_why == 5
+	replace 		ac_water_why = 5 if ac_water_why == 4
+	replace 		ac_water_why = 16 if ac_water_why == 10
 	
-	drop 			s05q06__7 s05q06__8 s05q06__14 
+	rename 			s05q04_5 ac_soap 
+	rename 			s05q04_6 ac_soap_why
+	replace 		ac_soap_why = 6 if ac_soap_why == 9
+	replace 		ac_soap_why = 9 if ac_soap_why == 7
+	rename 			s05q04_7 bh_freq_wash
 	
-	rename 			s05q07 edu_cont
-	
-	forval 			x = 1/8 {
-		rename 		s05q08__`x' edu_cont_`x'
+* credit
+	rename 			s05bq01 ac_cr_loan
+	rename 			s05bq02__1 ac_cr_lend_11
+	rename 			s05bq02__2 ac_cr_lend_12
+	rename 			s05bq02__3 ac_cr_lend_7
+	rename 			s05bq02__4 ac_cr_lend_8
+	rename 			s05bq02__5 ac_cr_lend_1
+	rename 			s05bq02__6 ac_cr_lend_4
+	rename 			s05bq02__7 ac_cr_lend_13
+	rename 			s05bq02__8 ac_cr_lend_14
+	forval 			x = 1/13 {
+		rename 			s05bq03__`x' ac_cr_why_`x'
 	}
-	drop 			s05q08__9 s05q08_autre
+	drop 			s05bq04__*
+	rename 			s05bq05 ac_cr_due
+	rename 			s05bq06 ac_cr_bef
+	forval 			x = 1/13 {
+		rename 			s05bq07__`x' ac_cr_bef_why_`x'
+	}
+	drop 			s05bq08__*
+	
+ANN figure out creidt variables, do we want to drop ac_cr_why* and others from panel cleaning? Make note of it if so...
 	
 * employment 
 	rename 			s06q01 emp
@@ -443,18 +493,3 @@
 	log	close
 
 /* END */	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	

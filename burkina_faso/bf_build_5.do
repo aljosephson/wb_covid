@@ -14,7 +14,7 @@
 	* raw BF data
 
 * TO DO:
-	* complete
+	* GET FIES DATA
 
 
 * **********************************************************************
@@ -178,39 +178,46 @@
 	rename 			s05eq08 sch_online
 	replace 		sch_online = 0 if sch_online == 2
 	
-	rename 			s05eq09__* edu_act_why_*
-	
+	rename 			s05eq09__* edu_act_why_*	
 	replace 		edu_act_why_1 = 1 if edu_act_why_2 == 1 
 	drop 			edu_act_why_2 edu_act_why_96 edu_act_why_13
 	forval 			x = 3/12 {
 	    local 		z = `x' - 1
 		rename 		edu_act_why_`x' edu_act_why_`z'
 	}
-	
 	rename 			s05eq12 sch_child 
 	replace 		sch_child = 0 if sch_child == 2
 	rename 			s05eq15 edu_act
-	replace 		edu_act = 0 if edu_act == 2
-	
-	
-	
-	
-	
+	replace 		edu_act = 0 if edu_act == 2	
 	collapse 		(sum) sch* edu* , by (hhid) 
 	
+	* replace missing values that became 0 with the collapse (sum)
+	replace 		sch_onsite = . if sch_att == 0
+	forval 			x = 1/11 {
+		replace 		sch_prec_`x' = . if sch_att == 0
+	}
+	replace 		sch_online = . if sch_att == 0
+	forval 			x = 1/11 {
+		replace 		edu_act_why_`x' = . if sch_att == 0 | sch_online == 1
+	}
+	replace 		edu_act = . if sch_child == 0
+	forval 			x = 1/14 {
+	    replace 	sch_att_why_`x' = . if sch_att == 1
+	}
 	
-	
-	lab	def				yesno 0 "No" 1 "Yes", replace
+	lab	def			yesno 0 "No" 1 "Yes", replace
 	tostring 		hhid, replace
 	ds,				has(type numeric)
 	foreach 		var in `r(varlist)' {
-	    replace 	`var' = 1 if `var' > 1
+	    replace 	`var' = 1 if `var' > 1 & `var' != .
 		lab val 	`var' yesno
 	}
 	destring 		hhid, replace 
 	
-ann you are here - replace values that are no but should be missing with . 
-and check that this is done in UGA
+* save temp file
+	tempfile	tempe
+	save		`tempe'
+	
 	
 * ***********************************************************************
 *  5 - FIES
@@ -248,33 +255,17 @@ and check that this is done in UGA
 	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec4b_vaccination_covid19", nogen
 	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec5_acces_service_base", nogen
 	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec6a_emplrev_general", nogen
-	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec6b_emplrev_travailsalarie", nogen
-	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec6c_emplrev_nonagr", nogen
-	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec6d_emplrev_agr", nogen
 	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec7_securite_alimentaire", nogen
 
 * clean variables inconsistent with other rounds
 	* ac_med
-	rename 			s05q01a ac_med		
+	rename 			s05q01a ac_med	
 	replace 		ac_med = 1 if ac_med == 2 | ac_med == 3
 	replace 		ac_med = 2 if ac_med == 4
 	replace 		ac_med = 3 if ac_med == 5
 	
-	* employment 
-	rename 			s06q04_0 emp_chg_why
-	replace 		emp_chg_why = 96 if emp_chg_why == 13
-	
-	* agriculture
-	rename 			s06q23 ag_crop_lost
-	rename 			s06q24 ag_live
-	rename 			s06q25 ag_live_chg
-	forval 			x = 1/7 {
-		rename 		s06q26__`x' ag_live_chg_`x'
-	}
-	rename 			s06q27 ag_live_loc
-	
-* drop 55 variables re main type of crop grown
-	drop 			s06q16_*
+	rename 			s05q03d_1 ac_medserv_why 
+	replace 		ac_medserv_why = 8 if ac_medserv_why == 7 
 	
 * generate round variables
 	gen				wave = `w'

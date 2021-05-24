@@ -235,7 +235,7 @@
 	collapse		(sum) s1q10, by(HHID)
 	gen 			edu_act = 1 if s1q10 > 0 
 	replace 		edu_act = 0 if edu_act == .
-	keep 			HHI edu_act
+	keep 			HHID edu_act
 	tempfile 		tempany
 	save 			`tempany'
 
@@ -258,6 +258,7 @@
 	forval 			x = 1/13 {
 	    replace 	edu_chal_`x' = 1 if edu_chal_`x' >= 1
 	}
+
 	tempfile 		tempoth
 	save 			`tempoth'
 	
@@ -288,8 +289,8 @@
 	rename 	 		s1q12__n96 edu_other
 
 * merge data together 
-	merge 1:1 HHID using `tempany', nogen
-	merge 1:1 HHID using `tempoth', nogen
+	merge 			1:1 HHID using `tempany', nogen
+	merge 			1:1 HHID using `tempoth', nogen
 	
 * save temp file
 	tempfile		temp7
@@ -390,8 +391,13 @@
 									  16 "Neighbour/friend" 17 "Other"
 		lab val			credit_source credit
 		lab var			credit_source "From whom did you borrow money?"
-		rename			s7q05 credit_purp
+		forval 			x = 1/10 {
+			gen 		cr_purp_`x' = 0 if credit == 1
+			replace 	cr_purp_`x' = 1 if s7q05 == `x' 
+		}
+		drop			s7q05
 		rename			s7q06 credit_wry
+		
 	* rename concerns
 		rename			s9q01 concern_1
 		rename			s9q02 concern_2

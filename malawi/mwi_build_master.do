@@ -423,7 +423,8 @@
 	replace 		ac_soap_why = 9 if s5q1b1__9 == 1
 	lab def			ac_soap_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
 								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
-								7 "cannot afford" 8 "afraid to go out" 9 "other"
+								7 "cannot afford" 8 "afraid to go out"
+	replace 		ac_soap_why = . if ac_soap_why == 9
 	lab val 		ac_soap_why ac_soap_why
 	lab var 		ac_soap_why "reason unable to purchase soap"
 	order			ac_soap_why, after(ac_soap_need)
@@ -466,7 +467,7 @@
 					8 "restriction to go out" 9 "increase in price" 10 "cannot afford" ///
 					11 "afraid to get viurs" 12 "water source too far" ///
 					13 "too many people at water source" 14 "large household size" ///
-					15 "lack of money", replace
+					15 "lack of money" 16 "cannot talk about it", replace
 	lab val 		ac_water_why ac_water_why 
 	lab var 		ac_water_why "reason unable to access water for washing hands"
 	rename			s5q1a2_1 ac_drink

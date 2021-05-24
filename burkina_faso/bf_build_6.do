@@ -6,15 +6,15 @@
 * Stata v.16.1
 
 * does
-	* reads in first round of BF data
-	* builds round 1
-	* outputs round 1
+	* reads in sixth round of BF data
+	* builds round 6
+	* outputs round 6
 
 * assumes
 	* raw BF data
 
 * TO DO:
-	* complete
+	* GET FIES DATA
 
 
 * **********************************************************************
@@ -32,7 +32,7 @@
 	log using		"$logout/bf_build", append
 
 * set local wave number & file number
-	local			w = 1
+	local			w = 6
 	
 * make wave folder within refined folder if it does not already exist 
 	capture mkdir 	"$export/wave_0`w'" 
@@ -100,69 +100,115 @@
 	
 	
 * ***********************************************************************
-*  2 - merge
+* 2 - other revenues
+* ***********************************************************************		
+	
+* load data	
+	use 		"$root/wave_0`w'/r`w'_sec8_autres_revenu",clear
+	
+* drop other vars
+	keep 		hhid revenu__id s08q0*
+	
+* reshape 
+	reshape 	wide s08q0*, i(hhid) j(revenu__id)
+	
+* format vars
+	rename 		s08q011 oth_inc_1
+	rename 		s08q012 oth_inc_2
+	rename 		s08q013 oth_inc_3
+	rename 		s08q014 oth_inc_4
+	rename 		s08q015 oth_inc_5
+	
+	rename 		s08q021 oth_inc_chg_1
+	rename 		s08q022 oth_inc_chg_2
+	rename 		s08q023 oth_inc_chg_3
+	rename 		s08q024 oth_inc_chg_4
+	rename 		s08q025 oth_inc_chg_5
+	
+* save temp file
+	tempfile		tempc
+	save			`tempc'
+	
+	
+* ***********************************************************************
+*  3 - shocks
+* ***********************************************************************		
+
+* load data
+	use 			"$root/wave_0`w'/r`w'_sec9_chocs", clear
+
+* drop other shock
+	drop			s09q03_autre
+	
+* generate shock variables
+	forval 			x = 1/13 {
+		gen 		shock_`x' = s09q01 if chocs__id == `x'
+	}
+
+* collapse to household level	
+	collapse 		(max) s09q03__1-shock_13, by(hhid)
+	
+* save temp file
+	tempfile		tempd
+	save			`tempd'	
+	
+
+* ***********************************************************************
+*  4 - FIES
+* ***********************************************************************	
+/*
+* load data
+	use 			"$fies/BFA_FIES_round`w'", clear
+	
+* format hhid & vars
+	destring 		HHID, gen(hhid)
+	drop 			country round HHID
+	
+* save temp file
+	tempfile		tempe
+	save			`tempe'	
+
+*/	
+	
+
+* ***********************************************************************
+*  5 - merge
 * ***********************************************************************
 
 * load cover data
 	use 		"$root/wave_0`w'/r`w'_sec0_cover", clear
 	
 * merge formatted sections
-	foreach 		x in a b {
+	foreach 		x in a b c d {
 	    merge 		1:1 hhid using `temp`x'', nogen
 	}
-	
+
 * merge in other sections
-	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec3_connaisance_covid19", nogen
-	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec4_comportaments", nogen
 	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec5_acces_service_base", nogen
-	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec6_emploi_revenue", nogen
+	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec6a_emplrev_general", nogen
+	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec6b_emplrev_travailsalarie", nogen
+	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec6c_emplrev_nonagr", nogen
+	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec6d_emplrev_agr", nogen
+	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec7_securite_alimentaire", nogen
+	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec11_frag_confl_violence", nogen
 
 * clean variables inconsistent with other rounds
 	* ac_med
-	rename 			s05q01 ac_med
+	rename 			s05q01a ac_med	
+	replace 		ac_med = 1 if ac_med == 2 | ac_med == 3
+	replace 		ac_med = 2 if ac_med == 4
+	replace 		ac_med = 3 if ac_med == 5
 	
-	rename 			s05q03e ac_medserv_why
-	replace 		ac_medserv_why = . if ac_medserv_why == 4
+	rename 			s05q03d_1 ac_medserv_why 
+	replace 		ac_medserv_why = 8 if ac_medserv_why == 7 
 	
-	* farm_why
-	rename 			s06q16__1 farm_why_1
-	rename 			s06q16__2 farm_why_2
-	rename 			s06q16__3 farm_why_3
-	rename 			s06q16__4 farm_why_4
-	rename 			s06q16__5 farm_why_5
-	rename 			s06q16__6 farm_why_6
-	rename 			s06q16__7 farm_why_8
-	drop  			s06q16_autre 
-	
-	* education 
-	rename 			s05q05 sch_child
-	rename 			s05q06__1 edu_1
-	replace 		edu_1 = 1 if s05q06__7 == 1
-	rename 			s05q06__2 edu_other 
-	replace 		edu_other = 1 if s05q06__8 == 1
-	rename 			s05q06__3 edu_13
-	rename 			s05q06__4 edu_14
-	rename 			s05q06__5 edu_2
-	rename 			s05q06__6 edu_3
-	rename 			s05q06__9 edu_15
-	rename 			s05q06__10 edu_4
-	rename 			s05q06__11 edu_16
-	rename 			s05q06__12 edu_9
-	rename 			s05q06__13 edu_7
-	gen 			edu_act = 1 if s05q06__14 == 0
-	replace 		edu_act = 0 if s05q06__14 == 1
-	drop 			s05q06__7 s05q06__8 s05q06__14 
-	rename 			s05q07 edu_cont
-	
-	forval 			x = 1/8 {
-		rename 		s05q08__`x' edu_cont_`x'
-	}
-		
 * generate round variables
 	gen				wave = `w'
 	lab var			wave "Wave number"
-	rename 			hhwcovid_r`w' phw_cs
-	label var		phw_cs "sampling weights - cross section"
+	rename 			hhwcovid_r`w'_cs phw_cs
+	rename 			hhwcovid_r`w'_pnl phw_pnl
+	label var		phw_cs "sampling weights- cross section"
+	label var		phw_pnl "sampling weights- panel"
 	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace

@@ -283,7 +283,7 @@
 	replace 			ac_medserv_why = . if ac_medserv_why < 0
 	lab def				ac_medserv_why 1 "lack of money" 2 "no med personnel" ///
 								3 "facility full" 4 "facility closed" ///
-								5 "not enough supplies" 6 "lack of transportation" ///
+								5 "not enough supplies" 6 "lack of transportation/too far" ///
 								7 "restriction to go out" 8 "afraid to get virus", replace
 	lab val 			ac_medserv_why ac_medserv_why
 	
@@ -303,6 +303,10 @@
 * access to soap
 	replace 			ac_soap = 0 if ac_soap == 2
 	replace 			ac_soap_why = . if ac_soap_why == 96 | ac_soap_why == 9	
+	lab def 			ac_soap_why 1 "shops out" 2 "markets closed" 3 "lack of transportation" ///
+							4 "restriction to go out" 5 "increase in price" 6 "lack of money" ///
+							7 "cannot afford" 8 "afraid to get virus" 9 "cannot talk about it", replace
+	lab val 			ac_soap_why ac_soap_why
 	
 * access to staples
 	* Ethiopia
@@ -374,7 +378,8 @@
 	lab def 			ac_drink_why 1 "water supply not available" 2 "water supply reduced" ///
 							3 "unable to access communal supply" 4 "unable to access water tanks" ///
 							5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
-							8 "restriction to go out" 9 "increase in price" 10 "cannot afford", replace
+							8 "restriction to go out" 9 "increase in price" 10 "cannot afford" ///
+							11 "unable to buy water" 12 "fear of catching the virus", replace
 	lab val 			ac_drink_why ac_drink_why 	
 
 * access to water for handwashing	
@@ -387,7 +392,7 @@
 							8 "restriction to go out" 9 "increase in price" 10 "cannot afford" ///
 							11 "afraid to get viurs" 12 "water source too far" ///
 							13 "too many people at water source" 14 "large household size" ///
-							15 "lack of money", replace
+							15 "lack of money" 16 "cannot talk about it", replace
 	lab val 			ac_water_why ac_water_why
 	
 * access to cleaning supllies

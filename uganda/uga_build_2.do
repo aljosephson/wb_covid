@@ -364,23 +364,23 @@
 		rename			s7q01 credit
 		rename			s7q02 credit_cvd
 		rename			s7q03 credit_cvd_how	
-		gen				credit_source = 1 if s7q04__1
-		replace			credit_source = 2 if s7q04__2
-		replace			credit_source = 3 if s7q04__3
-		replace			credit_source = 4 if s7q04__4
-		replace			credit_source = 5 if s7q04__5
-		replace			credit_source = 6 if s7q04__6
-		replace			credit_source = 7 if s7q04__7
-		replace			credit_source = 8 if s7q04__8
-		replace			credit_source = 9 if s7q04__9
-		replace			credit_source = 10 if s7q04__10
-		replace			credit_source = 11 if s7q04__11
-		replace			credit_source = 12 if s7q04__12
-		replace			credit_source = 13 if s7q04__13
-		replace			credit_source = 14 if s7q04__14
-		replace			credit_source = 15 if s7q04__15
-		replace			credit_source = 16 if s7q04__16
-		replace			credit_source = 17 if s7q04__n96
+		gen				credit_cvd_src = 1 if s7q04__1
+		replace			credit_cvd_src  = 2 if s7q04__2
+		replace			credit_cvd_src  = 3 if s7q04__3
+		replace			credit_cvd_src  = 4 if s7q04__4
+		replace			credit_cvd_src  = 5 if s7q04__5
+		replace			credit_cvd_src  = 6 if s7q04__6
+		replace			credit_cvd_src  = 7 if s7q04__7
+		replace			credit_cvd_src  = 8 if s7q04__8
+		replace			credit_cvd_src  = 9 if s7q04__9
+		replace			credit_cvd_src  = 10 if s7q04__10
+		replace			credit_cvd_src  = 11 if s7q04__11
+		replace			credit_cvd_src  = 12 if s7q04__12
+		replace			credit_cvd_src  = 13 if s7q04__13
+		replace			credit_cvd_src  = 14 if s7q04__14
+		replace			credit_cvd_src  = 15 if s7q04__15
+		replace			credit_cvd_src  = 16 if s7q04__16
+		replace			credit_cvd_src  = 17 if s7q04__n96
 		lab def			credit 1 "Commercial bank" 2 "Savings club" ///
 									  3 "Credit Institution" 4 "ROSCAs" ///
 									  5 "MDI" 6 "Welfare fund" ///
@@ -389,14 +389,10 @@
 									  11 "ASCAs" 12 "MFIs" 13 "VSLAs" ///
 									  14 "MOKASH" 15 "WEWOLE" ///
 									  16 "Neighbour/friend" 17 "Other"
-		lab val			credit_source credit
-		lab var			credit_source "From whom did you borrow money?"
-		forval 			x = 1/10 {
-			gen 		cr_purp_`x' = 0 if credit == 1
-			replace 	cr_purp_`x' = 1 if s7q05 == `x' 
-		}
-		drop			s7q05
-		rename			s7q06 credit_wry
+		lab val			credit_cvd_src  credit
+		lab var			credit_cvd_src  "From whom did you borrow money?"
+		rename 			s7q05 credit_cvd_purp
+		rename			s7q06 credit_cvd_wry
 		
 	* rename concerns
 		rename			s9q01 concern_1

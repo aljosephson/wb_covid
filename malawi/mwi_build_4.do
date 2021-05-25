@@ -265,7 +265,11 @@
 	rename 			s6dq9 ac_cr_worry
 	rename 			s6dq10 ac_cr_bef
 	rename 			s6dq10a ac_cr_prev_repay
-	rename 			s6dq11 ac_cr_bef_why
+	forval 			x = 1/13 {
+	    gen 		ac_cr_bef_why_`x' = .
+		replace 	ac_cr_bef_why_`x' = 1 if s6dq11 == `x'
+	}
+	drop 			s6dq11
 	rename 			s6dq12__0 ac_cr_bef_who_1
 	rename 			s6dq12__1 ac_cr_bef_who_2
 	rename 			s6dq13 ac_cr_bef_worry

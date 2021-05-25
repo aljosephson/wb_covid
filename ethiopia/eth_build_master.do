@@ -271,17 +271,39 @@
 		replace 		ac_cr_lend_1 = 1 if ac_cr_lend_11 == 1
 		drop 			ac_cr_lend_11
 		lab var 		ac_cr_lend_1 "friend or relative"
-		forval 			x = 1/11 {
-			rename 		cr3_since_reas_`x' ac_cr_why_`x'
-		}
+		
+		rename 			cr3_since_reas_1 ac_cr_why_1
+		rename 			cr3_since_reas_2 ac_cr_why_4
+		replace 		ac_cr_why_4 = 1 if cr3_since_reas_3 == 1
+		rename 			cr3_since_reas_4 ac_cr_why_5
+		replace 		ac_cr_why_5 = 1 if cr3_since_reas_5 == 1 | ///
+							cr3_since_reas_6 == 1 |cr3_since_reas_7 == 1 ///
+							| cr3_since_reas_8 == 1
+		rename 			cr3_since_reas_9 ac_cr_why_7
+		rename 			cr3_since_reas_10 ac_cr_why_13
+		rename 			cr3_since_reas_11 ac_cr_why_9
+		drop 			cr3_since_reas_3 cr3_since_reas_5 cr3_since_reas_6 ///
+							cr3_since_reas_7 cr3_since_reas_8
+		
 		forval    		x = 1/12 {
 			rename 		cr4_since_who_`x' ac_cr_who_`x'
 		}
 		rename 			cr5_since_duedate ac_cr_due
 		rename 			cr6_before_loan ac_cr_bef
-		forval 			x = 1/11 {
-			rename 		cr7_before_reas_`x' ac_cr_bef_why_`x'
-		}
+	
+		rename 			cr7_before_reas_1 ac_cr_bef_why_1
+		rename 			cr7_before_reas_2 ac_cr_bef_why_4
+		replace 		ac_cr_bef_why_4 = 1 if cr7_before_reas_3 == 1
+		rename 			cr7_before_reas_4 ac_cr_bef_why_5
+		replace 		ac_cr_bef_why_5 = 1 if cr7_before_reas_5 == 1 | ///
+							cr7_before_reas_6 == 1 |cr7_before_reas_7 == 1 ///
+							| cr7_before_reas_8 == 1
+		rename 			cr7_before_reas_9 ac_cr_bef_why_7
+		rename 			cr7_before_reas_10 ac_cr_bef_why_13
+		rename 			cr7_before_reas_11 ac_cr_bef_why_9
+		drop 			cr7_before_reas_3 cr7_before_reas_5 cr7_before_reas_6 ///
+							cr7_before_reas_7 cr7_before_reas_8
+											
 		forval 			x = 1/12 {
 			rename		cr8_before_who_`x' ac_cr_bef_who_`x'
 		}

@@ -267,6 +267,11 @@
 	rename 			s05q03d_1 ac_medserv_why 
 	replace 		ac_medserv_why = 8 if ac_medserv_why == 7 
 	
+	* employment 
+	rename 			s06q04_0 emp_chg_why
+	drop 			s06q04_0_autre
+	replace 		emp_chg_why = 96 if emp_chg_why == 13
+	
 * generate round variables
 	gen				wave = `w'
 	lab var			wave "Wave number"

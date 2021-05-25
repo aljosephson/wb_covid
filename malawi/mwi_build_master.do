@@ -791,7 +791,7 @@
 	forval 			x = 1/12 {
 		rename 		s6qe6__`x' ag_crop_pl_`x'
 	}
-	rename 			s6qe7 ag_sell_rev
+	rename 			s6qe7 harv_sell_rev
 	forval 			x = 1/6 {
 		rename 		s6qf4__`x' ag_live_affect_`x'
 	}

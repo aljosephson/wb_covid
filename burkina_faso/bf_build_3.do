@@ -213,6 +213,7 @@
 		rename 		s06q26__`x' ag_live_chg_`x'
 	}
 	rename 			s06q27 ag_live_loc
+	rename 			s06q14 ag_crop
 	
 * drop 55 variables re main type of crop grown
 	drop 			s06q16_*

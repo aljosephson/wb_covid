@@ -210,6 +210,7 @@
 	forval 			x = 1/7 {
 	    rename 		s05q03a_1__`x' ac_medserv_type_`x'
 	}
+	drop 			s05q03a_1__96
 	forval 			x = 1/11 {
 		rename 		s05q03b__`x' ac_medserv_need_why_`x'
 	}
@@ -261,6 +262,7 @@
 	replace 		ac_drink_why = 11 if ac_drink_why == 4 
 	replace 		ac_drink_why = 12 if ac_drink_why == 5
 	replace 		ac_drink_why = . if ac_drink_why == 6
+	drop 			s05q04_2_autre
 	
 	rename			s05q04_3 ac_water
 	rename	 		s05q04_4 ac_water_why
@@ -272,12 +274,14 @@
 	replace 		ac_water_why = 6 if ac_water_why == 5
 	replace 		ac_water_why = 5 if ac_water_why == 4
 	replace 		ac_water_why = 16 if ac_water_why == 10
+	drop 			s05q04_4_autre 
 	
 	rename 			s05q04_5 ac_soap 
 	rename 			s05q04_6 ac_soap_why
 	replace 		ac_soap_why = 6 if ac_soap_why == 9
 	replace 		ac_soap_why = 9 if ac_soap_why == 7
 	rename 			s05q04_7 bh_freq_wash
+	drop 			s05q04_6_autre
 	
 * credit
 	rename 			s05bq01 ac_cr_loan
@@ -289,25 +293,31 @@
 	rename 			s05bq02__6 ac_cr_lend_4
 	rename 			s05bq02__7 ac_cr_lend_13
 	rename 			s05bq02__8 ac_cr_lend_14
+	drop 			s05bq02__96 s05bq02_autre
 	forval 			x = 1/13 {
 		rename 			s05bq03__`x' ac_cr_why_`x'
 	}
+	drop 			s05bq03__96 s05bq03_autre
 	drop 			s05bq04__*
 	rename 			s05bq05 ac_cr_due
 	rename 			s05bq06 ac_cr_bef
 	forval 			x = 1/13 {
 		rename 			s05bq07__`x' ac_cr_bef_why_`x'
 	}
-	drop 			s05bq08__*
-	
-ANN figure out creidt variables, do we want to drop ac_cr_why* and others from panel cleaning? Make note of it if so...
+	drop 			s05bq07__96 s05bq07_autre
+	rename 			s05bq08__* ac_cr_who_*
+	rename 			s05bq09 ac_cr_worry
+	rename 			s05bq10 ac_cr_miss
+	rename 			s05bq11 ac_cr_delay
 	
 * employment 
 	rename 			s06q01 emp
 	rename 			s06q01a rtrn_emp
 	rename 			s06q02 emp_pre
 	rename 			s06q03 emp_pre_why
-	drop 			s06q03_autre
+	replace 		emp_pre_why = s06q03_1 if emp_pre_why == . & s06q03_1 != .
+	replace 		emp_pre_why = s06q03_2 if emp_pre_why == . & s06q03_2 != .
+	drop 			s06q03_autre s06q03_1* s06q03_2*
 	rename 			s06q03a emp_search
 	rename 			s06q03b emp_search_how
 	replace 		emp_search_how = 6 if emp_search_how == 7
@@ -340,7 +350,8 @@ ANN figure out creidt variables, do we want to drop ac_cr_why* and others from p
 	rename 			s06q04_1 emp_same
 	replace 		emp_same = s06q04_2 if s06q04_2 != .
 	replace 		emp_same = s06q05 if s06q05 != . & emp_same == .
-	drop 			s06q04_2 s06q05
+	replace 		emp_same = s06q04 if s06q04 != . & emp_same == .
+	drop 			s06q04_2 s06q05 s06q04
 	
 	gen 			emp_able = s06q06 if wave == 1
 	replace 		s06q06 = . if wave == 1
@@ -362,11 +373,15 @@ ANN figure out creidt variables, do we want to drop ac_cr_why* and others from p
 	egen 			emp_hrs_cov_num = rowtotal(s06q09__*)
 	drop			s06q09*  				
 
+* nfe
 	rename 			s06q10 bus_emp
 	rename 			s06q10a_1 bus_stat
 	replace 		bus_stat = s06q10a_2 if s06q10a_2 != .
 	replace 		bus_stat = s06q10a_3 if s06q10a_3 != .	
-	drop 			s06q10a_*
+	replace 		bus_stat = s06q10a1 if s06q10a1 != .
+	replace 		bus_stat = s06q10a2 if s06q10a2 != .
+	replace 		bus_stat = s06q10a3 if s06q10a3 != .
+	drop 			s06q10a*
 	rename 			s06q10b bus_closed
 	replace 		bus_closed = 7 if bus_closed == 6
 	drop 			s06q10b_autre
@@ -395,7 +410,7 @@ ANN figure out creidt variables, do we want to drop ac_cr_why* and others from p
 	drop 			s06q13c_autre s06q13c__2
 	
 * agriculture 	
-	rename 			s06q14 farm_emp
+	rename 			s06q14_2 ac_harv_exp
 	gen 			ag_plan = s06q15 if wave == 3
 	replace 		s06q15 = . if wave == 3
 	rename 			s06q15 farm_norm
@@ -439,7 +454,12 @@ ANN figure out creidt variables, do we want to drop ac_cr_why* and others from p
 	replace 		ag_ac_seed_why_6 = 1 if s06q16a == 1
 	drop 			s06q16a s06q16a_autre	
 	
-	drop  			s06a_filtre s06q03b_autre s06c_filtre s06q26_autre 
+	rename 			s06dq01__0 ag_crop_who
+	drop 			s06dq01__1
+	drop  			s06a_filtre s06q03b_autre s06c_filtre s06q26_autre s06dq02 s06dq03
+	
+// ANN you are here - add round 6 sec 6b data, make sure it does not overlap with other wave sec 6s 		
+	
 	
 * FIES
 	rename 			s07q01 fies_4

@@ -435,9 +435,7 @@
 	lab var 			ac_cr_lend_14 "Lender: womens group"
 	lab var 			ac_cr_lend_15 "Lender: adashi/esusu/ajo"
 
-	drop 				ac_cr_why* ac_cr_who* ac_cr_bef_why* ac_cr_bef_who* ///
-						ac_cr_slc_why* ac_cr_slc_who*
-	* NOTE: dropped because very inconsistent across countries - can add back and clean if needed
+	drop 				ac_cr_who* ac_cr_bef_who* ac_cr_att_who* ac_cr_slc_who*  
 	
 	replace 			ac_cr_due = 7 if ac_cr_due == -97
 	lab def 			ac_cr_due 1 "Already Due" 2 "Within One Month" ///

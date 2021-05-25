@@ -169,7 +169,6 @@
 	save			`tempe'	
 
 */	
-	
 
 * ***********************************************************************
 *  5 - merge
@@ -198,9 +197,17 @@
 	replace 		ac_med = 1 if ac_med == 2 | ac_med == 3
 	replace 		ac_med = 2 if ac_med == 4
 	replace 		ac_med = 3 if ac_med == 5
-	
+
 	rename 			s05q03d_1 ac_medserv_why 
 	replace 		ac_medserv_why = 8 if ac_medserv_why == 7 
+		
+	* employment 
+	rename 			s06q04_0 emp_chg_why
+	drop 			s06q04_0_autre
+	replace 		emp_chg_why = 96 if emp_chg_why == 13
+	
+	* agriculture 
+	rename 			s06dq00  ag_crop
 	
 * generate round variables
 	gen				wave = `w'

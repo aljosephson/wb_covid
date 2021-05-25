@@ -596,6 +596,23 @@
 	rename 			s7cq06* ac_cr_bef_worry*
 	rename 			s7cq07* ac_cr_bef_miss*
 	rename 			s7cq08* ac_cr_bef_delay*
+* collapse loans into one variable when possible
+	foreach 		t in cr cr_bef cr_slc {
+		forval 			x = 1/13 {
+			gen 		ac_`t'_why_`x' = .
+			replace 	ac_`t'_why_`x' = 0 if ac_`t'_why_l1_`x' == 0 | ac_`t'_why_l2_`x' == 0
+			replace 	ac_`t'_why_`x' = 1 if ac_`t'_why_l1_`x' == 1 | ac_`t'_why_l2_`x' == 1 
+			drop 		ac_`t'_why_l1_`x' ac_`t'_why_l2_`x'
+		}
+	}
+	foreach 		t in cr cr_bef cr_slc {
+		foreach 	v in miss delay {
+			gen 			ac_`t'_`v' = .
+			replace 		ac_`t'_`v' = 0 if ac_`t'_`v'_l1 == 0 | ac_`t'_`v'_l2 == 0
+			replace 		ac_`t'_`v' = 1 if ac_`t'_`v'_l1 == 1 | ac_`t'_`v'_l2 == 1
+			drop 			ac_`t'_`v'_l1 ac_`t'_`v'_l2
+		}
+	}
 	
 * drop unnecessary variables
 	drop			 BSEQNO DistrictName sec0_endtime	///

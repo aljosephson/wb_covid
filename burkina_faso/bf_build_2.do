@@ -175,7 +175,7 @@
 	drop 			s06q05a_autre 
 	replace 		emp_chg_why = 96 if emp_chg_why == 13
 	
-	* farm_why
+	* farming
 	rename 			s06q16__1 farm_why_1
 	rename 			s06q16__2 farm_why_2
 	rename 			s06q16__3 farm_why_3
@@ -186,6 +186,7 @@
 	rename 			s06q16__9 farm_why_8
 	rename 			s06q16__11 farm_why_7
 	drop 			s06q16__6 s06q16__10 s06q16_autre
+	rename 			s06q14 farm_emp
 	
 	* asst
 	rename 			s06q23 asst_any

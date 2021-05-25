@@ -124,7 +124,7 @@
 	rename 			s05q03e ac_medserv_why
 	replace 		ac_medserv_why = . if ac_medserv_why == 4
 	
-	* farm_why
+	* farming
 	rename 			s06q16__1 farm_why_1
 	rename 			s06q16__2 farm_why_2
 	rename 			s06q16__3 farm_why_3
@@ -133,6 +133,7 @@
 	rename 			s06q16__6 farm_why_6
 	rename 			s06q16__7 farm_why_8
 	drop  			s06q16_autre 
+	rename 			s06q14 farm_emp
 	
 	* education 
 	rename 			s05q05 sch_child

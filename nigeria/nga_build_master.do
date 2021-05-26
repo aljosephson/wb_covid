@@ -609,7 +609,7 @@
 	replace 		harv_sell_norm = . if harv_sell_norm > 2
 	drop 			crop_filter2
 	rename 			s6aq11 harv_sell_chg
-	rename 			s6aq12 harv_sell_plan
+	rename 			s6aq12 harv_sell
 	rename 			s6aq1b ag_crop_who
 	rename 			s6q2a ag_use_infert
 	rename 			s6q2b ag_use_orfert

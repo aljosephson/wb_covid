@@ -14,9 +14,7 @@
 	* cleaned country data
 
 * TO DO:
-	* finish cleaning credit variables
-	* add more notes and annotation
-	* search "NOTE" and review
+	* add new rounds
 	
 	
 * **********************************************************************
@@ -461,9 +459,6 @@
 	replace 			ac_cr_att = 0 if ac_cr_att == 2
 	replace 			ac_cr_slc = 0 if ac_cr_slc == 2	
 	
-***NOTE: Uganda asks credit by loan number, need to clean to match format of other countries
-
-
 * negate questions (unable to access) 
  /* note: cannot negate preventative care and credit (only mwi & nga ask if needed loan, 
 	others just ask if took out loan, not if able to access loan) */

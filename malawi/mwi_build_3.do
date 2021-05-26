@@ -291,13 +291,23 @@
 	forval 			x = 1/8 {
 	    rename 		s6dq4__`x' ac_cr_lend_`x'
 	}
-	rename 			s6dq5 ac_cr_why_main
+	forval 			x = 1/12 {
+		gen 			ac_cr_why_`x' = 0
+		replace 		ac_cr_why_`x' =	. if s6dq5 == .
+		replace 		ac_cr_why_`x' = 1 if s6dq5 == `x'
+	}
+	drop 			s6dq5
 	rename 			s6dq6__0 ac_cr_who_1
 	rename 			s6dq6__1 ac_cr_who_2
 	rename 			s6dq7 ac_cr_due
 	rename 			s6dq8 ac_cr_worry
-	rename 			s6dq9 ac_cr_bef
-	rename 			s6dq10 ac_cr_bef_why
+	rename 			s6dq9 ac_cr_bef	
+	forval 			x = 1/12 {
+		gen 			ac_cr_bef_why_`x' = 0
+		replace 		ac_cr_bef_why_`x' =	. if s6dq10 == .
+		replace 		ac_cr_bef_why_`x' = 1 if s6dq10 == `x'
+	}
+	drop 			s6dq10
 	rename 			s6dq11 ac_cr_bef_worry
 	rename 			s6dq12 ac_cr_miss
 	rename 			s6dq13 ac_cr_delay	

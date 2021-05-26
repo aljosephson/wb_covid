@@ -164,6 +164,7 @@
 	rename 			s04bq02 cov_vac
 	rename 			s04bq03 cov_vac_no_why
 	rename 			s04bq04 cov_vac_dk_why
+	drop 			s04bq03_autre s04bq04_autre
 	
 * access
 	gen 			ac_med_need = 0 if ac_med == 3
@@ -317,7 +318,7 @@
 	rename 			s06q03 emp_pre_why
 	replace 		emp_pre_why = s06q03_1 if emp_pre_why == . & s06q03_1 != .
 	replace 		emp_pre_why = s06q03_2 if emp_pre_why == . & s06q03_2 != .
-	drop 			s06q03_autre s06q03_1* s06q03_2*
+	drop 			s06q03_autre s06q03_1* s06q03_2* s06d_filtre
 	rename 			s06q03a emp_search
 	rename 			s06q03b emp_search_how
 	replace 		emp_search_how = 6 if emp_search_how == 7
@@ -410,7 +411,7 @@
 	drop 			s06q13c_autre s06q13c__2
 	
 * agriculture 	
-	rename 			s06q14_2 ac_harv_exp
+	rename 			s06q14_2 ag_harv_exp
 	gen 			ag_plan = s06q15 if wave == 3
 	replace 		s06q15 = . if wave == 3
 	rename 			s06q15 farm_norm
@@ -454,12 +455,71 @@
 	replace 		ag_ac_seed_why_6 = 1 if s06q16a == 1
 	drop 			s06q16a s06q16a_autre	
 	
+	* round 6 ag vars
 	rename 			s06dq01__0 ag_crop_who
 	drop 			s06dq01__1
 	drop  			s06a_filtre s06q03b_autre s06c_filtre s06q26_autre s06dq02 s06dq03
+	rename 			s06dq04 ag_main
+	drop	 		s06dq04_autre
+	gen 			temp = cond(s06dq05b == 2, 10000, cond(s06dq05b == 1,1,.))
+	gen 			ag_main_area = s06dq05a * temp
+	drop 			temp s06dq05a s06dq05b 
+	lab var 		ag_main_area "Area planted in main crop - Hectares"
+	rename 			s06dq06 ag_main_harv
+	rename 			s06dq08 ag_main_sell
+	gen 			ag_main_sell_per = s06dq09 / s06dq07a if ag_main_sell == 1
+	drop 			s06dq07* s06dq09
+	rename 			s06dq10 ag_main_rev
+	rename 			s06dq11 harv_sell_rev
+	rename 			s06dq12 ag_main_sell_plan
+	rename 			s06dq14 ag_main_harv_comp
+	drop 			s06dq15*
 	
-// ANN you are here - add round 6 sec 6b data, make sure it does not overlap with other wave sec 6s 		
+	rename 			s06dq16a ag_use_infert
+	rename 			s06dq16b ag_use_orfert
+	rename 			s06dq16c ag_use_pest
+	rename 			s06dq16d ag_use_lab
+	rename 			s06dq16e ag_use_anim
+	forval 			x = 1/6 {
+	    rename 		s06dq17__`x' ag_ac_infert_why_`x'
+	}
 	
+	forval 			x = 1/6 {
+	    rename 		s06dq18__`x' ag_ac_orfert_why_`x'
+	}
+	
+	forval 			x = 1/6 {
+	    rename 		s06dq19__`x' ag_ac_pest_why_`x'
+	}
+	drop 			s06dq17_* s06dq18_* s06dq19_*	
+ 		
+	rename 			s06dq20__6 ag_ac_lab_why_5
+	rename 			s06dq21__6 ag_ac_anim_why_6
+	drop 			s06dq20_* s06dq21_*
+	
+* livestock 
+	replace 		ag_live = s06dbq01 if ag_live == . & s06dbq01 != . 
+	drop	 		s06dbq01 
+	forval 			x = 1/4 {
+		rename 			s06dbq02__`x' ag_live_`x'
+	}
+	rename 			s06dbq02__5 ag_live_7
+	rename 			s06dbq03 ag_live_affect
+	rename 			s06dbq04__1 ag_live_affect_1
+	rename 			s06dbq04__2 ag_live_affect_3
+	rename 			s06dbq04__3 ag_live_affect_4
+	rename 			s06dbq04__4 ag_live_affect_7
+	drop 			s06dbq04__96 s06dbq04_autre
+	rename 			s06dbq06 ag_live_sell
+	rename 			s06dbq07 ag_live_sell_chg
+	rename 			s06dbq08 ag_live_sell_want
+	rename 			s06dbq09 ag_live_sell_why
+	rename 			s06dbq10 ag_live_sell_able
+	rename 			s06dbq11 ag_live_sell_cond
+	rename 			s06dbq12 ag_live_sell_pr
+	forval 			x = 1/6{
+	    rename 		s06dbq13__`x' ag_live_sell_nowhy_`x'
+	}
 	
 * FIES
 	rename 			s07q01 fies_4
@@ -493,6 +553,7 @@
 	rename 			s11q05 move_why
 	rename 			s11q06 hh_needs_met
 	drop 			s11q*_autre
+	
 	
 * **********************************************************************
 * 4 - end matter, clean up to save

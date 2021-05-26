@@ -777,8 +777,9 @@
 	rename			s13q12__7 ag_live_chg_7
 	rename			s13q13 harv_sell_need
 	rename			s13q14 harv_sell
+	replace 		harv_sell = s6qe1 if harv_sell == . & s6qe1  != .
+	drop 			s6qe1 
 	rename 			s13q15 ag_price	
-	rename			s6qe1 harv_sell_plan
 	forval 			x = 1/12 {
 		rename 		s6qe2__`x' ag_sold_`x'
 	}

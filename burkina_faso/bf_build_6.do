@@ -208,6 +208,7 @@
 	
 	* agriculture 
 	rename 			s06dq00  ag_crop
+	rename 			s06dq13 harv_sell_rev_exp
 	
 * generate round variables
 	gen				wave = `w'

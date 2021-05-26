@@ -254,8 +254,10 @@
 	rename 			s6dq3 ac_cr_lend_att
 	forval 			x = 1/12 {
 		rename 		s6dq4__`x' ac_cr_why_`x'
+		replace 	ac_cr_why_`x' = 0 if ac_cr_why_`x' == . & s6dq5 == 0 
+		replace 	ac_cr_why_`x' = 1 if s6dq5 == `x' 
 	}
-	rename 			s6dq5 ac_cr_why_main
+	drop 			s6dq5 
 	rename 			s6dq6__0 ac_cr_who_1
 	rename 			s6dq6__1 ac_cr_who_2
 	rename 			s6dq6__2 ac_cr_who_3
@@ -265,9 +267,10 @@
 	rename 			s6dq9 ac_cr_worry
 	rename 			s6dq10 ac_cr_bef
 	rename 			s6dq10a ac_cr_prev_repay
-	forval 			x = 1/13 {
-	    gen 		ac_cr_bef_why_`x' = .
-		replace 	ac_cr_bef_why_`x' = 1 if s6dq11 == `x'
+	forval 			x = 1/12 {
+		gen 			ac_cr_bef_why_`x' = 0
+		replace 		ac_cr_bef_why_`x' =	. if s6dq11 == .
+		replace 		ac_cr_bef_why_`x' = 1 if s6dq11 == `x'
 	}
 	drop 			s6dq11
 	rename 			s6dq12__0 ac_cr_bef_who_1

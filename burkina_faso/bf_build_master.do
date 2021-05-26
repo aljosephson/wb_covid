@@ -13,6 +13,7 @@
 
 * TO DO:
 	* CONSUMPTION AGGREGATES FROM TALIP
+	* add and check 9 when we gen questionnaire
 
 		
 * **********************************************************************
@@ -20,7 +21,7 @@
 * **********************************************************************
 
 * define list of waves
-	global 			waves "1" "2" "3" "4" "5" "6"
+	global 			waves "1" "2" "3" "4" "5" "6" "7" "8" 
 	
 * define 
 	global	root	=	"$data/burkina_faso/raw"
@@ -131,6 +132,36 @@
 * ***********************************************************************
 * 3 - clean bukina faso panel
 * ***********************************************************************	
+
+* mental health 
+	forval 			x = 1/8 {
+		rename 		s02bq0`x' mh_`x'
+	}
+	
+* early childhood development 
+	rename 			s02cq02 ecd_pcg
+	rename 			s02cq03 ecd_pcg_mem
+	rename 			s02cq03a ecd_pcg_gen
+	rename 			s02cq04 ecd_pcg_id
+	rename 			s02cq05 ecd_pcg_relate
+	rename 			s02cq06 ecd_play
+	rename 			s02cq07 ecd_read
+	rename 			s02cq08 ecd_story
+	rename 			s02cq09 ecd_song
+	rename 			s02cq10 ecd_out
+	rename 			s02cq11 ecd_ncd
+	rename 			s02cq12 ecd_hv_bks
+	rename 			s02cq13 ecd_num_bks
+	rename 			s02cq14 ecd_ed_1
+	rename 			s02cq15 ecd_ed_2
+	rename 			s02cq16 ecd_ed_3
+	rename 			s02cq17 ecd_ed_4
+	rename 			s02cq18 ecd_ed_5
+	rename 			s02cq19 ecd_ed_6
+	rename 			s02cq20 ecd_ed_7
+	rename 			s02cq21 ecd_ed_8
+	rename 			s02cq22 ecd_ed_pre
+	drop 			s02cq22_autre
 	
 * administrative variables 
 	rename 			milieu sector
@@ -212,6 +243,9 @@
 	    rename 		s05q03a_1__`x' ac_medserv_type_`x'
 	}
 	drop 			s05q03a_1__96
+
+// ANN YOU ARE HERE ADD ROUND 8 WHY BY TYPE AND ADD TO DATA DIC
+
 	forval 			x = 1/11 {
 		rename 		s05q03b__`x' ac_medserv_need_why_`x'
 	}

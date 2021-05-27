@@ -499,18 +499,19 @@
 	rename 			ag3_crops_reas_8 ag_nocrop_7	
 	rename 			ag3_crops_reas_9 ag_nocrop_11
 	rename 			ag3_crops_reas__96 ag_nocrop_9 
-
-	generate		ag_ac_seed_why_1 = 1 if ag5_crops_reas_seeds == 1
-	generate		ag_ac_seed_why_2 = 1 if ag5_crops_reas_seeds == 2 
-	generate		ag_ac_seed_why_3 = 1 if ag5_crops_reas_seeds == 3
-	generate		ag_ac_seed_why_4 = 1 if ag5_crops_reas_seeds == 4
-	generate		ag_ac_seed_why_5 = 1 if ag5_crops_reas_seeds == 5
-	generate		ag_ac_seed_why_6 = 1 if ag5_crops_reas_seeds == 6
+	
+	forval 			x = 1/6 {
+	    gen 		ag_ac_seed_why_`x' = .
+		replace 	ag_ac_seed_why_`x' = 0 if ag5_crops_reas_seeds != .	
+		replace 	ag_ac_seed_why_`x' = 1 if ag5_crops_reas_seeds == `x'
+	}
 
 	forval 			x = 1/6 {
 	    gen 		ag_ac_fert_why_`x' = .
+		replace 	ag_ac_fert_why_`x' = 0 if ag4_crops_reas_fert != .	
 		replace 	ag_ac_fert_why_`x' = 1 if ag4_crops_reas_fert == `x'
 	}
+
 	drop			ag4_crops_reas_fert
 	rename 			ag6_ext_need ag_ext_need 
 	rename 			ag7_ext_receive ag_ext

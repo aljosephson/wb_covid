@@ -123,6 +123,7 @@
 	
 	rename 			s05q03e ac_medserv_why
 	replace 		ac_medserv_why = . if ac_medserv_why == 4
+	rename 			s05q03d ac_medserv_oth
 	
 	* farming
 	rename 			s06q16__1 farm_why_1

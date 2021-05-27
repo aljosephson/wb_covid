@@ -208,7 +208,6 @@
 	replace			relate_hoh = s2q9 if relate_hoh == .
 
 * shock variables	
- * need to make shock variables match uganda
 	rename 			shock_8 shock_15 
 	rename 			shock_13 shock_3
 	rename 			shock_95 shock_14
@@ -757,11 +756,16 @@
 	rename 			s13q9 ag_ext
 	rename			s13q10 ag_live
 	replace 		ag_live = s6qf1 if ag_live == . & s6qf1 != .
-	gen 			ag_live_1 = 1 if s6qf2__1 == 1 | s6qf2__2 == 1
-	gen 			ag_live_2 = 1 if s6qf2__3 == 1 | s6qf2__4 == 1 | s6qf2__6 == 1
-	gen 			ag_live_3 = 1 if s6qf2__7 == 1 | s6qf2__8 == 1 | s6qf2__9 == 1 ///
-						| s6qf2__10 == 1 | s6qf2__11 == 1 
-	gen 			ag_live_7 = 1 if s6qf2__5 == 1 
+	gen 			ag_live_1 = 0 if s6qf2__1 == 0 | s6qf2__2 == 0
+	replace 		ag_live_1 = 1 if s6qf2__1 == 1 | s6qf2__2 == 1
+	gen 			ag_live_2 = 0 if s6qf2__3 == 0 | s6qf2__4 == 0 | s6qf2__6 == 0
+	replace 		ag_live_2 = 1 if s6qf2__3 == 1 | s6qf2__4 == 1 | s6qf2__6 == 1
+	gen 			ag_live_3 = 0 if s6qf2__7 == 0 | s6qf2__8 == 0 | s6qf2__9 == 0 ///
+						| s6qf2__10 == 0 | s6qf2__11 == 0 
+	replace			ag_live_3 = 1 if s6qf2__7 == 1 | s6qf2__8 == 1 | s6qf2__9 == 1 ///
+						| s6qf2__10 == 1 | s6qf2__11 == 1 					
+	gen 			ag_live_7 = 0 if s6qf2__5 == 0
+	replace 		ag_live_7 = 1 if s6qf2__5 == 1 
 	lab var			ag_live_1 "Large ruminants" 
 	lab var			ag_live_2 "Small ruminants" 
 	lab var			ag_live_3 "Poultry/birds"
@@ -778,6 +782,7 @@
 	rename			s13q13 harv_sell_need
 	rename			s13q14 harv_sell
 	replace 		harv_sell = s6qe1 if harv_sell == . & s6qe1  != .
+	replace 		harv_sell = . if harv_sell == 3
 	drop 			s6qe1 
 	rename 			s13q15 ag_price	
 	forval 			x = 1/12 {
@@ -807,6 +812,8 @@
 	}
 	rename 			s6qf8 ag_live_sell_want
 	rename 			s6qf9 ag_live_sell_able
+	replace 		ag_live_sell_able = 1 if ag_live_sell_able == 2
+	replace 		ag_live_sell_able = 2 if ag_live_sell_able == 3
 	forval 			x = 1/4 {
 		rename 			s6qf10__`x' ag_live_sell_nowhy_`x'
 	}

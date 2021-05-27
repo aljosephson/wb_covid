@@ -85,9 +85,7 @@
 		}
 
 	gen				shock_14 = 0 if s9q01 == 2 & shocks__id == 96
-	replace			shock_14 = 1 if s9q02 == 3 & shocks__id == 96
-	replace			shock_14 = 2 if s9q02 == 2 & shocks__id == 96
-	replace			shock_14 = 3 if s9q02 == 1 & shocks__id == 96
+	replace			shock_14 = 1 if s9q01 == 1 & shocks__id == 96
 
 * format shock variables
 	lab var			shock_1 "Death or disability of an adult working member of the household"
@@ -104,12 +102,6 @@
 	lab var			shock_12 "Increase in price of major food items consumed"
 	lab var			shock_13 "Floods"
 	lab var			shock_14 "Other shock"
-
-	lab def			shock 0 "None" 1 "Severe" 2 "More Severe" 3 "Most Severe"
-
-	foreach var of varlist shock_1-shock_14 {
-		lab val		`var' shock
-	}
 
 * rename cope variables
 	rename			s9q03__1 cope_1

@@ -169,6 +169,7 @@
 	
 	rename 			s05q03e ac_medserv_why
 	replace 		ac_medserv_why = . if ac_medserv_why == 4
+	rename 			s05q03d ac_medserv_oth
 	
 	* employment 
 	rename 			s06q05a emp_chg_why

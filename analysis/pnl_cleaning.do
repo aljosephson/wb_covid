@@ -185,6 +185,7 @@
 * **********************************************************************
 	
 * know 
+	replace 			know = 0 if know == 2
 	forval 				x = 1/10 {
 		replace 		know_`x' = 0 if know_`x' == 2
 		lab val 		know_`x' yesno
@@ -263,6 +264,8 @@
 	replace 			ac_med = 0 if ac_med == 1 & country == 4
 	replace 			ac_med = 1 if ac_med == 2 & country == 4
 	replace 			ac_med_why = . if ac_med_why < 0
+	replace 			ac_med_need = 0 if ac_med_need == 2
+	
 	* note "decrease in reg income" and "no money" both coded as 6
  	lab def 			ac_med_why 1 "Shops have run out of stock" ///
 							2 "Local markets not operating / closed" ///
@@ -368,9 +371,9 @@
 	
 * access to drinking water
 	replace 			ac_drink = . if ac_drink == 3 & country == 2
-	replace 			ac_drink = 0 if ac_drink == 1 & (country == 2 | country == 4)
-	replace 			ac_drink = 1 if ac_drink == 2 & (country == 2 | country == 4)
-	replace 			ac_drink = 0 if ac_drink == 2 & country == 3
+	replace 			ac_drink = 0 if ac_drink == 1 & (country == 2 | country == 4 | country == 5)
+	replace 			ac_drink = 1 if ac_drink == 2 & (country == 2 | country == 4 | country == 5)
+	replace 			ac_drink = 0 if ac_drink == 2 & country == 3 
 
 	replace 			ac_drink_why = . if (ac_drink_why == -96 | ac_drink_why > 94)
 	lab def 			ac_drink_why 1 "water supply not available" 2 "water supply reduced" ///
@@ -532,16 +535,17 @@
 	replace				concern_2 = 1 if concern_2 == 2
 	lab val				concern_2 yesno
  
+	replace 			tot_inc_chg = . if tot_inc_chg == -98 | tot_inc_chg == -99
 	loc inc				farm_inc bus_inc wage_inc isp_inc pen_inc gov_inc ngo_inc oth_inc asst_inc
 	foreach 			var of varlist `inc' {
 		replace			`var' = 0 if `var' == 2 | `var' == -98
 		replace 		`var' = . if `var' == -99
 		lab val			`var' yesno
 	}
-			
-	gen 				other_inc = 1 if isp_inc == 1 | pen_inc == 1 | gov_inc == 1 | ///
+	gen 				other_inc = 0 if isp_inc == 0 | pen_inc == 0 | gov_inc == 0 | ///
+							ngo_inc == 0 | oth_inc == 0 | asst_inc == 0 		
+	replace				other_inc = 1 if isp_inc == 1 | pen_inc == 1 | gov_inc == 1 | ///
 							ngo_inc == 1 | oth_inc == 1 | asst_inc == 1 
-	replace 			other_inc = 0 if other_inc == . 
 	lab var 			other_inc "other income sources (isp, pen, gov, ngo, oth, asst)"
 	lab val 			other_inc  yesno
 	
@@ -570,9 +574,11 @@
 	gen 				remit_chg = 1 if rem_dom_chg == 1 | rem_for_chg == 1 
 	replace 			remit_chg = 0 if remit_chg == .
 	lab var 			remit_chg "change in remittances (foreign, domestic)"
-	gen 				other_chg = 1 if isp_chg == 1 | pen_chg == 1 | ngo_chg == 1 | ///
-						gov_chg == 1 | oth_chg == 1 | asst_chg == 1 
-	replace				other_chg = 0 if other_chg == .
+	
+	gen 				other_chg = 0 if isp_chg == 0 | pen_chg == 0 | ngo_chg == 0 | ///
+						gov_chg == 0 | oth_chg == 0 | asst_chg == 0 
+	replace 				other_chg = 1 if isp_chg == 1 | pen_chg == 1 | ngo_chg == 1 | ///
+						gov_chg == 1 | oth_chg == 1 | asst_chg == 1 				
 	lab var 			other_chg "change in other income sources (isp, pen, gov, ngo, oth, asst)"	
 	
 	gen					farm_dwn = 1 if farm_chg == -1
@@ -643,9 +649,8 @@
 	
 	gen 				dwn_percent = dwn_count / 4
 	label var 			dwn_percent "percent of income sources which had losses"
-	
-	
-	gen					dwn = 1 if dwn_count != 0 | dwn_count != . 
+
+	gen					dwn = 1 if dwn_count != 0 & dwn_count != . 
 	replace 			dwn = 0 if dwn_count == 0 
 	lab var 			dwn "=1 if household experience any type of income loss"
 		
@@ -685,6 +690,7 @@
 * 7 - clean education questions
 * **********************************************************************
  	
+	replace 			sch_att = 0 if sch_att == 2
 	replace				edu_cont = 0 if edu_cont == 2
 	lab val				edu_cont yesno
  	
@@ -725,23 +731,37 @@
 	lab var				edu_16 "Continued to visit the Daara"
 	lab var				edu_17 "Resumed school"
 
-	
+
 * **********************************************************************
 * 8 - clean agriculture and livestock variables
 * **********************************************************************
 
 	replace 			ag_crop = 0 if ag_crop == 2 | ag_crop == 3
 	replace 			ag_crop = . if ag_crop < 0
+	lab val 			ag_crop yesno
 	
-	replace 			ag_live = 0 if ag_live == 2
-	lab val 			ag_crop ag_live yesno
+	replace 			ag_live_sell = . if ag_live_sell == 97
+	replace 			ag_live_sell_chg = . if ag_live_sell_chg == 98 | ag_live_sell_chg == -98
+	replace 			ag_live_sell_pr = . if ag_live_sell_pr == 98
+	replace 			harv_sell = . if harv_sell == 3
+	replace 			harv_sell_rev = . if harv_sell_rev == 99
+	replace 			ag_ext = . if ag_ext < 0
+	replace 			ag_ext_need = . if ag_ext_need < 0
+	replace 			ag_plan = . if ag_plan < 0
+	
+	foreach var in 		ag_live ag_live_sell ag_live_sell_able ag_live_affect ag_live_sell_want ///
+							harv_cov harv_sell ag_ext ag_ext_need ag_plan {
+		replace 			`var' = 0 if `var' == 2
+		lab val 			`var' yesno
+	}
 	
 	* ag_chg invert ethiopia, change other for consistency
 		replace 		ag_chg = . if country == 1 & (ag_chg < 0 | ag_chg == 2)
 		replace 		ag_chg = 0 if country == 1 & ag_chg == 1
 		replace 		ag_chg = 1 if country == 1 & ag_chg == 3
-		replace 		ag_chg = 0 if (country == 3 | country == 4) & ag_chg == 3
-		replace			ag_chg = . if (country == 3 | country == 4) & ag_chg == 2
+		replace 		ag_chg = 0 if (country == 3 | country == 4 | country == 5) & ag_chg == 3
+		replace			ag_chg = . if (country == 3 | country == 4 | country == 5) & ag_chg == 2
+		lab val 		ag_chg yesno
 	
 	
 * **********************************************************************
@@ -776,6 +796,7 @@
 		replace 			`var' = 0 if `var' == 2
 		replace 			`var'= . if `var '< 0
 	}
+	replace 			bus_emp = . if bus_emp > 97
 	
 	replace 			emp_chg_why = 96 if emp_chg_why == -96
 	replace 			emp_chg_why = 96 if emp_chg_why == 13 & country == 2
@@ -824,7 +845,8 @@
 							14 "Post/Update CV on professional social media sites" ///
 							96 "Other"
 	lab val 			emp_search_how emp_search_how
-		
+	
+	replace 			emp_act = . if emp_act == -99
 	lab def 			emp_act -96 "Other" 1 "Agriculture" 2 "Industry/manufacturing" ///
 							3 "Wholesale/retail" 4 "Transportation services" ///
 							5 "Restaurants/hotels" 6 "Public Administration" ///
@@ -841,6 +863,7 @@
 						7 "ILLNESS IN THE HOUSEHOLD" 8 "NEED TO TAKE CARE OF A FAMILY MEMBER" ///
 						9 "SEASONAL CLOSURE" 10 "VACATION", replace
 	lab val 		bus_closed clsd
+	
 	
 * **********************************************************************
 * 10 - shocks 

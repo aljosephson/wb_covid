@@ -194,9 +194,9 @@
 * clean variables inconsistent with other rounds
 	* ac_med
 	rename 			s05q01a ac_med	
-	replace 		ac_med = 1 if ac_med == 2 | ac_med == 3
-	replace 		ac_med = 2 if ac_med == 4
-	replace 		ac_med = 3 if ac_med == 5
+	replace 		ac_med = 1 if ac_med == 2 | ac_med == 3 | ac_med == 4
+	replace 		ac_med = 2 if ac_med == 5
+	replace 		ac_med = 3 if ac_med == 6 
 
 	rename 			s05q03d_1 ac_medserv_why 
 	replace 		ac_medserv_why = 8 if ac_medserv_why == 7 

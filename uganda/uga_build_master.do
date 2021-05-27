@@ -323,8 +323,10 @@
 	rename			s5aq22__6 ag_ac_seed_why_6
 	forval 			x = 1/6 {
 	    gen 		ag_ac_fert_why_`x' = .
+		replace 	ag_ac_fert_why_`x' = 0 if s5aq23 != .
 		replace 	ag_ac_fert_why_`x' = 1 if s5aq23 == `x'
 		gen 		ag_ac_oth_why_`x' = .
+		replace 	ag_ac_oth_why_`x' = 0 if s5aq24 != .
 		replace 	ag_ac_oth_why_`x' = 1 if s5aq24 == `x'
 	}
 	drop			s5aq23 s5aq24 
@@ -369,9 +371,12 @@
 	rename 			s5bq07 harv_nohire_why
 	
 * rename livestock
-	gen 			ag_live_1 = 1 if s5cq02__1 == 1 | s5cq02__2 == 1
-	gen 			ag_live_2 = 1 if s5cq02__3 == 1 | s5cq02__4 == 1	
-	gen 			ag_live_3 = 1 if s5cq02__5 == 1 | s5cq02__6 == 1
+	gen 			ag_live_1 = 0 if s5cq02__1 == 0 | s5cq02__2 == 0
+	replace 		ag_live_1 = 1 if s5cq02__1 == 1 | s5cq02__2 == 1
+	gen 			ag_live_2 = 0 if s5cq02__3 == 0 | s5cq02__4 == 0	
+	replace 		ag_live_2 = 1 if s5cq02__3 == 1 | s5cq02__4 == 1	
+	gen 			ag_live_3 = 0 if s5cq02__5 == 0 | s5cq02__6 == 0
+	replace 		ag_live_3 = 1 if s5cq02__5 == 1 | s5cq02__6 == 1
 	rename 			s5cq02__8 ag_live_4
 	rename 			s5cq02__7 ag_live_7
 	lab var			ag_live_1 "Large ruminants" 
@@ -566,8 +571,10 @@
 	rename 			s7aq06* ac_cr_slc_worry*
 	rename 			s7aq07* ac_cr_slc_miss*
 	rename 			s7aq08* ac_cr_slc_delay*
+ 
  * since march
 	rename 			s7bq01 ac_cr_loan
+	replace 		ac_cr_loan = 0 if ac_cr_loan == .
 	rename 			s7bq02* ac_cr_lend*
 	forval 			x = 1/13 {
 		rename 		s7bq03__`x'_* ac_cr_why_*_`x'
@@ -581,6 +588,7 @@
 	rename 			s7bq06* ac_cr_worry*
 	rename 			s7bq07* ac_cr_miss*
 	rename 			s7bq08* ac_cr_delay*
+ 
  * before march
 	rename 			s7cq01 ac_cr_bef
 	rename 			s7cq02* ac_cr_bef_lend*
@@ -596,6 +604,7 @@
 	rename 			s7cq06* ac_cr_bef_worry*
 	rename 			s7cq07* ac_cr_bef_miss*
 	rename 			s7cq08* ac_cr_bef_delay*
+
 * collapse loans into one variable when possible
 	foreach 		t in cr cr_bef cr_slc {
 		forval 			x = 1/13 {
@@ -608,7 +617,7 @@
 	foreach 		t in cr cr_bef cr_slc {
 		foreach 	v in miss delay {
 			gen 			ac_`t'_`v' = .
-			replace 		ac_`t'_`v' = 0 if ac_`t'_`v'_l1 == 0 | ac_`t'_`v'_l2 == 0
+			replace 		ac_`t'_`v' = 0 if ac_`t'_`v'_l1 == 2 | ac_`t'_`v'_l2 == 2
 			replace 		ac_`t'_`v' = 1 if ac_`t'_`v'_l1 == 1 | ac_`t'_`v'_l2 == 1
 			drop 			ac_`t'_`v'_l1 ac_`t'_`v'_l2
 		}

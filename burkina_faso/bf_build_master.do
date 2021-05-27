@@ -12,8 +12,8 @@
 	* raw Burkina Faso data
 
 * TO DO:
-	* CONSUMPTION AGGREGATES FROM TALIP
-	* add and check 9 when we gen questionnaire
+	* CONSUMPTION AGGREGATES FROM TALIP & FIES FOR ROUNDS
+	* add and check 9 when we get questionnaire
 
 		
 * **********************************************************************
@@ -127,7 +127,7 @@
 	
 	rename 			commune zone_id 
 	
-	drop 			village b40 echantillon resultat weight
+	drop 			village b40 echantillon resultat weight ind_id_EHCVM
 
 * ***********************************************************************
 * 3 - clean bukina faso panel
@@ -240,11 +240,9 @@
 	
 	rename 			s05q03a ac_medserv_need
 	forval 			x = 1/7 {
-	    rename 		s05q03a_1__`x' ac_medserv_type_`x'
+	    rename 		s05q03a_1__`x' ac_medserv_need_type_`x'
 	}
 	drop 			s05q03a_1__96
-
-// ANN YOU ARE HERE ADD ROUND 8 WHY BY TYPE AND ADD TO DATA DIC
 
 	forval 			x = 1/11 {
 		rename 		s05q03b__`x' ac_medserv_need_why_`x'
@@ -252,10 +250,17 @@
 	rename 			s05q03c ac_medserv_cvd
 	rename 			s05q03c_1 ac_medserv_cvd_why
 		
-	rename 			s05q03d ac_medserv_oth
-	gen 			ac_medserv = 0 if ac_medserv_cvd == 0 | ac_medserv_oth == 0
-	replace 		ac_medserv = 1 if ac_medserv_cvd == 1 | ac_medserv_oth == 1
-
+	rename 			s05q03d ac_medserv //for rounds 5+ when var not split by cvd & non-cvd
+	replace 		ac_medserv = 0 if ac_medserv == . & (ac_medserv_cvd == 0 | ac_medserv_oth == 0)
+	replace 		ac_medserv = 1 if ac_medserv == . & (ac_medserv_cvd == 1 | ac_medserv_oth == 1)
+	
+	forval			x = 1/7 { 			
+		rename 			s05q03d_`x'a	ac_medserv_type_`x'
+		rename 			s05q03d_`x'b	ac_medserv_type_`x'_why
+		drop 			s05q03d_`x'b_autre
+	}
+	drop 			s05q03d_96*
+	
 	rename 			s05q04 med_ins
 	drop 			s05q03b_autre s05q03c_1_autre  s05q03e_autre s05q03d_1_autre ///
 						s05q03_3__96 s05q03_6__96 s05q03_6_autre s05q03a_1_autre
@@ -505,6 +510,7 @@
 	drop 			s06dq07* s06dq09
 	rename 			s06dq10 ag_main_rev
 	rename 			s06dq11 harv_sell_rev
+	replace 		harv_sell_rev = . if harv_sell_rev == 99
 	rename 			s06dq12 ag_main_sell_plan
 	rename 			s06dq14 ag_main_harv_comp
 	drop 			s06dq15*
@@ -564,6 +570,10 @@
 	rename 			s07q06 fies_1
 	rename 			s07q07 fies_2
 	rename 			s07q08 fies_3
+	
+	forval 			x = 1/8 {
+		replace 	fies_`x' = . if fies_`x' > 97
+	}
 
 * coping
 	rename 			s09q03__1 cope_1

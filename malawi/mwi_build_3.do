@@ -176,7 +176,8 @@
 
 * generate shock variables
 	foreach 		i in 5 6 7 8 10 11 12 13 95 {
-		gen				shock_`i' = 1 if s10q1 == 1 & shock_id == `i'
+	    gen				shock_`i' = 0 if s10q1 == 2
+		replace			shock_`i' = 1 if s10q1 == 1 & shock_id == `i'
 	}
 
 * collapse to household level	

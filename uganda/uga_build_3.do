@@ -243,7 +243,7 @@
 	
 * load data since march	
 	use 			"$root/wave_0`w'/SEC7B_2.dta", clear
-	
+
 * reshape wide
 	reshape 		wide s7bq*, i(HHID) j(loan_roster)
 	rename 			*201 *_l1

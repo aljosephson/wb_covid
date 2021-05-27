@@ -547,13 +547,12 @@
 						7 "ILLNESS IN THE HOUSEHOLD" 8 "NEED TO TAKE CARE OF A FAMILY MEMBER" ///
 						9 "SEASONAL CLOSURE" 10 "VACATION" 
 	lab val 		bus_closed clsd
-	rename 			s6q15__1 bus_chal_1	
-	rename 			s6q15__2 bus_chal_2 
-	rename 			s6q15__3 bus_chal_3 
-	rename 			s6q15__4 bus_chal_4 
-	rename 			s6q15__5 bus_chal_5 
-	rename 			s6q15__6 bus_chal_6 
-	rename 			s6q15__96 bus_chal_7 	
+	forval 			x = 1/6 {
+	  rename 			s6q15__`x' bus_chal_`x'
+	  replace 			bus_chal_`x' = 0 if bus_chal_`x' == 2
+	}
+	rename 			s6q15__96 bus_chal_7 
+	replace 		bus_chal_7 = 0 if bus_chal_7 == 2
 	rename 			s6q15b bus_num
 	rename 			s6q15b__1 bus_beh_1 
 	rename 			s6q15b__2 bus_beh_2 
@@ -608,7 +607,7 @@
 	replace 		harv_sell_norm = crop_filter2 if harv_sell_norm == .
 	replace 		harv_sell_norm = . if harv_sell_norm > 2
 	drop 			crop_filter2
-	rename 			s6aq11 harv_sell_chg
+	rename 			s6aq11 harv_sell_rev_exp
 	rename 			s6aq12 harv_sell
 	rename 			s6aq1b ag_crop_who
 	rename 			s6q2a ag_use_infert

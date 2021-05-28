@@ -676,8 +676,6 @@
 
 * final clean 
 	compress	
-	describe
-	summarize 
 	rename 			household_id hhid_eth 
 	label 			var hhid_eth "household id unique - ethiopia"
 	

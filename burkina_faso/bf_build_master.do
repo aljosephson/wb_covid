@@ -605,8 +605,6 @@
 
 * final clean 
 	compress	
-	describe
-	summarize 
 	rename 			hhid hhid_bf 
 	label 			var hhid_bf "household id unique - Burkina Faso"
 	

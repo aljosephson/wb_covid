@@ -27,7 +27,7 @@
 * **********************************************************************
 
 * define list of waves
-	global 			waves "1" "2" "3" "4"
+	global 			waves "1" "2" "3" "4" "5" "6" "7" "8"
 	
 * define
 	global	root	=	"$data/malawi/raw"
@@ -114,168 +114,17 @@
 * create country variables
 	gen				country = 2
 	
+
 * ***********************************************************************
 * 3 - clean malawi panel
 * ***********************************************************************	
 
-* drop meta data
-	drop			interview__key nbrbst s12q2 s12q3__0 s12q3__1 s12q3__2 ///
-						s12q3__3 s12q3__4 s12q3__5 s12q3__6 s12q3__7 s12q4__0 ///
-						s12q4__1 s12q4__2 s12q4__3 s12q5 s12q6 s12q7 s12q8 ///
-						s12q9 s12q10 s12q10_os s12q11 s12q12 s12q13 s12q14
-
-* income
-	rename 			s7q11 farm_inc
-	label 			var farm_inc "income from farming, fishing, livestock in last 12 months"
-	rename			s7q21 farm_chg
-	label 			var farm_chg "change in income from farming since covid"
-	rename 			s7q12 bus_inc
-	label 			var bus_inc "income from non-farm family business in last 12 months"
-	rename			s7q22 bus_chg
-	label 			var bus_chg "change in income from non-farm family business since covid"
-	rename 			s7q13 wage_inc
-	label 			var wage_inc "income from wage employment in last 12 months"
-	rename			s7q23 wage_chg
-	label 			var wage_chg "change in income from wage employment since covid"
-	rename 			s7q14 rem_for
-	label 			var rem_for "income from remittances abroad in last 12 months"
-	rename			s7q24 rem_for_chg
-	label 			var rem_for_chg "change in income from remittances abroad since covid"
-	rename 			s7q15 rem_dom
-	label 			var rem_dom "income from remittances domestic in last 12 months"
-	rename			s7q25 rem_dom_chg
-	label 			var rem_dom_chg "change in income from remittances domestic since covid"
-	rename 			s7q16 asst_inc
-	label 			var asst_inc "income from assistance from non-family in last 12 months"
-	rename			s7q26 asst_chg
-	label 			var asst_chg "change in income from assistance from non-family since covid"
-	rename 			s7q17 isp_inc
-	label 			var isp_inc "income from properties, investment in last 12 months"
-	rename			s7q27 isp_chg
-	label 			var isp_chg "change in income from properties, investment since covid"
-	rename 			s7q18 pen_inc
-	label 			var pen_inc "income from pension in last 12 months"
-	rename			s7q28 pen_chg
-	label 			var pen_chg "change in income from pension since covid"
-	rename 			s7q19 gov_inc
-	label 			var gov_inc "income from government assistance in last 12 months"
-	rename			s7q29 gov_chg
-	label 			var gov_chg "change in income from government assistance since covid"
-	rename 			s7q110 ngo_inc
-	label 			var ngo_inc "income from NGO assistance in last 12 months"
-	rename			s7q210 ngo_chg
-	label 			var ngo_chg "change in income from NGO assistance since covid"
-	rename 			s7q196 oth_inc
-	label 			var oth_inc "income from other source in last 12 months"
-	rename			s7q296 oth_chg
-	label 			var oth_chg "change in income from other source since covid"
-	drop 			s7q199
-	*** yes or no response to ``total income'' - unclear what this measures
-	*** omit, but keep overall change
-	rename			s7q299 tot_inc_chg
-	label 			var tot_inc_chg "change in total income since covid"	
- 
-* assistance
-	rename 			s11q11 asst_food
-	replace			asst_food = 0 if asst_food == 2
-	replace			asst_food = 0 if asst_food == .
-	lab var			asst_food "Recieved food assistance"
-	lab def			assist 0 "No" 1 "Yes"
-	lab val			asst_food assist
-	
-	rename 			s11q12 asst_cash
-	replace 		asst_cash = 0 if asst_cash == 2
-	replace			asst_cash = 0 if asst_cash == .
-	lab var			asst_cash "Recieved cash assistance"
-	lab val			asst_cash assist
-	
-	rename 			s11q13 asst_kind 
-	replace			asst_kind = 0 if asst_kind == 2
-	replace			asst_kind = 0 if asst_kind == .
-	lab var			asst_kind "Recieved in-kind assistance"
-	lab val			asst_kind assist
-	
-	gen				asst_any = 1 if asst_food == 1 | asst_cash == 1 | ///
-						asst_kind == 1
-	replace			asst_any = 0 if asst_any == .
-	lab var			asst_any "Recieved any assistance"
-	lab val			asst_any assist	
-
-* rename variables and fill in missing values
+* general variables 
 	rename			s2q5 sex
 	rename			s2q6 age
 	rename			s2q7 relate_hoh
 	replace			relate_hoh = s2q9 if relate_hoh == .
 
-* shock variables	
-	rename 			shock_8 shock_15 
-	rename 			shock_13 shock_3
-	rename 			shock_95 shock_14
-	replace 		shock_14 = shock_96 if shock_96 != . & shock_14 == .
- 	lab var			shock_3 "Illness of income earning member of the household"
-	lab var			shock_5 "Job loss"
-	lab var			shock_6 "Non-farm business failure"
-	lab var			shock_7 "Theft of crops, cash, livestock or other property"
-	lab var			shock_10 "Increase in price of inputs"
-	lab var			shock_11 "Fall in the price of output"
-	lab var			shock_12 "Increase in price of major food items consumed"
-	lab var			shock_14 "Other shock"
-	lab var 		shock_15 "Disruption of farming, livestock, fishing activities"	
-
-	gen				shock_any = 1 if shock_3 == 1 | shock_5 == 1 | shock_6 == 1 | ///
-					shock_7 == 1 |  shock_10 == 1 | shock_11 == 1 | shock_12 == 1 | ///
-					shock_14 == 1 |  shock_15 == 1
-	replace			shock_any = 0 if shock_any == . & (wave == 2 | wave == 3)
-	lab var			shock_any "Experience some shock"
-	
-* cope variables
-	rename			s10q3__1 cope_1
-	rename			s10q3__6 cope_2
-	rename			s10q3__7 cope_3
-	rename			s10q3__8 cope_4
-	rename			s10q3__9 cope_5
-	rename			s10q3__11 cope_6
-	rename			s10q3__12 cope_7
-	rename			s10q3__13 cope_8
-	rename			s10q3__14 cope_9
-	rename			s10q3__15 cope_10
-	rename			s10q3__16 cope_11
-	rename			s10q3__17 cope_12
-	rename			s10q3__18 cope_13
-	rename			s10q3__19 cope_14
-	rename			s10q3__20 cope_15
-	rename			s10q3__21 cope_16
-	rename			s10q3__96 cope_17
-	lab var			cope_1 "Sale of assets (Agricultural and Non_agricultural)"
-	lab var			cope_2 "Engaged in additional income generating activities"
-	lab var			cope_3 "Received assistance from friends & family"
-	lab var			cope_4 "Borrowed from friends & family"
-	lab var			cope_5 "Took a loan from a financial institution"
-	lab var			cope_6 "Credited purchases"
-	lab var			cope_7 "Delayed payment obligations"
-	lab var			cope_8 "Sold harvest in advance"
-	lab var			cope_9 "Reduced food consumption"
-	lab var			cope_10 "Reduced non_food consumption"
-	lab var			cope_11 "Relied on savings"
-	lab var			cope_12 "Received assistance from NGO"
-	lab var			cope_13 "Took advanced payment from employer"
-	lab var			cope_14 "Received assistance from government"
-	lab var			cope_15 "Was covered by insurance policy"
-	lab var			cope_16 "Did nothing"
-	lab var			cope_17 "Other"
-	
-* affected variables
-	rename			s10q2__1 elseaff_1
-	rename			s10q2__2 elseaff_2
-	rename			s10q2__3 elseaff_3
-	rename			s10q2__4 elseaff_4
-	rename			s10q2__5 elseaff_5
-	lab var			elseaff_1 "just household affected by shock"
-	lab var			elseaff_2 "famliy members outside household affected by shock"
-	lab var			elseaff_3 "several hh in village affected by shock"
-	lab var			elseaff_4 "most or all hhs in village affected by shock"
-	lab var			elseaff_5 "several villages affected by shock"
-	
 * knowledge
 	rename 			s3q1  know
 	rename			s3q1a ac_internet
@@ -397,6 +246,8 @@
 	rename 			s3q14__3 dis_gov_act_4
 	rename 			s3q14__4 dis_gov_act_5
 	rename 			s3q15 comm_lead
+
+ANN YOU ARE HERE - go through rounds 5-8 section by section 
 	
 * behavior
 	replace 		bh_1 = 0 if bh_1 > 1 & bh_1 != .
@@ -561,6 +412,7 @@
 		rename 		s5q2_2c__`x' ac_nat_why_`x'
 	}
 	lab var 		ac_nat_why_6 "..not able to access pre/post-natal care: REFUSED TREATMENT BY FACILITY"
+	
  * preventative care
 	rename 			s5q2_2d ac_prev_app
 	rename 			s5q2_2e ac_prev_canc
@@ -571,6 +423,7 @@
 	forval 			x = 1/9 {
 	    rename 		s5q2_2f__`x' ac_prev_why_`x'
 	}
+	
  * vaccines
 	rename 			s5q2_2j ac_vac_need
 	rename 			s5q2_2k ac_vac
@@ -715,30 +568,8 @@
 	lab var 		oth_inc_4 "Other Income: Income from properties, investments, or savings"
 	rename			s6cq5 oth_inc_5
 	lab var 		oth_inc_5 "Other Income: Pension"
-	
-* concern 
-	rename			s9q1 concern_1
-	rename			s9q2 concern_2
-	rename			s9q3 have_symp
-	replace 		have_symp = cond(s9q3__1 == 1 | s9q3__2 == 1 | s9q3__3 == 1 | ///
-						s9q3__4 == 1 | s9q3__5 == 1 | s9q3__6 == 1 | ///
-						s9q3__7 == 1 | s9q3__8 == 1, 1, cond( ///
-						s9q3__1 == 0 & s9q3__2 == 0 & s9q3__3 == 0 & ///
-						s9q3__4 == 0 & s9q3__5 == 0 & s9q3__6 == 0 & ///
-						s9q3__7 == 0 & s9q3__8 == 0, 2, .)) if have_symp == .
-		lab var			have_symp "Has anyone in your hh experienced covid symptoms?"
-	drop			s9q3__1 s9q3__2 s9q3__3 s9q3__4 s9q3__5 s9q3__6 s9q3__7 s9q3__8
-	rename 			s9q4 have_test
-	rename 			s9q5 concern_3
-	rename			s9q6 concern_4
-	lab var			concern_4 "Response to the COVID-19 emergency will limit my rights and freedoms"
-	rename			s9q7 concern_5
-	lab var			concern_5 "Money and supplies allocated for the COVID-19 response will be misused and captured by powerful people in the country"
-	rename			s9q8 concern_6
-	lab var			concern_6 "Corruption in the government has lowered the quality of medical supplies and care"
-	rename 			s9q9 symp_call
-	
-* agriculture
+
+* agriculture (sec 13 in w1, 6e in all others)
 	rename			s13q1 ag_crop
 	rename			s13q2a ag_crop_1
 	rename			s13q2b ag_crop_2
@@ -818,7 +649,58 @@
 		rename 			s6qf10__`x' ag_live_sell_nowhy_`x'
 	}
 	rename	 		s6qf10__5 ag_live_sell_nowhy_96
-	rename 			s6qf11 ag_live_sell_rev
+	rename 			s6qf11 ag_live_sell_rev	
+	
+* income
+	rename 			s7q11 farm_inc
+	label 			var farm_inc "income from farming, fishing, livestock in last 12 months"
+	rename			s7q21 farm_chg
+	label 			var farm_chg "change in income from farming since covid"
+	rename 			s7q12 bus_inc
+	label 			var bus_inc "income from non-farm family business in last 12 months"
+	rename			s7q22 bus_chg
+	label 			var bus_chg "change in income from non-farm family business since covid"
+	rename 			s7q13 wage_inc
+	label 			var wage_inc "income from wage employment in last 12 months"
+	rename			s7q23 wage_chg
+	label 			var wage_chg "change in income from wage employment since covid"
+	rename 			s7q14 rem_for
+	label 			var rem_for "income from remittances abroad in last 12 months"
+	rename			s7q24 rem_for_chg
+	label 			var rem_for_chg "change in income from remittances abroad since covid"
+	rename 			s7q15 rem_dom
+	label 			var rem_dom "income from remittances domestic in last 12 months"
+	rename			s7q25 rem_dom_chg
+	label 			var rem_dom_chg "change in income from remittances domestic since covid"
+	rename 			s7q16 asst_inc
+	label 			var asst_inc "income from assistance from non-family in last 12 months"
+	rename			s7q26 asst_chg
+	label 			var asst_chg "change in income from assistance from non-family since covid"
+	rename 			s7q17 isp_inc
+	label 			var isp_inc "income from properties, investment in last 12 months"
+	rename			s7q27 isp_chg
+	label 			var isp_chg "change in income from properties, investment since covid"
+	rename 			s7q18 pen_inc
+	label 			var pen_inc "income from pension in last 12 months"
+	rename			s7q28 pen_chg
+	label 			var pen_chg "change in income from pension since covid"
+	rename 			s7q19 gov_inc
+	label 			var gov_inc "income from government assistance in last 12 months"
+	rename			s7q29 gov_chg
+	label 			var gov_chg "change in income from government assistance since covid"
+	rename 			s7q110 ngo_inc
+	label 			var ngo_inc "income from NGO assistance in last 12 months"
+	rename			s7q210 ngo_chg
+	label 			var ngo_chg "change in income from NGO assistance since covid"
+	rename 			s7q196 oth_inc
+	label 			var oth_inc "income from other source in last 12 months"
+	rename			s7q296 oth_chg
+	label 			var oth_chg "change in income from other source since covid"
+	drop 			s7q199
+	*** yes or no response to ``total income'' - unclear what this measures
+	*** omit, but keep overall change
+	rename			s7q299 tot_inc_chg
+	label 			var tot_inc_chg "change in total income since covid"	
 	
 * fies
 	rename			s8q1 fies_4
@@ -837,6 +719,123 @@
 	lab var			fies_2 "Hungry but did not eat"
 	rename			s8q8 fies_3
 	lab var			fies_3 "Went without eating for a whole day"	
+
+* concern 
+	rename			s9q1 concern_1
+	rename			s9q2 concern_2
+	rename			s9q3 have_symp
+	replace 		have_symp = cond(s9q3__1 == 1 | s9q3__2 == 1 | s9q3__3 == 1 | ///
+						s9q3__4 == 1 | s9q3__5 == 1 | s9q3__6 == 1 | ///
+						s9q3__7 == 1 | s9q3__8 == 1, 1, cond( ///
+						s9q3__1 == 0 & s9q3__2 == 0 & s9q3__3 == 0 & ///
+						s9q3__4 == 0 & s9q3__5 == 0 & s9q3__6 == 0 & ///
+						s9q3__7 == 0 & s9q3__8 == 0, 2, .)) if have_symp == .
+		lab var			have_symp "Has anyone in your hh experienced covid symptoms?"
+	drop			s9q3__1 s9q3__2 s9q3__3 s9q3__4 s9q3__5 s9q3__6 s9q3__7 s9q3__8
+	rename 			s9q4 have_test
+	rename 			s9q5 concern_3
+	rename			s9q6 concern_4
+	lab var			concern_4 "Response to the COVID-19 emergency will limit my rights and freedoms"
+	rename			s9q7 concern_5
+	lab var			concern_5 "Money and supplies allocated for the COVID-19 response will be misused and captured by powerful people in the country"
+	rename			s9q8 concern_6
+	lab var			concern_6 "Corruption in the government has lowered the quality of medical supplies and care"
+	rename 			s9q9 symp_call
+
+* shock variables	
+	rename 			shock_8 shock_15 
+	rename 			shock_13 shock_3
+	rename 			shock_95 shock_14
+	replace 		shock_14 = shock_96 if shock_96 != . & shock_14 == .
+ 	lab var			shock_3 "Illness of income earning member of the household"
+	lab var			shock_5 "Job loss"
+	lab var			shock_6 "Non-farm business failure"
+	lab var			shock_7 "Theft of crops, cash, livestock or other property"
+	lab var			shock_10 "Increase in price of inputs"
+	lab var			shock_11 "Fall in the price of output"
+	lab var			shock_12 "Increase in price of major food items consumed"
+	lab var			shock_14 "Other shock"
+	lab var 		shock_15 "Disruption of farming, livestock, fishing activities"	
+
+	gen				shock_any = 1 if shock_3 == 1 | shock_5 == 1 | shock_6 == 1 | ///
+					shock_7 == 1 |  shock_10 == 1 | shock_11 == 1 | shock_12 == 1 | ///
+					shock_14 == 1 |  shock_15 == 1
+	replace			shock_any = 0 if shock_any == . & (wave == 2 | wave == 3)
+	lab var			shock_any "Experience some shock"
+		
+* affected variables
+	rename			s10q2__1 elseaff_1
+	rename			s10q2__2 elseaff_2
+	rename			s10q2__3 elseaff_3
+	rename			s10q2__4 elseaff_4
+	rename			s10q2__5 elseaff_5
+	lab var			elseaff_1 "just household affected by shock"
+	lab var			elseaff_2 "famliy members outside household affected by shock"
+	lab var			elseaff_3 "several hh in village affected by shock"
+	lab var			elseaff_4 "most or all hhs in village affected by shock"
+	lab var			elseaff_5 "several villages affected by shock"
+	
+* cope variables
+	rename			s10q3__1 cope_1
+	rename			s10q3__6 cope_2
+	rename			s10q3__7 cope_3
+	rename			s10q3__8 cope_4
+	rename			s10q3__9 cope_5
+	rename			s10q3__11 cope_6
+	rename			s10q3__12 cope_7
+	rename			s10q3__13 cope_8
+	rename			s10q3__14 cope_9
+	rename			s10q3__15 cope_10
+	rename			s10q3__16 cope_11
+	rename			s10q3__17 cope_12
+	rename			s10q3__18 cope_13
+	rename			s10q3__19 cope_14
+	rename			s10q3__20 cope_15
+	rename			s10q3__21 cope_16
+	rename			s10q3__96 cope_17
+	lab var			cope_1 "Sale of assets (Agricultural and Non_agricultural)"
+	lab var			cope_2 "Engaged in additional income generating activities"
+	lab var			cope_3 "Received assistance from friends & family"
+	lab var			cope_4 "Borrowed from friends & family"
+	lab var			cope_5 "Took a loan from a financial institution"
+	lab var			cope_6 "Credited purchases"
+	lab var			cope_7 "Delayed payment obligations"
+	lab var			cope_8 "Sold harvest in advance"
+	lab var			cope_9 "Reduced food consumption"
+	lab var			cope_10 "Reduced non_food consumption"
+	lab var			cope_11 "Relied on savings"
+	lab var			cope_12 "Received assistance from NGO"
+	lab var			cope_13 "Took advanced payment from employer"
+	lab var			cope_14 "Received assistance from government"
+	lab var			cope_15 "Was covered by insurance policy"
+	lab var			cope_16 "Did nothing"
+	lab var			cope_17 "Other"	
+
+* assistance
+	rename 			s11q11 asst_food
+	replace			asst_food = 0 if asst_food == 2
+	replace			asst_food = 0 if asst_food == .
+	lab var			asst_food "Recieved food assistance"
+	lab def			assist 0 "No" 1 "Yes"
+	lab val			asst_food assist
+	
+	rename 			s11q12 asst_cash
+	replace 		asst_cash = 0 if asst_cash == 2
+	replace			asst_cash = 0 if asst_cash == .
+	lab var			asst_cash "Recieved cash assistance"
+	lab val			asst_cash assist
+	
+	rename 			s11q13 asst_kind 
+	replace			asst_kind = 0 if asst_kind == 2
+	replace			asst_kind = 0 if asst_kind == .
+	lab var			asst_kind "Recieved in-kind assistance"
+	lab val			asst_kind assist
+	
+	gen				asst_any = 1 if asst_food == 1 | asst_cash == 1 | ///
+						asst_kind == 1
+	replace			asst_any = 0 if asst_any == .
+	lab var			asst_any "Recieved any assistance"
+	lab val			asst_any assist	
 	
 * drop unnecessary variables
  	drop			s5q1c3__1 s5q1c3__2 s5q1c3__3 s5q1c3__4 s5q1c3__5 s5q1c3__6 ///
@@ -961,11 +960,9 @@
 * 5 - end matter, clean up to save
 * **********************************************************************
 
+* final clean
 	drop 			interviewDate PID Above_18 HHID
 	compress
-	describe
-	summarize
-
 	rename 			y4_hhid hhid_mwi
 	lab var			hhid_mwi "household ID malawi"
 

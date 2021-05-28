@@ -7,14 +7,14 @@
 
 * does
 	* merges together each section of malawi data
-	* builds round 4
-	* outputs round 4
+	* builds round 7
+	* outputs round 7
 
 * assumes
 	* raw malawi data 
 
 * TO DO:
-	* complete
+	* ADD FIES
 
 
 * **********************************************************************
@@ -32,7 +32,7 @@
 	log using		"$logout/mal_build", append
 	
 * set local wave number & file number
-	local			w = 4
+	local			w = 7
 	
 * make wave folder within refined folder if it does not already exist 
 	capture mkdir "$export/wave_0`w'" 	
@@ -59,8 +59,8 @@
 * 1b - reshape section on safety nets wide data
 * ***********************************************************************
 
-* not available for round
-	
+* no data
+
 
 * ***********************************************************************
 * 1c - get respondant gender
@@ -96,7 +96,7 @@
 
 * rename other variables 
 	rename 			PID ind_id 
-	rename 			new_member new_mem
+	rename 			s2q2 new_mem
 	rename 			s2q3 curr_mem
 	rename 			s2q5 sex_mem
 	rename 			s2q6 age_mem
@@ -129,15 +129,44 @@
 * 1e - FIES score
 * ***********************************************************************
 
-* not available for round
+/*
+* load data
+	use				"$fies/MW_FIES_round`w'.dta", clear
+	drop 			country round 
 
+* merge in other data to get HHID to match 
+	rename 			HHID y4_hhid 
+	merge 			1:1 y4_hhid using "$root/wave_0`w'/secta_Cover_Page_r`w'"
+	keep 			HHID hhsize wt_hh p_mod urban weight Above_18 wt_18 p_sev
+
+* save temp file
+	tempfile		tempe
+	save			`tempe'
+*/
 
 * ***********************************************************************
 * 1f - reshape section on coping wide data
 * ***********************************************************************
 
-* not available for round
+* load data
+	use				"$root/wave_0`w'/sect10_Coping_r`w'", clear
 
+* drop other shock
+	drop			shock_id_os s10q3_os
+
+* generate shock variables
+	foreach 		i in 5 6 7 8 10 11 12 13 95 {
+	    gen				shock_`i' = 0 if s10q1 == 2
+		replace			shock_`i' = 1 if s10q1 == 1 & shock_id == `i'
+	}
+
+* collapse to household level	
+	collapse (max) s10q3__1- shock_95, by(HHID y4_hhid)
+	
+* save temp file
+	tempfile		tempf
+	save			`tempf'
+	
 	
 * ***********************************************************************
 * 2 - merge to build complete dataset for the round 
@@ -147,141 +176,45 @@
 	use				"$root/wave_0`w'/secta_Cover_Page_r`w'", clear
 	
 * merge formatted sections
-	foreach 		x in a c d {
+	foreach 		x in a c d f {
 	    merge 		1:1 HHID using `temp`x'', nogen
 	}
 	
 * merge in other sections
+	merge 1:1 		HHID using "$root/wave_0`w'/sect3_Knowledge_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect4_Behavior_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect5_Access_r`w'.dta", nogen
-	merge 1:1 		HHID using "$root/wave_0`w'/sect6a_Employment1_r`w'.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/sect5c_Education_r`w'", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect6a_Employment2_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect6b_NFE_r`w'.dta", nogen
-	merge 1:1 		HHID using "$root/wave_0`w'/sect6c_OtherIncome_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect6d_Credit_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect6e_Agriculture_r`w'.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/sect8_food_security_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect9_Concerns_r`w'.dta", nogen
-
-* rename variables inconsistent with  wave 1
-	rename			s6q1a rtrn_emp
-	rename 	 		s6q2_1 emp_pre
-	rename			s6q3a_1 emp_pre_why
-	rename			s6q4a_1 emp_same
-	rename			s6q4b_1 emp_chg_why
-	rename			s6q4c_1 emp_pre_act
-	rename			s6q6_1 emp_stat
-	rename			s6q7_1 emp_able
-	rename			s6q8_1 emp_unable
-	rename			s6q8a_1 emp_unable_why
-	rename			s6q8b_1__1 emp_cont_1
-	rename			s6q8b_1__2 emp_cont_2
-	rename			s6q8b_1__3 emp_cont_3
-	rename			s6q8b_1__4 emp_cont_4
-
-	rename			s6q8c_1 contrct
-	replace 		contrct = s6q8e if contrct == .
-	drop 			s6q8e
-	replace 		contrct = 0 if contrct == 2
 	
-	rename			s6bq11 bus_emp
-	rename			s6qb12 bus_sect
-	rename			s6qb13 bus_emp_inc
-	rename			s6qb14 bus_why
-	rename			s6q9_1 emp_hh
-	rename			s6q15_1 farm_emp
-	rename			s6q16_1 farm_norm
-	rename			s6q17_1__1 farm_why_1
-	rename			s6q17_1__2 farm_why_2
-	rename			s6q17_1__3 farm_why_3
-	rename			s6q17_1__4 farm_why_4
-	rename			s6q17_1__5 farm_why_5
-	rename			s6q17_1__6 farm_why_6
-	rename			s6q17_1__96 farm_why_7
-	rename			s6q17_1__7 farm_why_8
-
-* edit employment activity
-	rename			s6q5_1 emp_act	
-	replace 		emp_act = -96 if emp_act == 96
-	replace 		emp_act = 7 if emp_act == 10
-	replace 		emp_act = 13 if emp_act == 8
-	replace 		emp_act = 8 if emp_act == 6
-
-	replace 		s6q5 = -96 if s6q5 == 96
-	replace 		s6q5 = 16 if s6q5 == 15
-	replace 		s6q5 = 15 if s6q5 == 14
-	replace 		s6q5 = 14 if s6q5 == 9
-	replace 		s6q5 = 9 if s6q5 == 11 | s6q5 == 12
-	replace 		s6q5 = 11 if s6q5 == 4
-	replace 		s6q5 = 12 if s6q5 == 5
-	replace 		s6q5 = 4 if s6q5 == 7
-	replace 		s6q5 = 7 if s6q5 == 10
-	replace 		s6q5 = 10 if s6q5 == 2
-	replace 		s6q5 = 2 if s6q5 == 3
-	replace 		s6q5 = 0 if s6q5 == 8
-	replace 		s6q5 = 8 if s6q5 == 6
-	replace 		s6q5 = 6 if s6q5 == 13
-	replace 		s6q5 = 13 if s6q5 == 0
-	
-	lab def 		emp_act -96 "Other" 1 "Agriculture" 2 "Industry/manufacturing" ///
-						3 "Wholesale/retail" 4 "Transportation services" ///
-						5 "Restaurants/hotels" 6 "Public Administration" ///
-						7 "Personal Services" 8 "Construction" 9 "Education/Health" ///
-						10 "Mining" 11 "Professional/scientific/technical activities" ///
-						12 "Electic/water/gas/waste" 13 "Buying/selling" ///
-						14 "Finance/insurance/real estate" 15 "Tourism" 16 "Food processing" 
-	lab val 		emp_act emp_act
-	
-* behavior
-	rename			s4q1 bh_1
-	rename			s4q2a bh_2
-	rename			s4q3a bh_3a
-	rename			s4q3b bh_3b
-	rename			s4q3c bh_3c
-	rename			s4q6 bh_5
-	rename			s4q8 bh_freq_mask
-	
-* rename access credit variables inconsistent with wave 3 
-	rename 			s6dq1 ac_cr_loan
-	replace 		ac_cr_loan = 2 if ac_cr_loan == 3
-	lab def 		ac_cr_loan 1 "Yes" 2 "Unable or did not try" 
-	lab val 		ac_cr_loan ac_cr_loan 
-	rename 			s6dq2 ac_cr_lend
-	forval 			x = 1/8 {
-	    gen 		ac_cr_lend_`x' = 1 if ac_cr_lend == `x'
-	}
-	drop 			ac_cr_lend
-	rename 			s6dq3 ac_cr_lend_att
-	forval 			x = 1/12 {
-		rename 		s6dq4__`x' ac_cr_why_`x'
-		replace 	ac_cr_why_`x' = 0 if ac_cr_why_`x' == . & s6dq5 == 0 
-		replace 	ac_cr_why_`x' = 1 if s6dq5 == `x' 
-	}
-	drop 			s6dq5 
-	rename 			s6dq6__0 ac_cr_who_1
-	rename 			s6dq6__1 ac_cr_who_2
-	rename 			s6dq6__2 ac_cr_who_3
-	rename 			s6dq7__0 ac_cr_att_who_1
-	rename 			s6dq7__1 ac_cr_att_who_2
-	rename 			s6dq8 ac_cr_due
-	rename 			s6dq9 ac_cr_worry
-	rename 			s6dq10 ac_cr_bef
-	rename 			s6dq10a ac_cr_prev_repay
-	forval 			x = 1/12 {
-		gen 			ac_cr_bef_why_`x' = 0
-		replace 		ac_cr_bef_why_`x' =	. if s6dq11 == .
-		replace 		ac_cr_bef_why_`x' = 1 if s6dq11 == `x'
-	}
-	drop 			s6dq11
-	rename 			s6dq12__0 ac_cr_bef_who_1
-	rename 			s6dq12__1 ac_cr_bef_who_2
-	rename 			s6dq13 ac_cr_bef_worry
-	rename 			s6dq14 ac_cr_miss
-	rename 			s6dq15 ac_cr_delay	
+* rename variables inconsistent with other waves
+	* knowledge/gov
+		rename 		s3q1 vac
+		rename 		s3q2a vac_myth_1
+		rename 		s3q2b vac_myth_2
+		rename 		s3q2c vac_myth_3
+		rename 		s3q2d vac_myth_4
+		rename 		s3q2e vac_myth_5
+		rename 		s3q3 satis
+		rename 		s3q4__1 satis_1
+		rename 		s3q4__2 satis_3
+		rename 		s3q4__3 satis_4
+		rename 		s3q4__4 satis_6
+		rename 		s3q4__5 satis_8
+		rename 		s3q4__555 satis_7
+		rename 		s3q5a have_cov_oth
+		rename 		s3q5 have_cov_self
+		drop 		s3q4_ot
 	
 * generate round variables
 	gen				wave = `w'
 	lab var			wave "Wave number"
-	rename 			wt_round`w' phw_cs
+	rename			wt_round`w' phw_cs
 	label var		phw "sampling weights - cross section"
 	
 * save round file

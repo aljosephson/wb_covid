@@ -772,8 +772,6 @@
 
 * final clean 
 	compress
-	describe
-	summarize
 	rename HHID hhid_uga
 	drop if hhid_uga == .
 

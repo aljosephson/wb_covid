@@ -919,8 +919,6 @@
 
 * final clean 
 	compress
-	describe
-	summarize 
 	rename hhid hhid_nga 
 
 * save file

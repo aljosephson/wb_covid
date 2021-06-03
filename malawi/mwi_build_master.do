@@ -228,16 +228,7 @@
 	rename			s3q2_4 myth_4
 	rename			s3q2_5 myth_5
 	
-* satisfaction + government perspectives
-	rename 			s3q6 satis
-	rename 			s3q7__1 satis_1
-	rename			s3q7__2 satis_2
-	rename 			s3q7__3 satis_3
-	rename 			s3q7__4 satis_4
-	rename 			s3q7__5 satis_5
-	rename 			s3q7__6 satis_6
-	rename 			s3q7__96 satis_7
-	rename 			s3q7_os satis_7_details
+* government perspectives
 	rename 			s3q8_7 ngo_pers_1	
 	rename 			s3q13 bribe
 	rename 			s3q14__0 dis_gov_act_1
@@ -246,20 +237,34 @@
 	rename 			s3q14__3 dis_gov_act_4
 	rename 			s3q14__4 dis_gov_act_5
 	rename 			s3q15 comm_lead
-
-ANN YOU ARE HERE - go through rounds 5-8 section by section 
 	
 * behavior
 	replace 		bh_1 = 0 if bh_1 > 1 & bh_1 != .
-	replace 		bh_3 = 0 if bh_3 == 1
-	replace 		bh_3 = 1 if bh_3 > 1 & (wave == 1 | wave == 2 )
-	replace 		bh_5 = 7 if bh_5 == 1 & wave > 2
-	replace 		bh_5 = 1 if bh_5 == 2 | bh_5 == 3
-	replace 		bh_5 = 2 if bh_5 == 7
-	replace 		bh_5 = . if bh_5 == 4
+	replace 		bh_2 = 0 if bh_2 == 2
+	replace 		bh_3 = 0 if bh_3 == 2
 	replace 		bh_5 = 0 if bh_5 == 2
-	
+	rename 			s4q8a cov_test
+	rename 			s4q8b cov_vac
+	rename 			s4q8c cov_vac_no_why
+	rename 			s4q8d cov_vac_dk_why
+	drop 			s4q8cot s4q8dot
+
+* patient health
+	forval 			x = 1/8 {
+	    rename 		s4bq`x' mh_`x'
+		replace 	mh_`x' = mh_`x' - 1
+	}
+
 * access
+ * agricultural affordable inputs program
+	rename 			s5q0a aaip
+	rename 			s5q0b aaip_purch
+	rename 			s5q0c aaip_sat
+	forval 			x = 1/6 {
+		rename 			s5q0d__`x' aaip_sat_why_`x'
+	}
+	drop 			s5q0d__555 s5q0d_ot 
+		
  * soap
 	gen				ac_soap_why = .
 	replace			ac_soap_why = 1 if s5q1c1__1 == 1 | s5q1b1__1 == 1
@@ -298,7 +303,8 @@ ANN YOU ARE HERE - go through rounds 5-8 section by section
 		
  * water
 	rename 			s5q1a2 ac_water
-	replace 		ac_water = ac_water - 1
+	replace 		ac_water = ac_water - 1 if wave != 8
+	replace 		ac_water = 0 if ac_water == 2
 	lab var 		ac_water "was your household able to access water"
 	rename 			s5q1b2 ac_water_why	
 	replace			ac_water_why = 1 if s5q1b2__1 == 1
@@ -324,12 +330,14 @@ ANN YOU ARE HERE - go through rounds 5-8 section by section
 	rename			s5q1a2_2 ac_drink_why
 	replace 		ac_drink_why = 95 if ac_drink_why == 6
 	replace 		ac_drink_why = 10 if ac_drink_why == 4
+	replace 		ac_drink_why = 12 if ac_drink_why == 5
 	lab def 		ac_drink_why 1 "water supply not available" 2 "water supply reduced" ///
-					3 "unable to access communal supply" 4 "unable to access water tanks" ///
-					5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
-					8 "restriction to go out" 9 "increase in price" 10 "cannot afford"
+							3 "unable to access communal supply" 4 "unable to access water tanks" ///
+							5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
+							8 "restriction to go out" 9 "increase in price" 10 "cannot afford" ///
+							11 "unable to buy water" 12 "fear of catching the virus", replace
 	lab val 		ac_drink_why ac_drink_why
-	lab val 		ac_drink_why ac_drink_why
+	lab var  		ac_drink_why "reason unable to access water for drinking"
 	
  * staple
 	rename 			s5q2 ac_staple_def
@@ -385,12 +393,17 @@ ANN YOU ARE HERE - go through rounds 5-8 section by section
 
  * medical services
 	rename 			s5q3 ac_medserv_need
+	forval 			x = 1/7 {
+	    rename 		s5q3b__`x' ac_medserv_need_type_`x'
+	}
 	rename 			s5q4 ac_medserv
 	rename 			s5q5 ac_medserv_why
-	replace 		ac_medserv_why = . if ac_medserv_why == 4 | ac_medserv_why == 8
+	replace 		ac_medserv_why = . if wave < 7 & (ac_medserv_why == 4 | ac_medserv_why == 8)
+	replace 		ac_medserv_why = . if ac_medserv_why == 96 | ac_medserv_why == 555
 	replace 		ac_medserv_why = 8 if ac_medserv_why == 7
 	replace 		ac_medserv_why = 7 if ac_medserv_why == 6
-	replace 		ac_medserv_why = 6 if ac_medserv_why == 5
+	replace 		ac_medserv_why = 6 if ac_medserv_why == 5 | ac_medserv_why == 8
+	replace 		ac_medserv_why = 5 if ac_medserv_why == 9
 	replace			ac_medserv_why = 1 if s5q5__1 == 1
 	replace 		ac_medserv_why = 2 if s5q5__2 == 1
 	replace 		ac_medserv_why = 3 if s5q5__3 == 1
@@ -399,7 +412,7 @@ ANN YOU ARE HERE - go through rounds 5-8 section by section
 	replace 		ac_medserv_why = 8 if s5q5__7 == 1
 	lab def			ac_medserv_why 1 "lack of money" 2 "no med personnel" 3 "facility full" ///
 								4 "facility closed" 5 "not enough supplies" ///
-								6 "lack of transportation" 7 "restriction to go out" ///
+								6 "lack of transportation/too far" 7 "restriction to go out" ///
 								8 "afraid to get virus"
 	lab val 		ac_medserv_why ac_medserv_why
 	lab var 		ac_medserv_why "reason unable to access medical services"
@@ -438,6 +451,9 @@ ANN YOU ARE HERE - go through rounds 5-8 section by section
 	rename 			ac_cr_lend_4 ac_cr_lend_8
 	rename 			ac_cr_lend_5 ac_cr_lend_1
 	rename 			ac_cr_lend_6 ac_cr_lend_4
+	rename 			s5q9 ac_bank_need
+	rename 			s5q10 ac_bank
+	rename 			s5q11 ac_bank_why
 	
  * order access variables	
 	order			ac_soap_need ac_soap ac_soap_why ac_water ac_water_why ///
@@ -453,27 +469,7 @@ ANN YOU ARE HERE - go through rounds 5-8 section by section
 
 	rename 			s5q6b sch_child_meal
 	rename 			s5q6c sch_child_mealskip
-	rename 			s5q6d edu_act
-	rename 			s5q6__1 edu_1
-	rename 			s5q6__2 edu_2
-	rename 			s5q6__3 edu_3
-	rename 			s5q6__4 edu_4
-	rename 			s5q6__5 edu_5
-	rename 			s5q6__6 edu_6
-	rename 			s5q6__7 edu_7
-	rename 			s5q6__96 edu_other
-	rename 			s5q7 edu_cont
-	rename			s5q8__1 edu_cont_1
-	rename 			s5q8__2 edu_cont_2
-	rename 			s5q8__3 edu_cont_3
-	rename 			s5q8__4 edu_cont_4
-	rename 			s5q8__5 edu_cont_5
-	rename 			s5q8__6 edu_cont_6
-	rename 			s5q8__7 edu_cont_7
-	rename 			s5q8__8 edu_cont_8
-	rename 			s5q9 ac_bank_need
-	rename 			s5q10 ac_bank
-	rename 			s5q11 ac_bank_why
+
 	rename 			s5q12 ac_internet_able
 	rename 			s5q13 ac_internet_qual	
 	rename 			s5q17 sch_open 
@@ -482,9 +478,12 @@ ANN YOU ARE HERE - go through rounds 5-8 section by section
 					3 "no, they will not return" 4 "not sure" 5 "children do not attend school"
 	lab val 		sch_open_act sch_open_act
 	replace 		sch_open = . if wave > 3
-	rename 			s5q17a sch_open_why	
-	rename 			s5q18 edu_meas
-	rename 			s5q19 edu_meas_sat
+	rename 			s5q17a sch_open_why
+	
+* early childhood development 
+
+ANN YOU ARE HERE
+
 	
 * employment
 	rename			s6q1 emp	
@@ -864,7 +863,8 @@ ANN YOU ARE HERE - go through rounds 5-8 section by section
 						s6qf1 s6qf2__95 s6qf2_ot s6qf3 s6qf6__95 s6qf6_ot s6qf7__95 ///
 						s6qf7_ot s6qf10__95 s6qf10_ot s6qf4__95 s6qf4_ot s6qf5__95 ///
 						s6qf5_ot s6dq10_ot weight s2q9 s6q3b_1 harv_cov_why_6 ///
-						harv_cov_why_7 s13q6_* s6qf2__* s3q2__5 s6bq15_ot shock_96
+						harv_cov_why_7 s13q6_* s6qf2__* s3q2__5 s6bq15_ot shock_96 ///
+						s5q5_oth
 
 * regional and sector information
 	gen				sector = 2 if urb_rural == 1

@@ -211,6 +211,35 @@
 		rename 		s3q5 have_cov_self
 		drop 		s3q4_ot
 	
+	* behavior
+		rename			s4q1 bh_1
+		rename			s4q2a bh_2
+		rename 			s4q3a bh_3
+		replace 		bh_2 = . if bh_2 == 3 
+		replace 		bh_3 = . if bh_3 == 3
+		rename 			s4q3b bh_freq_gath
+		rename 			s4q5 bh_4
+		rename 			s4q6 bh_5
+		rename 			s4q7 bh_freq_wash
+		rename 			s4q8 bh_freq_mask
+		
+	* shops
+		rename 			s5q6 ac_shops_need
+		rename 			s5q6a ac_shops_mask
+		rename 			s5q5b ac_shops_wash
+		rename 			s5q5c ac_shops_san
+		rename 			s5q5d ac_shops_line
+		
+	* education 
+		rename 			s5cq1 sch_att
+		rename 			s5cq1a sch_child
+		rename 			s5cq2 sch_msk_sens
+		rename 			s5cq3 sch_wsh_sens
+		forval 			x = 1/11 {
+			rename 		s5cq4__`x' sch_prec_`x'
+		}
+		rename 			s5cq4__99 sch_prec_none
+		
 * generate round variables
 	gen				wave = `w'
 	lab var			wave "Wave number"

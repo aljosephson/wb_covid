@@ -180,9 +180,20 @@
 	merge 1:1 		HHID using "$root/wave_0`w'/sect9_Concerns_r`w'.dta", nogen
 
 * rename variables inconsistent with other waves
-
-
 	
+	* behavior
+		rename 			s4q7 bh_freq_wash
+		rename 			s4q8 bh_freq_mask
+	
+	* access
+		rename 			s5q1a1 ac_soap
+		* shops
+		rename 			s5q6 ac_shops_need
+		rename 			s5q6a ac_shops_mask
+		rename 			s5q5b ac_shops_wash
+		rename 			s5q5c ac_shops_san
+		rename 			s5q5d ac_shops_line
+		
 * generate round variables
 	gen				wave = `w'
 	lab var			wave "Wave number"

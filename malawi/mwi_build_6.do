@@ -165,8 +165,18 @@
 
 *rename variables inconsistent with other waves
 
-
-	
+	* behavior
+		rename			s4q1 bh_1
+		rename			s4q2a bh_2
+		rename 			s4q3a bh_3
+		replace 		bh_2 = . if bh_2 == 3 
+		replace 		bh_3 = . if bh_3 == 3
+		rename 			s4q3b bh_freq_gath
+		rename 			s4q5 bh_4
+		rename 			s4q6 bh_5
+		rename 			s4q7 bh_freq_wash
+		rename 			s4q8 bh_freq_mask
+		
 * generate round variables
 	gen				wave = `w'
 	lab var			wave "Wave number"

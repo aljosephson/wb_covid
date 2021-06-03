@@ -274,10 +274,14 @@
 * behavior
 	rename			s4q1 bh_1
 	rename			s4q2a bh_2
+	replace 		bh_2 = 0 if bh_2 < 3
+	replace 		bh_2 = 1 if bh_2 > 0 & bh_2 != .
 	rename			s4q3a bh_3a
 	rename			s4q3b bh_3b
 	rename			s4q3c bh_3c
 	rename			s4q6 bh_5
+	replace 		bh_5 = 0 if bh_5 == 1
+	replace 		bh_5 = 1 if bh_5 == 2 | bh_5 == 3
 	rename			s4q8 bh_freq_mask
 	rename 			s4q9 bh_comply_1
 	rename 			s4q10 bh_comply_2

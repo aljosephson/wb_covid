@@ -163,6 +163,9 @@
 	merge 1:1 		HHID using "$root/wave_0`w'/sect9_Concerns_r`w'.dta", nogen
 
 * rename variables inconsistent with  wave 1
+	rename 			s5q18 sch_prec
+	rename 			s5q19 sch_prec_sat
+	
 	rename			s6q1a rtrn_emp
 	rename 	 		s6q2_1 emp_pre
 	rename			s6q3a_1 emp_pre_why
@@ -234,10 +237,15 @@
 * behavior
 	rename			s4q1 bh_1
 	rename			s4q2a bh_2
+	replace 		bh_2 = 0 if bh_2 < 3
+	replace 		bh_2 = 1 if bh_2 > 0 & bh_2 != .
 	rename			s4q3a bh_3a
 	rename			s4q3b bh_3b
 	rename			s4q3c bh_3c
 	rename			s4q6 bh_5
+	replace 		bh_5 = 0 if bh_5 == 1
+	replace 		bh_5 = 1 if bh_5 == 2 | bh_5 == 3
+	replace 		bh_5 = . if bh_5 == 4
 	rename			s4q8 bh_freq_mask
 	
 * rename access credit variables inconsistent with wave 3 

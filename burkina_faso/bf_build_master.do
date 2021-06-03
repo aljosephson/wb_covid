@@ -195,6 +195,12 @@
 	rename 			s04bq02 cov_vac
 	rename 			s04bq03 cov_vac_no_why
 	rename 			s04bq04 cov_vac_dk_why
+	foreach 		var in cov_vac_dk_why cov_vac_no_why {
+	    replace 	`var' = 100 if `var' == 6
+		replace 	`var' = 6 if `var' == 4
+		replace 	`var' = 4 if `var' == 5
+		replace 	`var' = 5 if `var' == 100
+	}
 	drop 			s04bq03_autre s04bq04_autre
 	
 * access

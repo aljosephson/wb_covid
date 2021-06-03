@@ -199,8 +199,6 @@
 
 * behavior
 	replace 			bh_1 = 0 if bh_1 > 1 & bh_1 != .
-	replace 			bh_2 = 0 if bh_2 < 3 & country == 2
-	replace 			bh_2 = 1 if bh_2 > 0 & country == 2 & bh_2 != .
 	replace 			bh_2 = 0 if bh_2 == 2
 	replace 			bh_2 = . if bh_2 == 3
 	replace 			bh_3 = . if bh_3 == 3 | bh_3 < 0
@@ -209,10 +207,25 @@
 	replace 			bh_5 = 0 if bh_5 == 2
 	gen 				bh_8 = . if bh_freq_mask < 0 | bh_freq_mask == 6
 	replace 			bh_8 = 0 if bh_freq_mask == 5
-	replace				bh_8 = 1 if bh_freq_mask == 1 | bh_freq_mask == 2 | bh_freq_mask == 3 | bh_freq_mask == 4
+	replace				bh_8 = 1 if bh_freq_mask == 1 | bh_freq_mask == 2 | ///
+							bh_freq_mask == 3 | bh_freq_mask == 4
 	lab var 			bh_8 "Wore mask in public in last 7 days"
 	lab val 			bh_8 yesno
 
+* COVID
+	lab def 			cov 1 "I DONT THINK IT WILL WORK" 2 "I DONT THINK IT WILL BE SAFE" ///
+							3 "I AM WORRIED ABOUT THE SIDE EFFECTS" ///
+							4 "I AM AGAINST VACCINE IN GENERAL" 5 "IT IS AGAINST MY RELIGION" ///
+							6 "I AM NOT AT RISK OF CONTRACTING COVID 19"
+	lab val 			cov_vac_no_why cov_vac_dk_why cov 
+	
+* mental health
+	lab def 			mh 0 "not at all" 1 "several days" 2 "more than half of the time" ///
+							3 "almost every day"
+	forval 				x = 1/8 {
+		lab val 		mh_`x' mh
+	}
+	
 * coping (create cope_any = 1 if any coping used, 0 if not, . if no data for that wave)
 	egen 				tempgrp = group(country wave)
 	levelsof			(tempgrp), local(countrywave)
@@ -918,7 +931,7 @@
 * close the log
 	log	close	
 	
-
+/*
 * *********************************************************************
 * 9 - generate variable-country-wave crosswalk
 * **********************************************************************	

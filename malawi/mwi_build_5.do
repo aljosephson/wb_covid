@@ -208,7 +208,44 @@
 
 *rename variables inconsistent with other waves
 
-
+	* behavior
+		rename			s4q1 bh_1
+		rename			s4q2a bh_2
+		rename 			s4q3a bh_3
+		replace 		bh_2 = . if bh_2 == 3 
+		replace 		bh_3 = . if bh_3 == 3
+		rename 			s4q3b bh_freq_gath
+		rename 			s4q5 bh_4
+		rename 			s4q6 bh_5
+		rename 			s4q7 bh_freq_wash
+		rename 			s4q8 bh_freq_mask
+		
+	* education 
+		rename 			s5cq1 sch_att
+		forval 			x = 1/14 {
+			rename 			s5cq2__`x' sch_att_why_`x'
+		}
+		rename 			s5cq3 sch_prec
+		forval 			x = 1/11 {
+			rename 		s5cq4__`x' sch_prec_`x'
+		}
+		rename 			s5cq4__99 sch_prec_none
+		rename 			s5cq5a sch_prec_sat
+		rename 			s5cq6 edu_act
+		forval 			x = 1/4 {
+		    rename 		s5cq7__`x' edu_`x'
+		}
+		rename 			s5cq7__5 edu_6
+		rename 			s5cq7__6 edu_7
+		rename 			s5cq7__7 edu_5
+		drop 			s5cq2__96 s5cq7__96 s5cq5b s5cq4__98 s5cq7_os
+		
+		rename 			s5cq8 edu_cont
+		forval 			x = 1/7 {
+			rename 		s5cq9__`x' edu_cont_`x'
+		}
+		rename 			s5cq10 sch_msk_sens
+		
 * generate round variables
 	gen				wave = `w'
 	lab var			wave "Wave number"

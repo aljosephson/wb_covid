@@ -171,6 +171,26 @@
 	merge 1:1 		HHID using "$root/wave_0`w'/sect13_Agriculture_r`w'.dta", nogen
 
 * rename variables inconsistent with other waves
+	* education
+	rename 			s5q6d edu_act
+	rename 			s5q6__1 edu_1
+	rename 			s5q6__2 edu_2
+	rename 			s5q6__3 edu_3
+	rename 			s5q6__4 edu_4
+	rename 			s5q6__5 edu_5
+	rename 			s5q6__6 edu_6
+	rename 			s5q6__7 edu_7
+	rename 			s5q6__96 edu_other
+	rename 			s5q7 edu_cont
+	rename			s5q8__1 edu_cont_1
+	rename 			s5q8__2 edu_cont_2
+	rename 			s5q8__3 edu_cont_3
+	rename 			s5q8__4 edu_cont_4
+	rename 			s5q8__5 edu_cont_5
+	rename 			s5q8__6 edu_cont_6
+	rename 			s5q8__7 edu_cont_7
+	rename 			s5q8__8 edu_cont_8
+	
 	rename			s6q2 emp_pre
 	rename			s6q3a emp_pre_why	
 	rename 			s6q3b emp_nowork_pay
@@ -209,11 +229,26 @@
 	
 	rename 			s5q1a1 ac_soap_need
 	rename 			s5q1b1 ac_soap
-
+	
+* satisfaction 
+	rename 			s3q6 satis
+	rename 			s3q7__1 satis_1
+	rename			s3q7__2 satis_2
+	rename 			s3q7__3 satis_3
+	rename 			s3q7__4 satis_4
+	rename 			s3q7__5 satis_5
+	rename 			s3q7__6 satis_6
+	rename 			s3q7__96 satis_7
+	drop 			s3q7_os 
+	
 * behavior
 	rename			s4q1 bh_1
 	rename			s4q2a bh_2
+	replace 		bh_2 = 0 if bh_2 < 3
+	replace 		bh_2 = 1 if bh_2 > 0 & bh_2 != .
 	rename			s4q3a bh_3
+	replace 		bh_3 = 0 if bh_3 == 1
+	replace 		bh_3 = 1 if bh_3 > 1 & bh_3 != .
 	rename			s4q3b bh_nogath
 	drop 			s4q4 //questions inconsistent from survey to data, usually go with data but this one seems incompatible with other responses
 	rename			s4q5 bh_4

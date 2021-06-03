@@ -210,7 +210,27 @@
 	merge 1:1 		HHID using "$root/wave_0`w'/sect8_food_security_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect9_Concerns_r`w'.dta", nogen
 	
-* rename variables inconsistent with  wave 1
+* rename variables inconsistent with other waves
+	* education
+	rename 			s5q6d edu_act
+	rename 			s5q6__1 edu_1
+	rename 			s5q6__2 edu_2
+	rename 			s5q6__3 edu_3
+	rename 			s5q6__4 edu_4
+	rename 			s5q6__5 edu_5
+	rename 			s5q6__6 edu_6
+	rename 			s5q6__7 edu_7
+	rename 			s5q6__96 edu_other
+	rename 			s5q7 edu_cont
+	rename			s5q8__1 edu_cont_1
+	rename 			s5q8__2 edu_cont_2
+	rename 			s5q8__3 edu_cont_3
+	rename 			s5q8__4 edu_cont_4
+	rename 			s5q8__5 edu_cont_5
+	rename 			s5q8__6 edu_cont_6
+	rename 			s5q8__7 edu_cont_7
+	rename 			s5q8__8 edu_cont_8
+	
 	rename			s3q9 sup_rcvd
 	rename			s3q10 sup_cmpln
 	lab def 		yesno 1 "Yes" 2 "No"
@@ -268,7 +288,11 @@
 * behavior
 	rename			s4q1 bh_1
 	rename			s4q2a bh_2
+	replace 		bh_2 = 0 if bh_2 < 3
+	replace 		bh_2 = 1 if bh_2 > 0 & bh_2 != .
 	rename			s4q3a bh_3
+	replace 		bh_3 = 0 if bh_3 == 1
+	replace 		bh_3 = 1 if bh_3 > 1 & bh_3 != .
 	rename			s4q4 bh_canc_trav
 	rename			s4q5 bh_4
 	rename			s4q6 bh_5

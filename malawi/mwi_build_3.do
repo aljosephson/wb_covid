@@ -211,10 +211,11 @@
 	merge 1:1 		HHID using "$root/wave_0`w'/sect8_food_security_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect9_Concerns_r`w'.dta", nogen
 	
-*rename variables inconsistent with  wave 1
-	rename			s6q1a rtrn_emp
+* rename variables inconsistent with  wave 1
 	rename 	 		s6q2_1 emp_pre
 	rename			s6q3a_1 emp_pre_why
+	rename			s6q3a_1a emp_search
+	rename			s6q3a_2a emp_search_how
 	rename			s6q4a_1 emp_same
 	rename			s6q4b_1 emp_chg_why
 	rename			s6q4c_1 emp_pre_act

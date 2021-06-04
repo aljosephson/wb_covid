@@ -488,11 +488,11 @@
 	rename 			s4q13 ac_mask_why
 	rename 			s4q14_* ac_mask_srce*
 * rename assets 
-	rename			s4q12__1 asset_1
-	rename			s4q12__2 asset_2
-	rename			s4q12__3 asset_3
-	rename			s4q12__4 asset_4
-	rename			s4q12__5 asset_5
+	rename			s4q12__1 ac_radio
+	rename			s4q12__2 ac_tv
+	rename			s4q12__3 ac_elec
+	rename			s4q12__4 ac_solar
+	rename			s4q12__5 ac_solar_kit
 
 * rename knowledge
 	rename			s2q02__1 know_1

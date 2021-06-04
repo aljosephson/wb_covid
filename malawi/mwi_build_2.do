@@ -209,7 +209,7 @@
 	merge 1:1 		HHID using "$root/wave_0`w'/sect6c_OtherIncome_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect8_food_security_r`w'.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/sect9_Concerns_r`w'.dta", nogen
-	
+
 * rename variables inconsistent with other waves
 	* education
 	rename 			s5q6d edu_act
@@ -217,9 +217,9 @@
 	rename 			s5q6__2 edu_2
 	rename 			s5q6__3 edu_3
 	rename 			s5q6__4 edu_4
-	rename 			s5q6__5 edu_5
-	rename 			s5q6__6 edu_6
-	rename 			s5q6__7 edu_7
+	rename 			s5q6__5 edu_6
+	rename 			s5q6__6 edu_7
+	rename 			s5q6__7 edu_5
 	rename 			s5q6__96 edu_other
 	rename 			s5q7 edu_cont
 	rename			s5q8__1 edu_cont_1
@@ -230,16 +230,18 @@
 	rename 			s5q8__6 edu_cont_6
 	rename 			s5q8__7 edu_cont_7
 	rename 			s5q8__8 edu_cont_8
-	
+	rename 			s5q6a sch_child
+		
 	rename			s3q9 sup_rcvd
 	rename			s3q10 sup_cmpln
 	lab def 		yesno 1 "Yes" 2 "No"
 	lab val			sup_cmpln sup_rcvd yesno
 	rename			s3q11 sup_cmpln_who
 	rename			s3q12 sup_cmpln_done
-	rename			s6q1a rtrn_emp
 	rename 	 		s6q2_1 emp_pre
 	rename			s6q3a_1 emp_pre_why
+	rename			s6q3a_1a emp_search
+	rename			s6q3a_2a emp_search_how
 	rename			s6q4a_1 emp_same
 	rename			s6q4b_1 emp_chg_why
 	rename			s6q4c_1 emp_pre_act
@@ -278,10 +280,6 @@
 	rename			s6q17_1__6 farm_why_6
 	rename			s6q17_1__7 farm_why_8
 	drop 			s6q17_1__96
-	rename 			s5q6__5 temp
-	rename 			s5q6__7 s5q6__5 
-	rename 			s5q6__6 s5q6__7
-	rename 			temp s5q6__6
 
 	rename 			s5q1a1 ac_soap
  

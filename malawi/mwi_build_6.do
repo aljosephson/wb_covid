@@ -176,6 +176,24 @@
 		rename 			s4q6 bh_5
 		rename 			s4q7 bh_freq_wash
 		rename 			s4q8 bh_freq_mask
+	
+	* access
+		rename 			s5fq7 ac_internet
+	
+	* employment 
+		rename 			s6q3a emp_search
+		rename 			s6q3b emp_search_how
+		rename 			s6q5 emp_act
+		replace 		emp_act = 13 if emp_act == 8
+		replace 		emp_act = 8 if emp_act == 6
+		replace 		emp_act = 14 if emp_act == 9
+		replace 		emp_act = 9 if emp_act == 11 | emp_act == 12
+		replace 		emp_act = 11 if emp_act == 4
+		replace 		emp_act = 12 if emp_act == 5
+		replace 		emp_act = 4 if emp_act == 7
+		replace 		emp_act = 7 if emp_act == 10
+		replace 		emp_act = 16 if emp_act == 15
+		replace 		emp_act = -96 if emp_act == 96
 		
 * generate round variables
 	gen				wave = `w'

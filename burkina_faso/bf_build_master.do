@@ -144,6 +144,12 @@
 	rename 			s02cq03a ecd_pcg_gen
 	rename 			s02cq04 ecd_pcg_id
 	rename 			s02cq05 ecd_pcg_relate
+	replace 		ecd_pcg_relate = 6 if ecd_pcg_relate == 5
+	replace 		ecd_pcg_relate = 5 if ecd_pcg_relate == 4
+	replace 		ecd_pcg_relate = 4 if ecd_pcg_relate == 3
+	lab def 		ecd_rel 1 "mother" 2 "father" 3 "sibling" 4 "grandparent" ///
+						5 "other relative" 6 "non-relative/household worker"
+	lab val 		ecd_pcg_relate ecd_rel
 	rename 			s02cq06 ecd_play
 	rename 			s02cq07 ecd_read
 	rename 			s02cq08 ecd_story

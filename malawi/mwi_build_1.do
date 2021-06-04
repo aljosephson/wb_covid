@@ -178,8 +178,6 @@
 	rename 			s5q6__3 edu_3
 	rename 			s5q6__4 edu_4
 	rename 			s5q6__5 edu_5
-	rename 			s5q6__6 edu_6
-	rename 			s5q6__7 edu_7
 	rename 			s5q6__96 edu_other
 	rename 			s5q7 edu_cont
 	rename			s5q8__1 edu_cont_1
@@ -189,8 +187,9 @@
 	rename 			s5q8__5 edu_cont_5
 	rename 			s5q8__6 edu_cont_6
 	rename 			s5q8__7 edu_cont_7
-	rename 			s5q8__8 edu_cont_8
+	rename 			s5q6a sch_child
 	
+	* employment
 	rename			s6q2 emp_pre
 	rename			s6q3a emp_pre_why	
 	rename 			s6q3b emp_nowork_pay
@@ -226,11 +225,12 @@
 	rename			s6q17__5 farm_why_5
 	rename			s6q17__6 farm_why_6
 	drop			s6q17__7 
-	
+	* access
 	rename 			s5q1a1 ac_soap_need
 	rename 			s5q1b1 ac_soap
+	rename			s3q1a ac_internet
 	
-* satisfaction 
+	* satisfaction 
 	rename 			s3q6 satis
 	rename 			s3q7__1 satis_1
 	rename			s3q7__2 satis_2
@@ -241,7 +241,7 @@
 	rename 			s3q7__96 satis_7
 	drop 			s3q7_os 
 	
-* behavior
+	* behavior
 	rename			s4q1 bh_1
 	rename			s4q2a bh_2
 	replace 		bh_2 = 0 if bh_2 < 3
@@ -254,7 +254,8 @@
 	rename			s4q5 bh_4
 	rename			s4q6 bh_5
 	
-* edit employment activity	
+	* edit employment activity	
+	rename			s6q1a edu
 	rename			s6q5 emp_act
 	replace 		emp_act = -96 if emp_act == 16
 	replace 		emp_act = 16 if emp_act == 15

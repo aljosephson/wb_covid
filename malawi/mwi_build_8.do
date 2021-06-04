@@ -194,6 +194,23 @@
 		rename 			s5q5c ac_shops_san
 		rename 			s5q5d ac_shops_line
 		
+	* employment 
+		rename 			s6q3a emp_search
+		rename 			s6q3b emp_search_how		
+		rename 			s6q5 emp_act
+		replace 		emp-act = 100 if emp_act == 13
+		replace 		emp_act = 13 if emp_act == 8
+		replace 		emp_act = 8 if emp_act == 6
+		replace 		emp_act = 6 if emp_act == 100
+		replace 		emp_act = 14 if emp_act == 9
+		replace 		emp_act = 9 if emp_act == 11 | emp_act == 12
+		replace 		emp_act = 11 if emp_act == 4
+		replace 		emp_act = 12 if emp_act == 5
+		replace 		emp_act = 4 if emp_act == 7
+		replace 		emp_act = 7 if emp_act == 10
+		replace 		emp_act = 16 if emp_act == 15
+		replace 		emp_act = -96 if emp_act == 96
+		
 * generate round variables
 	gen				wave = `w'
 	lab var			wave "Wave number"

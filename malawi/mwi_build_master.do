@@ -127,7 +127,6 @@
 
 * knowledge
 	rename 			s3q1  know
-	rename			s3q1a ac_internet
 	rename			s3q2__1 know_1
 	lab var			know_1 "Handwashing with Soap Reduces Risk of Coronavirus Contraction"
 	rename			s3q2__2 know_9
@@ -465,7 +464,6 @@
 * education
 	rename 			filter1 children618
 	replace 		children618 = filter2_sec5 if children618 == .
-	rename 			s5q6a sch_child
 
 	rename 			s5q6b sch_child_meal
 	rename 			s5q6c sch_child_mealskip
@@ -481,18 +479,63 @@
 	rename 			s5q17a sch_open_why
 	
 * early childhood development 
-
-ANN YOU ARE HERE
-
+	rename 			s5dq2 ecd_pcg 
+	replace 		ecd_pcg = 2 if ecd_pcg == 555
+	rename 			s5dq3 ecd_pcg_relate
+	replace 		ecd_pcg_relate = 6 if ecd_pcg_relate == 7
+	rename 			s5dq4 ecd_pcg_gen
+	rename 			s5dq5 ecd_resp_relate
+	lab def 		ecd_rel 1 "mother" 2 "father" 3 "sibling" 4 "grandparent" ///
+						5 "other relative" 6 "non-relative/household worker"
+	lab val 		ecd_pcg_relate ecd_resp_relate ecd_rel
+	rename 			s5dq7 ecd_ed_pre
+	replace 		ecd_ed_pre = 77 if ecd_ed_pre == 555
 	
+	rename 			s5eq1 ecd_play
+	rename 			s5eq2 ecd_read
+	rename 			s5eq3 ecd_story
+	rename 			s5eq4 ecd_song
+	rename 			s5eq5 ecd_out
+	rename 			s5eq6 ecd_ncd
+	rename 			s5eq7 ecd_num_bks
+	
+	rename 			s5fq1 ac_elec
+	rename 			s5fq2 ac_radio
+	rename 			s5fq3 ac_tv
+	rename 			s5fq4 ac_mobile
+	rename 			s5fq5 ac_phone
+	rename 			s5fq6 ac_comp
+	
+	rename 			s5gq1 ecd_ed_1
+	rename 			s5gq2 ecd_ed_2
+	rename 			s5gq3 ecd_ed_3
+	rename 			s5gq4 ecd_ed_4
+	rename 			s5gq6 ecd_ed_5
+	rename 			s5gq7 ecd_ed_6
+	rename 			s5gq8 ecd_ed_7
+	rename 			s5gq9 ecd_ed_8
+	
+	rename 			s5iq1 ecd_bh_1
+	rename 			s5iq2 ecd_bh_2
+	rename 			s5iq3 ecd_bh_3
+	rename 			s5iq4 ecd_bh_4
+	rename 			s5iq5 ecd_bh_5
+	rename 			s5iq6 ecd_bh_6
+	
+	rename 			s5jq1 ecd_disc_1
+	rename 			s5jq2 ecd_disc_2
+	rename 			s5jq3 ecd_disc_3
+	rename 			s5jq4 ecd_disc_4
+	rename 			s5jq5 ecd_disc_5
+	rename 			s5jq6 ecd_disc_6
+	rename 			s5jq7 ecd_disc
+
 * employment
 	rename			s6q1 emp	
-	rename			s6q1a edu
+	rename			s6q1a rtrn_emp
 	replace			emp = s6q1_1 if emp == .
 	rename			s6q8d_1 emp_hrs
 	rename			s6q8e_1 emp_hrs_chg
-	rename			s6q3a_1a emp_search
-	rename			s6q3a_2a emp_search_how
 	replace 		emp_nowork_pay = s6q3b_1 if emp_nowork_pay == .
 	drop			s6q4_1 // duplicative of emp_pre_act
 	rename 			working_last emp_last
@@ -501,8 +544,9 @@ ANN YOU ARE HERE
  	rename			s6q1b rtrn_emp_when
 	replace			emp_same = s6q4a_1b if s6q4a_1b != .
 	replace			emp_chg_why = s6q4b if s6q4b != .
-	replace			emp_act = s6q5 if s6q5 != .
+	replace			emp_act = s6q5 if emp_act == . & s6q5 != .
 	replace 		emp_act = -96 if emp_act == 96
+ANN YOU ARE HERE
 	replace			emp_stat = s6q6 if s6q6 != .
 	replace			emp_able = s6q7 if s6q7 != .
 	replace			emp_unable = s6q8 if s6q8 != .
@@ -516,23 +560,6 @@ ANN YOU ARE HERE
 	replace			emp_hh = s6q9 if s6q9 != .
 	replace			emp_search = s6q3a if s6q3a != .
 	replace			emp_search_how = s6q3b if s6q3b != .
-	gen				emp_why = .
-	forval 			x = 1/13 {
-					replace emp_why = `x' if s6q1c__`x' == 1
-					replace	emp_why = `x' if s6q3__`x' == 1 & emp_why == .
-	}
-	replace			emp_why = 14 if s6q1c__96 == 1
-	replace			emp_why = 14 if s6q3__96 == 1 & emp_why == .
-	lab def			emp_why 1 "Business closed due to legal restrictions" ///
-								 2 "Business closed for other reasons" 3 "Laid off" ///
-								 4 "Furloughed" 5 "Vacation" 6 "Ill/Quarantined" ///
-								 7 "Caregiving" 8 "Seasonal worker" 9 "Retired" ///
-								 10 "Unable to farm due to legal restrictions" ///
-								 11 "Unable to farm due to lack of inputs" ///
-								 12 "Not farming season" 13 "COVID rotation" ///
-								 14 "Other"
-	lab val			emp_why emp_why
-	lab var 		emp_why "Why did you not work last week"
 
 	rename			s6bq11a_1 bus_stat
 	replace			bus_stat = s6bq11a_2 if bus_stat == .

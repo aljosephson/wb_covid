@@ -166,9 +166,10 @@
 	rename 			s5q18 sch_prec
 	rename 			s5q19 sch_prec_sat
 	
-	rename			s6q1a rtrn_emp
 	rename 	 		s6q2_1 emp_pre
 	rename			s6q3a_1 emp_pre_why
+	rename			s6q3a_1a emp_search
+	rename			s6q3a_2a emp_search_how
 	rename			s6q4a_1 emp_same
 	rename			s6q4b_1 emp_chg_why
 	rename			s6q4c_1 emp_pre_act

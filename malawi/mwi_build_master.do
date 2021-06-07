@@ -265,13 +265,13 @@
 	drop 			s5q0d__555 s5q0d_ot 
 		
  * soap
-	gen				ac_soap_why = .
-	replace			ac_soap_why = 1 if s5q1c1__1 == 1 | s5q1b1__1 == 1
+	rename 			s5q1b1 ac_soap_why
+	replace			ac_soap_why = 1 if s5q1c1__1 == 1 | s5q1b1__1 == 1 
 	replace 		ac_soap_why = 2 if s5q1c1__2 == 1 | s5q1b1__2 == 1
 	replace 		ac_soap_why = 3 if s5q1c1__3 == 1 | s5q1b1__3 == 1
 	replace 		ac_soap_why = 4 if s5q1c1__4 == 1 | s5q1b1__4 == 1
 	replace 		ac_soap_why = 5 if s5q1c1__5 == 1 | s5q1b1__5 == 1
-	replace 		ac_soap_why = 6 if s5q1c1__6 == 1 | s5q1b1__6 == 1
+	replace 		ac_soap_why = 6 if s5q1c1__6 == 1 | s5q1b1__6 == 1 
 	replace 		ac_soap_why = 7 if s5q1b1__7 == 1
 	replace 		ac_soap_why = 8 if s5q1b1__8 == 1
 	replace 		ac_soap_why = 9 if s5q1b1__9 == 1
@@ -342,8 +342,8 @@
 	rename 			s5q2 ac_staple_def
 	rename			s5q2a ac_staple_need
 	rename 			s5q2b ac_staple
-	gen 			ac_staple_why = .
-	replace			ac_staple_why = 1 if s5q2c__1 == 1
+	rename 			s5q2c ac_staple_why
+	replace			ac_staple_why = 1 if s5q2c__1 == 1 
 	replace 		ac_staple_why = 2 if s5q2c__2 == 1
 	replace 		ac_staple_why = 3 if s5q2c__3 == 1
 	replace 		ac_staple_why = 4 if s5q2c__4 == 1
@@ -546,21 +546,25 @@
 	replace			emp_chg_why = s6q4b if s6q4b != .
 	replace			emp_act = s6q5 if emp_act == . & s6q5 != .
 	replace 		emp_act = -96 if emp_act == 96
-ANN YOU ARE HERE
 	replace			emp_stat = s6q6 if s6q6 != .
+	rename 			s6q6a emp_purp
 	replace			emp_able = s6q7 if s6q7 != .
 	replace			emp_unable = s6q8 if s6q8 != .
 	replace			emp_unable_why = s6q8a if s6q8a != .
 	replace			emp_hrs = s6q8b if s6q8b != .
 	replace			emp_hrs_chg = s6q8c if s6q8c != .
+	rename 			s6q8c1 emp_hrs_norm
 	replace			emp_cont_1 = s6q8d__1 if s6q8d__1 != .
 	replace			emp_cont_2 = s6q8d__2 if s6q8d__2 != .
 	replace			emp_cont_3 = s6q8d__3 if s6q8d__3 != .
 	replace			emp_cont_4 = s6q8d__4 if s6q8d__4 != .
 	replace			emp_hh = s6q9 if s6q9 != .
+	forval 			x = 1/8 {
+	    rename 		s6q9__`x' emp_saf_`x'
+	}
+	rename 			s6q9__9 emp_saf_96
 	replace			emp_search = s6q3a if s6q3a != .
 	replace			emp_search_how = s6q3b if s6q3b != .
-
 	rename			s6bq11a_1 bus_stat
 	replace			bus_stat = s6bq11a_2 if bus_stat == .
 	replace			bus_stat = s6bq11a_3 if bus_stat == .
@@ -572,11 +576,13 @@ ANN YOU ARE HERE
 						5 "CAN'T TRAVEL / TRANSPORT GOODS FOR TRADE" ///
 						7 "ILLNESS IN THE HOUSEHOLD" 8 "NEED TO TAKE CARE OF A FAMILY MEMBER" ///
 						9 "SEASONAL CLOSURE" 10 "VACATION" 
-	lab val 		bus_closed clsd										
+	lab val 		bus_closed clsd	
+	replace 		bus_sect = s6qb12 if bus_sect == . & s6qb12 != .
+	replace 		bus_emp_inc = s6qb13 if bus_emp_inc == .
+	replace 		bus_why = s6qb14 if bus_why == .
 	forval 			x = 1/7 {
 		rename 			s6qb15__`x' bus_chal_`x'
-	}
-	drop			s6bq11a_2 s6bq11a_3 s6q14b_os 
+	}	 
 	rename			s6bq15a bus_beh
 	forval 			x = 1/6 {
 		rename 		s6bq15b__`x' bus_beh_`x'
@@ -584,6 +590,8 @@ ANN YOU ARE HERE
 	rename 			s6bq15b__96 bus_beh_7
 	rename 			s6bq15c bus_other
 	rename 			s6bq15d bus_num
+	
+* other income 
 	rename			s6cq1 oth_inc_1
 	lab var 		oth_inc_1 "Other Income: Remittances from abroad"
 	rename			s6cq2 oth_inc_2
@@ -595,8 +603,7 @@ ANN YOU ARE HERE
 	rename			s6cq5 oth_inc_5
 	lab var 		oth_inc_5 "Other Income: Pension"
 
-* agriculture (sec 13 in w1, 6e in all others)
-	rename			s13q1 ag_crop
+* agriculture (sec 13 in w1, 6e in others, 5A in 7)
 	rename			s13q2a ag_crop_1
 	rename			s13q2b ag_crop_2
 	rename			s13q2c ag_crop_3
@@ -611,6 +618,21 @@ ANN YOU ARE HERE
 	rename 			s13q7 ag_hire_chg_why
 	rename 			s13q8 ag_ext_need
 	rename 			s13q9 ag_ext
+	replace 		harv_sell = s6qe1 if harv_sell == . & s6qe1  != .
+	replace 		harv_sell = . if harv_sell == 3			
+	rename 			s13q15 ag_price	
+	forval 			x = 1/12 {
+		rename 		s6qe2__`x' ag_sold_`x'
+	}
+	rename 			s6qe3 ag_sold_why
+	rename 			s6qe4__1 ag_sell_where_5
+	rename 			s6qe4__2 ag_sell_where_2
+	rename 			s6qe4__3 ag_sell_where_3
+	rename 			s6qe4__4 ag_sell_where_4
+	rename 			s6qe5 ag_dimba
+	rename 			s6qe7 harv_sell_rev
+
+* livestock
 	rename			s13q10 ag_live
 	replace 		ag_live = s6qf1 if ag_live == . & s6qf1 != .
 	gen 			ag_live_1 = 0 if s6qf2__1 == 0 | s6qf2__2 == 0
@@ -636,25 +658,7 @@ ANN YOU ARE HERE
 	rename			s13q12__5 ag_live_chg_5
 	rename			s13q12__6 ag_live_chg_6
 	rename			s13q12__7 ag_live_chg_7
-	rename			s13q13 harv_sell_need
-	rename			s13q14 harv_sell
-	replace 		harv_sell = s6qe1 if harv_sell == . & s6qe1  != .
-	replace 		harv_sell = . if harv_sell == 3
-	drop 			s6qe1 
-	rename 			s13q15 ag_price	
-	forval 			x = 1/12 {
-		rename 		s6qe2__`x' ag_sold_`x'
-	}
-	rename 			s6qe3 ag_sold_why
-	rename 			s6qe4__1 ag_sell_where_5
-	rename 			s6qe4__2 ag_sell_where_2
-	rename 			s6qe4__3 ag_sell_where_3
-	rename 			s6qe4__4 ag_sell_where_4
-	rename 			s6qe5 ag_dimba
-	forval 			x = 1/12 {
-		rename 		s6qe6__`x' ag_crop_pl_`x'
-	}
-	rename 			s6qe7 harv_sell_rev
+
 	forval 			x = 1/6 {
 		rename 		s6qf4__`x' ag_live_affect_`x'
 	}
@@ -671,12 +675,37 @@ ANN YOU ARE HERE
 	rename 			s6qf9 ag_live_sell_able
 	replace 		ag_live_sell_able = 1 if ag_live_sell_able == 2
 	replace 		ag_live_sell_able = 2 if ag_live_sell_able == 3
+	replace 		ag_live_sell_want = s6qe9 if ag_live_sell_want == .
+	replace 		ag_live_sell_able = s6qe10 if ag_live_sell_able == .
 	forval 			x = 1/4 {
 		rename 			s6qf10__`x' ag_live_sell_nowhy_`x'
+		replace 		ag_live_sell_nowhy_`x'= s6qe11__`x' if ag_live_sell_nowhy_`x' == .
 	}
 	rename	 		s6qf10__5 ag_live_sell_nowhy_96
+	replace 		ag_live_sell_nowhy_96 = s6qe11__96 if ag_live_sell_nowhy_96 == .
 	rename 			s6qf11 ag_live_sell_rev	
 	
+* livestock products 
+	rename 			s6qe12* ag_live_*
+	rename 			s6qe13* ag_live_*_sales
+	forval 			x = 1/5 {
+		foreach 	p in eggs manure meat milk other {
+			rename 	s6qe14__`x'`p' ag_live_`p'_dec_why_`x'
+			lab var ag_live_`p'_dec_why_`x' "Why have the sales of [LIVESTOCK PRODUCT] declined?"
+		}
+	}
+	forval 			x = 1/6 {
+		foreach 	p in eggs manure meat milk other {
+			rename 	s6qe15__`x'`p' ag_live_`p'_no_why_`x'
+			lab var ag_live_`p'_no_why_`x' "Why there were no sales of [LIVESTOCK PRODUCT]?"
+		}
+	}
+	drop 			s6qe14__96* s6qe14_oth* s6qe15__96* s6qe15_oth*
+	foreach 		p in eggs manure meat milk other {
+		rename 		s6qe16`p' ag_live_pr_`p'
+		lab var 	ag_live_pr_`p' "Has the price of [LIVESTOCK PRODUCT]…"
+	}
+
 * income
 	rename 			s7q11 farm_inc
 	label 			var farm_inc "income from farming, fishing, livestock in last 12 months"
@@ -767,6 +796,7 @@ ANN YOU ARE HERE
 	rename			s9q8 concern_6
 	lab var			concern_6 "Corruption in the government has lowered the quality of medical supplies and care"
 	rename 			s9q9 symp_call
+	rename 			s9q9b symp_call_sat
 
 * shock variables	
 	rename 			shock_8 shock_15 
@@ -796,7 +826,7 @@ ANN YOU ARE HERE
 	rename			s10q2__4 elseaff_4
 	rename			s10q2__5 elseaff_5
 	lab var			elseaff_1 "just household affected by shock"
-	lab var			elseaff_2 "famliy members outside household affected by shock"
+	lab var			elseaff_2 "familyy members outside household affected by shock"
 	lab var			elseaff_3 "several hh in village affected by shock"
 	lab var			elseaff_4 "most or all hhs in village affected by shock"
 	lab var			elseaff_5 "several villages affected by shock"
@@ -891,7 +921,10 @@ ANN YOU ARE HERE
 						s6qf7_ot s6qf10__95 s6qf10_ot s6qf4__95 s6qf4_ot s6qf5__95 ///
 						s6qf5_ot s6dq10_ot weight s2q9 s6q3b_1 harv_cov_why_6 ///
 						harv_cov_why_7 s13q6_* s6qf2__* s3q2__5 s6bq15_ot shock_96 ///
-						s5q5_oth
+						s5q5_oth s6q9_oth s6bq11c s6qb12 s6qb13 s6qb14 s6bq11a_2 ///
+						s6bq11a_3 s6q14b_os s6qe1 s6qe9 s6qe10 s6qe11__* s6qe4_oth ///
+						s6qe4_oth2 s5q3b__555 s5q3b_ot s5dq5_oth s5dq7_ot s5cq4__96 ///
+						 s5q1b1_ot s6qe2_oth s6qe4__96 s6qe11_oth s6qe2__96
 
 * regional and sector information
 	gen				sector = 2 if urb_rural == 1

@@ -234,9 +234,6 @@
 	replace 		contrct = 0 if contrct == 2
 	
 	rename			s6bq11 bus_emp
-	rename			s6qb12 bus_sect
-	rename			s6qb13 bus_emp_inc
-	rename			s6qb14 bus_why
 	rename			s6q9_1 emp_hh
 	rename			s6q15_1 farm_emp
 	rename			s6q16_1 farm_norm
@@ -314,8 +311,8 @@
 	}
 	drop 			s6dq10
 	rename 			s6dq11 ac_cr_bef_worry
-	rename 			s6dq12 ac_cr_miss
-	rename 			s6dq13 ac_cr_delay	
+	rename 			s6dq12 ac_cr_bef_miss
+	rename 			s6dq13 ac_cr_bef_delay	
 	
 * generate round variables
 	gen				wave = `w'

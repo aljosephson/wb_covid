@@ -195,6 +195,10 @@
 		replace 		emp_act = 16 if emp_act == 15
 		replace 		emp_act = -96 if emp_act == 96
 		
+	* agriculture 
+		rename 			s6qe1 harv_sell_need
+		rename 			s6qe1a harv_sell
+		
 * generate round variables
 	gen				wave = `w'
 	lab var			wave "Wave number"

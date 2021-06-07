@@ -204,7 +204,25 @@
 	drop 			livestock
 	reshape 		wide s5cq*, i(HHID) j(product) string
 
+* save temp file part 1
+	tempfile		templs1
+	save			`templs1'
+	
+* load data		
+	use 			"$root/wave_0`w'/SEC5D.dta", clear
+
+* reshape wide
+	keep 			livestock HHID
+	gen 			product = cond(livestock == -96, "other", cond(livestock == 1, ///
+					"milk",cond(livestock == 2, "eggs","meat")))
+	reshape 		wide livestock, i(HHID) j(product) string
+	collapse 		(sum) livestock*, by (HHID)
+	replace 		livestock_products__ideggs = 1 if livestock_products__ideggs != 0
+	replace 		livestock_products__idmeat = 1 if livestock_products__idmeat != 0
+	replace 		livestock_products__idmilk = 1 if livestock_products__idmilk != 0	
+	
 * save temp file
+	merge			1:1 HHID using `templs1', nogen
 	tempfile		temp5
 	save			`temp5'
 	

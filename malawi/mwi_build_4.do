@@ -188,9 +188,6 @@
 	replace 		contrct = 0 if contrct == 2
 	
 	rename			s6bq11 bus_emp
-	rename			s6qb12 bus_sect
-	rename			s6qb13 bus_emp_inc
-	rename			s6qb14 bus_why
 	rename			s6q9_1 emp_hh
 	rename			s6q15_1 farm_emp
 	rename			s6q16_1 farm_norm
@@ -251,12 +248,14 @@
 	
 * rename access credit variables inconsistent with wave 3 
 	rename 			s6dq1 ac_cr_loan
-	replace 		ac_cr_loan = 2 if ac_cr_loan == 3
+	gen 			ac_cr_need = 1 if ac_cr_loan == 1 | ac_cr_loan == 2
+	replace 		ac_cr_need = 0 if ac_cr_loan == 3
+	replace 		ac_cr_loan = 0 if ac_cr_loan == 3
 	lab def 		ac_cr_loan 1 "Yes" 2 "Unable or did not try" 
 	lab val 		ac_cr_loan ac_cr_loan 
 	rename 			s6dq2 ac_cr_lend
 	forval 			x = 1/8 {
-	    gen 		ac_cr_lend_`x' = 1 if ac_cr_lend == `x'
+	    gen 		ac_cr_lend_`x' = 1 if ac_cr_lend == `x' // cleaned for consistency in master
 	}
 	drop 			ac_cr_lend
 	rename 			s6dq3 ac_cr_lend_att
@@ -284,8 +283,13 @@
 	rename 			s6dq12__0 ac_cr_bef_who_1
 	rename 			s6dq12__1 ac_cr_bef_who_2
 	rename 			s6dq13 ac_cr_bef_worry
-	rename 			s6dq14 ac_cr_miss
-	rename 			s6dq15 ac_cr_delay	
+	rename 			s6dq14 ac_cr_bef_miss
+	rename 			s6dq15 ac_cr_bef_delay	
+	
+* ag
+	forval 			x = 1/12 {
+		rename 		s6qe6__`x' ag_crop_pl_`x'
+	}
 	
 * generate round variables
 	gen				wave = `w'

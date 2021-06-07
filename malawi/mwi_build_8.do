@@ -198,7 +198,7 @@
 		rename 			s6q3a emp_search
 		rename 			s6q3b emp_search_how		
 		rename 			s6q5 emp_act
-		replace 		emp-act = 100 if emp_act == 13
+		replace 		emp_act = 100 if emp_act == 13
 		replace 		emp_act = 13 if emp_act == 8
 		replace 		emp_act = 8 if emp_act == 6
 		replace 		emp_act = 6 if emp_act == 100
@@ -210,6 +210,46 @@
 		replace 		emp_act = 7 if emp_act == 10
 		replace 		emp_act = 16 if emp_act == 15
 		replace 		emp_act = -96 if emp_act == 96
+		rename			s6bq11 bus_emp
+	
+	* rename access credit variables inconsistent with wave 3 
+		rename 			s6dq1 ac_cr_loan
+		gen 			ac_cr_need = 1 if ac_cr_loan == 1 | ac_cr_loan == 2
+		replace 		ac_cr_need = 0 if ac_cr_loan == 3
+		replace 		ac_cr_loan = 0 if ac_cr_loan == 3
+		lab def 		ac_cr_loan 1 "Yes" 2 "Unable or did not try" 
+		lab val 		ac_cr_loan ac_cr_loan 
+		rename 			s6dq2 ac_cr_lend
+		forval 			x = 1/8 {
+			gen 		ac_cr_lend_`x' = 1 if ac_cr_lend == `x' // cleaned for consistency in master
+		}
+		drop 			ac_cr_lend
+		rename 			s6dq3 ac_cr_lend_att
+		forval 			x = 1/12 {
+			rename 		s6dq4__`x' ac_cr_why_`x'
+			replace 	ac_cr_why_`x' = 0 if ac_cr_why_`x' == . & s6dq5 == 0 
+			replace 	ac_cr_why_`x' = 1 if s6dq5 == `x' 
+		}
+		drop 			s6dq5
+		rename 			s6dq6__0 ac_cr_who_1
+		rename 			s6dq6__1 ac_cr_who_2
+		rename 			s6dq7__0 ac_cr_att_who_1
+		rename 			s6dq7__1 ac_cr_att_who_2
+		rename 			s6dq8 ac_cr_due
+		rename 			s6dq9 ac_cr_worry
+		rename 			s6dq10 ac_cr_bef
+		rename 			s6dq10a ac_cr_prev_repay
+		forval 			x = 1/12 {
+			gen 			ac_cr_bef_why_`x' = 0
+			replace 		ac_cr_bef_why_`x' =	. if s6dq11 == .
+			replace 		ac_cr_bef_why_`x' = 1 if s6dq11 == `x'
+		}
+		drop 			s6dq11
+		rename 			s6dq12__0 ac_cr_bef_who_1
+		rename 			s6dq12__1 ac_cr_bef_who_2
+		rename 			s6dq13 ac_cr_bef_worry
+		rename 			s6dq14 ac_cr_bef_miss
+		rename 			s6dq15 ac_cr_bef_delay		
 		
 * generate round variables
 	gen				wave = `w'

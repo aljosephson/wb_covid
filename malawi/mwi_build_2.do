@@ -266,9 +266,6 @@
 	replace 		contrct = s6q8e__2 if contrct == .
 	
 	rename			s6bq11 bus_emp
-	rename			s6qb12 bus_sect
-	rename			s6qb13 bus_emp_inc
-	rename			s6qb14 bus_why
 	rename			s6q9_1 emp_hh
 	rename			s6q15_1 farm_emp
 	rename			s6q16_1 farm_norm

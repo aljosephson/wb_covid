@@ -528,7 +528,7 @@
 	rename			s6q4b emp_chg_why 
 	rename 			s6q8b emp_hrs
 	replace 		emp_hrs = s6q8b1 if emp_hrs == . & s6q8b1 != .
-	rename 			s6q8c1 emp_hrs_typ
+	rename 			s6q8c1 emp_hrs_norm
 	rename 			s6q8c emp_hrs_chg 
 	rename			s6q8d__1 emp_cont_1
 	rename			s6q8d__2 emp_cont_2

@@ -225,6 +225,12 @@
 	rename			s6q17__5 farm_why_5
 	rename			s6q17__6 farm_why_6
 	drop			s6q17__7 
+	
+	* ag
+	rename			s13q1 ag_crop
+	rename			s13q13 harv_sell_need
+	rename			s13q14 harv_sell
+	
 	* access
 	rename 			s5q1a1 ac_soap_need
 	rename 			s5q1b1 ac_soap

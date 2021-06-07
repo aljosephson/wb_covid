@@ -169,7 +169,7 @@
 
 * load data
 	use				"$root/wave_0`w'/sect6e_Livestock_Products_r`w'", clear
-	
+
 	drop 			interview__key
 	
 * reshape wide
@@ -177,11 +177,11 @@
 					"milk",cond(LivestockPr == 2, "eggs",cond(LivestockPr == 3, "meat","manure"))))
 	drop 			Livestock
 	reshape 		wide s6qe*, i(HHID y4_hhid) j(product) string
-	
-* save temp file
+
+* save temp file part 1
 	tempfile		tempg
 	save			`tempg'
-	
+
 	
 * ***********************************************************************
 * 2 - merge to build complete dataset for the round 
@@ -191,7 +191,7 @@
 	use				"$root/wave_0`w'/secta_Cover_Page_r`w'", clear
 	
 * merge formatted sections
-	foreach 		x in c d e g {
+	foreach 		x in b c d e g {
 	    merge 		1:1 HHID using `temp`x'', nogen
 	}
 	
@@ -262,7 +262,15 @@
 		replace 		emp_act = 13 if emp_act == 100
 		replace 		emp_act = 16 if emp_act == 15
 		replace 		emp_act = -96 if emp_act == 96
-			
+		rename			s6bq11 bus_emp	
+		
+	* agriculture 
+		rename 			s6qe1 harv_sell_need
+		rename 			s6qe1a harv_sell
+	
+	* concerns
+		rename 			s9q7 concern_8
+		
 * generate round variables
 	gen				wave = `w'
 	lab var			wave "Wave number"

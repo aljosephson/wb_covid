@@ -772,8 +772,8 @@
 		replace 		ag_chg = . if country == 1 & (ag_chg < 0 | ag_chg == 2)
 		replace 		ag_chg = 0 if country == 1 & ag_chg == 1
 		replace 		ag_chg = 1 if country == 1 & ag_chg == 3
-		replace 		ag_chg = 0 if (country == 3 | country == 4 | country == 5) & ag_chg == 3
-		replace			ag_chg = . if (country == 3 | country == 4 | country == 5) & ag_chg == 2
+		replace 		ag_chg = 0 if country > 1  & ag_chg == 3
+		replace			ag_chg = . if country > 1  & ag_chg == 2
 		lab val 		ag_chg yesno
 	
 	

@@ -393,11 +393,11 @@
 	rename 			s5cq08 ag_live_sell_want
 	rename 			s5cq09 ag_live_sell_able
 	rename 			s5cq11_* ag_live_sell_nowhy*
+	rename 			livestock_products__ideggs ag_live_eggs
+	rename 			livestock_products__idmeat ag_live_meat
+	rename 			livestock_products__idmilk ag_live_milk
+	rename 			livestock_products__idoth ag_live_other
 	rename 			s5cq13* ag_live_*_sales
-	lab var			ag_live_eggs_sales "Since March have sales of eggs"
-	lab var			ag_live_meat_sales "Since March have sales of meat"
-	lab var			ag_live_milk_sales "Since March have sales of milk"
-	lab var			ag_live_other_sales "Since March have sales of other"
 	forval 			x = 1/6 {
 		foreach 	p in eggs meat milk other {
 			rename 	s5cq14_1__`x'`p' ag_live_`p'_dec_why_`x'
@@ -412,7 +412,7 @@
 	}
 	foreach 		p in eggs meat milk other {
 		rename 		s5cq15`p' ag_live_pr_`p'
-		lab var 	ag_live_pr_`p' "Since March 20, 2020 has the price of [LIVESTOCK PRODUCT]…"
+		lab var 	ag_live_pr_`p' "Has the price of [LIVESTOCK PRODUCT]…"
 	}
 
 * rename access

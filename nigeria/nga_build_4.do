@@ -198,8 +198,52 @@
 	rename			s6q16 ag_crop
 	rename 			s6bq1 ag_live
 	rename 			s6q11b1 bus_other
-	rename 			s5q5b sch_att
 	
+  * access
+	* pre-post natal care
+	rename 			filter3 ac_nat_filter
+	rename 			s5q2a ac_nat_need
+	rename 			s5q2b ac_nat
+	forval 			x = 1/6 {
+		rename 			s5q2c__`x' ac_nat_why_`x' 
+	}
+	drop 			s5q2c*
+	 * preventative care
+	rename 			s5q2d ac_prev_app
+	rename 			s5q2e ac_prev_canc
+	replace 		ac_prev_canc = 0 if ac_prev_canc == 3
+	lab def 		ac_prev_canc 0 "NO" 1 " YES, HAD APPOINTMENT THAT WAS CANCELED" ///
+					2 "YES, WAS PLANNING TO GO BUT DID NOT"
+	lab val 		ac_prev_canc ac_prev_canc
+	forval 			x = 1/9 {
+	    rename 		s5q2f__`x' ac_prev_why_`x'
+	}
+	drop 			s5q2f*
+	* medical service	
+	rename 			s5q2 ac_medserv_need
+	rename 			s5q3 ac_medserv
+	rename 			s5q4 ac_medserv_why 
+	replace 		ac_medserv_why = 7 if ac_medserv_why == 4
+	replace 		ac_medserv_why = 9 if ac_medserv_why == 5
+	replace 		ac_medserv_why = 10 if ac_medserv_why == 6
+	replace 		ac_medserv_why = . if ac_medserv_why == 96 
+	* education 
+	rename 			filter1 children520
+	rename 			s5q4b edu_act
+	rename 			s5q5__1 edu_1 
+	rename 			s5q5__2 edu_2  
+	rename 			s5q5__3 edu_3 
+	rename 			s5q5__4 edu_4 
+	rename 			s5q5__7 edu_5 
+	rename 			s5q5__5 edu_6 
+	rename 			s5q5__6 edu_7 	
+	rename 			s5q5__96 edu_other 
+	rename 			s5q5b sch_att
+	rename 			s5q5c sch_open
+	* women banking
+	rename 			s5q21 ac_bank_fem
+	rename 			s5q22 ac_save_fem
+	rename 			s5q23 ac_save_fem_amt
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace
 

@@ -165,6 +165,9 @@
 * rename variables inconsistent with  wave 1
 	rename 			s5q18 sch_prec
 	rename 			s5q19 sch_prec_sat
+	replace 		sch_prec_sat = 100 if sch_prec_sat == 3
+	replace 		sch_prec_sat = 3 if sch_prec_sat == 1
+	replace 		sch_prec_sat = 1 if sch_prec_sat == 100
 	
 	rename 	 		s6q2_1 emp_pre
 	rename			s6q3a_1 emp_pre_why

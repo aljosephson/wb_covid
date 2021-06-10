@@ -6,7 +6,7 @@
 * Stata v.16.1
 
 * does
-	* reads in fifth round of Nigeria data
+	* reads in eight round of Nigeria data
 	* reshapes and builds panel
 	* outputs panel data 
 
@@ -32,12 +32,12 @@
 	log using		"$logout/nga_reshape", append
 
 * set local wave number & file number
-	local			w = 5
+	local			w = 8
 	
 * make wave folder within refined folder if it does not already exist 
 	capture mkdir "$export/wave_0`w'" 
 		
-				
+		
 * ***********************************************************************
 * 1 - format secitons and save tempfiles
 * ***********************************************************************
@@ -56,14 +56,14 @@
 	rename 			s2q3 curr_mem
 	rename 			s2q5 sex_mem
 	rename 			s2q6 age_mem
-	rename 			s2q7 relat_mem
+	rename 			s2q7 relat_mem	
 	
 * generate counting variables
 	gen				hhsize = 1
 	gen 			hhsize_adult = 1 if age_mem > 18 & age_mem < .
 	gen				hhsize_child = 1 if age_mem < 19 & age_mem != . 
 	gen 			hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
-	
+
 * create hh head gender
 	gen 			sexhh = . 
 	replace			sexhh = sex_mem if relat_mem == 1
@@ -79,10 +79,10 @@
 * save temp file
 	tempfile		tempa
 	save			`tempa'
-
 	
+
 * ***********************************************************************
-* 1b - sections 3-6, 8-9, 12: respondant gender
+* 1b - sections 2, 5-6, 12: respondant gender
 * ***********************************************************************
 
 * load data
@@ -111,61 +111,57 @@
 * save temp file
 	tempfile		tempb
 	save			`tempb'
-
+		
 	
 * ***********************************************************************
 * 1c - section 7: income
 * ***********************************************************************
 
-* load data
-	use				"$root/wave_0`w'/r`w'_sect_7", clear
+* not available for round
+	
 
-* reformat HHID
-	format 			%5.0f hhid
-	
-* drop other source
-	drop			zone state lga sector ea
-	
-* reshape data	
-	reshape 		wide s7q1, i(hhid) j(source_cd)
-
-	rename			s7q14 oth_inc_1
-	lab var 		oth_inc_1 "Other Income: Remittances from abroad"
-	rename			s7q15 oth_inc_2
-	lab var 		oth_inc_2 "Other Income: Remittances from family in the country"
-	rename			s7q16 oth_inc_3
-	lab var 		oth_inc_3 "Other Income: Assistance from non-family"
-	rename			s7q17 oth_inc_4
-	lab var 		oth_inc_4 "Other Income: Income from properties, investments, or savings"
-	rename			s7q18 oth_inc_5
-	lab var 		oth_inc_5 "Other Income: Pension"
-	
-* save temp file
-	tempfile		tempc
-	save			`tempc'
-
-	
 * ***********************************************************************
 * 1d - section 11: assistance
-* ***********************************************************************	
-	
-* not avaiable for round 
-	
+* ***********************************************************************
+
+* not available for round				
+		
 		
 * ***********************************************************************
 * 1e - section 10: shocks
 * ***********************************************************************
 
-* not avaiable for round
+* load data
+	use				"$root/wave_0`w'/r`w'_sect_10", clear
 
+* reformat HHID
+	format 			%5.0f hhid
+
+* drop other shock
+	drop			shock_cd_os s10q3_os
+	
+* generate shock variables
+	levelsof(shock_cd), local(id)
+	foreach 			i in `id' {
+		gen				shock_`i' = 1 if s10q1 == 1 & shock_cd == `i'
+		replace			shock_`i' = 0 if s10q1 == 2 & shock_cd == `i'
+		}
+
+* collapse to household level
+	collapse 		(max) s10q3__1- shock_96, by(hhid)	
+	
+* save temp file
+	tempfile		tempc
+	save			`tempc'
+	
 	
 * ***********************************************************************
 * 2 - FIES score
 * ***********************************************************************
 
-* not available for round 
+* not available for round
 
-	
+		
 * ***********************************************************************
 * 3 - merge sections into panel and save
 * ***********************************************************************
@@ -179,42 +175,14 @@
 * generate round variable
 	gen				wave = `w'
 	lab var			wave "Wave number"	
-
+	
 * clean variables inconsistent with other rounds	
 	rename			s6q16 ag_crop
-	rename 			s6bq1 ag_live
- 	rename 			s6q11b1 bus_other
-	replace 		s6q1c = s6q4b if s6q1c == .
-	drop 			s6q4b*
-	
-	* education
-	rename 			s5cq1 sch_att
-	forval 			x = 1/14 {
-	    rename 		s5cq2__`x' sch_att_why_`x'
-	}
-	rename 			s5cq3 sch_prec
-	forval 			x = 1/11 {
-	    rename 		s5cq4__`x' sch_prec_`x'
-	}
-	rename 			s5cq4__99 sch_prec_none
-	rename 			s5cq5 sch_prec_sat
-	rename 			s5cq6 edu_act 
-	rename 			s5cq7__1 edu_1 
-	rename 			s5cq7__2 edu_2  
-	rename 			s5cq7__3 edu_3 
-	rename 			s5cq7__4 edu_4 
-	rename 			s5cq7__7 edu_5 
-	rename 			s5cq7__5 edu_6 
-	rename 			s5cq7__6 edu_7 	
-	rename 			s5cq7__96 edu_other 
-	rename 			s5cq8 edu_cont
-	rename 			s5cq9__1 edu_cont_1
-	rename 			s5cq9__2 edu_cont_2
-	rename 			s5cq9__3 edu_cont_3
-	rename 			s5cq9__4 edu_cont_5
-	rename 			s5cq9__5 edu_cont_6
-	rename 			s5cq9__6 edu_cont_7
-	rename 			s5cq9__7 edu_cont_8
+
+	rename 			s5cq0 sch_att
+	rename 			s5cq1_* sch_catchup*
+	rename 			s5cq2 sch_catchup_imp
+	rename 			s5cq3_* sch_prec_prac*
 	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace

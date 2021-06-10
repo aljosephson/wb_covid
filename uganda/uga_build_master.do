@@ -542,6 +542,7 @@
 	lab val 		bus_closed clsd
 	rename 			s5a11c bus_act
 	replace			bus_why = s5aq14_2 if bus_why == .
+	
 	forval 			x = 1/6 {
 		rename 			s5aq15__`x' bus_chal_`x'
 	}

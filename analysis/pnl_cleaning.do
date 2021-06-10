@@ -179,6 +179,9 @@
 	}	
 		order				hhw_pnl phw* ahw* chw* shw*, after(hhw_cs)
 
+* admin/general 
+	replace 			realte_hoh = . if relate_hoh == -98 | relate_hoh == 98
+	
 	
 * **********************************************************************
 * 3 - revise knowledge, myths, behavior, and coping variables
@@ -211,7 +214,10 @@
 							bh_freq_mask == 3 | bh_freq_mask == 4
 	lab var 			bh_8 "Wore mask in public in last 7 days"
 	lab val 			bh_8 yesno
-
+	
+	lab def 			bh_freq_gath 0 "none" 1 "1" 2 "2" 3 "3" 4 "4" 5 "5 or more"
+	lab val 			bh_freq_gath bh_freq_gath 
+	
 * COVID
 	lab def 			cov 1 "I DONT THINK IT WILL WORK" 2 "I DONT THINK IT WILL BE SAFE" ///
 							3 "I AM WORRIED ABOUT THE SIDE EFFECTS" ///
@@ -225,6 +231,10 @@
 	forval 				x = 1/8 {
 		lab val 		mh_`x' mh
 	}
+	
+* government 
+	lab def 			satis 1 "yes" 2 "no" 3 "neither satisfied nor unsatisfied"
+	lab val 			satis satis 
 	
 * coping (create cope_any = 1 if any coping used, 0 if not, . if no data for that wave)
 	egen 				tempgrp = group(country wave)
@@ -298,8 +308,18 @@
 	lab def				ac_medserv_why 1 "lack of money" 2 "no med personnel" ///
 								3 "facility full" 4 "facility closed" ///
 								5 "not enough supplies" 6 "lack of transportation/too far" ///
-								7 "restriction to go out" 8 "afraid to get virus", replace
+								7 "restriction to go out" 8 "afraid to get virus" ///
+								9 "on suspicion of having virus" 10 "refused treatment by facility" ///
+								, replace
 	lab val 			ac_medserv_why ac_medserv_why
+	
+	lab def 			ac_medserve_type_why 1 "lack of money" 2 "no med personnel" ///
+							3 "facility full" 4 "facility closed" 5 "not enough supplies" ///
+							6 "health facility is too far" 7 "fear of contracting virus" ///
+							8 "lockdown/travel restrictions" 
+	forval 				x = 1/7 {
+		lab val 		ac_medserve_type_`x'_why ac_medserve_type_why
+	}
 	
 * access to pre-natal care
 	replace 			ac_nat_filter = 0 if ac_nat_filter == 2
@@ -313,7 +333,7 @@
 * access to vaccines	
 	replace 			ac_vac = 0 if ac_vac == 2
 	replace 			ac_vac_need = 0 if ac_vac_need == 2
-	
+
 * access to soap
 	replace 			ac_soap = 0 if ac_soap == 2
 	replace 			ac_soap_why = . if ac_soap_why == 96 | ac_soap_why == 9	
@@ -323,6 +343,9 @@
 	lab val 			ac_soap_why ac_soap_why
 	
 * access to staples
+	lab def 			staple_def 1 "Maize" 2 "Rice" 3 "Matooke" 4 "Cassava" ///
+							5 "Millet" 6 "Sorghum" 7 "Sweet Potatoes" 8 "Irish Potatoes"
+	lab val 			ac_staple_def staple_def
 	* Ethiopia
 		foreach 		var in ac_oil ac_teff ac_wheat {
 			replace 	`var' = . if `var' < 0
@@ -350,21 +373,22 @@
 		replace 		ac_staple = 0 if ac_staple == 2 & country == 2
 		replace 		ac_staple_need = 0 if ac_staple_need == 2
 	* Nigeria
-		foreach 		s in rice beans cass yam sorg  {
+		foreach 		s in rice beans cass yam sorg onion {
 			replace 	ac_`s' = 0 if ac_`s' == 2
 			replace 	ac_`s'_need = 0 if ac_`s'_need == 2
 		}
 		replace 		ac_staple_need = 1 if country == 3 & (ac_rice_need == 1 | ///
 						ac_beans_need == 1 | ac_cass_need == 1 | ac_yam_need == 1 | ///
-						ac_sorg_need == 1)
+						ac_sorg_need == 1 | ac_onion_need == 1)
 		replace 		ac_staple_need = 0 if country == 3 & ac_rice_need == 0 & ///
 						ac_beans_need == 0 & ac_cass_need == 0 & ac_yam_need == 0 & ///
-						ac_sorg_need == 0
+						ac_sorg_need == 0 & ac_onion_need == 0
 		replace 		ac_staple = 1 if country == 3 & (ac_rice == 1 | ac_beans == 1 | ///
-						ac_cass == 1 | ac_yam == 1 | ac_sorg == 1)
+						ac_cass == 1 | ac_yam == 1 | ac_sorg == 1 | ac_onion == )
 		replace 		ac_staple = 0 if country == 3 & ((ac_rice == 0 & ac_rice_need == 1 ) ///
 						| (ac_beans == 0 & ac_beans_need == 1) | (ac_cass == 0 & ac_cass_need == 1) ///
-						| (ac_yam == 0 & ac_yam_need == 1)  | (ac_sorg == 0 & ac_sorg_need == 1))
+						| (ac_yam == 0 & ac_yam_need == 1)  | (ac_sorg == 0 & ac_sorg_need == 1)) ///
+						| (ac_onion == 0 & ac_onion_need == 1))
 	* Uganda
 		replace 		ac_staple_need = 0 if ac_staple == 3 & country == 4
 		replace 		ac_staple_need = 1 if ac_staple == 1 | ac_staple == 2
@@ -387,7 +411,6 @@
 	replace 			ac_drink = 0 if ac_drink == 1 & (country == 2 | country == 4 | country == 5)
 	replace 			ac_drink = 1 if ac_drink == 2 & (country == 2 | country == 4 | country == 5)
 	replace 			ac_drink = 0 if ac_drink == 2 & country == 3 
-
 	replace 			ac_drink_why = . if (ac_drink_why == -96 | ac_drink_why > 94)
 	lab def 			ac_drink_why 1 "water supply not available" 2 "water supply reduced" ///
 							3 "unable to access communal supply" 4 "unable to access water tanks" ///
@@ -398,7 +421,6 @@
 
 * access to water for handwashing	
 	replace 			ac_water = 0 if ac_water == 2
-	
 	replace 			ac_water_why = . if (ac_water_why < 0 | ac_water_why > 94)
 	lab def 			ac_water_why 1 "water supply not available" 2 "water supply reduced" ///
 							3 "unable to access communal supply" 4 "unable to access water tanks" ///
@@ -536,7 +558,7 @@
 
 	
 * **********************************************************************
-* 5 - clean concerns and income changes
+* 5 - clean concerns 
 * **********************************************************************
 	
 * turn concerns 1 and 2 into binary
@@ -548,6 +570,9 @@
 	replace				concern_2 = 1 if concern_2 == 2
 	lab val				concern_2 yesno
  
+* **********************************************************************
+* 6 - income changes
+* **********************************************************************
 	replace 			tot_inc_chg = . if tot_inc_chg == -98 | tot_inc_chg == -99
 	loc inc				farm_inc bus_inc wage_inc isp_inc pen_inc gov_inc ngo_inc oth_inc asst_inc
 	foreach 			var of varlist `inc' {
@@ -683,7 +708,7 @@
 	
 	
 * **********************************************************************
-* 6 - clean food security information 
+* 7 - clean food security information 
 * **********************************************************************
 
 	loc fies			fies_1 fies_2 fies_3 fies_4 fies_5 fies_6 fies_7 fies_8	
@@ -700,7 +725,7 @@
 	
 	
 * **********************************************************************
-* 7 - clean education questions
+* 8 - clean education & early childhood development questions
 * **********************************************************************
  	
 	replace 			sch_att = 0 if sch_att == 2
@@ -744,9 +769,19 @@
 	lab var				edu_16 "Continued to visit the Daara"
 	lab var				edu_17 "Resumed school"
 
+	lab def 			sch_prec_sat 1 "Not satisfied" 2 "Somewhat satisfied" //
+							3 "Satisfied"
+	lab val 			sch_prec_sat sch_prec_sat
 
+	* early childhood development 
+	lab def 		ecd_rel 1 "mother" 2 "father" 3 "sibling" 4 "grandparent" ///
+						5 "other relative" 6 "non-relative/household worker"
+	lab val 		ecd_pcg_relate ecd_resp_relate ecd_rel
+
+	GENERATE ECD ED PRE BASED ON LVL IN BF & MWI
+CLEAN THESE 
 * **********************************************************************
-* 8 - clean agriculture and livestock variables
+* 9 - clean agriculture and livestock variables
 * **********************************************************************
 
 	replace 			ag_crop = 0 if ag_crop == 2 | ag_crop == 3
@@ -778,7 +813,7 @@
 	
 	
 * **********************************************************************
-* 9 - clean employment variables 
+* 10 - clean employment variables 
 * **********************************************************************
 	
 	foreach 			var in emp_pre emp emp_same contrct emp_cont_1 ///
@@ -812,9 +847,6 @@
 	replace 			bus_emp = . if bus_emp > 97
 	
 	replace 			emp_chg_why = 96 if emp_chg_why == -96
-	replace 			emp_chg_why = 96 if emp_chg_why == 13 & country == 2
-	replace 			emp_chg_why = 15 if emp_chg_why == 13 & country == 3
-	replace 			emp_chg_why = 16 if emp_chg_why == 14 & country == 3	
 	lab def 			emp_chg_why 1 "Bus closed due to COVID restrictions" ///
 							2 "Bus closed not due to COVID restrictions" ///
 							3 "Laid off" 4 "Furlough" 5 "Vacation" 6 "Ill/quarentined" ///
@@ -824,6 +856,7 @@
 							12 "Not farm season" 13 "Lack of transportation" ///
 							14 "Do not want to be exposed to the virus" ///
 							15 "focus on secondary activity" 16 "Better opportunity" ///
+							17 "PREVIOUS BUSINESS/JOB CLOSED DUE TO ENDSARS PROTESTS"
 							96 "Other", replace
 	lab val				emp_chg_why emp_chg_why 
 	
@@ -874,12 +907,14 @@
 						3 "NO COSTUMERS / FEWER CUSTOMERS" 4 "CAN'T GET INPUTS" ///
 						5 "CAN'T TRAVEL / TRANSPORT GOODS FOR TRADE" ///
 						7 "ILLNESS IN THE HOUSEHOLD" 8 "NEED TO TAKE CARE OF A FAMILY MEMBER" ///
-						9 "SEASONAL CLOSURE" 10 "VACATION", replace
+						9 "SEASONAL CLOSURE" 10 "VACATION" 11 "LACK OR LOSS OF CAPITAL" ///
+						12 "USUAL PLACE OF BUSINESS CLOSED DUE TO ENDSARS PROTESTS" ///
+						13 "INCREASE IN THE PRICE OF INPUTS", replace
 	lab val 		bus_closed clsd
 	
 	
 * **********************************************************************
-* 10 - shocks 
+* 11 - shocks 
 * **********************************************************************
 
 	lab var 		shock_1 "Death or disability of an adult working member of the household"
@@ -900,7 +935,7 @@
 
 	
 * **********************************************************************
-* 11 - end matter, clean up to save
+* 12 - end matter, clean up to save
 * **********************************************************************
 
 	order 				wave, after(hhid)
@@ -931,9 +966,9 @@
 * close the log
 	log	close	
 	
-/*
-* *********************************************************************
-* 9 - generate variable-country-wave crosswalk
+
+* **********************************************************************
+* 13 - generate variable-country-wave crosswalk
 * **********************************************************************	
 	preserve
 	drop 				country wave 

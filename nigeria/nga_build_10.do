@@ -6,7 +6,7 @@
 * Stata v.16.1
 
 * does
-	* reads in fifth round of Nigeria data
+	* reads in tenth round of Nigeria data
 	* reshapes and builds panel
 	* outputs panel data 
 
@@ -32,10 +32,10 @@
 	log using		"$logout/nga_reshape", append
 
 * set local wave number & file number
-	local			w = 5
+	local			w = 10
 	
 * make wave folder within refined folder if it does not already exist 
-	capture mkdir "$export/wave_0`w'" 
+	capture mkdir "$export/wave_`w'" 
 		
 				
 * ***********************************************************************
@@ -48,7 +48,7 @@
 * ***********************************************************************
 	
 * load data
-	use				"$root/wave_0`w'/r`w'_sect_2.dta", clear
+	use				"$root/wave_`w'/r`w'_sect_2.dta", clear
 
 * rename other variables 
 	rename 			indiv ind_id 
@@ -86,7 +86,7 @@
 * ***********************************************************************
 
 * load data
-	use				"$root/wave_0`w'/r`w'_sect_a_2_5c_6_12", clear
+	use				"$root/wave_`w'/r`w'_sect_a_2_5_6_9_9a_12", clear
 	
 * drop all but household respondant
 	keep			hhid s12q9
@@ -94,7 +94,7 @@
 	isid			hhid
 	
 * merge in household roster
-	merge 			1:1	hhid indiv using "$root/wave_0`w'/r`w'_sect_2.dta"
+	merge 			1:1	hhid indiv using "$root/wave_`w'/r`w'_sect_2.dta"
 	keep 			if _merge == 3
 	drop 			_merge
 	
@@ -117,32 +117,7 @@
 * 1c - section 7: income
 * ***********************************************************************
 
-* load data
-	use				"$root/wave_0`w'/r`w'_sect_7", clear
-
-* reformat HHID
-	format 			%5.0f hhid
-	
-* drop other source
-	drop			zone state lga sector ea
-	
-* reshape data	
-	reshape 		wide s7q1, i(hhid) j(source_cd)
-
-	rename			s7q14 oth_inc_1
-	lab var 		oth_inc_1 "Other Income: Remittances from abroad"
-	rename			s7q15 oth_inc_2
-	lab var 		oth_inc_2 "Other Income: Remittances from family in the country"
-	rename			s7q16 oth_inc_3
-	lab var 		oth_inc_3 "Other Income: Assistance from non-family"
-	rename			s7q17 oth_inc_4
-	lab var 		oth_inc_4 "Other Income: Income from properties, investments, or savings"
-	rename			s7q18 oth_inc_5
-	lab var 		oth_inc_5 "Other Income: Pension"
-	
-* save temp file
-	tempfile		tempc
-	save			`tempc'
+* not avaiable for round 
 
 	
 * ***********************************************************************
@@ -171,8 +146,8 @@
 * ***********************************************************************
 
 * merge sections based on hhid
-	use				"$root/wave_0`w'/r`w'_sect_a_2_5c_6_12", clear
-	foreach 		s in a b c {
+	use				"$root/wave_`w'/r`w'_sect_a_2_5_6_9_9a_12", clear
+	foreach 		s in a b {
 	    merge		1:1 hhid using `temp`s'', nogen
 	}
 	
@@ -181,43 +156,21 @@
 	lab var			wave "Wave number"	
 
 * clean variables inconsistent with other rounds	
-	rename			s6q16 ag_crop
-	rename 			s6bq1 ag_live
- 	rename 			s6q11b1 bus_other
-	replace 		s6q1c = s6q4b if s6q1c == .
-	drop 			s6q4b*
-	
-	* education
-	rename 			s5cq1 sch_att
-	forval 			x = 1/14 {
-	    rename 		s5cq2__`x' sch_att_why_`x'
+  * access
+	* medical services
+	rename 			s5q1f ac_medserv_need
+	rename 			s5q1g_* ac_medserv_need_type*
+	drop 			ac_medserv_need_type_96 ac_medserv_need_typeos
+	forval 			x = 1/7 {
+		rename 			s5q1h__`x' ac_medserv_type_`x'
 	}
-	rename 			s5cq3 sch_prec
-	forval 			x = 1/11 {
-	    rename 		s5cq4__`x' sch_prec_`x'
+	forval 			x = 1/7 {
+	    rename 			s5q1i_`x' ac_medserve_type_`x'_why 
 	}
-	rename 			s5cq4__99 sch_prec_none
-	rename 			s5cq5 sch_prec_sat
-	rename 			s5cq6 edu_act 
-	rename 			s5cq7__1 edu_1 
-	rename 			s5cq7__2 edu_2  
-	rename 			s5cq7__3 edu_3 
-	rename 			s5cq7__4 edu_4 
-	rename 			s5cq7__7 edu_5 
-	rename 			s5cq7__5 edu_6 
-	rename 			s5cq7__6 edu_7 	
-	rename 			s5cq7__96 edu_other 
-	rename 			s5cq8 edu_cont
-	rename 			s5cq9__1 edu_cont_1
-	rename 			s5cq9__2 edu_cont_2
-	rename 			s5cq9__3 edu_cont_3
-	rename 			s5cq9__4 edu_cont_5
-	rename 			s5cq9__5 edu_cont_6
-	rename 			s5cq9__6 edu_cont_7
-	rename 			s5cq9__7 edu_cont_8
 	
+
 * save round file
-	save			"$export/wave_0`w'/r`w'", replace
+	save			"$export/wave_`w'/r`w'", replace
 
 * close the log
 	log	close

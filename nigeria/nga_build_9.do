@@ -6,7 +6,7 @@
 * Stata v.16.1
 
 * does
-	* reads in third round of Nigeria data
+	* reads in nineth round of Nigeria data
 	* reshapes and builds panel
 	* outputs panel data 
 
@@ -32,7 +32,7 @@
 	log using		"$logout/nga_reshape", append
 
 * set local wave number & file number
-	local			w = 3
+	local			w = 9
 	
 * make wave folder within refined folder if it does not already exist 
 	capture mkdir "$export/wave_0`w'" 
@@ -86,7 +86,7 @@
 * ***********************************************************************
 
 * load data
-	use				"$root/wave_0`w'/r`w'_sect_a_2_5_5a_6_12", clear
+	use				"$root/wave_0`w'/r`w'_sect_a_2_5_5c_5d_6_12", clear
 	
 * drop all but household respondant
 	keep			hhid s12q9
@@ -124,10 +124,10 @@
 	format 			%5.0f hhid
 	
 * drop other source
-	drop			zone state lga sector ea
+	drop			zone state lga sector ea source_cd_os 
 	
 * reshape data	
-	reshape 		wide s7q1, i(hhid) j(source_cd)
+	reshape 		wide s7q1 s7q2, i(hhid) j(source_cd)
 
 	rename			s7q14 oth_inc_1
 	lab var 		oth_inc_1 "Other Income: Remittances from abroad"
@@ -149,53 +149,15 @@
 * 1d - section 11: assistance
 * ***********************************************************************
 
-* load data  - updated via convo with Talip 9/1
-	use				"$root/wave_0`w'/r`w'_sect_11", clear
-
-* reformat HHID
-	format 			%5.0f hhid
-	
-* drop other 
-	drop 			zone state lga sector ea s11q2 s11q3__1 s11q3__2 ///
-						s11q3__3 s11q3__4 s11q3__5 s11q3__6 s11q3__7 ///
-						s11q3__96 s11q3_os s11q5 s11q6__1 s11q6__2 ///
-						s11q6__3 s11q6__4 s11q6__6 s11q6__7 s11q6__96 s11q6_os
-
-* reshape 
-	reshape 		wide s11q1, i(hhid) j(assistance_cd)
-
-* save temp file
-	tempfile		tempd
-	save			`tempd'					
+* not available for round			
 		
 		
 * ***********************************************************************
 * 1e - section 10: shocks
 * ***********************************************************************
 
-* load data
-	use				"$root/wave_0`w'/r`w'_sect_10", clear
+* not available for round
 
-* reformat HHID
-	format 			%5.0f hhid
-
-* drop other shock
-	drop			shock_cd_os s10q3_os
-	
-* generate shock variables
-	levelsof(shock_cd), local(id)
-	foreach 			i in `id' {
-		gen				shock_`i' = 1 if s10q1 == 1 & shock_cd == `i'
-		replace			shock_`i' = 0 if s10q1 == 2 & shock_cd == `i'
-		}
-
-* collapse to household level
-	collapse 		(max) s10q3__1- shock_96, by(hhid)	
-	
-* save temp file
-	tempfile		tempe
-	save			`tempe'
-	
 	
 * ***********************************************************************
 * 2 - FIES score
@@ -209,19 +171,20 @@
 * ***********************************************************************
 
 * merge sections based on hhid
-	use				"$root/wave_0`w'/r`w'_sect_a_2_5_5a_6_12", clear
-	foreach 		s in a b c d e {
+	use				"$root/wave_0`w'/r`w'_sect_a_2_5_5c_5d_6_12", clear
+	foreach 		s in a b c {
 	    merge		1:1 hhid using `temp`s'', nogen
 	}
 	
 * generate round variable
 	gen				wave = `w'
 	lab var			wave "Wave number"	
-	
+
 * clean variables inconsistent with other rounds	
-	rename 			s6aq1 ag_crop
-	drop			s6q16a 
-	rename 			s6q15a bus_other
+	rename 			s5cq0 sch_att
+	rename 			s5cq1_* sch_catchup*
+	rename 			s5cq2 sch_catchup_imp
+	rename 			s5cq3_* sch_prec_prac*
 	
   * access
 	* rice
@@ -234,7 +197,7 @@
 	replace 		ac_rice_why = 4 if s5q1c4__4 == 1 
 	replace 		ac_rice_why = 5 if s5q1c4__5 == 1 
 	replace 		ac_rice_why = 6 if s5q1c4__6 == 1 
-	label var 		ac_rice_why "reason unable to purchase rice"
+	rename 			s5q1d4 ac_rice_pr
 	* beans 	
 	rename 			s5q1a5 ac_beans_need
 	rename 			s5q1b5 ac_beans
@@ -245,7 +208,7 @@
 	replace 		ac_beans_why = 4 if s5q1c5__4 == 1 
 	replace 		ac_beans_why = 5 if s5q1c5__5 == 1 
 	replace 		ac_beans_why = 6 if s5q1c5__6 == 1 
-	label var 		ac_beans_why "reason unable to purchase beans"
+	rename 			s5q1d5 ac_beans_pr
 	* cassava 		
 	rename 			s5q1a6 ac_cass_need
 	rename 			s5q1b6 ac_cass
@@ -256,7 +219,7 @@
 	replace 		ac_cass_why = 4 if s5q1c6__4 == 1 
 	replace 		ac_cass_why = 5 if s5q1c6__5 == 1 
 	replace 		ac_cass_why = 6 if s5q1c6__6 == 1 
-	label var 		ac_cass_why "reason unable to purchase cassava"
+	rename 			s5q1d6 ac_cass_pr
 	* yam	
 	rename 			s5q1a7 ac_yam_need
 	rename 			s5q1b7 ac_yam
@@ -267,7 +230,7 @@
 	replace 		ac_yam_why = 4 if s5q1c7__4 == 1 
 	replace 		ac_yam_why = 5 if s5q1c7__5 == 1 
 	replace 		ac_yam_why = 6 if s5q1c7__6 == 1 
-	label var 		ac_yam_why "reason unable to purchase yam"
+	rename 			s5q1d7 ac_yam_pr
 	* sorghum 	
 	rename 			s5q1a8 ac_sorg_need
 	rename 			s5q1b8 ac_sorg
@@ -278,53 +241,31 @@
 	replace 		ac_sorg_why = 4 if s5q1c8__4 == 1 
 	replace 		ac_sorg_why = 5 if s5q1c8__5 == 1 
 	replace 		ac_sorg_why = 6 if s5q1c8__6 == 1 
-	label var 		ac_sorg_why "reason unable to purchase sorghum"
-	* vaccine
-	rename 			s5q3a ac_vac_need
-	rename 			s5q3b ac_vac
-	rename 			s5q3c__* ac_vac_why_*
-	drop 			ac_vac_why_96
-	* medical service	
-	rename 			s5q2 ac_medserv_need
-	rename 			s5q3 ac_medserv
-	rename 			s5q4 ac_medserv_why 
-	replace 		ac_medserv_why = 7 if ac_medserv_why == 4
-	replace 		ac_medserv_why = 9 if ac_medserv_why == 5
-	replace 		ac_medserv_why = 10 if ac_medserv_why == 6
-	replace 		ac_medserv_why = . if ac_medserv_why == 96 
-	* ncdc hotline
-	rename 			s5q3d ncdc
-	rename 			s5q3e hotline
-	rename 			s5q3f__* hotline_why_*
-	drop 			hotline_why_96
-	* education 
-	rename 			s5q4b edu_act
-	rename 			s5q5__1 edu_1 
-	rename 			s5q5__2 edu_2  
-	rename 			s5q5__3 edu_3 
-	rename 			s5q5__4 edu_4 
-	rename 			s5q5__7 edu_5 
-	rename 			s5q5__5 edu_6 
-	rename 			s5q5__6 edu_7 	
-	rename 			s5q5__96 edu_other 	
-	* public transport & travel
-	rename 			s5q11 ac_pubtr_need
-	rename 			s5q12 ac_pubtr
-	rename 			s5q13__* ac_pubtr_why_*
-	drop 			ac_pubtr_why_96
-	rename 			s5q13a ac_pubtr_dif
-	rename 			s5q13b__* ac_pubtr_dif_*
-	drop 			ac_pubtr_dif_96
-	rename 			s5q14 bh_trav
-	rename 			s5q15 bh_trav_why
-	rename 			s5q16 bh_trav_how 
-	rename 			s5q17__1 bh_trav_morn
-	rename 			s5q17__2 bh_trav_aft
-	rename 			s5q17__3 bh_trav_night
-
+	rename 			s5q1d8 ac_sorg_pr
+	* onion	
+	rename 			s5q1a9 ac_onion_need
+	rename 			s5q1b9 ac_onion
+	gen 			ac_onion_why = . 
+	replace			ac_onion_why = 1 if s5q1c9__1 == 1 
+	replace 		ac_onion_why = 2 if s5q1c9__2 == 1
+	replace 		ac_onion_why = 3 if s5q1c9__3 == 1 
+	replace 		ac_onion_why = 4 if s5q1c9__4 == 1 
+	replace 		ac_onion_why = 5 if s5q1c9__5 == 1 
+	replace 		ac_onion_why = 6 if s5q1c9__6 == 1 
+	lab val			ac_onion_why ac_why 
+	label var 		ac_onion_why "reason for unable to purchase onions"
+	rename 			s5q1d9 ac_onion_pr
+	* medical services
+	rename 			s5q1f ac_medserv_need
+	rename 			s5q1g_* ac_medserv_need_type*
+	drop 			ac_medserv_need_type_96 ac_medserv_need_typeos
+	forval 			x = 1/7 {
+		rename 			s5q1h__`x' ac_medserv_type_`x'
+	}
+	forval 			x = 1/7 {
+	    rename 			s5q1i_`x' ac_medserve_type_`x'_why 
+	}
 	
-	//ADD HOUSING SECTION
-
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace
 

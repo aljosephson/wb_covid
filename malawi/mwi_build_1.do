@@ -195,6 +195,7 @@
 	rename 			s6q3b emp_nowork_pay
 	rename			s6q4a emp_same
 	rename			s6q4b emp_chg_why
+	replace 		emp_chg_why = 96 if emp_chg_why == 13
 	rename			s6q4c emp_pre_act
 	rename			s6q6 emp_stat
 	rename			s6q7 emp_able

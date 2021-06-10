@@ -340,6 +340,9 @@
 	
  * staple
 	rename 			s5q2 ac_staple_def
+	replace 		ac_staple_def = 5 if ac_staple_def == 6
+	replace 		ac_staple_def = 6 if ac_staple_def == 4
+	replace 		ac_staple_def = 4 if ac_staple_def == 3
 	rename			s5q2a ac_staple_need
 	rename 			s5q2b ac_staple
 	rename 			s5q2c ac_staple_why
@@ -392,6 +395,7 @@
 
  * medical services
 	rename 			s5q3 ac_medserv_need
+	replace 		ac_medserv_need = . if ac_medserv_need == 98
 	forval 			x = 1/7 {
 	    rename 		s5q3b__`x' ac_medserv_need_type_`x'
 	}
@@ -439,7 +443,11 @@
  * vaccines
 	rename 			s5q2_2j ac_vac_need
 	rename 			s5q2_2k ac_vac
-	rename 			s5q2_2l ac_vac_why
+	gen 			ac_vac_why = .
+	forval 			x = 1/6 {
+		replace 	ac_vac_why = 1 if s5q2_2l == `x'
+	}
+	drop 			s5q2_2l 
 	
  * credit 
 	rename 			ac_cr_lend_1 ac_cr_lend_11
@@ -453,6 +461,9 @@
 	rename 			s5q9 ac_bank_need
 	rename 			s5q10 ac_bank
 	rename 			s5q11 ac_bank_why
+	replace 		ac_cr_bef_delay = 0 if ac_cr_bef_delay == 2
+	replace 		ac_cr_bef_delay = . if ac_cr_bef_delay == 99
+	replace 		ac_cr_bef_miss = 0 if ac_cr_bef_miss == 2
 	
  * order access variables	
 	order			ac_soap_need ac_soap ac_soap_why ac_water ac_water_why ///
@@ -468,6 +479,7 @@
 	rename 			s5q6b sch_child_meal
 	rename 			s5q6c sch_child_mealskip
 
+	replace 		ac_internet = . if ac_internet == 88
 	rename 			s5q12 ac_internet_able
 	rename 			s5q13 ac_internet_qual	
 	rename 			s5q17 sch_open 
@@ -488,7 +500,7 @@
 	lab def 		ecd_rel 1 "mother" 2 "father" 3 "sibling" 4 "grandparent" ///
 						5 "other relative" 6 "non-relative/household worker"
 	lab val 		ecd_pcg_relate ecd_resp_relate ecd_rel
-	rename 			s5dq7 ecd_ed_pre
+	rename 			s5dq7 ecd_ed_pre_lvl
 	replace 		ecd_ed_pre = 77 if ecd_ed_pre == 555
 	
 	rename 			s5eq1 ecd_play
@@ -544,6 +556,9 @@
  	rename			s6q1b rtrn_emp_when
 	replace			emp_same = s6q4a_1b if s6q4a_1b != .
 	replace			emp_chg_why = s6q4b if s6q4b != .
+	replace 		emp_chg_why = 15 if emp_chg_why == 13
+	replace 		emp_chg_why = 16 if emp_chg_why == 14
+	replace 		emp_chg_why = 96 if emp_chg_why == 555
 	replace			emp_act = s6q5 if emp_act == . & s6q5 != .
 	replace 		emp_act = -96 if emp_act == 96
 	replace			emp_stat = s6q6 if s6q6 != .
@@ -570,6 +585,7 @@
 	replace			bus_stat = s6bq11a_3 if bus_stat == .
 	rename 			s6bq11b bus_closed 
 	replace 		bus_closed = 7 if bus_closed == 6
+	replace 		bus_closed = 96 if bus_closed == 11
 	lab def 		clsd 1 "USUAL PLACE OF BUSINESS CLOSED DUE TO CORONAVIRUS LEGAL RESTRICTIONS" ///
 						2 "USUAL PLACE OF BUSINESS CLOSED FOR ANOTHER REASON" ///
 						3 "NO COSTUMERS / FEWER CUSTOMERS" 4 "CAN'T GET INPUTS" ///

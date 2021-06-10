@@ -166,7 +166,7 @@
 	rename 			s02cq19 ecd_ed_6
 	rename 			s02cq20 ecd_ed_7
 	rename 			s02cq21 ecd_ed_8
-	rename 			s02cq22 ecd_ed_pre
+	rename 			s02cq22 ecd_ed_pre_lvl
 	drop 			s02cq22_autre
 	
 * administrative variables 
@@ -332,6 +332,7 @@
 	rename 			s05q04_6 ac_soap_why
 	replace 		ac_soap_why = 6 if ac_soap_why == 9
 	replace 		ac_soap_why = 9 if ac_soap_why == 7
+	replace 		ac_soap_why = . if ac_soap_why == 10
 	rename 			s05q04_7 bh_freq_wash
 	drop 			s05q04_6_autre
 	

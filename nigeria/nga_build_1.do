@@ -208,6 +208,134 @@
 	rename			s6q15 farm_emp 
 	rename			s6q16 farm_norm	
 	
+  * access
+	* medicine
+	rename 			s5q1a1 ac_med_need
+	rename 			s5q1b1 ac_med
+	gen 			ac_med_why = . 
+	replace			ac_med_why = 1 if s5q1c1__1 == 1 
+	replace 		ac_med_why = 2 if s5q1c1__2 == 1 
+	replace 		ac_med_why = 3 if s5q1c1__3 == 1 
+	replace 		ac_med_why = 4 if s5q1c1__4 == 1 
+	replace 		ac_med_why = 5 if s5q1c1__5 == 1 
+	replace 		ac_med_why = 6 if s5q1c1__6 == 1
+	label var 		ac_med_why "reason unable to purchase medicine"
+	* soap
+	rename 			s5q1a2 ac_soap_need
+	rename 			s5q1b2 ac_soap
+	lab var 		ac_soap "Had Enough Handwashing Soap in Last 7 Day"
+	gen 			ac_soap_why = .
+	replace			ac_soap_why = 1 if s5q1c2__1 == 1 
+	replace 		ac_soap_why = 2 if s5q1c2__2 == 1
+	replace 		ac_soap_why = 3 if s5q1c2__3 == 1
+	replace 		ac_soap_why = 4 if s5q1c2__4 == 1
+	replace 		ac_soap_why = 5 if s5q1c2__5 == 1
+	replace 		ac_soap_why = 6 if s5q1c2__6 == 1
+	label var 		ac_soap_why "reason unable to purchase soap"
+	* cleaning supplies								
+	rename 			s5q1a3 ac_clean_need 
+	rename 			s5q1b3 ac_clean
+	gen 			ac_clean_why = . 
+	replace			ac_clean_why = 1 if s5q1c3__1 == 1 
+	replace 		ac_clean_why = 2 if s5q1c3__2 == 1
+	replace 		ac_clean_why = 3 if s5q1c3__3 == 1
+	replace 		ac_clean_why = 4 if s5q1c3__4 == 1
+	replace 		ac_clean_why = 5 if s5q1c3__5 == 1
+	replace 		ac_clean_why = 6 if s5q1c3__6 == 1
+	label var 		ac_clean_why "reason unable to purchase cleaning supplies"
+	* rice
+	rename 			s5q1a4 ac_rice_need
+	rename 			s5q1b4 ac_rice
+	gen 			ac_rice_why = . 
+	replace			ac_rice_why = 1 if s5q1c4__1 == 1 
+	replace 		ac_rice_why = 2 if s5q1c4__2 == 1
+	replace 		ac_rice_why = 3 if s5q1c4__3 == 1 
+	replace 		ac_rice_why = 4 if s5q1c4__4 == 1 
+	replace 		ac_rice_why = 5 if s5q1c4__5 == 1 
+	replace 		ac_rice_why = 6 if s5q1c4__6 == 1 
+	label var 		ac_rice_why "reason unable to purchase rice"
+	* beans 	
+	rename 			s5q1a5 ac_beans_need
+	rename 			s5q1b5 ac_beans
+	gen 			ac_beans_why = . 
+	replace			ac_beans_why = 1 if s5q1c5__1 == 1 
+	replace 		ac_beans_why = 2 if s5q1c5__2 == 1
+	replace 		ac_beans_why = 3 if s5q1c5__3 == 1 
+	replace 		ac_beans_why = 4 if s5q1c5__4 == 1 
+	replace 		ac_beans_why = 5 if s5q1c5__5 == 1 
+	replace 		ac_beans_why = 6 if s5q1c5__6 == 1 
+	label var 		ac_beans_why "reason unable to purchase beans"
+	* cassava 		
+	rename 			s5q1a6 ac_cass_need
+	rename 			s5q1b6 ac_cass
+	gen 			ac_cass_why = . 
+	replace			ac_cass_why = 1 if s5q1c6__1 == 1 
+	replace 		ac_cass_why = 2 if s5q1c6__2 == 1
+	replace 		ac_cass_why = 3 if s5q1c6__3 == 1 
+	replace 		ac_cass_why = 4 if s5q1c6__4 == 1 
+	replace 		ac_cass_why = 5 if s5q1c6__5 == 1 
+	replace 		ac_cass_why = 6 if s5q1c6__6 == 1 
+	label var 		ac_cass_why "reason unable to purchase cassava"
+	* yam	
+	rename 			s5q1a7 ac_yam_need
+	rename 			s5q1b7 ac_yam
+	gen 			ac_yam_why = . 
+	replace			ac_yam_why = 1 if s5q1c7__1 == 1 
+	replace 		ac_yam_why = 2 if s5q1c7__2 == 1
+	replace 		ac_yam_why = 3 if s5q1c7__3 == 1 
+	replace 		ac_yam_why = 4 if s5q1c7__4 == 1 
+	replace 		ac_yam_why = 5 if s5q1c7__5 == 1 
+	replace 		ac_yam_why = 6 if s5q1c7__6 == 1 
+	label var 		ac_yam_why "reason unable to purchase yam"
+	* sorghum 	
+	rename 			s5q1a8 ac_sorg_need
+	rename 			s5q1b8 ac_sorg
+	gen 			ac_sorg_why = . 
+	replace			ac_sorg_why = 1 if s5q1c8__1 == 1 
+	replace 		ac_sorg_why = 2 if s5q1c8__2 == 1
+	replace 		ac_sorg_why = 3 if s5q1c8__3 == 1 
+	replace 		ac_sorg_why = 4 if s5q1c8__4 == 1 
+	replace 		ac_sorg_why = 5 if s5q1c8__5 == 1 
+	replace 		ac_sorg_why = 6 if s5q1c8__6 == 1 
+	label var 		ac_sorg_why "reason unable to purchase sorghum"
+	* medical service	
+	rename 			s5q2 ac_medserv_need
+	rename 			s5q3 ac_medserv
+	rename 			s5q4 ac_medserv_why 
+	replace 		ac_medserv_why = 7 if ac_medserv_why == 4
+	replace 		ac_medserv_why = . if ac_medserv_why == 96 
+	lab def			ac_medserv_why 1 "lack of money" 2 "no med personnel" ///
+						3 "facility full" 4 "facility closed" 5 "not enough supplies" ///
+						6 "lack of transportation" 7 "restriction to go out" ///
+						8 "afraid to get virus" 9 "on suspicion of having virus" ///
+						10 "refused treatment by facility"
+	lab val 		ac_medserv_why ac_medserv_why
+	lab var 		ac_med_why "reason for unable to access medical services"
+	* education 
+	rename 			filter1 children520
+	rename 			s5q4a sch_child
+	rename 			s5q4b edu_act
+	rename 			s5q5__1 edu_1 
+	rename 			s5q5__2 edu_2  
+	rename 			s5q5__3 edu_3 
+	rename 			s5q5__4 edu_4 
+	rename 			s5q5__7 edu_5 
+	rename 			s5q5__5 edu_6 
+	rename 			s5q5__6 edu_7 	
+	rename 			s5q5__96 edu_other 
+	rename 			s5q6 edu_cont
+	rename			s5q7__1 edu_cont_1
+	rename 			s5q7__2 edu_cont_2 
+	rename 			s5q7__3 edu_cont_3 
+	rename 			s5q7__4 edu_cont_5 
+	rename 			s5q7__5 edu_cont_6 
+	rename 			s5q7__6 edu_cont_7 
+	rename 			s5q7__7	edu_cont_8 
+	* credit 
+	rename 			s5q8 ac_bank_need
+	rename 			s5q9 ac_bank 
+	rename 			s5q10 ac_bank_why 
+	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace
 

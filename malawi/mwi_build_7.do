@@ -243,6 +243,7 @@
 	* employment 
 		rename 			s6q3a emp_search
 		rename 			s6q3b emp_search_how
+		replace 		s6q4b = . if s6q4b == 555
 		rename 			s6q5 emp_act
 		replace 		emp_act = 2 if emp_act == 3
 		replace 		emp_act = 13 if emp_act == 8

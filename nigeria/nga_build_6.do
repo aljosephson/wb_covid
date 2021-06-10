@@ -148,22 +148,65 @@
 * not avaiable for round
 
 
-
 * ***********************************************************************
 * 1e - section 5c: education
 * ***********************************************************************
 
 * load data
 	use				"$root/wave_0`w'/r`w'_sect_5c.dta", clear	
+
+	rename 			s5cq11 sch_att
+	replace 		sch_att = 0 if sch_att == 2
+	forval 			x = 1/14 {
+	    gen 		sch_att_why_`x' = 0 if sch_att == 0
+		replace 	sch_att_why_`x' = 1 if s5cq12 == `x'
+	}		
+	drop 			s5cq12_os
+	rename 			s5cq12a sch_open 
+	replace 		sch_open = 0 if sch_open == 2
 	
-adsf 
+	rename 			s5cq15 sch_onsite
+	replace 		sch_onsite = 1 if sch_onsite == 2
+	replace 		sch_onsite = 0 if sch_onsite == 3
+	
+	rename 			s5cq17 sch_online
+	replace 		sch_online = 0 if sch_online == 2
+	
+	rename 			s5cq18 sch_child
+	replace 		sch_child = 0 if sch_child == 2
+	
+	rename 			s5cq21 edu_act 
+	replace 		edu_act = 0 if edu_act == 2
+	
+	collapse 		(sum) edu* sch*, by (hhid)
+	
+* replace missing values that became 0 with the collapse (sum)
+	replace 		sch_onsite = . if sch_att == 0
+	replace 		sch_online = . if sch_att == 0
+	replace 		edu_act = . if sch_child == 0
+	forval 			x = 1/14 {
+	    replace 	sch_att_why_`x' = . if sch_att == 1
+	}
+	
+	lab	def			yesno 0 "No" 1 "Yes", replace
+	tostring 		hhid, replace
+	ds,				has(type numeric)
+	foreach 		var in `r(varlist)' {
+	    replace 	`var' = 1 if `var' > 1 & `var' != .
+		lab val 	`var' yesno
+	}
+	destring 		hhid, replace 
+	
+* save temp file
+	tempfile	tempd
+	save		`tempd'
+	
 	
 * ***********************************************************************
 * 2 - FIES score
 * ***********************************************************************
 
 * not available for round 
-
 	
 
 * ***********************************************************************
@@ -172,13 +215,16 @@ adsf
 
 * merge sections based on hhid
 	use				"$root/wave_0`w'/r`w'_sect_a_2_3a_6_9a_12", clear
-	foreach 		s in a b c {
+	foreach 		s in a b c d {
 	    merge		1:1 hhid using `temp`s'', nogen
 	}
 	
 * generate round variable
 	gen				wave = `w'
 	lab var			wave "Wave number"	
+	
+* clean variables inconsistent with other rounds	
+
 	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace

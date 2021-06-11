@@ -219,9 +219,30 @@
 	lab var			wave "Wave number"	
 	
 * clean variables inconsistent with other rounds	
+	* agriculture
 	rename 			s6aq1 ag_crop
 	drop			s6q16a 
 	rename 			s6q15a bus_other
+	rename 			s6aq1b ag_crop_who
+	rename 			s6q2a ag_use_infert
+	rename 			s6q2b ag_use_orfert
+	rename 			s6q2c ag_use_pest
+	rename 			s6q2d ag_use_lab
+	rename 			s6q2e ag_use_anim
+	rename 			s6aq3a ag_ac_infert
+	rename 			s6aq3b ag_ac_orfert
+	rename 			s6aq3c ag_ac_pest
+	rename 			s6aq3d ag_ac_lab
+	rename 			s6aq3e ag_ac_anim
+	forval 			x = 1/6 {
+	    rename 		s6aq4__`x' ag_ac_infert_why_`x'
+		rename 		s6aq5__`x' ag_ac_orfert_why_`x'
+		rename 		s6aq6__`x' ag_ac_pest_why_`x'		
+	}
+	forval 			x = 1/5 {
+	    rename 		s6aq7__`x' ag_ac_lab_why_`x'
+		rename 		s6aq8__`x' ag_ac_anim_why_`x'
+	}
 	
   * access
 	* rice

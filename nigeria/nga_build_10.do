@@ -167,7 +167,8 @@
 	forval 			x = 1/7 {
 	    rename 			s5q1i_`x' ac_medserve_type_`x'_why 
 	}
-	
+  * non-farm income 
+	rename 			s6q11b1 bus_other
 
 * save round file
 	save			"$export/wave_`w'/r`w'", replace

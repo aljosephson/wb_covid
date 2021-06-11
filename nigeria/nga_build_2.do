@@ -267,6 +267,43 @@
 	rename 			s5q7__5 edu_cont_6 
 	rename 			s5q7__6 edu_cont_7 
 	rename 			s5q7__7	edu_cont_8 
+	* agriculture
+	rename			s6q17 ag_plan
+	rename			s6q18_1 ag_crop_1
+	rename			s6q18_2 ag_crop_2
+	rename			s6q18_3 ag_crop_3
+	rename 			s6q19 ag_chg	
+	rename			s6q20__1 ag_chg_1
+	rename			s6q20__2 ag_chg_2
+	rename			s6q20__3 ag_chg_3
+	rename			s6q20__4 ag_chg_4
+	rename			s6q20__5 ag_chg_5
+	rename			s6q20__6 ag_chg_6
+	rename			s6q20__7 ag_chg_7
+	rename 			s6q20__96 ag_chg_13
+	rename			s6q21a__1 ag_covid_1 
+	rename 			s6q21a__2 ag_covid_2
+	rename 			s6q21a__3 ag_covid_3
+	rename			s6q21a__4 ag_covid_4	
+	rename			s6q21a__5 ag_covid_6	 
+	rename 			s6q21a__6 ag_covid_7
+	rename 			s6q21a__7 ag_covid_8
+	rename 			s6q21a__8 ag_covid_9		
+	rename 			s6q21b__1 ag_nocrop_1 
+	rename 			s6q21b__2 ag_nocrop_2 
+	rename 			s6q21b__3 ag_nocrop_3 
+	rename 			s6q21b__4 ag_nocrop_4 
+	rename 			s6q21b__5 ag_nocrop_5 
+	rename 			s6q21b__6 ag_nocrop_6 
+	rename 			s6q21b__7 ag_nocrop_7 
+	rename 			s6q21b__8 ag_nocrop_8 
+	rename 			s6q21b__96 ag_nocrop_9 
+	rename			s6q22__1 ag_ac_seed_why_1
+	rename			s6q22__2 ag_ac_seed_why_2
+	rename			s6q22__3 ag_ac_seed_why_3
+	rename			s6q22__4 ag_ac_seed_why_4
+	rename			s6q22__5 ag_ac_seed_why_5
+	rename			s6q22__6 ag_ac_seed_why_6
 	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace

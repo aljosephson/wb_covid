@@ -181,12 +181,20 @@
 	lab var			wave "Wave number"	
 
 * clean variables inconsistent with other rounds	
+	* agriculture
 	rename			s6q16 ag_crop
 	rename 			s6bq1 ag_live
  	rename 			s6q11b1 bus_other
 	replace 		s6q1c = s6q4b if s6q1c == .
 	drop 			s6q4b*
-	
+	rename 			s6aq9 ag_harv_exp
+	rename 			s6aq10 harv_sell_norm
+	replace 		harv_sell_norm = crop_filter2 if harv_sell_norm == .
+	replace 		harv_sell_norm = . if harv_sell_norm > 2
+	drop 			crop_filter2
+	rename 			s6aq11 harv_sell_rev_exp
+	rename 			s6aq12 harv_sell
+		
 	* education
 	rename 			s5cq1 sch_att
 	forval 			x = 1/14 {

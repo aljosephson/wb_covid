@@ -411,85 +411,8 @@
 	replace 		crop_filter1 = . if crop_filter1 == 3
 	replace 		ag_crop = crop_filter1 if ag_crop == .
 	drop 			crop_filter1
-	rename 			s6aq1_1 ag_crop_who
-	drop 			s6aq1_1 s6aq2 s6aq3
-	rename 			s6aq4 ag_main
-	rename 			s6aq5a ag_main_area
-	rename 			s6aq5b ag_main_area_unit
-	rename 			s6aq6 ag_main_harv
-	drop 			s6aq7* s6aq9
-	rename 			s6aq8 ag_main_sell
-	rename 			s6aq10 ag_main_rev
-	rename 			s6aq11 harv_sell_rev
-	replace 		harv_sell_rev = . if harv_sell_rev == 99
-	rename 			s6aq12 ag_main_sell_plan
-	rename 			s6aq13 harv_sell_rev_exp
-	
-ANN YOU ARE HERE	
-	
-	rename			s6q17 ag_plan
-	rename			s6q18_1 ag_crop_1
-	rename			s6q18_2 ag_crop_2
-	rename			s6q18_3 ag_crop_3
-	rename 			s6q19 ag_chg	
-	rename			s6q20__1 ag_chg_1
-	rename			s6q20__2 ag_chg_2
-	rename			s6q20__3 ag_chg_3
-	rename			s6q20__4 ag_chg_4
-	rename			s6q20__5 ag_chg_5
-	rename			s6q20__6 ag_chg_6
-	rename			s6q20__7 ag_chg_7
-	rename 			s6q20__96 ag_chg_13
-	rename			s6q21a__1 ag_covid_1 
-	rename 			s6q21a__2 ag_covid_2
-	rename 			s6q21a__3 ag_covid_3
-	rename			s6q21a__4 ag_covid_4	
-	rename			s6q21a__5 ag_covid_6	 
-	rename 			s6q21a__6 ag_covid_7
-	rename 			s6q21a__7 ag_covid_8
-	rename 			s6q21a__8 ag_covid_9		
-	rename 			s6q21b__1 ag_nocrop_1 
-	rename 			s6q21b__2 ag_nocrop_2 
-	rename 			s6q21b__3 ag_nocrop_3 
-	rename 			s6q21b__4 ag_nocrop_4 
-	rename 			s6q21b__5 ag_nocrop_5 
-	rename 			s6q21b__6 ag_nocrop_6 
-	rename 			s6q21b__7 ag_nocrop_7 
-	rename 			s6q21b__8 ag_nocrop_8 
-	rename 			s6q21b__96 ag_nocrop_9 
-	rename			s6q22__1 ag_ac_seed_why_1
-	rename			s6q22__2 ag_ac_seed_why_2
-	rename			s6q22__3 ag_ac_seed_why_3
-	rename			s6q22__4 ag_ac_seed_why_4
-	rename			s6q22__5 ag_ac_seed_why_5
-	rename			s6q22__6 ag_ac_seed_why_6
-	rename 			s6aq9 ag_harv_exp
-	rename 			s6aq10 harv_sell_norm
-	replace 		harv_sell_norm = crop_filter2 if harv_sell_norm == .
-	replace 		harv_sell_norm = . if harv_sell_norm > 2
-	drop 			crop_filter2
-	rename 			s6aq11 harv_sell_rev_exp
-	rename 			s6aq12 harv_sell
-	rename 			s6aq1b ag_crop_who
-	rename 			s6q2a ag_use_infert
-	rename 			s6q2b ag_use_orfert
-	rename 			s6q2c ag_use_pest
-	rename 			s6q2d ag_use_lab
-	rename 			s6q2e ag_use_anim
-	rename 			s6aq3a ag_ac_infert
-	rename 			s6aq3b ag_ac_orfert
-	rename 			s6aq3c ag_ac_pest
-	rename 			s6aq3d ag_ac_lab
-	rename 			s6aq3e ag_ac_anim
-	forval 			x = 1/6 {
-	    rename 		s6aq4__`x' ag_ac_infert_why_`x'
-		rename 		s6aq5__`x' ag_ac_orfert_why_`x'
-		rename 		s6aq6__`x' ag_ac_pest_why_`x'		
-	}
-	forval 			x = 1/5 {
-	    rename 		s6aq7__`x' ag_ac_lab_why_`x'
-		rename 		s6aq8__`x' ag_ac_anim_why_`x'
-	}
+
+* livestock 	
 	replace 		ag_live = livest_filter3 if ag_live == .
 	replace 		ag_live = . if ag_live == 3
 	drop 			livest_filter3
@@ -577,8 +500,7 @@ ANN YOU ARE HERE
 	rename			s8q6 fies_1
 	lab var			fies_1 "Ran out of food"
 	rename			s8q8 fies_3
-	lab var			fies_3 "Went without eating for a whole day"	 
- * round 2 additional questions 
+	lab var			fies_3 "Went without eating for a whole day"	  
 	rename			s8q1 fies_4
 	lab var			fies_4 "Worried about not having enough food to eat"
 	rename			s8q2 fies_5
@@ -596,7 +518,56 @@ ANN YOU ARE HERE
 	    rename 		s9q3__`x' concern_1_why_`x'
 	}
 	rename			s9q2 concern_2
-
+	rename 			s9q4 crime
+	rename 			s9q5 crime_rep
+	forval 			x = 1/6 {
+		rename 			s9q6__`x' crime_rep_who_`x'
+	}
+	rename 			s9q7 ineq
+	rename 			s9q8 ineq_cov
+	
+* COVID 
+	rename 			s9aq1 cov_test
+	rename 			s9aq2 cov_vac
+	gen 			cov_vac_no_why_1 = s9aq3__1 if cov_vac == 2
+	gen 			cov_vac_no_why_2 = s9aq3__2 if cov_vac == 2
+	gen 			cov_vac_no_why_3 = s9aq3__3 if cov_vac == 2
+	gen 			cov_vac_no_why_6 = s9aq3__4 if cov_vac == 2
+	gen 			cov_vac_no_why_4 = s9aq3__5 if cov_vac == 2
+	gen 			cov_vac_no_why_5 = s9aq3__6 if cov_vac == 2	
+	gen 			cov_vac_dk_why_1 = s9aq3__1 if cov_vac == 3
+	gen 			cov_vac_dk_why_2 = s9aq3__2 if cov_vac == 3
+	gen 			cov_vac_dk_why_3 = s9aq3__3 if cov_vac == 3
+	gen 			cov_vac_dk_why_6 = s9aq3__4 if cov_vac == 3
+	gen 			cov_vac_dk_why_4 = s9aq3__5 if cov_vac == 3
+	gen 			cov_vac_dk_why_5 = s9aq3__6 if cov_vac == 3
+	
+* assistance
+	gen				asst_food = 1 if s11q11 == 1
+	replace			asst_food = 0 if s11q11 == 2
+	replace			asst_food = 0 if asst_food == .
+	lab var			asst_food "Recieved food assistance"
+	lab def			assist 0 "No" 1 "Yes"
+	lab val			asst_food assist
+	
+	gen				asst_cash = 1 if s11q12 == 1
+	replace			asst_cash = 0 if s11q12 == 2
+	replace			asst_cash = 0 if asst_cash == .
+	lab var			asst_cash "Recieved cash assistance"
+	lab val			asst_cash assist
+	
+	gen				asst_kind = 1 if s11q13 == 1
+	replace			asst_kind = 0 if s11q13 == 2
+	replace			asst_kind = 0 if asst_kind == .
+	lab var			asst_kind "Recieved in-kind assistance"
+	lab val			asst_kind assist
+	
+	gen				asst_any = 1 if asst_food == 1 | asst_cash == 1 | ///
+						asst_kind == 1
+	replace			asst_any = 0 if asst_any == .
+	lab var			asst_any "Recieved any assistance"
+	lab val			asst_any assist
+	
 * shocks
 	rename 			shock_8 shock_15 
 	rename 			shock_96 shock_14
@@ -635,6 +606,7 @@ ANN YOU ARE HERE
 	rename			s10q3__19 cope_14
 	rename			s10q3__20 cope_15
 	rename			s10q3__21 cope_16
+	rename 			s10q3__22 cope_18
 	rename			s10q3__96 cope_17
 
 	lab var			cope_1 "Sale of assets (Agricultural and Non_agricultural)"
@@ -654,32 +626,6 @@ ANN YOU ARE HERE
 	lab var			cope_15 "Was covered by insurance policy"
 	lab var			cope_16 "Did nothing"
 	lab var			cope_17 "Other"
-	
-* assistance
-	gen				asst_food = 1 if s11q11 == 1
-	replace			asst_food = 0 if s11q11 == 2
-	replace			asst_food = 0 if asst_food == .
-	lab var			asst_food "Recieved food assistance"
-	lab def			assist 0 "No" 1 "Yes"
-	lab val			asst_food assist
-	
-	gen				asst_cash = 1 if s11q12 == 1
-	replace			asst_cash = 0 if s11q12 == 2
-	replace			asst_cash = 0 if asst_cash == .
-	lab var			asst_cash "Recieved cash assistance"
-	lab val			asst_cash assist
-	
-	gen				asst_kind = 1 if s11q13 == 1
-	replace			asst_kind = 0 if s11q13 == 2
-	replace			asst_kind = 0 if asst_kind == .
-	lab var			asst_kind "Recieved in-kind assistance"
-	lab val			asst_kind assist
-	
-	gen				asst_any = 1 if asst_food == 1 | asst_cash == 1 | ///
-						asst_kind == 1
-	replace			asst_any = 0 if asst_any == .
-	lab var			asst_any "Recieved any assistance"
-	lab val			asst_any assist
 
 * drop variables
 	drop			interviewer_id *_os  s6q10_* s12q3__* s12q4__* /// 
@@ -687,9 +633,11 @@ ANN YOU ARE HERE
 						s12q10a s6q11c s6bq4__96 s6aq8__96 s6aq7__96 s6aq6__96 ///
 						s6aq5__96 s6aq4__96 s6q8b1 s6bq6a lga filter ///
 						PID s2q0a s2q0b s12q4a s12q4b s9q3__96 ag_chg_13 ///
-						s5q1a* s5q1b* s5q1c* 
-	drop if			wave ==  .
-	drop			s11q11 s11q12 s11q13 s6q21a__96 s6q22__96 s3q2__5 
+						s5q1a* s5q1b* s5q1c* s9q6__96 s9q6_os ///
+						s11q11 s11q12 s11q13 s6q21a__96 s6q22__96 s3q2__5 ///
+						s5aq3__96 s5cq2__96 s5cq4__98 s5q1h__96 s5q1i_96 ///
+						s6q16_round5 s9aq3__* s9aq4__*
+	drop if			wave ==  .		
 	
 * reorder variables
 	order			fies_2 fies_3 fies_4 fies_5 fies_6 fies_7 fies_8, after(fies_1)

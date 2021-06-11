@@ -224,7 +224,11 @@
 	lab var			wave "Wave number"	
 	
 * clean variables inconsistent with other rounds	
-
+	* educaiton
+	forval 			x = 1/11 {
+	    rename 		s5cq4__`x' sch_prec_`x'
+	}
+	rename 			s5cq4__99 sch_prec_none
 	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace

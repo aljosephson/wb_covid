@@ -139,7 +139,7 @@
 
 * drop other shock
 	drop			shock_cd_os s10q3_os
-	
+
 * generate shock variables
 	levelsof(shock_cd), local(id)
 	foreach 			i in `id' {
@@ -177,12 +177,47 @@
 	lab var			wave "Wave number"	
 	
 * clean variables inconsistent with other rounds	
+	* agriculture 
 	rename			s6q16 ag_crop
+	rename 			s6aq1_1 ag_crop_who
+	drop 			s6aq2 s6aq3
+	rename 			s6aq4 ag_main
+	rename 			s6aq5a ag_main_area
+	rename 			s6aq5b ag_main_area_unit
+	rename 			s6aq6 ag_main_harv
+	drop 			s6aq7* s6aq9
+	rename 			s6aq8 ag_main_sell
+	rename 			s6aq10 ag_main_rev
+	rename 			s6aq11 harv_sell_rev
+	replace 		harv_sell_rev = . if harv_sell_rev == 99
+	rename 			s6aq12 ag_main_sell_plan
+	rename 			s6aq13 harv_sell_rev_exp
+	rename 			s6aq14 ag_main_harv_comp
+	drop 			s6aq15*
+	rename 			s6aq16a ag_use_infert
+	rename 			s6aq16b ag_use_orfert
+	rename 			s6aq16c ag_use_pest
+	rename 			s6aq16d ag_use_lab
+	rename 			s6aq16e ag_use_anim
+	forval 			x = 1/7 {
+	    rename 		s6aq17__`x' ag_ac_infert_why_`x'
+		rename 		s6aq18__`x' ag_ac_orfert_why_`x'
+		rename 		s6aq19__`x' ag_ac_pest_why_`x'
+	}
+	forval 			x = 1/5 {
+	    rename 		s6aq20__`x' ag_ac_lab_why_`x'	
+		rename 		s6aq21__`x' ag_ac_amin_why_`x' // data differ from survey response #s
+	}
+	rename 			s6aq20__7 ag_ac_lab_why_7
+	rename 			s6aq21__7 ag_ac_amin_why_7	
+	drop 			s6aq*
 
+	* education
 	rename 			s5cq0 sch_att
 	rename 			s5cq1_* sch_catchup*
 	rename 			s5cq2 sch_catchup_imp
 	rename 			s5cq3_* sch_prec_prac*
+	
 	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace

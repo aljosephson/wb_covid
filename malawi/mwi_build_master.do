@@ -244,9 +244,12 @@
 	replace 		bh_5 = 0 if bh_5 == 2
 	rename 			s4q8a cov_test
 	rename 			s4q8b cov_vac
-	rename 			s4q8c cov_vac_no_why
-	rename 			s4q8d cov_vac_dk_why
-	drop 			s4q8cot s4q8dot
+	
+	forval 			x = 1/6 {
+	    gen 		cov_vac_no_why_`x' = 1 if s4q8c == `x'
+		gen 		cov_vac_dk_why_`x' = 1 if s4q8d == `x'
+	}
+	drop 			s4q8c s4q8d s4q8cot s4q8dot
 
 * patient health
 	forval 			x = 1/8 {

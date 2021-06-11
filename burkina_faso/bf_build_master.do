@@ -199,15 +199,34 @@
 * COVID 
 	rename 			s04bq01 cov_test
 	rename 			s04bq02 cov_vac
-	rename 			s04bq03 cov_vac_no_why
-	rename 			s04bq04 cov_vac_dk_why
-	foreach 		var in cov_vac_dk_why cov_vac_no_why {
-	    replace 	`var' = 100 if `var' == 6
-		replace 	`var' = 6 if `var' == 4
-		replace 	`var' = 4 if `var' == 5
-		replace 	`var' = 5 if `var' == 100
-	}
-	drop 			s04bq03_autre s04bq04_autre
+
+	gen 			cov_vac_no_why_1 = 1 if s04bq03 == 1
+	replace 		cov_vac_no_why_1 = 0 if s04bq03 != 1 & s04bq03 != .
+	gen 			cov_vac_no_why_2 = 1 if s04bq03 == 2
+	replace 		cov_vac_no_why_2 = 0 if s04bq03 != 2 & s04bq03 != .
+	gen 			cov_vac_no_why_3 = 1 if s04bq03 == 3
+	replace 		cov_vac_no_why_3 = 0 if s04bq03 != 3 & s04bq03 != .
+	gen 			cov_vac_no_why_4 = 1 if s04bq03 == 6
+	replace 		cov_vac_no_why_4 = 0 if s04bq03 != 6 & s04bq03 != .
+	gen 			cov_vac_no_why_5 = 1 if s04bq03 == 4
+	replace 		cov_vac_no_why_5 = 0 if s04bq03 != 4 & s04bq03 != .
+	gen 			cov_vac_no_why_6 = 1 if s04bq03 == 5
+	replace 		cov_vac_no_why_6 = 0 if s04bq03 != 5 & s04bq03 != .
+
+	gen 			cov_vac_dk_why_1 = 1 if s04bq04 == 1
+	replace 		cov_vac_dk_why_1 = 0 if s04bq04 != 1 & s04bq04 != .
+	gen 			cov_vac_dk_why_2 = 1 if s04bq04 == 2
+	replace 		cov_vac_dk_why_2 = 0 if s04bq04 != 2 & s04bq04 != .
+	gen 			cov_vac_dk_why_3 = 1 if s04bq04 == 3
+	replace 		cov_vac_dk_why_3 = 0 if s04bq04 != 3 & s04bq04 != .
+	gen 			cov_vac_dk_why_4 = 1 if s04bq04 == 6
+	replace 		cov_vac_dk_why_4 = 0 if s04bq04 != 6 & s04bq04 != .
+	gen 			cov_vac_dk_why_5 = 1 if s04bq04 == 4
+	replace 		cov_vac_dk_why_5 = 0 if s04bq04 != 4 & s04bq04 != .
+	gen 			cov_vac_dk_why_6 = 1 if s04bq04 == 5
+	replace 		cov_vac_dk_why_6 = 0 if s04bq04 != 5 & s04bq04 != .
+	
+	drop 			s04bq03 s04bq04 s04bq03_autre s04bq04_autre
 	
 * access
 	gen 			ac_med_need = 0 if ac_med == 3
@@ -533,21 +552,23 @@
 	rename 			s06dq16c ag_use_pest
 	rename 			s06dq16d ag_use_lab
 	rename 			s06dq16e ag_use_anim
-	forval 			x = 1/6 {
+	forval 			x = 1/7 {
 	    rename 		s06dq17__`x' ag_ac_infert_why_`x'
 	}
 	
-	forval 			x = 1/6 {
+	forval 			x = 1/7 {
 	    rename 		s06dq18__`x' ag_ac_orfert_why_`x'
 	}
 	
-	forval 			x = 1/6 {
+	forval 			x = 1/7 {
 	    rename 		s06dq19__`x' ag_ac_pest_why_`x'
 	}
 	drop 			s06dq17_* s06dq18_* s06dq19_*	
  		
 	rename 			s06dq20__6 ag_ac_lab_why_5
+	rename 			s06dq20__7 ag_ac_lab_why_7
 	rename 			s06dq21__6 ag_ac_anim_why_6
+	rename 			s06dq21__7 ag_ac_anim_why_7
 	drop 			s06dq20_* s06dq21_*
 	
 * livestock 

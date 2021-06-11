@@ -180,7 +180,7 @@
 		order				hhw_pnl phw* ahw* chw* shw*, after(hhw_cs)
 
 * admin/general 
-	replace 			realte_hoh = . if relate_hoh == -98 | relate_hoh == 98
+	replace 			relate_hoh = . if relate_hoh == -98 | relate_hoh == 98
 	
 	
 * **********************************************************************
@@ -215,15 +215,8 @@
 	lab var 			bh_8 "Wore mask in public in last 7 days"
 	lab val 			bh_8 yesno
 	
-	lab def 			bh_freq_gath 0 "none" 1 "1" 2 "2" 3 "3" 4 "4" 5 "5 or more"
+	lab def 			bh_freq_gath 0 "none" 1 "1" 2 "2" 3 "3" 4 "4" 5 "5 or more", replace
 	lab val 			bh_freq_gath bh_freq_gath 
-	
-* COVID
-	lab def 			cov 1 "I DONT THINK IT WILL WORK" 2 "I DONT THINK IT WILL BE SAFE" ///
-							3 "I AM WORRIED ABOUT THE SIDE EFFECTS" ///
-							4 "I AM AGAINST VACCINE IN GENERAL" 5 "IT IS AGAINST MY RELIGION" ///
-							6 "I AM NOT AT RISK OF CONTRACTING COVID 19"
-	lab val 			cov_vac_no_why cov_vac_dk_why cov 
 	
 * mental health
 	lab def 			mh 0 "not at all" 1 "several days" 2 "more than half of the time" ///
@@ -235,7 +228,7 @@
 * government 
 	lab def 			satis 1 "yes" 2 "no" 3 "neither satisfied nor unsatisfied"
 	lab val 			satis satis 
-	
+ 	
 * coping (create cope_any = 1 if any coping used, 0 if not, . if no data for that wave)
 	egen 				tempgrp = group(country wave)
 	levelsof			(tempgrp), local(countrywave)
@@ -246,7 +239,8 @@
 						cope_4 == 1 | cope_5 == 1 | cope_6 == 1 | ///
 						cope_7 == 1 | cope_8 == 1 | cope_9 == 1 | ///
 						cope_10 == 1 | cope_11 == 1 | cope_12 == 1 | ///
-						cope_13 == 1 | cope_14 == 1 | cope_15 == 1
+						cope_13 == 1 | cope_14 == 1 | cope_15 == 1 | ///
+						cope_17 == 1 | cope_18 == 1 
 		egen 			cope_tot = total(cope_any)
 		replace 		cope_any = 0 if cope_any == . & cope_tot != 0
 		tempfile 		temp`cw'
@@ -257,7 +251,7 @@
 	foreach 			cw in `countrywave' {
 		append 			using `temp`cw''
 	}
-	drop 				tempgrp cope_tot cope_16 cope_17
+	drop 				tempgrp cope_tot cope_16
 	lab var				cope_any "Adopted any coping strategy"
 	lab val 			cope_any yesno
 	

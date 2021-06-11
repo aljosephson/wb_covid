@@ -195,9 +195,14 @@
 	lab var			wave "Wave number"	
 
 * clean variables inconsistent with other rounds	
+	* agriculture
 	rename			s6q16 ag_crop
 	rename 			s6bq1 ag_live
 	rename 			s6q11b1 bus_other
+	rename 			s6aq9 ag_harv_exp
+	rename 			s6aq10 harv_sell_norm
+	replace 		harv_sell_norm = . if harv_sell_norm > 2
+	rename 			s6aq11 harv_sell_rev_exp
 	
   * access
 	* pre-post natal care

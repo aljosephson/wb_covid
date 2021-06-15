@@ -233,7 +233,6 @@
 	replace 		ac_medserv_why = 10 if ac_medserv_why == 6
 	replace 		ac_medserv_why = . if ac_medserv_why == 96 
 	* education 
-	rename 			filter1 children520
 	rename 			s5q4b edu_act
 	rename 			s5q5__1 edu_1 
 	rename 			s5q5__2 edu_2  

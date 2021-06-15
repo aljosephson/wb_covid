@@ -129,17 +129,6 @@
 * reshape data	
 	reshape 		wide s7q1 s7q2, i(hhid) j(source_cd)
 
-	rename			s7q14 oth_inc_1
-	lab var 		oth_inc_1 "Other Income: Remittances from abroad"
-	rename			s7q15 oth_inc_2
-	lab var 		oth_inc_2 "Other Income: Remittances from family in the country"
-	rename			s7q16 oth_inc_3
-	lab var 		oth_inc_3 "Other Income: Assistance from non-family"
-	rename			s7q17 oth_inc_4
-	lab var 		oth_inc_4 "Other Income: Income from properties, investments, or savings"
-	rename			s7q18 oth_inc_5
-	lab var 		oth_inc_5 "Other Income: Pension"	
-	
 * save temp file
 	tempfile		tempc
 	save			`tempc'	
@@ -180,8 +169,10 @@
 	gen				wave = `w'
 	lab var			wave "Wave number"	
 
-* clean variables inconsistent with other rounds	
-	rename 			s5cq0 sch_att
+* clean variables inconsistent with other rounds
+	drop 			s5cq0a // survey says 5-18 data says 2-20, can't know which
+	rename 			s5cq11_18 sch_att
+	replace 		sch_att = 1 if s5cq0 == 1
 	rename 			s5cq1_* sch_catchup*
 	rename 			s5cq2 sch_catchup_imp
 	rename 			s5cq3_* sch_prec_prac*
@@ -263,8 +254,10 @@
 		rename 			s5q1h__`x' ac_medserv_type_`x'
 	}
 	forval 			x = 1/7 {
-	    rename 			s5q1i_`x' ac_medserve_type_`x'_why 
+	    rename 			s5q1i_`x' ac_medserv_type_`x'_why 
 	}
+	* business
+	rename 			s6q11b1 bus_other
 	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace

@@ -307,12 +307,12 @@
 								, replace
 	lab val 			ac_medserv_why ac_medserv_why
 	
-	lab def 			ac_medserve_type_why 1 "lack of money" 2 "no med personnel" ///
+	lab def 			ac_medserv_type_why 1 "lack of money" 2 "no med personnel" ///
 							3 "facility full" 4 "facility closed" 5 "not enough supplies" ///
 							6 "health facility is too far" 7 "fear of contracting virus" ///
 							8 "lockdown/travel restrictions" 
-	forval 				x = 1/7 {
-		lab val 		ac_medserve_type_`x'_why ac_medserve_type_why
+	forval 				x = 2/7 {
+		lab val 		ac_medserv_type_`x'_why ac_medserv_type_why
 	}
 	
 * access to pre-natal care
@@ -378,10 +378,10 @@
 						ac_beans_need == 0 & ac_cass_need == 0 & ac_yam_need == 0 & ///
 						ac_sorg_need == 0 & ac_onion_need == 0
 		replace 		ac_staple = 1 if country == 3 & (ac_rice == 1 | ac_beans == 1 | ///
-						ac_cass == 1 | ac_yam == 1 | ac_sorg == 1 | ac_onion == )
+						ac_cass == 1 | ac_yam == 1 | ac_sorg == 1 | ac_onion == 1)
 		replace 		ac_staple = 0 if country == 3 & ((ac_rice == 0 & ac_rice_need == 1 ) ///
 						| (ac_beans == 0 & ac_beans_need == 1) | (ac_cass == 0 & ac_cass_need == 1) ///
-						| (ac_yam == 0 & ac_yam_need == 1)  | (ac_sorg == 0 & ac_sorg_need == 1)) ///
+						| (ac_yam == 0 & ac_yam_need == 1)  | (ac_sorg == 0 & ac_sorg_need == 1) ///
 						| (ac_onion == 0 & ac_onion_need == 1))
 	* Uganda
 		replace 		ac_staple_need = 0 if ac_staple == 3 & country == 4
@@ -532,7 +532,6 @@
 
 	lab var 			ac_med_why "Reason unable to access medicine"
 	lab var 			ac_medserv_why "Reason unable to access medical services"
-	lab var 			ac_vac_why "Reason unable to access vaccines"
 	lab var 			ac_soap_why "Reason unable to purchase soap"
 	lab var 			ac_bank_why "Reason unable to access bank"
 	lab var 			ac_water_why "Reason unable to access water for washing hands"		
@@ -763,17 +762,33 @@
 	lab var				edu_16 "Continued to visit the Daara"
 	lab var				edu_17 "Resumed school"
 
-	lab def 			sch_prec_sat 1 "Not satisfied" 2 "Somewhat satisfied" //
+	lab def 			sch_prec_sat 1 "Not satisfied" 2 "Somewhat satisfied" ///
 							3 "Satisfied"
 	lab val 			sch_prec_sat sch_prec_sat
 
 	* early childhood development 
-	lab def 		ecd_rel 1 "mother" 2 "father" 3 "sibling" 4 "grandparent" ///
-						5 "other relative" 6 "non-relative/household worker"
-	lab val 		ecd_pcg_relate ecd_resp_relate ecd_rel
+	lab def 			ecd_rel 1 "mother" 2 "father" 3 "sibling" 4 "grandparent" ///
+							5 "other relative" 6 "non-relative/household worker", replace 
+	lab val 			ecd_pcg_relate ecd_resp_relate ecd_rel
+	
+	replace 			ecd_pcg = 96 if ecd_pcg == 2 | ecd_pcg == 77  	
+	lab def 			ecd_pcg 1 "Person completing interview" 96 "Other"
+	lab val 			ecd_pcg ecd_pcg 
+	
+	foreach 			x in play read story song out ncd {
+		replace 			ecd_`x' = . if ecd_`x' == 98 | ecd_`x' == 97 | ecd_`x' == 888 
+	}
+	forval 				x = 1/8 {
+		replace 			ecd_ed_`x' = . if ecd_ed_`x' == 888 | ecd_ed_`x' == 98
+	} 
+	forval 				x = 1/6 {
+		replace 			ecd_bh_`x' = . if ecd_bh_`x' == 888
+		replace 			ecd_disc_`x' = . if ecd_disc_`x' == 888
+	}
+	replace 			ecd_disc = . if ecd_disc == 888
+	replace 			ecd_hv_bks = . if ecd_hv_bks == 98
+	
 
-	GENERATE ECD ED PRE BASED ON LVL IN BF & MWI
-CLEAN THESE 
 * **********************************************************************
 * 9 - clean agriculture and livestock variables
 * **********************************************************************
@@ -850,7 +865,7 @@ CLEAN THESE
 							12 "Not farm season" 13 "Lack of transportation" ///
 							14 "Do not want to be exposed to the virus" ///
 							15 "focus on secondary activity" 16 "Better opportunity" ///
-							17 "PREVIOUS BUSINESS/JOB CLOSED DUE TO ENDSARS PROTESTS"
+							17 "PREVIOUS BUSINESS/JOB CLOSED DUE TO ENDSARS PROTESTS" ///
 							96 "Other", replace
 	lab val				emp_chg_why emp_chg_why 
 	

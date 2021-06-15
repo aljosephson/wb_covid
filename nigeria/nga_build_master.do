@@ -148,7 +148,8 @@
 	lab val			sector nga_sec
 	drop			urb_rural
 	rename 			filter2 children05
-
+	rename 			filter1 children520
+	
 * SWIFT
 	rename 			s3aq1 swift_rice
 	rename 			s3aq2 swift_chick
@@ -296,8 +297,10 @@
 	rename 			s5bq11 ac_cr_delay
 
 * early childhood development 
+	rename 			s5dq0 children210
 	rename 			ch_name ecd_id
 	rename 			cg_prim ecd_pcg 
+	replace 		ecd_pcg = 1 if ecd_pcg == 3
 	rename 			cg_primoth1 ecd_pcg_mem
 	rename 			cg_primoth2 ecd_pcg_id
 	rename 			cg_primoth3 ecd_pcg_relate
@@ -636,7 +639,7 @@
 						s5q1a* s5q1b* s5q1c* s9q6__96 s9q6_os ///
 						s11q11 s11q12 s11q13 s6q21a__96 s6q22__96 s3q2__5 ///
 						s5aq3__96 s5cq2__96 s5cq4__98 s5q1h__96 s5q1i_96 ///
-						s6q16_round5 s9aq3__* s9aq4__*
+						s6q16_round5 s9aq3__* s9aq4__* sch_catchupos s5cq0 
 	drop if			wave ==  .		
 	
 * reorder variables

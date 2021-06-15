@@ -446,9 +446,8 @@
  * vaccines
 	rename 			s5q2_2j ac_vac_need
 	rename 			s5q2_2k ac_vac
-	gen 			ac_vac_why = .
 	forval 			x = 1/6 {
-		replace 	ac_vac_why = 1 if s5q2_2l == `x'
+		gen 			ac_vac_why_`x' = 1 if s5q2_2l == `x'
 	}
 	drop 			s5q2_2l 
 	
@@ -623,6 +622,7 @@
 	lab var 		oth_inc_5 "Other Income: Pension"
 
 * agriculture (sec 13 in w1, 6e in others, 5A in 7)
+	replace 		ag_crop = rainy_filter if ag_crop == .
 	rename			s13q2a ag_crop_1
 	rename			s13q2b ag_crop_2
 	rename			s13q2c ag_crop_3
@@ -654,6 +654,7 @@
 * livestock
 	rename			s13q10 ag_live
 	replace 		ag_live = s6qf1 if ag_live == . & s6qf1 != .
+	replace 		ag_live = livestock_filter if ag_live == . & livestock_filter != .
 	gen 			ag_live_1 = 0 if s6qf2__1 == 0 | s6qf2__2 == 0
 	replace 		ag_live_1 = 1 if s6qf2__1 == 1 | s6qf2__2 == 1
 	gen 			ag_live_2 = 0 if s6qf2__3 == 0 | s6qf2__4 == 0 | s6qf2__6 == 0
@@ -943,7 +944,8 @@
 						s5q5_oth s6q9_oth s6bq11c s6qb12 s6qb13 s6qb14 s6bq11a_2 ///
 						s6bq11a_3 s6q14b_os s6qe1 s6qe9 s6qe10 s6qe11__* s6qe4_oth ///
 						s6qe4_oth2 s5q3b__555 s5q3b_ot s5dq5_oth s5dq7_ot s5cq4__96 ///
-						 s5q1b1_ot s6qe2_oth s6qe4__96 s6qe11_oth s6qe2__96
+						s5q1b1_ot s6qe2_oth s6qe4__96 s6qe11_oth s6qe2__96 ///
+						livestock_filter previous_loanfilter rainy_filter
 
 * regional and sector information
 	gen				sector = 2 if urb_rural == 1

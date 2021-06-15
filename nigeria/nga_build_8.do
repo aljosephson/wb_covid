@@ -206,18 +206,22 @@
 	}
 	forval 			x = 1/5 {
 	    rename 		s6aq20__`x' ag_ac_lab_why_`x'	
-		rename 		s6aq21__`x' ag_ac_amin_why_`x' // data differ from survey response #s
+		rename 		s6aq21__`x' ag_ac_anim_why_`x' // data differ from survey response #s
 	}
 	rename 			s6aq20__7 ag_ac_lab_why_7
-	rename 			s6aq21__7 ag_ac_amin_why_7	
+	rename 			s6aq21__7 ag_ac_anim_why_7	
 	drop 			s6aq*
 
 	* education
-	rename 			s5cq0 sch_att
+	drop 			s5cq0a // survey says 5-20 data says 2-20, can't know which
+	rename 			s5cq11_18 sch_att
+	replace 		sch_att = 1 if s5cq0 == 1
 	rename 			s5cq1_* sch_catchup*
 	rename 			s5cq2 sch_catchup_imp
 	rename 			s5cq3_* sch_prec_prac*
 	
+	* business
+	rename 			s6q11b1 bus_other
 	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace

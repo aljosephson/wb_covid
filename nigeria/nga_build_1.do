@@ -312,7 +312,6 @@
 	lab val 		ac_medserv_why ac_medserv_why
 	lab var 		ac_med_why "reason for unable to access medical services"
 	* education 
-	rename 			filter1 children520
 	rename 			s5q4a sch_child
 	rename 			s5q4b edu_act
 	rename 			s5q5__1 edu_1 

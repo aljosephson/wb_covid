@@ -165,7 +165,7 @@
 		rename 			s5q1h__`x' ac_medserv_type_`x'
 	}
 	forval 			x = 1/7 {
-	    rename 			s5q1i_`x' ac_medserve_type_`x'_why 
+	    rename 			s5q1i_`x' ac_medserv_type_`x'_why 
 	}
   * non-farm income 
 	rename 			s6q11b1 bus_other

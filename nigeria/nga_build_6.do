@@ -129,6 +129,17 @@
 * reshape data	
 	reshape 		wide s7q1, i(hhid) j(source_cd)
 
+	rename			s7q14 oth_inc_1
+	lab var 		oth_inc_1 "Other Income: Remittances from abroad"
+	rename			s7q15 oth_inc_2
+	lab var 		oth_inc_2 "Other Income: Remittances from family in the country"
+	rename			s7q16 oth_inc_3
+	lab var 		oth_inc_3 "Other Income: Assistance from non-family"
+	rename			s7q17 oth_inc_4
+	lab var 		oth_inc_4 "Other Income: Income from properties, investments, or savings"
+	rename			s7q18 oth_inc_5
+	lab var 		oth_inc_5 "Other Income: Pension"
+	
 * save temp file
 	tempfile		tempc
 	save			`tempc'	
@@ -154,7 +165,7 @@
 
 * load data
 	use				"$root/wave_0`w'/r`w'_sect_5c.dta", clear	
-
+	drop 			if s5cq10 == 2 | s5cq10a == 2
 	rename 			s5cq11 sch_att
 	replace 		sch_att = 0 if sch_att == 2
 	forval 			x = 1/14 {
@@ -177,9 +188,10 @@
 	
 	rename 			s5cq21 edu_act 
 	replace 		edu_act = 0 if edu_act == 2
-	
+
+	egen 			hhgrp = group(hhid)
 	collapse 		(sum) edu* sch*, by (hhid)
-	
+
 * replace missing values that became 0 with the collapse (sum)
 	replace 		sch_onsite = . if sch_att == 0
 	replace 		sch_online = . if sch_att == 0
@@ -224,11 +236,14 @@
 	lab var			wave "Wave number"	
 	
 * clean variables inconsistent with other rounds	
-	* educaiton
+	* education
 	forval 			x = 1/11 {
 	    rename 		s5cq4__`x' sch_prec_`x'
 	}
 	rename 			s5cq4__99 sch_prec_none
+	
+	* business
+	rename 			s6q11b1 bus_other
 	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace

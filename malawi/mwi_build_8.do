@@ -238,6 +238,8 @@
 		rename 			s6dq8 ac_cr_due
 		rename 			s6dq9 ac_cr_worry
 		rename 			s6dq10 ac_cr_bef
+		replace 		ac_cr_bef = previous_loanfilter if ///
+							ac_cr_bef == . & previous_loanfilter != .
 		rename 			s6dq10a ac_cr_prev_repay
 		forval 			x = 1/12 {
 			gen 			ac_cr_bef_why_`x' = 0

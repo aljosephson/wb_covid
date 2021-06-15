@@ -197,6 +197,9 @@
 	rename 			s5q1m ac_water_why
 	replace 		ac_water_why = ac_water_why + 1 if (ac_water_why > 3 & ac_water_why < 10)
 	
+	* business
+	rename 			s6q11b1 bus_other
+	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace
 

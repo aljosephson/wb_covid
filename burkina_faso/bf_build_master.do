@@ -127,7 +127,9 @@
 	
 	rename 			commune zone_id 
 	
-	drop 			village b40 echantillon resultat weight ind_id_EHCVM
+	drop 			village b40 echantillon resultat weight ind_id_EHCVM ///
+						membres__id
+	
 
 * ***********************************************************************
 * 3 - clean bukina faso panel
@@ -142,6 +144,7 @@
 	rename 			s02cq02 ecd_pcg
 	rename 			s02cq03 ecd_pcg_mem
 	rename 			s02cq03a ecd_pcg_gen
+	replace 		ecd_pcg_gen = sex if ecd_pcg_gen == .
 	rename 			s02cq04 ecd_pcg_id
 	rename 			s02cq05 ecd_pcg_relate
 	replace 		ecd_pcg_relate = 6 if ecd_pcg_relate == 5
@@ -383,6 +386,7 @@
 	rename 			s05bq11 ac_cr_delay
 	
 * employment 
+	drop 			sec6_rep // not sure what this is
 	rename 			s06q01 emp
 	rename 			s06q01a rtrn_emp
 	rename 			s06q02 emp_pre

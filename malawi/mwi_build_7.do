@@ -275,10 +275,12 @@
 		rename 			s6qe5 ag_chg
 		rename 			s6qe6__* ag_chg_*
 		rename 			s6qe7__* ag_ac_seed_why_*
-		rename 			s6qe8__* ag_ac_fert_why_*
+		rename 			s6qe8__* ag_ac_fert_why_*		
 		rename 			s6qe9__* ag_ac_oth_why_*
-		drop 			s6qe*ot
-		
+		drop 			s6qe*ot ag_ac_fert_why_555 ag_ac_oth_why_555 ///
+							ag_ac_seed_why_555 ag_chg_555 ag_crop_pl_555 ///
+							ag_crop_pl_556
+	
 	* rename access credit variables inconsistent with wave 3 
 		rename 			s6dq1 ac_cr_loan
 		gen 			ac_cr_need = 1 if ac_cr_loan == 1 | ac_cr_loan == 2

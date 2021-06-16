@@ -258,28 +258,38 @@
 	tempfile 		tempany
 	save 			`tempany'
 
-* rename other variables 
+* rename other variables 	
+	* edu_act_why
 	use				"$root/wave_0`w'/SEC1.dta", clear
-	keep 			HHID hh_roster__id s1q11__* s1q13__*
+	keep 			if s1q10 == 2
+	keep 			HHID hh_roster__id s1q11__* 
 	forval 			x = 1/10 {
 	    replace 	s1q11__`x' = 0 if s1q11__`x' == 2
 	    rename 		s1q11__`x' edu_act_why_`x'
 	}
+	drop 			*__n96
+	collapse 		(sum) edu_act*, by(HHID)
+	forval 			x = 1/10 {
+	    replace 	edu_act_why_`x' = 1 if edu_act_why_`x' >= 1
+	}
+	tempfile 		tempactwhy
+	save 			`tempactwhy'
+
+	* edu_chal
+	use				"$root/wave_0`w'/SEC1.dta", clear
+	keep 			if s1q10 == 1
+	keep 			HHID hh_roster__id s1q13__*
 	forval 			x = 1/13 {
 	    replace 	s1q13__`x' = 0 if s1q13__`x' == 2
 	    rename 		s1q13__`x' edu_chal_`x'
 	}
 	drop 			*__n96
-	collapse 		(sum) edu_act* edu_chal*, by(HHID)
-	forval 			x = 1/10 {
-	    replace 	edu_act_why_`x' = 1 if edu_act_why_`x' >= 1
-	}
+	collapse 		(sum) edu_chal*, by(HHID)
 	forval 			x = 1/13 {
 	    replace 	edu_chal_`x' = 1 if edu_chal_`x' >= 1
 	}
-
-	tempfile 		tempoth
-	save 			`tempoth'
+	tempfile 		tempchal
+	save 			`tempchal'
 	
 * generate educational engagement type variables  
 	use				"$root/wave_0`w'/SEC1.dta", clear
@@ -309,8 +319,9 @@
 
 * merge data together 
 	merge 			1:1 HHID using `tempany', nogen
-	merge 			1:1 HHID using `tempoth', nogen
-	
+	merge 			1:1 HHID using `tempactwhy', nogen
+	merge 			1:1 HHID using `tempchal', nogen
+
 * save temp file
 	tempfile		temp7
 	save			`temp7'
@@ -336,6 +347,7 @@
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC5B.dta", nogen 
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC5C.dta", nogen 
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC7.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/SEC8.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC9.dta", nogen	
 	
 * reformat HHID

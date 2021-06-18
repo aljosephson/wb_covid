@@ -376,9 +376,10 @@
 						ac_sorg_need == 1 | ac_onion_need == 1)
 		replace 		ac_staple_need = 0 if country == 3 & ac_rice_need == 0 & ///
 						ac_beans_need == 0 & ac_cass_need == 0 & ac_yam_need == 0 & ///
-						ac_sorg_need == 0 & ac_onion_need == 0
+						ac_sorg_need == 0 & (ac_onion_need == 0 | ac_onion_need == .)
+		// Note: some rounds they don't ask about onion so allow that to be 0 or .				
 		replace 		ac_staple = 1 if country == 3 & (ac_rice == 1 | ac_beans == 1 | ///
-						ac_cass == 1 | ac_yam == 1 | ac_sorg == 1 | ac_onion == 1)
+						ac_cass == 1 | ac_yam == 1 | ac_sorg == 1 | ac_onion == 1
 		replace 		ac_staple = 0 if country == 3 & ((ac_rice == 0 & ac_rice_need == 1 ) ///
 						| (ac_beans == 0 & ac_beans_need == 1) | (ac_cass == 0 & ac_cass_need == 1) ///
 						| (ac_yam == 0 & ac_yam_need == 1)  | (ac_sorg == 0 & ac_sorg_need == 1) ///

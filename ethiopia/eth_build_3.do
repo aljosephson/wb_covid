@@ -101,7 +101,7 @@
 	
 * load FIES score data
 	use				"$fies/ET_FIES_round`w'.dta", clear
-	
+
 * format variables
 	drop 			country round 
 	rename 			HHID household_id

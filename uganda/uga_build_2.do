@@ -177,7 +177,8 @@
 	label var 		sexhh "Sex of household head"
 	
 * collapse data
-	collapse		(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(HHID)
+	collapse		(sum) hhsize hhsize_adult hhsize_child hhsize_schchild ///
+						(max) sexhh, by(HHID)
 	lab var			hhsize "Household size"
 	lab var 		hhsize_adult "Household size - only adults"
 	lab var 		hhsize_child "Household size - children 0 - 18"

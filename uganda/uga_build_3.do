@@ -174,7 +174,8 @@
 	label var 		sexhh "Sex of household head"
 	
 * collapse data
-	collapse		(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(HHID)
+	collapse		(sum) hhsize hhsize_adult hhsize_child hhsize_schchild ///
+						(max) sexhh, by(HHID)
 	lab var			hhsize "Household size"
 	lab var 		hhsize_adult "Household size - only adults"
 	lab var 		hhsize_child "Household size - children 0 - 18"
@@ -398,6 +399,11 @@
 	format 			%12.0f HHID
 
 * rename variables inconsistent with other waves
+	* rename govt actions 
+		rename 			s2gq01 cvd_lockdwn
+		rename 			s2gq02 cvd_sch
+		rename 			s2gq03 cvd_church
+
 	* rename behavioral changes
 		rename			s3q01 bh_1
 		rename			s3q02 bh_2

@@ -6,15 +6,15 @@
 * Stata v.16.1
 
 * does
-	* reads in fourth round of Uganda data
-	* builds round 4
-	* outputs round 4
+	* reads in fifth round of Uganda data
+	* builds round 5
+	* outputs round 5
 
 * assumes
 	* raw Uganda data
 
 * TO DO:
-	* complete
+	CHECK WHICH DATA WE SHOULD USE (ONLINE ONE SKIPS R5 BUT R6 LOOKS LIKE IT MATCHES R5 SURVEY)
 
 
 * **********************************************************************
@@ -32,7 +32,7 @@
 	log using		"$logout/uga_build", append
 	
 * set local wave number & file number
-	local			w = 4
+	local			w = 5
 	
 * make wave folder within refined folder if it does not already exist 
 	capture mkdir "$export/wave_0`w'" 	
@@ -44,9 +44,6 @@
 
 * load income data
 	use				"$root/wave_0`w'/SEC6", clear
-
-* drop 
-	drop 			interview__key s6q01_Other
 	
 * reformat HHID
 	format 			%12.0f HHID
@@ -74,8 +71,7 @@
 
 * drop other safety nets and missing values
 	drop			s10q02 s10q03__1 s10q03__2 s10q03__3 s10q03__4 ///
-						s10q03__5 s10q03__6 s10q03__n96 s10q03_Other ///
-						other_nets
+						s10q03__5 s10q03__6 s10q03__n96 
 
 * reshape data
 	reshape 		wide s10q01, i(HHID) j(safety_net__id)
@@ -191,7 +187,7 @@
 * ***********************************************************************
 * 5 - FIES
 * ***********************************************************************
-
+/*
 * load data
 	use				"$fies/UG_FIES_round`w'.dta", clear
 
@@ -201,26 +197,15 @@
 * save temp file
 	tempfile		temp5
 	save			`temp5'
-
+*/
 	
 * ***********************************************************************
 * 6 - education 
 * ***********************************************************************
- 
-* generate sch_att = 1 if any child attending school
-	use				"$root/wave_0`w'/SEC1.dta", clear
-	keep 			if s1cq01 == 1
-	replace 		s1cq03 = 0 if s1cq03 == 2
-	collapse		(sum) s1cq03, by(HHID)
-	gen 			sch_att = 1 if s1cq03 > 0 
-	replace 		sch_att = 0 if sch_att  == .
-	keep 			HHID sch_att 
-	tempfile 		tempsch
-	save 			`tempsch'
 	
 * generate edu_act = 1 if any child engaged in learning activities
-	use				"$root/wave_0`w'/SEC1.dta", clear
-	keep 			if s1cq01 == 1
+	use				"$root/wave_0`w'/SEC1C.dta", clear
+	keep 			if s1cq09 != .
 	replace 		s1cq09  = 0 if s1cq09  == 2
 	collapse		(sum) s1cq09, by(HHID)
 	gen 			edu_act = 1 if s1cq09 > 0 
@@ -229,37 +214,9 @@
 	tempfile 		tempany
 	save 			`tempany'
 
-* rename other variables 
-	* sch_att_why
-	use				"$root/wave_0`w'/SEC1.dta", clear	
-	keep 			if s1cq03 == 2
-	forval 			x = 1/15 {
-	    rename 		s1cq04__`x' sch_att_why_`x'
-	}		
-	collapse 		(sum) sch* , by(HHID)
-	forval 			x = 1/15 {
-	    replace 		sch_att_why_`x' = 1 if sch_att_why_`x' >= 1
-	}	
-	tempfile 		tempattwhy
-	save 			`tempattwhy'
-	
-	* sch_prec
-	use				"$root/wave_0`w'/SEC1.dta", clear	
-	keep 			if s1cq03 == 1
-	forval 			x = 1/11 {
-	    rename 		s1cq07__`x' sch_prec_`x'
-	}
-	rename 			s1cq07__n99 sch_prec_none
-	collapse 		(sum) sch* , by(HHID)
-	forval 			x = 1/11 {
-	    replace 		sch_prec_`x' = 1 if sch_prec_`x' >= 1
-	}
-	replace 		sch_prec_none = 1 if sch_prec_none >= 1
-	tempfile 		tempprec
-	save 			`tempprec'
-	
+* rename other variables 	
 	* edu_act_why
-	use				"$root/wave_0`w'/SEC1.dta", clear
+	use				"$root/wave_0`w'/SEC1C.dta", clear
 	keep 			if s1cq09 == 2
 	forval 			x = 1/11 {
 		rename 		s1cq10__`x' edu_act_why_`x'
@@ -272,19 +229,21 @@
 	save 			`tempactwhy'
 		
 	* edu & edu_chal
-	use				"$root/wave_0`w'/SEC1.dta", clear
+	use				"$root/wave_0`w'/SEC1C.dta", clear
 	keep 			if s1cq09 == 1
 	rename 			s1cq11__1 edu_1
 	rename 			s1cq11__2 edu_2
-	rename 			s1cq11__3 edu_3
-	rename 			s1cq11__4 edu_4
-	rename 			s1cq11__5 edu_5
-	rename 			s1cq11__6 edu_8
-	rename 			s1cq11__7 edu_9
-	rename 			s1cq11__8 edu_10
-	rename 			s1cq11__9 edu_11
-	rename 			s1cq11__10 edu_12
-	rename 			s1cq11__11 edu_7
+	replace 		edu_2 = 1 if s1cq11__3 == 1 | s1cq11__4 == 1 | ///
+						s1cq11__5 == 1 | s1cq11__6 == 1
+	rename 			s1cq11__7 edu_3
+	rename 			s1cq11__8 edu_4
+	rename 			s1cq11__9 edu_5
+	rename 			s1cq11__10 edu_8
+	rename 			s1cq11__11 edu_9
+	rename 			s1cq11__12 edu_10
+	rename 			s1cq11__13 edu_11
+	rename 			s1cq11__14 edu_12
+	rename 			s1cq11__15 edu_7
 	rename 	 		s1cq11__n96 edu_other
 	forval 			x = 1/13 {
 	    replace 	s1cq12__`x' = 0 if s1cq12__`x' == 2
@@ -302,16 +261,13 @@
 	use				"$root/wave_0`w'/SEC1.dta", clear
 	keep 			HHID 
 	duplicates 		drop
-	merge 			1:1 HHID using `tempsch', nogen
 	merge 			1:1 HHID using `tempany', nogen
-	merge			1:1 HHID using `tempattwhy', nogen
-	merge 			1:1 HHID using `tempprec', nogen
 	merge 			1:1 HHID using `tempactwhy', nogen
 	merge 			1:1 HHID using `tempedu', nogen
 
 * save temp file
-	tempfile		temp6
-	save			`temp6'
+	tempfile		temp5
+	save			`temp5'
 
 		
 * ***********************************************************************
@@ -322,12 +278,12 @@
 	use				"$root/wave_0`w'/Cover", clear
 	
 * merge in other sections	
-	forval 			x = 1/6 {
+	forval 			x = 1/5 {
 	    merge 		1:1 HHID using `temp`x'', nogen
 	}
-	merge 1:1 		HHID using "$root/wave_0`w'/SEC2.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC3.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC4.dta", nogen
+	merge 1:1 		HHID using "$root/wave_0`w'/SEC4A.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC5.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC5A.dta", nogen
 	merge 1:1 		HHID using "$root/wave_0`w'/SEC5B.dta", nogen 

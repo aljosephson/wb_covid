@@ -26,7 +26,7 @@
 * **********************************************************************
 
 * define list of waves
-	global 			waves "1" "2" "3"
+	global 			waves "1" "2" "3" "4" "5"
 	
 * define
 	global	root	=	"$data/uganda/raw"
@@ -125,108 +125,54 @@
 * 3 - clean uganda panel
 * ***********************************************************************	
 
-* rename income variables
-	rename 			s6q011 farm_inc
-	lab	var			farm_inc "Income from farming, fishing, livestock in last 12 months"
-	rename			s6q021 farm_chg
-	lab var			farm_chg "Change in income from farming since covid"
-	rename 			s6q012 bus_inc
-	lab var			bus_inc "Income from non-farm family business in last 12 months"
-	rename			s6q022 bus_chg
-	lab var			bus_chg "Change in income from non-farm family business since covid"
-	rename 			s6q013 wage_inc
-	lab var			wage_inc "Income from wage employment in last 12 months"
-	rename			s6q023 wage_chg
-	lab var			wage_chg "Change in income from wage employment since covid"
-	rename			s6q014 unemp_inc
-	lab var			unemp_inc "Income from unemployment benefits in the last 12 months"
-	rename			s6q024 unemp_chg
-	lab var			unemp_chg "Change in income from unemployment benefits since covid"
-	rename 			s6q015 rem_for
-	label 			var rem_for "Income from remittances abroad in last 12 months"
-	rename			s6q025 rem_for_chg
-	label 			var rem_for_chg "Change in income from remittances abroad since covid"
-	rename 			s6q016 rem_dom
-	label 			var rem_dom "Income from remittances domestic in last 12 months"
-	rename			s6q026 rem_dom_chg
-	label 			var rem_dom_chg "Change in income from remittances domestic since covid"
-	rename 			s6q017 asst_inc
-	label 			var asst_inc "Income from assistance from non-family in last 12 months"
-	rename			s6q027 asst_chg
-	label 			var asst_chg "Change in income from assistance from non-family since covid"
-	rename 			s6q018 isp_inc
-	label 			var isp_inc "Income from properties, investment in last 12 months"
-	rename			s6q028 isp_chg
-	label 			var isp_chg "Change in income from properties, investment since covid"
-	rename 			s6q019 pen_inc
-	label 			var pen_inc "Income from pension in last 12 months"
-	rename			s6q029 pen_chg
-	label 			var pen_chg "Change in income from pension since covid"
-	rename 			s6q0110 gov_inc
-	label 			var gov_inc "Income from government assistance in last 12 months"
-	rename			s6q0210 gov_chg
-	label 			var gov_chg "Change in income from government assistance since covid"
-	rename 			s6q0111 ngo_inc
-	label 			var ngo_inc "Income from NGO assistance in last 12 months"
-	rename			s6q0211 ngo_chg
-	label 			var ngo_chg "Change in income from NGO assistance since covid"
-	rename 			s6q0196 oth_inc
-	label 			var oth_inc "Income from other source in last 12 months"
-	rename			s6q0296 oth_chg
-	label 			var oth_chg "Change in income from other source since covid"	
-
-* clean employment
-	replace 		emp_act = 1 if emp_act == 11111
-	replace 		emp_act = 2 if emp_act == 31111
-	replace 		emp_act = 3 if emp_act == 71111
-	replace 		emp_act = 4 if emp_act == 81111
-	replace 		emp_act = 5 if emp_act == 91111
-	replace 		emp_act = 6 if emp_act == 151111  | emp_act == 141111
-	replace 		emp_act = 8 if emp_act == 61111
-	replace 		emp_act = 9 if emp_act == 161111 | emp_act == 171111
-	replace 		emp_act = 10 if emp_act == 21111
-	replace 		emp_act = 11 if emp_act == 131111
-	replace 		emp_act = 12 if emp_act == 41111 | emp_act == 51111
-	replace 		emp_act = 14 if emp_act == 111111 | emp_act == 121111
-	replace 		emp_act = -96 if emp_act == 101111 | emp_act == 191111 ///
-						| emp_act == 181111 | emp_act == 201111
-						
-	lab def 		emp_act -96 "Other" 1 "Agriculture" 2 "Industry/manufacturing" ///
-						3 "Wholesale/retail" 4 "Transportation services" ///
-						5 "Restaurants/hotels" 6 "Public Administration" ///
-						7 "Personal Services" 8 "Construction" 9 "Education/Health" ///
-						10 "Mining" 11 "Professional/scientific/technical activities" ///
-						12 "Electic/water/gas/waste" 13 "Buying/selling" ///
-						14 "Finance/insurance/real estate" 15 "Tourism" 16 "Food processing" 
-	lab val 		emp_act emp_act
+* rename symptoms
+	rename			s2q01 know
+	rename			s2q01b__1 symp_1
+	rename			s2q01b__2 symp_2
+	rename			s2q01b__3 symp_3
+	rename			s2q01b__4 symp_4
+	rename			s2q01b__5 symp_5
+	rename			s2q01b__6 symp_6
+	rename			s2q01b__7 symp_7
+	rename			s2q01b__8 symp_8
+	rename			s2q01b__9 symp_9
+	rename			s2q01b__10 symp_10
+	rename			s2q01b__11 symp_11
+	rename			s2q01b__12 symp_12
+	rename			s2q01b__13 symp_13
+	rename			s2q01b__14 symp_14
+	rename			s2q01b__n98 symp_15	
 	
-* label cope variabels	
-	lab var			cope_1 "Sale of assets (Agricultural and Non_agricultural)"
-	lab var			cope_2 "Engaged in additional income generating activities"
-	lab var			cope_3 "Received assistance from friends & family"
-	lab var			cope_4 "Borrowed from friends & family"
-	lab var			cope_5 "Took a loan from a financial institution"
-	lab var			cope_6 "Credited purchases"
-	lab var			cope_7 "Delayed payment obligations"
-	lab var			cope_8 "Sold harvest in advance"
-	lab var			cope_9 "Reduced food consumption"
-	lab var			cope_10 "Reduced non_food consumption"
-	lab var			cope_11 "Relied on savings"
-	lab var			cope_12 "Received assistance from NGO"
-	lab var			cope_13 "Took advanced payment from employer"
-	lab var			cope_14 "Received assistance from government"
-	lab var			cope_15 "Was covered by insurance policy"
-	lab var			cope_16 "Did nothing"
-	lab var			cope_17 "Other"				
+* rename knowledge
+	rename			s2q02__1 know_1
+	lab var			know_1 "Handwashing with Soap Reduces Risk of Coronavirus Contraction"
+	rename			s2q02__2 know_9
+	lab var			know_9 "Use of Sanitizer Reduces Risk of Coronavirus Contraction"
+	rename			s2q02__3 know_2
+	lab var			know_2 "Avoiding Handshakes/Physical Greetings Reduces Risk of Coronavirus Contract"
+	rename			s2q02__4 know_3
+	replace 		know_3 = 1 if s2q02__5 == 1
+	replace 		know_3 = 0 if s2q02__5 == 0 & know_3 == .
+	lab var			know_3 "Using Masks and/or Gloves Reduces Risk of Coronavirus Contraction"
+	rename			s2q02__6 know_4
+	lab var			know_4 "Avoiding Travel Reduces Risk of Coronavirus Contraction"
+	rename			s2q02__7 know_5
+	lab var			know_5 "Staying at Home Reduces Risk of Coronavirus Contraction"
+	rename			s2q02__8 know_6
+	lab var			know_6 "Avoiding Crowds and Gatherings Reduces Risk of Coronavirus Contraction"
+	rename			s2q02__9 know_7
+	lab var			know_7 "Mainting Social Distance of at least 1 Meter Reduces Risk of Coronavirus Contraction"
+	rename			s2q02__10 know_8
+	lab var			know_8 "Avoiding Face Touching Reduces Risk of Coronavirus Contraction"	
 	
-* rename government contribution to spread
-	rename			s2gq01 revised
-	rename			s2gq02__1 spread_1
-	rename			s2gq02__2 spread_2
-	rename			s2gq02__3 spread_3
-	rename			s2gq02__4 spread_4
-	rename			s2gq02__5 spread_5
-	rename			s2gq02__6 spread_6
+* rename myths
+	rename			s2q02a_1 myth_1
+	rename			s2q02a_2 myth_2
+	rename			s2q02a_3 myth_3
+	rename			s2q02a_4 myth_4
+	rename			s2q02a_5 myth_5
+	rename			s2q02a_6 myth_6
+	rename			s2q02a_7 myth_7	
 
 * rename government actions
 	rename			s2q03__1 gov_1
@@ -253,24 +199,95 @@
 	lab var			gov_13 "Compulsary putting on masks in public"
 	rename			s2q03__12 gov_10
 	lab var			gov_10 "Stopping or limiting social gatherings / social distancing"
-	
-* rename symptoms
-	rename			s2q01 know
-	rename			s2q01b__1 symp_1
-	rename			s2q01b__2 symp_2
-	rename			s2q01b__3 symp_3
-	rename			s2q01b__4 symp_4
-	rename			s2q01b__5 symp_5
-	rename			s2q01b__6 symp_6
-	rename			s2q01b__7 symp_7
-	rename			s2q01b__8 symp_8
-	rename			s2q01b__9 symp_9
-	rename			s2q01b__10 symp_10
-	rename			s2q01b__11 symp_11
-	rename			s2q01b__12 symp_12
-	rename			s2q01b__13 symp_13
-	rename			s2q01b__14 symp_14
-	rename			s2q01b__n98 symp_15	
+
+* rename government contribution to spread
+	rename			s2gq01 revised
+	rename			s2gq02__1 spread_1
+	rename			s2gq02__2 spread_2
+	rename			s2gq02__3 spread_3
+	rename			s2gq02__4 spread_4
+	rename			s2gq02__5 spread_5
+	rename			s2gq02__6 spread_6
+	rename 			s2gq05 mask 
+asdfds	
+* rename access
+ * drinking water 
+	rename			s4q01e ac_drink
+	rename			s4q01f ac_drink_why
+	replace 		ac_drink_why = 7 if ac_drink_why == 6
+	replace 		ac_drink_why = 9 if ac_drink_why == 8
+	lab def 		ac_drink_why 1 "water supply not available" 2 "water supply reduced" ///
+					3 "unable to access communal supply" 4 "unable to access water tanks" ///
+					5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
+					8 "restriction to go out" 9 "increase in price" 10 "cannot afford"
+	lab val 		ac_drink_why ac_drink_why
+ * soap
+	rename 			s4q01 ac_soap
+	rename			s4q02 ac_soap_why
+	replace			ac_soap_why = 9 if ac_soap_why == -96
+	replace			ac_soap_why = . if ac_soap_why == 99
+	lab def			ac_soap_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
+								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
+								7 "cannot afford it" 8 "afraid to go out" 
+	replace 		ac_soap_why = . if ac_soap_why == 9
+	lab var 		ac_soap_why "reason for unable to purchase soap"
+ * water wash
+	rename 			s4q03 ac_water
+	rename 			s4q04 ac_water_why
+	replace 		ac_water_why = 15 if ac_water_why == 9
+	replace 		ac_water_why = ac_water_why + 1 if (ac_water_why > 5 & ac_water_why < 10)
+	lab def 			ac_water_why 1 "water supply not available" 2 "water supply reduced" ///
+						3 "unable to access communal supply" 4 "unable to access water tanks" ///
+						5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
+						8 "restriction to go out" 9 "increase in price" 10 "cannot afford" ///
+						11 "afraid to get viurs" 12 "water source too far" ///
+						13 "too many people at water source" 14 "large household size" ///
+						15 "lack of money", replace
+	lab val 			ac_water_why ac_water_why
+ * staple	
+	rename 			s4q05 ac_staple_def
+	rename 			s4q06 ac_staple
+	rename			s4q07 ac_staple_why
+	replace			ac_staple_why = 7 if ac_staple_why == -96
+	lab def			ac_staple_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
+								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
+								7 "other"
+	lab var 		ac_staple_why "reason for unable to purchase staple food"
+ * sauce
+	rename 			s4q07a ac_sauce_def
+	rename 			s4q07b ac_sauce
+	rename			s4q07c ac_sauce_why
+	replace			ac_sauce_why = 7 if ac_sauce_why == -96
+	lab def			ac_sauce_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
+								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
+								7 "other"
+	lab var 		ac_sauce_why "reason for unable to purchase staple food"
+ * medicine
+	rename 			s4q08 ac_med
+ * medical services
+	rename 			s4q09 ac_medserv_need
+	rename 			s4q10 ac_medserv
+	rename 			s4q11 ac_medserv_why
+	replace 		ac_medserv_why = 8 if ac_medserv_why == 4
+	replace			ac_medserv_why = 4 if ac_medserv_why == 5
+	replace			ac_medserv_why = 5 if ac_medserv_why == 7
+	replace			ac_medserv_why = 7 if ac_medserv_why == 6
+	lab def			ac_medserv_why 1 "lack of money" 2 "no med personnel" 3 "facility full" ///
+								4 "facility closed" 5 "not enough supplies" ///
+								6 "lack of transportation" 7 "restriction to go out" ///
+								8 "afraid to get virus"
+	lab val 		ac_medserv_why ac_medserv_why 
+	lab var 		ac_medserv_why "reason for unable to access medical services"
+ * masks
+	rename 			s4q12 ac_mask
+	rename 			s4q13 ac_mask_why
+	rename 			s4q14_* ac_mask_srce*
+* rename assets 
+	rename			s4q12__1 ac_radio
+	rename			s4q12__2 ac_tv
+	rename			s4q12__3 ac_elec
+	rename			s4q12__4 ac_solar
+	rename			s4q12__5 ac_solar_kit
 
 * rename education & bank
 	rename 			s4q16 edu_cont
@@ -286,6 +303,62 @@
 	rename 			s4q19 ac_bank
 	rename 			s4q20 ac_bank_why
 	replace 		ac_bank_why = 3 if ac_bank_why == 2
+
+* clean employment
+	replace 		emp_act = 1 if emp_act == 11111
+	replace 		emp_act = 2 if emp_act == 31111
+	replace 		emp_act = 3 if emp_act == 71111
+	replace 		emp_act = 4 if emp_act == 81111
+	replace 		emp_act = 5 if emp_act == 91111
+	replace 		emp_act = 6 if emp_act == 151111  | emp_act == 141111
+	replace 		emp_act = 8 if emp_act == 61111
+	replace 		emp_act = 9 if emp_act == 161111 | emp_act == 171111
+	replace 		emp_act = 10 if emp_act == 21111
+	replace 		emp_act = 11 if emp_act == 131111
+	replace 		emp_act = 12 if emp_act == 41111 | emp_act == 51111
+	replace 		emp_act = 14 if emp_act == 111111 | emp_act == 121111
+	replace 		emp_act = -96 if emp_act == 101111 | emp_act == 191111 ///
+						| emp_act == 181111 | emp_act == 201111
+						
+	lab def 		emp_act -96 "Other" 1 "Agriculture" 2 "Industry/manufacturing" ///
+						3 "Wholesale/retail" 4 "Transportation services" ///
+						5 "Restaurants/hotels" 6 "Public Administration" ///
+						7 "Personal Services" 8 "Construction" 9 "Education/Health" ///
+						10 "Mining" 11 "Professional/scientific/technical activities" ///
+						12 "Electic/water/gas/waste" 13 "Buying/selling" ///
+						14 "Finance/insurance/real estate" 15 "Tourism" 16 "Food processing" 
+	lab val 		emp_act emp_act
+	
+* rename business variables
+	lab def			bus_emp_inc 1 "Higher" 2 "The same" 3 "Less" 4 "No Revenue"
+	lab val			bus_emp_inc bus_emp_inc 
+	gen				bus_closed  = 1 if s5aq11b__1 == 1
+	forval 			x = 2/10{
+	    replace 	bus_closed = `x' if s5aq11b__`x' == 1
+	}
+	replace 		bus_closed = 7 if bus_closed == 6	
+	lab def 		clsd 1 "USUAL PLACE OF BUSINESS CLOSED DUE TO CORONAVIRUS LEGAL RESTRICTIONS" ///
+						2 "USUAL PLACE OF BUSINESS CLOSED FOR ANOTHER REASON" ///
+						3 "NO COSTUMERS / FEWER CUSTOMERS" 4 "CAN'T GET INPUTS" ///
+						5 "CAN'T TRAVEL / TRANSPORT GOODS FOR TRADE" ///
+						7 "ILLNESS IN THE HOUSEHOLD" 8 "NEED TO TAKE CARE OF A FAMILY MEMBER" ///
+						9 "SEASONAL CLOSURE" 10 "VACATION" 
+	lab val 		bus_closed clsd
+	rename 			s5a11c bus_act
+	replace			bus_why = s5aq14_2 if bus_why == .
+	
+	forval 			x = 1/6 {
+		rename 			s5aq15__`x' bus_chal_`x'
+	}
+	rename 			s5aq15__n96 bus_chal_7
+ 	
+	rename			s5aq15a bus_beh
+	forval 			x = 1/6 {
+		rename 			s5aq15b__`x' bus_beh_`x'
+	}
+	rename			s5aq15b__n96 bus_beh_7
+	rename 			s5q15a bus_other
+	rename 			s5q15b bus_num
 	
 * rename agriculture (R1&3)
 	rename			s5aq17 ag_plan
@@ -415,147 +488,57 @@
 		lab var 	ag_live_pr_`p' "Has the price of [LIVESTOCK PRODUCT]…"
 	}
 
-* rename access
- * drinking water 
-	rename			s4q01e ac_drink
-	rename			s4q01f ac_drink_why
-	replace 		ac_drink_why = 7 if ac_drink_why == 6
-	replace 		ac_drink_why = 9 if ac_drink_why == 8
-	lab def 		ac_drink_why 1 "water supply not available" 2 "water supply reduced" ///
-					3 "unable to access communal supply" 4 "unable to access water tanks" ///
-					5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
-					8 "restriction to go out" 9 "increase in price" 10 "cannot afford"
-	lab val 		ac_drink_why ac_drink_why
- * soap
-	rename 			s4q01 ac_soap
-	rename			s4q02 ac_soap_why
-	replace			ac_soap_why = 9 if ac_soap_why == -96
-	replace			ac_soap_why = . if ac_soap_why == 99
-	lab def			ac_soap_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
-								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
-								7 "cannot afford it" 8 "afraid to go out" 
-	replace 		ac_soap_why = . if ac_soap_why == 9
-	lab var 		ac_soap_why "reason for unable to purchase soap"
- * water wash
-	rename 			s4q03 ac_water
-	rename 			s4q04 ac_water_why
-	replace 		ac_water_why = 15 if ac_water_why == 9
-	replace 		ac_water_why = ac_water_why + 1 if (ac_water_why > 5 & ac_water_why < 10)
-	lab def 			ac_water_why 1 "water supply not available" 2 "water supply reduced" ///
-						3 "unable to access communal supply" 4 "unable to access water tanks" ///
-						5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
-						8 "restriction to go out" 9 "increase in price" 10 "cannot afford" ///
-						11 "afraid to get viurs" 12 "water source too far" ///
-						13 "too many people at water source" 14 "large household size" ///
-						15 "lack of money", replace
-	lab val 			ac_water_why ac_water_why
- * staple	
-	rename 			s4q05 ac_staple_def
-	rename 			s4q06 ac_staple
-	rename			s4q07 ac_staple_why
-	replace			ac_staple_why = 7 if ac_staple_why == -96
-	lab def			ac_staple_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
-								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
-								7 "other"
-	lab var 		ac_staple_why "reason for unable to purchase staple food"
- * sauce
-	rename 			s4q07a ac_sauce_def
-	rename 			s4q07b ac_sauce
-	rename			s4q07c ac_sauce_why
-	replace			ac_sauce_why = 7 if ac_sauce_why == -96
-	lab def			ac_sauce_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
-								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
-								7 "other"
-	lab var 		ac_sauce_why "reason for unable to purchase staple food"
- * medicine
-	rename 			s4q08 ac_med
- * medical services
-	rename 			s4q09 ac_medserv_need
-	rename 			s4q10 ac_medserv
-	rename 			s4q11 ac_medserv_why
-	replace 		ac_medserv_why = 8 if ac_medserv_why == 4
-	replace			ac_medserv_why = 4 if ac_medserv_why == 5
-	replace			ac_medserv_why = 5 if ac_medserv_why == 7
-	replace			ac_medserv_why = 7 if ac_medserv_why == 6
-	lab def			ac_medserv_why 1 "lack of money" 2 "no med personnel" 3 "facility full" ///
-								4 "facility closed" 5 "not enough supplies" ///
-								6 "lack of transportation" 7 "restriction to go out" ///
-								8 "afraid to get virus"
-	lab val 		ac_medserv_why ac_medserv_why 
-	lab var 		ac_medserv_why "reason for unable to access medical services"
- * masks
-	rename 			s4q12 ac_mask
-	rename 			s4q13 ac_mask_why
-	rename 			s4q14_* ac_mask_srce*
-* rename assets 
-	rename			s4q12__1 ac_radio
-	rename			s4q12__2 ac_tv
-	rename			s4q12__3 ac_elec
-	rename			s4q12__4 ac_solar
-	rename			s4q12__5 ac_solar_kit
+	
+* rename income variables
+	rename 			s6q011 farm_inc
+	lab	var			farm_inc "Income from farming, fishing, livestock in last 12 months"
+	rename			s6q021 farm_chg
+	lab var			farm_chg "Change in income from farming since covid"
+	rename 			s6q012 bus_inc
+	lab var			bus_inc "Income from non-farm family business in last 12 months"
+	rename			s6q022 bus_chg
+	lab var			bus_chg "Change in income from non-farm family business since covid"
+	rename 			s6q013 wage_inc
+	lab var			wage_inc "Income from wage employment in last 12 months"
+	rename			s6q023 wage_chg
+	lab var			wage_chg "Change in income from wage employment since covid"
+	rename			s6q014 unemp_inc
+	lab var			unemp_inc "Income from unemployment benefits in the last 12 months"
+	rename			s6q024 unemp_chg
+	lab var			unemp_chg "Change in income from unemployment benefits since covid"
+	rename 			s6q015 rem_for
+	label 			var rem_for "Income from remittances abroad in last 12 months"
+	rename			s6q025 rem_for_chg
+	label 			var rem_for_chg "Change in income from remittances abroad since covid"
+	rename 			s6q016 rem_dom
+	label 			var rem_dom "Income from remittances domestic in last 12 months"
+	rename			s6q026 rem_dom_chg
+	label 			var rem_dom_chg "Change in income from remittances domestic since covid"
+	rename 			s6q017 asst_inc
+	label 			var asst_inc "Income from assistance from non-family in last 12 months"
+	rename			s6q027 asst_chg
+	label 			var asst_chg "Change in income from assistance from non-family since covid"
+	rename 			s6q018 isp_inc
+	label 			var isp_inc "Income from properties, investment in last 12 months"
+	rename			s6q028 isp_chg
+	label 			var isp_chg "Change in income from properties, investment since covid"
+	rename 			s6q019 pen_inc
+	label 			var pen_inc "Income from pension in last 12 months"
+	rename			s6q029 pen_chg
+	label 			var pen_chg "Change in income from pension since covid"
+	rename 			s6q0110 gov_inc
+	label 			var gov_inc "Income from government assistance in last 12 months"
+	rename			s6q0210 gov_chg
+	label 			var gov_chg "Change in income from government assistance since covid"
+	rename 			s6q0111 ngo_inc
+	label 			var ngo_inc "Income from NGO assistance in last 12 months"
+	rename			s6q0211 ngo_chg
+	label 			var ngo_chg "Change in income from NGO assistance since covid"
+	rename 			s6q0196 oth_inc
+	label 			var oth_inc "Income from other source in last 12 months"
+	rename			s6q0296 oth_chg
+	label 			var oth_chg "Change in income from other source since covid"	
 
-* rename knowledge
-	rename			s2q02__1 know_1
-	lab var			know_1 "Handwashing with Soap Reduces Risk of Coronavirus Contraction"
-	rename			s2q02__2 know_9
-	lab var			know_9 "Use of Sanitizer Reduces Risk of Coronavirus Contraction"
-	rename			s2q02__3 know_2
-	lab var			know_2 "Avoiding Handshakes/Physical Greetings Reduces Risk of Coronavirus Contract"
-	rename			s2q02__4 know_3
-	replace 		know_3 = 1 if s2q02__5 == 1
-	replace 		know_3 = 0 if s2q02__5 == 0 & know_3 == .
-	lab var			know_3 "Using Masks and/or Gloves Reduces Risk of Coronavirus Contraction"
-	rename			s2q02__6 know_4
-	lab var			know_4 "Avoiding Travel Reduces Risk of Coronavirus Contraction"
-	rename			s2q02__7 know_5
-	lab var			know_5 "Staying at Home Reduces Risk of Coronavirus Contraction"
-	rename			s2q02__8 know_6
-	lab var			know_6 "Avoiding Crowds and Gatherings Reduces Risk of Coronavirus Contraction"
-	rename			s2q02__9 know_7
-	lab var			know_7 "Mainting Social Distance of at least 1 Meter Reduces Risk of Coronavirus Contraction"
-	rename			s2q02__10 know_8
-	lab var			know_8 "Avoiding Face Touching Reduces Risk of Coronavirus Contraction"	
-	
-* rename myths
-	rename			s2q02a_1 myth_1
-	rename			s2q02a_2 myth_2
-	rename			s2q02a_3 myth_3
-	rename			s2q02a_4 myth_4
-	rename			s2q02a_5 myth_5
-	rename			s2q02a_6 myth_6
-	rename			s2q02a_7 myth_7	
-
-* rename business variables
-	lab def			bus_emp_inc 1 "Higher" 2 "The same" 3 "Less" 4 "No Revenue"
-	lab val			bus_emp_inc bus_emp_inc 
-	gen				bus_closed  = 1 if s5aq11b__1 == 1
-	forval 			x = 2/10{
-	    replace 	bus_closed = `x' if s5aq11b__`x' == 1
-	}
-	replace 		bus_closed = 7 if bus_closed == 6	
-	lab def 		clsd 1 "USUAL PLACE OF BUSINESS CLOSED DUE TO CORONAVIRUS LEGAL RESTRICTIONS" ///
-						2 "USUAL PLACE OF BUSINESS CLOSED FOR ANOTHER REASON" ///
-						3 "NO COSTUMERS / FEWER CUSTOMERS" 4 "CAN'T GET INPUTS" ///
-						5 "CAN'T TRAVEL / TRANSPORT GOODS FOR TRADE" ///
-						7 "ILLNESS IN THE HOUSEHOLD" 8 "NEED TO TAKE CARE OF A FAMILY MEMBER" ///
-						9 "SEASONAL CLOSURE" 10 "VACATION" 
-	lab val 		bus_closed clsd
-	rename 			s5a11c bus_act
-	replace			bus_why = s5aq14_2 if bus_why == .
-	
-	forval 			x = 1/6 {
-		rename 			s5aq15__`x' bus_chal_`x'
-	}
-	rename 			s5aq15__n96 bus_chal_7
- 	
-	rename			s5aq15a bus_beh
-	forval 			x = 1/6 {
-		rename 			s5aq15b__`x' bus_beh_`x'
-	}
-	rename			s5aq15b__n96 bus_beh_7
-	rename 			s5q15a bus_other
-	rename 			s5q15b bus_num
-	
 * credit
  * since last call (slc)
 	rename 			s7aq01 ac_cr_slc
@@ -623,7 +606,26 @@
 			drop 			ac_`t'_`v'_l1 ac_`t'_`v'_l2
 		}
 	}
-	
+
+* label cope variabels	
+	lab var			cope_1 "Sale of assets (Agricultural and Non_agricultural)"
+	lab var			cope_2 "Engaged in additional income generating activities"
+	lab var			cope_3 "Received assistance from friends & family"
+	lab var			cope_4 "Borrowed from friends & family"
+	lab var			cope_5 "Took a loan from a financial institution"
+	lab var			cope_6 "Credited purchases"
+	lab var			cope_7 "Delayed payment obligations"
+	lab var			cope_8 "Sold harvest in advance"
+	lab var			cope_9 "Reduced food consumption"
+	lab var			cope_10 "Reduced non_food consumption"
+	lab var			cope_11 "Relied on savings"
+	lab var			cope_12 "Received assistance from NGO"
+	lab var			cope_13 "Took advanced payment from employer"
+	lab var			cope_14 "Received assistance from government"
+	lab var			cope_15 "Was covered by insurance policy"
+	lab var			cope_16 "Did nothing"
+	lab var			cope_17 "Other"				
+		
 * drop unnecessary variables
 	drop			 BSEQNO DistrictName sec0_endtime	///
 						CountyName SubcountyName ParishName ///

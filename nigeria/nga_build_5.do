@@ -165,9 +165,17 @@
 
 * not available for round 
 
+
+* ***********************************************************************
+* 3 - Employment
+* ***********************************************************************
+
+* load data
+	use				"$root/wave_0`w'/r`w'_sect_6b", clear
+dsafdf
 	
 * ***********************************************************************
-* 3 - merge sections into panel and save
+* 4 - merge sections into panel and save
 * ***********************************************************************
 
 * merge sections based on hhid

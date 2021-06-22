@@ -129,8 +129,14 @@
 	
 	drop 			village b40 echantillon resultat weight ind_id_EHCVM ///
 						membres__id
-	
 
+* replace all missing values as . (not .a, .b, etc.)
+	quietly: ds, has(type numeric)
+	foreach var in `r(varlist)' {
+		replace 		`var' = . if `var' > .
+	} 	
+
+	
 * ***********************************************************************
 * 3 - clean bukina faso panel
 * ***********************************************************************	
@@ -202,7 +208,6 @@
 * COVID 
 	rename 			s04bq01 cov_test
 	rename 			s04bq02 cov_vac
-
 	gen 			cov_vac_no_why_1 = 1 if s04bq03 == 1
 	replace 		cov_vac_no_why_1 = 0 if s04bq03 != 1 & s04bq03 != .
 	gen 			cov_vac_no_why_2 = 1 if s04bq03 == 2

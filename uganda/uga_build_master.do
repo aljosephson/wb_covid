@@ -26,7 +26,7 @@
 * **********************************************************************
 
 * define list of waves
-	global 			waves "1" "2" "3" "4" "5"
+	global 			waves "1" "2" "3" 
 	
 * define
 	global	root	=	"$data/uganda/raw"
@@ -120,7 +120,13 @@
 		merge m:1		baseline_hhid using `pov_r0', nogen
 		drop 			if wave == .
 		
-
+* replace all missing values as . (not .a, .b, etc.)
+	quietly: ds, has(type numeric)
+	foreach var in `r(varlist)' {
+		replace 		`var' = . if `var' > .
+	} 
+	
+	
 * ***********************************************************************
 * 3 - clean uganda panel
 * ***********************************************************************	
@@ -209,7 +215,9 @@
 	rename			s2gq02__5 spread_5
 	rename			s2gq02__6 spread_6
 	rename 			s2gq05 mask 
-asdfds	
+
+// ANN YOU ARE HERE ADDING 4-5	
+	
 * rename access
  * drinking water 
 	rename			s4q01e ac_drink

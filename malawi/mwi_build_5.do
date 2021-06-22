@@ -184,6 +184,32 @@
 
 	
 * ***********************************************************************
+* 1h - reshape section on employment
+* ***********************************************************************	
+	
+* load data
+	use				"$root/wave_0`w'/sect6_Employment_Other_r`w'", clear
+
+* generate secondary income variables for index
+	gen 			wage_inc_ind = 1 if s6q6_1 == 4 | s6q6_1 == 5
+	replace 		wage_inc_ind = 0 if s6q6_1 < 4
+	gen 			farm_inc_ind = 1 if s6q6_1 == 3
+	replace 		farm_inc_ind = 0 if s6q6_1 != 3 & s6q6_1 < .
+	gen 			bus_inc_ind = 1 if s6q6_1 < 3
+	replace 		bus_inc_ind = 0 if s6q6_1 >= 3 & s6q6_1 < .
+	
+* collapse to hh level 
+	collapse 		(sum) *_inc_ind, by(HHID)
+	replace 		wage = 1 if wage > 1
+	replace 		farm = 1 if farm > 1
+	replace 		bus = 1 if bus > 1
+	
+* save temp file part 1
+	tempfile		temph
+	save			`temph'
+	
+	
+* ***********************************************************************
 * 2 - merge to build complete dataset for the round 
 * ***********************************************************************
 
@@ -191,7 +217,7 @@
 	use				"$root/wave_0`w'/secta_Cover_Page_r`w'", clear
 	
 * merge formatted sections
-	foreach 		x in b c d e g {
+	foreach 		x in b c d e g h {
 	    merge 		1:1 HHID using `temp`x'', nogen
 	}
 	

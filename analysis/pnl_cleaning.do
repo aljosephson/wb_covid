@@ -56,7 +56,7 @@
 * open log
 	cap log 			close
 	log using			"$logout/analysis", append
-	
+
 
 * **********************************************************************
 * 1 - build data set
@@ -134,7 +134,7 @@
 			drop 		`var'
 		 }
 	 }
-
+	 
 * define yes/no label
 	lab	def				yesno 0 "No" 1 "Yes", replace
 
@@ -201,7 +201,7 @@
 	}
 
 * behavior
-	replace 			bh_1 = 0 if bh_1 > 1 & bh_1 != .
+	replace 			bh_1 = 0 if bh_1 > 1 & bh_1 < .
 	replace 			bh_2 = 0 if bh_2 == 2
 	replace 			bh_2 = . if bh_2 == 3
 	replace 			bh_3 = . if bh_3 == 3 | bh_3 < 0
@@ -379,7 +379,7 @@
 						ac_sorg_need == 0 & (ac_onion_need == 0 | ac_onion_need == .)
 		// Note: some rounds they don't ask about onion so allow that to be 0 or .				
 		replace 		ac_staple = 1 if country == 3 & (ac_rice == 1 | ac_beans == 1 | ///
-						ac_cass == 1 | ac_yam == 1 | ac_sorg == 1 | ac_onion == 1
+						ac_cass == 1 | ac_yam == 1 | ac_sorg == 1 | ac_onion == 1)
 		replace 		ac_staple = 0 if country == 3 & ((ac_rice == 0 & ac_rice_need == 1 ) ///
 						| (ac_beans == 0 & ac_beans_need == 1) | (ac_cass == 0 & ac_cass_need == 1) ///
 						| (ac_yam == 0 & ac_yam_need == 1)  | (ac_sorg == 0 & ac_sorg_need == 1) ///
@@ -564,6 +564,7 @@
 	replace				concern_2 = 1 if concern_2 == 2
 	lab val				concern_2 yesno
  
+ 
 * **********************************************************************
 * 6 - income changes
 * **********************************************************************
@@ -692,7 +693,7 @@
 	replace 			rem_for = 2 if rem_for == 0
 	replace 			rem_dom = . if rem_dom <0
 	replace 			rem_for = . if rem_for <0
-	gen 				remit_inc = 0
+	gen 				remit_inc = 0 if rem_dom == 2 | rem_for == 2
 	replace 			remit_inc = 1 if rem_dom == 1 | rem_for == 1
 	lab val 			remit_inc yesno
 	* others fine as is: bus_inc farm_inc wage_inc 	
@@ -876,7 +877,7 @@
 							3 "No payment", replace
 	lab val 			emp_unable emp_unable
 	 
-	replace 			rtrn_emp_when = 0 if rtrn_emp_when > 97 & rtrn_emp_when != .
+	replace 			rtrn_emp_when = 0 if rtrn_emp_when > 97 & rtrn_emp_when < .
 	replace 			rtrn_emp_when = 6 if rtrn_emp_when == 5 & country == 2 
 	* in mwi 4 there is a "just returned to job" option coded as 5 (inconsistent with nga) but no one selected it, this line included in case it is selected in future rounds 
 	lab def 			rtrn_emp_when 1 "Within one week" 2 "Within one month" ///
@@ -975,7 +976,7 @@
 
 * close the log
 	log	close	
-	
+/*	
 
 * **********************************************************************
 * 13 - generate variable-country-wave crosswalk

@@ -114,6 +114,12 @@
 * create country variable
 	gen				country = 1
 	
+* replace all missing values as . (not .a, .b, etc.)
+	quietly: ds, has(type numeric)
+	foreach var in `r(varlist)' {
+		replace 		`var' = . if `var' > .
+	} 
+	
 	
 * ***********************************************************************
 * 3 - clean ethiopia panel

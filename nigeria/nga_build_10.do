@@ -133,6 +133,32 @@
 
 * not avaiable for round
 
+
+* ***********************************************************************
+* 1f - Employment
+* ***********************************************************************
+
+* load data
+	use				"$root/wave_`w'/r`w'_sect_6b", clear
+
+* generate secondary income variables for index
+	gen 			wage_inc_ind = 1 if s6q6_1 == 4 | s6q6_1 == 5 | s6q6_1 == 6
+	replace 		wage_inc_ind = 0 if s6q6_1 < 4	
+	gen 			farm_inc_ind = 1 if s6q6_1 == 3
+	replace 		farm_inc_ind = 0 if s6q6_1 != 3 & s6q6_1 < .	
+	gen 			bus_inc_ind = 1 if s6q6_1 < 3
+	replace 		bus_inc_ind = 0 if s6q6_1 >= 3 & s6q6_1 < .
+	
+* collapse to hh level 
+	collapse 		(sum) *_inc_ind, by(hhid)
+	replace 		wage = 1 if wage > 1
+	replace 		farm = 1 if farm > 1
+	replace 		bus = 1 if bus > 1
+	
+* save temp file part 1
+	tempfile		tempf
+	save			`tempf'	
+	
 	
 * ***********************************************************************
 * 2 - FIES score
@@ -140,14 +166,14 @@
 
 * not available for round 
 
-	
+
 * ***********************************************************************
-* 3 - merge sections into panel and save
+* 4 - merge sections into panel and save
 * ***********************************************************************
 
 * merge sections based on hhid
 	use				"$root/wave_`w'/r`w'_sect_a_2_5_6_9_9a_12", clear
-	foreach 		s in a b {
+	foreach 		s in a b f {
 	    merge		1:1 hhid using `temp`s'', nogen
 	}
 	

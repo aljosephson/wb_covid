@@ -49,7 +49,6 @@
 * 1b - reshape section on safety nets wide data
 * ***********************************************************************
 
-
 * load safety_net data - updated via convo with Talip 9/1
 	use				"$root/wave_0`w'/sect11_Safety_Nets_r`w'", clear
 
@@ -66,15 +65,88 @@
 	rename 			s11q12 temp
 	gen 			s11q12 = 1 if temp == 1 | s11q13 == 1 | s11q14 == 1
 	replace 		s11q12 = 2 if s11q12 == .
-	drop 			s11q13 s11q14  temp
+	drop 			s11q13 s11q14 temp
 	rename 			s11q15 s11q13
 
 * save temp file
 	tempfile		tempb
 	save			`tempb'
-	
-	
 
+* isolate government assistance for LD index 
+	* load safety_net data - updated via convo with Talip 9/1
+		use				"$root/wave_0`w'/sect11_Safety_Nets_r`w'", clear	
+
+	* keep only if govt source of asst
+		replace 		s11q1 = 2 if s11q3 != 1
+	
+	* drop other
+		drop 			s11q2 s11q3 s11q3_os s11q4a s11q4b s11q5 s11q6__1 ///
+							s11q6__2 s11q6__3 s11q6__4 s11q6__5 s11q6__6 ///
+							s11q6__7 s11q7__1 s11q7__2 s11q7__3 s11q7__4 ///
+							s11q7__5 s11q7__6 s11q7__7 s11q7_os 
+
+	* reshape
+		reshape 		wide s11q1, i(y4_hhid HHID) j(social_safety)
+	 
+	* collapse cash options into 1 to match round 1 
+		rename 			s11q12 temp
+		gen 			s11q12 = 1 if temp == 1 | s11q13 == 1 | s11q14 == 1
+		drop 			s11q13 s11q14 temp
+		rename 			s11q15 s11q13
+		
+		rename 			s11q11 asst_food
+		replace			asst_food = 0 if asst_food == .
+		rename 			s11q12 asst_cash
+		replace			asst_cash = 0 if asst_cash == .
+		rename 			s11q13 asst_kind 
+		replace			asst_kind = 0 if asst_kind == .
+		gen				gov_inc_sec = 1 if asst_food == 1 | asst_cash == 1 | ///
+							asst_kind == 1
+		replace			gov_inc_sec = 0 if gov_inc_sec == .
+		keep 			HHID gov_inc_sec
+		
+	* save temp file
+		tempfile		tempb1
+		save			`tempb1'
+		
+* isolate assistance other than gov for LD index 
+	* load safety_net data - updated via convo with Talip 9/1
+		use				"$root/wave_0`w'/sect11_Safety_Nets_r`w'", clear	
+
+	* keep only if govt source of asst
+		replace 		s11q1 = 2 if s11q3 == 1
+	
+	* drop other
+		drop 			s11q2 s11q3 s11q3_os s11q4a s11q4b s11q5 s11q6__1 ///
+							s11q6__2 s11q6__3 s11q6__4 s11q6__5 s11q6__6 ///
+							s11q6__7 s11q7__1 s11q7__2 s11q7__3 s11q7__4 ///
+							s11q7__5 s11q7__6 s11q7__7 s11q7_os 
+
+	* reshape
+		reshape 		wide s11q1, i(y4_hhid HHID) j(social_safety)
+	 
+	* collapse cash options into 1 to match round 1 
+		rename 			s11q12 temp
+		gen 			s11q12 = 1 if temp == 1 | s11q13 == 1 | s11q14 == 1
+		drop 			s11q13 s11q14 temp
+		rename 			s11q15 s11q13
+		
+		rename 			s11q11 asst_food
+		replace			asst_food = 0 if asst_food == .
+		rename 			s11q12 asst_cash
+		replace			asst_cash = 0 if asst_cash == .
+		rename 			s11q13 asst_kind 
+		replace			asst_kind = 0 if asst_kind == .
+		gen				oth_inc_sec = 1 if asst_food == 1 | asst_cash == 1 | ///
+							asst_kind == 1
+		replace			oth_inc_sec = 0 if oth_inc_sec == .
+		keep 			HHID oth_inc_sec
+	
+	* save temp file
+		tempfile		tempb2
+		save			`tempb2'	
+		
+	
 * ***********************************************************************
 * 1c - get respondant gender
 * ***********************************************************************
@@ -192,7 +264,7 @@
 
 * generate secondary income variables for index
 	gen 			wage_inc_ind = 1 if s6q6_1 == 4 | s6q6_1 == 5
-	replace 		wage_inc_ind = 0 if s6q6_1 < 4
+	replace 		wage_inc_ind = 0 if s6q6_1 < 4	
 	gen 			farm_inc_ind = 1 if s6q6_1 == 3
 	replace 		farm_inc_ind = 0 if s6q6_1 != 3 & s6q6_1 < .
 	gen 			bus_inc_ind = 1 if s6q6_1 < 3
@@ -217,7 +289,7 @@
 	use				"$root/wave_0`w'/secta_Cover_Page_r`w'", clear
 	
 * merge formatted sections
-	foreach 		x in b c d e g h {
+	foreach 		x in b b1 b2 c d e g h {
 	    merge 		1:1 HHID using `temp`x'', nogen
 	}
 	

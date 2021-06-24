@@ -139,16 +139,41 @@
 
 */	
 	
+* ***********************************************************************
+*  5 - Individual employment
+* ***********************************************************************
+
+* load data	
+	use 		"$root/wave_0`w'/r`w'_sec6a_b_emplrev_general_individuel", clear
+
+* generate secondary income variables for index
+	gen 			wage_inc_ind = 1 if s06aq04b == 4 | s06aq04b == 5
+	replace 		wage_inc_ind = 0 if s06aq04b < 4	
+	gen 			farm_inc_ind = 1 if s06aq04b == 3
+	replace 		farm_inc_ind = 0 if s06aq04b != 3 & s06aq04b < .
+	gen 			bus_inc_ind = 1 if s06aq04b < 3
+	replace 		bus_inc_ind = 0 if s06aq04b >= 3 & s06aq04b < .
+	
+* collapse to hh level 
+	collapse 		(sum) *_inc_ind, by(hhid)
+	replace 		wage = 1 if wage > 1
+	replace 		farm = 1 if farm > 1
+	replace 		bus = 1 if bus > 1
+	
+* save temp file part 1
+	tempfile		tempe
+	save			`tempe'
+	
 
 * ***********************************************************************
-*  5 - merge
+*  6 - merge
 * ***********************************************************************
 
 * load cover data
 	use 		"$root/wave_0`w'/r`w'_sec0_cover", clear
 	
 * merge formatted sections
-	foreach 		x in a b c {
+	foreach 		x in a b c e {
 	    merge 		1:1 hhid using `temp`x'', nogen
 	}
 

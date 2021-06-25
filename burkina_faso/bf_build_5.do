@@ -74,26 +74,88 @@
 
 * load roster data	
 	use 			"$root/wave_0`w'/r`w'_sec2_liste_membre_menage", clear
-	drop 			if s02q03 == 2 //drop if not still hh member
+	
+* rename other variables 
+	rename 			membres__id ind_id 
+	rename 			s02q03 curr_mem
+	rename 			s02q05 sex_mem
+	rename 			s02q06 age_mem
+	rename 			s02q07 relat_mem
 	
 * generate counting variables
-	gen 			hhsize = 1
-	gen 			hhsize_adult = 1 if s02q06 > 18 & s02q06 != .
-	gen 			hhsize_child = 1 if s02q06 < 19 & s02q06 != .
-	gen 			hhsize_schchild = 1 if s02q06 > 4 & s02q06 < 19
+	gen				hhsize = 1
+	gen 			hhsize_adult = 1 if age_mem > 18 & age_mem < .
+	gen				hhsize_child = 1 if age_mem < 19 & age_mem != . 
+	gen 			hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
 	
 * generate hh head gender variable
 	gen 			sexhh = .
-	replace 		sexhh = s02q05 if s02q07 == 1
+	replace 		sexhh = sex_mem if relat_mem== 1
 	lab var 		sexhh "Sex of household head"
 	
-* collapse data
-	collapse		(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(hhid)
-	lab var			hhsize "Household size"
-	lab var 		hhsize_adult "Household size - only adults"
-	lab var 		hhsize_child "Household size - children 0 - 18"
-	lab var 		hhsize_schchild "Household size - school-age children 5 - 18"
+* generate migration vars
+	rename 			s02q02 new_mem
+	replace 		new_mem = 0 if s02q08 == 10
+	replace 		s02q08 = . if s02q08 == 10
+	gen 			mem_left = 1 if curr_mem == 2
+	replace 		new_mem = 0 if new_mem == 2
+	replace 		mem_left = 0 if mem_left == 2
 	
+	replace 		s02q04 = 123 if s02q04 == 2
+	replace 		s02q04 = 2 if s02q04 == 3
+	replace 		s02q04 = 3 if s02q04 == 123
+		
+	* why member left
+		preserve
+			keep 		hhid s02q04 ind_id
+			keep 		if s02q04 != .
+			duplicates 	drop hhid s02q04, force
+			reshape 	wide ind_id, i(hhid) j(s02q04)
+			ds 			ind_id*
+			foreach 	var in `r(varlist)' {
+				replace 	`var' = 1 if `var' != .
+			}
+			rename 		ind_id* mem_left_why_*
+			tempfile 	mem_left
+			save 		`mem_left'
+		restore
+	
+	* why new member 
+		preserve
+			keep 		hhid s02q08 ind_id
+			keep 		if s02q08 != .
+			duplicates 	drop hhid s02q08, force
+			reshape 	wide ind_id, i(hhid) j(s02q08)
+			ds 			ind_id*
+			foreach 	var in `r(varlist)' {
+				replace 	`var' = 1 if `var' != .
+			}
+			rename 		ind_id* new_mem_why_*
+			tempfile 	new_mem
+			save 		`new_mem'
+		restore
+	
+* collapse data to hh level and merge in why vars
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild new_mem mem_left ///
+				(max) sexhh, by(hhid)
+	replace 	new_mem = 1 if new_mem > 0 & new_mem < .
+	replace 	mem_left = 1 if mem_left > 0 & new_mem < .	
+	merge 		1:1 hhid using `new_mem', nogen
+	merge 		1:1 hhid using `mem_left', nogen
+	ds 			new_mem_why_* 
+	foreach		var in `r(varlist)' {
+		replace 	`var' = 0 if `var' >= . & new_mem == 1
+	}
+	ds 			mem_left_why_* 
+	foreach		var in `r(varlist)' {
+		replace 	`var' = 0 if `var' >= . & mem_left == 1
+	}
+	lab var		hhsize "Household size"
+	lab var 	hhsize_adult "Household size - only adults"
+	lab var 	hhsize_child "Household size - children 0 - 18"
+	lab var 	hhsize_schchild "Household size - school-age children 5 - 18"
+	lab var 	mem_left "Member of household left since last call"
+	lab var 	new_mem "Member of household joined since last call"
 * save temp file
 	tempfile		tempb
 	save			`tempb'

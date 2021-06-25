@@ -47,18 +47,6 @@
 	//run 				"$code/analysis/pnl_cleaning"
 	use 				"$export/lsms_panel", clear
 
-
-	
-	tab 				new_mem wave
-	tab 				new_mem_why_9 wave // RETURN FROM WORK MIGRATION
-	tab 				new_mem_why_11 wave // DISPLACED DUE TO CONFLICT
-	
-	tab 				mem_left wave
-	tab 				mem_left_why_3 wave // LEFT FOR WORK
-	tab 				mem_left_why_4 wave // TO FIND BETTER LAND 
-	tab 				mem_left_why_11 wave // CONFLICT
-	* ONLY IN MWI for now
-	pause 
 	
 * **********************************************************************
 * 1 - generate, format, and clean variables
@@ -91,7 +79,7 @@
 	forval 					c = 1/5 {
 		preserve
 			keep 			if country == `c'
-			gen 			havedata = bus_inc + farm_inc + gov_inc + ///
+			gen 			havedata = bus_inc + farm_inc + ///
 								isp_inc + pen_inc + remit_inc + wage_inc 
 			collapse 		(sum) havedata, by(country wave)
 			drop 			if havedata == 0
@@ -105,14 +93,12 @@
 			keep 				if havedata == 1
 
 	* generate index for each country (fraction out of 8 income sources)
-			egen 				inc_count = rowtotal(bus_inc farm_inc gov_inc ///
-									isp_inc pen_inc remit_inc wage_inc oth_inc2)
-			/*
-			replace 			inc_count = . if bus_inc >= . & farm_inc >= . & ///
-									gov_inc >= . & isp_inc >= . & pen_inc >= . & ///
-									remit_inc >= . & wage_inc >= . & oth_inc2 >= .
-			*/
-			gen 				uni_index = inc_count/8
+			egen 				inc_count = rowtotal(bus_inc farm_inc ///
+									isp_inc pen_inc remit_inc wage_inc oth_inc3)
+			replace 			inc_count = . if bus_inc >= . | farm_inc >= . ///
+									| isp_inc >= . | pen_inc >= . | ///
+									remit_inc >= . | wage_inc >= . | oth_inc3 >= .
+			gen 				uni_index = inc_count/7
 			keep 				country wave hhid uni_index
 			tempfile 			country`c'
 			save 				`country`c''
@@ -133,19 +119,15 @@
 
 	
 tab uni_index country, missing 	
-/*
-WHY SO MANY MISSING VALUES IN NGA AND MWI? CONDITIONING QUESTION? MISSING SHOULD BE 0? THEN WHY UGANDA DIF?
-	- uganda and ethiopia ask all households, nga and mwi do not
-		to see this, use nga round 1, and get unique hhid from sec 7 vs total
-	- if include blocked out code, mwi and nga do not have any 0 values, they become missing 
-	- Ask Talip?
-*/ 
-pause 	
 
+/*
+Why so many 0s in Ethiopia? 
+pause 	
+*/ 
 
 * **********************************************************************
 * 3 - uniform indices with secondary variables when possible to 
-* 		increase number of waves in each country (same 8 as denominator)	
+* 		increase number of waves in each country (same 7 as denominator)	
 * **********************************************************************
 	
 ** ETHIOPIA **
@@ -155,7 +137,7 @@ pause
 	* add wave 5 - only other wave with wage inc available
 	* secondary wage and bus vars (combine emp_stat and ind income data)
 		* don't do this for farm because inconsistent with other rounds
-			* could be due to seasonal work & dif in question timing 
+			* could be due to seasonal work or bc ag is not main job
 		* wage income for respondent 
 			gen					wage_inc_sec = 1 if country == 2 & wave == 5 & ///
 									(emp_stat == 4 | emp_stat == 5)
@@ -177,29 +159,18 @@ pause
 	
 		tab wage_inc_sec wave
 		tab wage_inc_ind wave
-	/*	
-		THESE END UP BEING EXACTLY THE SAME AS JUST THE IND DATA, WHY?? (same below in NGA)
-	*/	
-		pause
-	
+/*	
+	THESE END UP BEING EXACTLY THE SAME AS JUST THE IND DATA, WHY?? (same below in NGA)	
+	pause
+*/
 		tab farm_inc_ind wave if country == 2
 		tab farm_inc wave if country == 2
 	
-	/*	
-		Why is farm inc from individual data so different from farm inc?
-		Still okay to use others that are similar or should we not use this sub at all?
-		
-		Should we include if they will return to job? okay that this is not asked to respondent?
-	*/
-		pause
-		
 	* secondary farm var
 		gen 					farm_inc_sec = ag_crop if country == 2 & wave == 5
 		replace 				farm_inc_sec = 1 if ag_live == 1 & country == 2 & wave == 5
 		replace 				farm_inc_sec = 0 if farm_inc_sec == . & ag_live == 0 & ///
 									country == 2 & wave == 5
-	* secondary gov var 
-		* generated in mwi_build_5 if hh got assistance from government
 	
 	* secondary isp var
 		gen 					isp_inc_sec = oth_inc_4 if country == 2 & wave == 5
@@ -217,26 +188,18 @@ pause
 									& country == 2 & wave == 5
 		replace 				remit_inc_sec = 0 if remit_inc_sec == 2	
 	
-	* secondary other var
+	* secondary other vars 2 and 3
 		* variable generated in mwi_build_5
 		replace 				oth_inc2_sec = 1 if oth_inc_3 == 1 & country == 2 ///
 									& wave == 5
 		replace 				oth_inc2_sec = 0 if oth_inc2_sec == . & oth_inc_3 == 2 ///
-									& country == 2 & wave == 5						
+									& country == 2 & wave == 5		
+		gen 					oth_inc3_sec = oth_inc2_sec
+		replace 				oth_inc3_sec = 1 if gov_inc_sec == 1
+		replace 				oth_inc3_sec = 0 if oth_inc3_sec == . & gov_inc_sec == 0			
 
-forval x = 1/4{
-	tab gov_inc wave if country == `x'
-} 
-/*
-* COULD INCLUDE NGA 5 IF WE PUT GOVT INC IN OTHER (oth_inc3)
-* very few hh get inc from gov, most in ETH 
-* if we do that, we could also include wave 10 if we use ind farm data but inconsistent
-*/ 
-pause 
-
-/*
 ** NIGERIA **
-	* add waves 5 (& 10?? if we use farm_inc_ind, but inconsistent)
+	* add waves 5 
 	* secondary wage and bus vars
 		* wage income for respondent
 			replace				wage_inc_sec = 1 if country == 3 & wave == 5 & ///
@@ -261,23 +224,8 @@ pause
 			replace 			farm_inc_sec = ag_crop if country == 3 & wave == 5
 			replace 			farm_inc_sec = 1 if ag_live == 1 & country == 3 & wave == 5
 			replace 			farm_inc_sec = 0 if farm_inc_sec == . & ag_live == 0 & ///
-									country == 3 & wave == 5
-			/*
-			* farm income for respondent
-			replace				farm_inc_sec = 1 if farm_inc_sec == . & country == 3 ///
-									& wave == 5 & emp_stat == 3 
-			replace 			farm_inc_sec = 0 if farm_inc_sec == . & country == 3 ///
-									& wave == 5 & emp_stat != 3 & emp_stat != .
-			* add in individual employment data to bus income
-			replace 			farm_inc_sec = 1 if farm_inc_sec == . & farm_inc_ind == 1 ///
-									& country == 3 
-			replace 			farm_inc_sec = 0 if farm_inc_sec == . & country == 3 &  ///
-									farm_inc_ind == 0								
-			*/		
-			
-		* secondary gov var 
-			* NOT AVAILABLE 
-			
+									country == 3 & wave == 5	
+
 		* secondary isp var
 			replace 			isp_inc_sec = oth_inc_4 if country == 3 & wave == 5
 			replace 			isp_inc_sec = 0 if isp_inc_sec == 2
@@ -297,18 +245,18 @@ pause
 		* secondary other var (only includes oth_inc_3, different from MWI)
 			replace 			oth_inc2_sec = oth_inc_3 if country == 3 & wave == 5
 			replace 			oth_inc2_sec = 0 if oth_inc2_sec == 2
-*/	
-	
+			replace				oth_inc3_sec = oth_inc2_sec // same because no gov inc var here
+			
 ** UGANDA **
 	* same as uniform index
 
 ** BURKINA FASO **
-	* cannot include - no wave has all 8 variables 
+	* cannot include - no wave has all 7 variables 
 	
 	
 ** COMBINE PRIMARY AND SECONDARY VARS & GENERATE INDEX **
-	foreach 				i in wage_inc bus_inc farm_inc gov_inc isp_inc ///
-								pen_inc remit_inc oth_inc2 {
+	foreach 				i in wage_inc bus_inc farm_inc isp_inc ///
+								pen_inc remit_inc oth_inc3 {
 		replace 				`i'_sec = `i' if `i'_sec == .
 	}	
 		
@@ -316,7 +264,7 @@ pause
 	forval 					c = 1/5 {
 		preserve
 			keep 			if country == `c'
-			gen 			havedata = bus_inc_sec + farm_inc_sec + gov_inc_sec + ///
+			gen 			havedata = bus_inc_sec + farm_inc_sec + ///
 								isp_inc_sec + pen_inc_sec + remit_inc_sec + wage_inc_sec 
 			collapse 		(sum) havedata, by(country wave)
 			drop 			if havedata == 0
@@ -330,15 +278,13 @@ pause
 			keep 				if havedata == 1
 
 	* generate index for each country (fraction out of 8 income sources)
-			egen 				inc_count_sec = rowtotal(bus_inc_sec farm_inc_sec gov_inc_sec ///
+			egen 				inc_count_sec = rowtotal(bus_inc_sec farm_inc_sec ///
 									isp_inc_sec pen_inc_sec remit_inc_sec wage_inc_sec ///
-									oth_inc2_sec)
-			/*
-			replace 			inc_count = . if bus_inc >= . & farm_inc >= . & ///
-									gov_inc >= . & isp_inc >= . & pen_inc >= . & ///
-									remit_inc >= . & wage_inc >= . & oth_inc2 >= .
-			*/
-			gen 				sec_index = inc_count_sec/8
+									oth_inc3_sec)
+			replace 			inc_count_sec = . if bus_inc_sec >= . | farm_inc_sec >= . | ///
+									isp_inc_sec >= . | pen_inc_sec >= . | ///
+									remit_inc_sec >= . | wage_inc_sec >= . | oth_inc3_sec >= .
+			gen 				sec_index = inc_count_sec/7
 			keep 				country wave hhid sec_index
 			tempfile 			country`c'
 			save 				`country`c''
@@ -357,6 +303,84 @@ pause
 	
 	merge 					1:1 country wave hhid using `temp_sec_index', nogen
 		
+		
+* **********************************************************************
+* 4 - generate summary statistics and graphs
+* **********************************************************************
+
+* uniform index
+	forval 					c = 1/5 {
+		sum 					uni_index if country == `c', detail
+	}
+	* histogram for all countries pooled
+	hist 					uni_index, normal xtitle("Income Index") width(.125) ///
+								subtitle("Pooled") color(teal*1.5) graphr(color(grey*.1))
+	graph export 			"$export/figures/LD/density/uni_index_all.png", ///
+								as(png) replace						
+	* histograms for each country							
+	forval 					c = 1/4 {
+		preserve 
+			keep 				if country == `c'
+			keep 				if uni_index != .
+			levelsof 			(wave), local(w)
+			hist 				uni_index, normal xtitle("Income Index") width(.125) ///
+									subtitle("Country `c', Waves `w'") color(teal*1.5)
+			graph export 		"$export/figures/LD/density/uni_index_`c'.png", ///
+									as(png) replace
+		restore 
+	}
+	
+* secondary index
+	forval 					c = 1/5 {
+		sum 					sec_index if country == `c', detail
+	}
+	* histogram for all countries pooled
+	hist 					sec_index, normal xtitle("Income Index") width(.125) ///
+								subtitle("Pooled") color(teal*1.5) graphr(color(grey*.1))
+	graph export 			"$export/figures/LD/density/sec_index_all.png", ///
+								as(png) replace						
+	* histograms for each country							
+	forval 					c = 1/4 {
+		preserve 
+			keep 				if country == `c'
+			keep 				if sec_index != .
+			levelsof 			(wave), local(w)
+			hist 				sec_index, normal xtitle("Income Index") width(.125) ///
+									subtitle("Country `c', Waves `w'") color(teal*1.5)
+			graph export 		"$export/figures/LD/density/sec_index_`c'.png", ///
+									as(png) replace
+		restore 
+	}
+			
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+/*		
 		
 * **********************************************************************
 * 4 - country indices (allow for dif denominator - as many waves as possible)
@@ -434,68 +458,8 @@ pause
 
 		*/
 
-		
-* **********************************************************************
-* 5 - generate summary statistics and graphs
-* **********************************************************************
 
-* uniform index
-	forval 					c = 1/5 {
-		sum 					uni_index if country == `c', detail
-	}
-	* histogram for all countries pooled
-	hist 					uni_index, normal xtitle("Income Index") width(.125) ///
-								subtitle("Pooled") color(teal*1.5) graphr(color(grey*.1))
-	graph export 			"$export/figures/LD/density/uni_index_all.png", ///
-								as(png) replace						
-	* histograms for each country							
-	forval 					c = 1/4 {
-		preserve 
-			keep 				if country == `c'
-			keep 				if uni_index != .
-			levelsof 			(wave), local(w)
-			hist 				uni_index, normal xtitle("Income Index") width(.125) ///
-									subtitle("Country `c', Waves `w'") color(teal*1.5)
-			graph export 		"$export/figures/LD/density/uni_index_`c'.png", ///
-									as(png) replace
-		restore 
-	}
 	
-* secondary index
-	forval 					c = 1/5 {
-		sum 					sec_index if country == `c', detail
-	}
-	* histogram for all countries pooled
-	hist 					sec_index, normal xtitle("Income Index") width(.125) ///
-								subtitle("Pooled") color(teal*1.5) graphr(color(grey*.1))
-	graph export 			"$export/figures/LD/density/sec_index_all.png", ///
-								as(png) replace						
-	* histograms for each country							
-	forval 					c = 1/4 {
-		preserve 
-			keep 				if country == `c'
-			keep 				if sec_index != .
-			levelsof 			(wave), local(w)
-			hist 				sec_index, normal xtitle("Income Index") width(.125) ///
-									subtitle("Country `c', Waves `w'") color(teal*1.5)
-			graph export 		"$export/figures/LD/density/sec_index_`c'.png", ///
-									as(png) replace
-		restore 
-	}
-	
-	
-	
-* country indices
-
-
-
-
-
-
-
-
-
-
 
 
 

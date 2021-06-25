@@ -396,7 +396,7 @@
 	rename			lc1_other oth_inc
 	rename			lc2_other_chg oth_chg
 	rename			lc3_total_chg tot_inc_chg
-	
+
 * coping variables 	
 	forval 			x = 1/15 {
 	    rename 		lc4_total_chg_cope_`x' cope_`x'

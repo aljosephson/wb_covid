@@ -158,7 +158,6 @@
 
 * rename other variables 
 	rename 			hh_roster__id ind_id 
-	rename 			s1q02 new_mem
 	rename 			s1q03 curr_mem
 	rename 			s1q05 sex_mem
 	rename 			s1q06 age_mem
@@ -174,15 +173,27 @@
 	gen 			sexhh = . 
 	replace			sexhh = sex_mem if relat_mem == 1
 	label var 		sexhh "Sex of household head"
+
+* generate migration vars
+	rename 			s1q02 new_mem
+	replace 		new_mem = 0 if new_mem >= .
+	replace 		new_mem = 0 if s1q08 == 10
+	replace 		s1q08 = . if s1q08 == 10
+	replace 		curr_mem = 2 if curr_mem >= .
+	gen 			mem_left = 1 if curr_mem == 2
+	replace 		new_mem = 0 if new_mem == 2
+	replace 		mem_left = 0 if mem_left == 2
 	
 * collapse data
-	collapse		(sum) hhsize hhsize_adult hhsize_child hhsize_schchild ///
+	collapse		(sum) hhsize hhsize_adult hhsize_child hhsize_schchild new_mem mem_left ///
 						(max) sexhh, by(HHID)
 	lab var			hhsize "Household size"
 	lab var 		hhsize_adult "Household size - only adults"
 	lab var 		hhsize_child "Household size - children 0 - 18"
 	lab var 		hhsize_schchild "Household size - school-age children 5 - 18"
-
+	lab var 		mem_left "Member of household left since last call"
+	lab var 		new_mem "Member of household joined since last call"
+	
 * save temp file
 	tempfile		temp4
 	save			`temp4'

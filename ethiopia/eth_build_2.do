@@ -46,7 +46,7 @@
 
 * load roster data
 	use				"$root/wave_0`w'/200`f'_WB_LSMS_HFPM_HH_Survey_Roster-Round`w'_Clean-Public", clear
-	
+
 * rename other variables 
 	rename 			individual_id ind_id 
 	rename 			bi2_hhm_new new_mem
@@ -68,7 +68,9 @@
 	label var 		sexhh "Sex of household head"	
 	
 * collapse data
-	collapse		(sum) hhsize hhsize_adult hhsize_child hhsize_schchild (max) sexhh, by(household_id)	
+	collapse		(sum) hhsize hhsize_adult hhsize_child hhsize_schchild new_mem ///
+					(max) sexhh, by(household_id)	
+	replace 		new_mem = 1 if new_mem > 0 & new_mem < .
 	lab var			hhsize "Household size"
 	lab var 		hhsize_adult "Household size - only adults"
 	lab var 		hhsize_child "Household size - children 0 - 18"

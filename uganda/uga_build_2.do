@@ -159,7 +159,6 @@
 
 * rename other variables 
 	rename 			hh_roster__id ind_id 
-	rename 			s1q02 new_mem
 	rename 			s1q03 curr_mem
 	rename 			s1q05 sex_mem
 	rename 			s1q06 age_mem
@@ -176,13 +175,50 @@
 	replace			sexhh = sex_mem if relat_mem == 1
 	label var 		sexhh "Sex of household head"
 	
-* collapse data
-	collapse		(sum) hhsize hhsize_adult hhsize_child hhsize_schchild ///
-						(max) sexhh, by(HHID)
-	lab var			hhsize "Household size"
-	lab var 		hhsize_adult "Household size - only adults"
-	lab var 		hhsize_child "Household size - children 0 - 18"
-	lab var 		hhsize_schchild "Household size - school-age children 5 - 18"
+* generate migration vars
+	rename 			s1q02 new_mem
+	replace 		new_mem = 0 if new_mem >= .
+	replace 		new_mem = 0 if s1q08 == 10
+	replace 		s1q08 = . if s1q08 == 10
+	replace 		curr_mem = 2 if curr_mem >= .
+	gen 			mem_left = 1 if curr_mem == 2
+	replace 		new_mem = 0 if new_mem == 2
+	replace 		mem_left = 0 if mem_left == 2
+	
+	* why member left
+		* no observations
+	
+	* why new member 
+		preserve
+			keep 		HHID s1q08 ind_id
+			keep 		if s1q08 < .
+			duplicates 	drop HHID s1q08, force
+			replace 	s1q08 = 96 if s1q08 == -96
+			reshape 	wide ind_id, i(HHID) j(s1q08)
+			ds 			ind_id*
+			foreach 	var in `r(varlist)' {
+				replace 	`var' = 1 if `var' != .
+			}
+			rename 		ind_id* new_mem_why_*
+			tempfile 	new_mem
+			save 		`new_mem'
+		restore
+	
+* collapse data to hh level and merge in why vars
+	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild new_mem mem_left ///
+				(max) sexhh, by(HHID)
+	replace 	new_mem = 1 if new_mem > 0 & new_mem < .
+	replace 	mem_left = 1 if mem_left > 0 & new_mem < .
+	merge 		1:1 HHID using `new_mem', nogen
+	ds 			new_mem_why_* 
+	foreach		var in `r(varlist)' {
+		replace 	`var' = 0 if `var' >= . & new_mem == 1
+	}
+	lab var		hhsize "Household size"
+	lab var 	hhsize_adult "Household size - only adults"
+	lab var 	hhsize_child "Household size - children 0 - 18"
+	lab var 	hhsize_schchild "Household size - school-age children 5 - 18"
+	lab var 	new_mem "Member of household joined since last call"
 
 * save temp file
 	tempfile		temp4

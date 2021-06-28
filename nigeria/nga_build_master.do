@@ -61,27 +61,7 @@
 * run do files for all rounds and create crosswalk of variables by wave
 	foreach 		r in "$waves" {
 		do 			"$code/nigeria/nga_build_`r'"
-		ds
-		clear
-		set 		obs 1
-		gen 		variables = ""
-		local 		counter = 1
-		foreach 	var in `r(varlist)' {
-			replace variables = "`var'" in `counter'
-			local 	counter = `counter' + 1
-			set 	obs `counter'
-			recast str30 variables
-		}
-		gen 		wave`r' = 1
-		tempfile 	t`r'
-		save 		`t`r''
 	}
-	use 			`t1',clear
-	foreach 		r in "$waves" {
-		merge 		1:1 variables using `t`r'', nogen
-	}
-	drop 			if variables == ""
-	export 			excel using "$export/nga_variable_crosswalk.xlsx", first(var) replace
 	
 
 * ***********************************************************************

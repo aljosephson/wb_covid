@@ -87,15 +87,16 @@
 * rename other variables 
 	rename 			PID ind_id 
 	rename 			s2q3 curr_mem
+	replace 		curr_mem = 1 if s2q2 == 1
 	rename 			s2q5 sex_mem
 	rename 			s2q6 age_mem
 	rename 			s2q7 relat_mem	
 	
 * generate counting variables
-	gen			hhsize = 1
-	gen 		hhsize_adult = 1 if age_mem > 18 & age_mem < .
-	gen			hhsize_child = 1 if age_mem < 19 & age_mem != . 
-	gen 		hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
+	gen				hhsize = 1 if curr_mem == 1
+	gen 			hhsize_adult = 1 if curr_mem == 1 & age_mem > 18 & age_mem < .
+	gen				hhsize_child = 1 if curr_mem == 1 & age_mem < 19 & age_mem != . 
+	gen 			hhsize_schchild = 1 if curr_mem == 1 & age_mem > 4 & age_mem < 19 
 	
 * create hh head gender
 	gen 			sexhh = . 

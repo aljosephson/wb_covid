@@ -52,17 +52,21 @@
 * 1 - generate, format, and clean variables
 * **********************************************************************	
 	
-* generate other income 2 (NGO, unemployment, non-family assistance)
+* generate other income 2 (NGO, unemp, non-family assistance, casual emp) 
+*	(in baseline this includes sale of assets)
 	gen  				oth_inc2 = 0 if oth_inc == 0 | ngo_inc == 0 ///
-							| unemp_inc == 0 | asst_inc == 0
+							| unemp_inc == 0 | asst_inc == 0 | casual_emp == 0
 	replace  			oth_inc2 = 1 if oth_inc == 1 | ngo_inc == 1 ///
-							| unemp_inc == 1 | asst_inc == 1
+							| unemp_inc == 1 | asst_inc == 1 | casual_emp == 1
 							
-* generate other income 3 (NGO, unemployment, non-family assistance, gov_inc)
+* generate other income 3 (NGO, unemp, non-family assistance, gov_inc, casual emp)
+*	(in baseline this includes sale of assets)
 	gen  				oth_inc3 = 0 if oth_inc == 0 | ngo_inc == 0 ///
-							| unemp_inc == 0 | asst_inc == 0 | gov_inc == 0
+							| unemp_inc == 0 | asst_inc == 0 | gov_inc == 0 ///
+							| casual_emp == 0
 	replace  			oth_inc3 = 1 if oth_inc == 1 | ngo_inc == 1 ///
-							| unemp_inc == 1 | asst_inc == 1 | gov_inc == 1
+							| unemp_inc == 1 | asst_inc == 1 | gov_inc == 1 ///
+							| casual_emp == 0
 							
 * generate government, ngo, unemployment
 	gen					gov_ngo_inc = 0 if ngo_inc == 0 | unemp_inc == 0 ///
@@ -99,7 +103,8 @@
 									| isp_inc >= . | pen_inc >= . | ///
 									remit_inc >= . | wage_inc >= . | oth_inc3 >= .
 			gen 				uni_index = inc_count/7
-			keep 				country wave hhid uni_index
+			gen 				uni_index_phhm = inc_count/hhsize 
+			keep 				country wave hhid uni_index* 
 			tempfile 			country`c'
 			save 				`country`c''
 		restore		
@@ -119,6 +124,7 @@
 
 	
 tab uni_index country, missing 	
+tab uni_index_phhm country, missing 	
 
 /*
 Why so many 0s in Ethiopia? 
@@ -131,15 +137,22 @@ pause
 * **********************************************************************
 	
 ** ETHIOPIA **
-	* same as uniform index
-	
+	* baseline
+		* secondary wage var
+			gen 				wage_inc_sec = wage_emp if country == 1 & wave == 0
+		* secondary bus var
+			gen 				bus_inc_sec = bus_emp if country == 1 & wave == 0
+		* secondary farm var	
+			gen 				farm_inc_sec = farm_emp if country == 1 & wave == 0
+			
+			
 ** MALAWI ** 
 	* add wave 5 - only other wave with wage inc available
 	* secondary wage and bus vars (combine emp_stat and ind income data)
 		* don't do this for farm because inconsistent with other rounds
 			* could be due to seasonal work or bc ag is not main job
 		* wage income for respondent 
-			gen					wage_inc_sec = 1 if country == 2 & wave == 5 & ///
+			replace				wage_inc_sec = 1 if country == 2 & wave == 5 & ///
 									(emp_stat == 4 | emp_stat == 5)
 			replace 			wage_inc_sec = 0 if country == 2 & wave == 5 & ///
 									emp_stat < 4
@@ -148,7 +161,7 @@ pause
 			replace 			wage_inc_sec = 0 if wage_inc_sec == . & ///
 									wage_inc_ind == 0
 		* bus income for respondent 
-			gen					bus_inc_sec = 1 if country == 2 & wave == 5 & ///
+			replace				bus_inc_sec = 1 if country == 2 & wave == 5 & ///
 									emp_stat < 3 
 			replace 			bus_inc_sec = 0 if country == 2 & wave == 5 & ///
 									emp_stat >= 3 & emp_stat < .
@@ -167,7 +180,7 @@ pause
 		tab farm_inc wave if country == 2
 	
 	* secondary farm var
-		gen 					farm_inc_sec = ag_crop if country == 2 & wave == 5
+		replace					farm_inc_sec = ag_crop if country == 2 & wave == 5
 		replace 				farm_inc_sec = 1 if ag_live == 1 & country == 2 & wave == 5
 		replace 				farm_inc_sec = 0 if farm_inc_sec == . & ag_live == 0 & ///
 									country == 2 & wave == 5
@@ -285,7 +298,8 @@ pause
 									isp_inc_sec >= . | pen_inc_sec >= . | ///
 									remit_inc_sec >= . | wage_inc_sec >= . | oth_inc3_sec >= .
 			gen 				sec_index = inc_count_sec/7
-			keep 				country wave hhid sec_index
+			gen 				sec_index_phhm = inc_count/hhsize 
+			keep 				country wave hhid sec_index* 
 			tempfile 			country`c'
 			save 				`country`c''
 		restore		
@@ -303,58 +317,101 @@ pause
 	
 	merge 					1:1 country wave hhid using `temp_sec_index', nogen
 		
-		
+/*		
 * **********************************************************************
 * 4 - generate summary statistics and graphs
 * **********************************************************************
 
-* uniform index
-	forval 					c = 1/5 {
-		sum 					uni_index if country == `c', detail
-	}
-	* histogram for all countries pooled
-	hist 					uni_index, normal xtitle("Income Index") width(.125) ///
-								subtitle("Pooled") color(teal*1.5) graphr(color(grey*.1))
-	graph export 			"$export/figures/LD/density/uni_index_all.png", ///
-								as(png) replace						
-	* histograms for each country							
-	forval 					c = 1/4 {
-		preserve 
-			keep 				if country == `c'
-			keep 				if uni_index != .
-			levelsof 			(wave), local(w)
-			hist 				uni_index, normal xtitle("Income Index") width(.125) ///
-									subtitle("Country `c', Waves `w'") color(teal*1.5)
-			graph export 		"$export/figures/LD/density/uni_index_`c'.png", ///
-									as(png) replace
-		restore 
-	}
+** UNIFORM INDEX ** 
+	* fraction of total sources
+		forval 					c = 1/5 {
+			sum 					uni_index if country == `c', detail
+		}
+		* histogram for all countries pooled
+		hist 					uni_index, normal xtitle("Income Index") width(.125) ///
+									subtitle("Pooled") color(teal*1.5) graphr(color(grey*.1))
+		graph export 			"$export/figures/LD/density/uni_index_all.png", ///
+									as(png) replace						
+		* histograms for each country							
+		forval 					c = 1/4 {
+			preserve 
+				keep 				if country == `c'
+				keep 				if uni_index != .
+				levelsof 			(wave), local(w)
+				hist 				uni_index, normal xtitle("Income Index") width(.125) ///
+										subtitle("Country `c', Waves `w'") color(teal*1.5)
+				graph export 		"$export/figures/LD/density/uni_index_`c'.png", ///
+										as(png) replace
+			restore 
+		}
 	
-* secondary index
-	forval 					c = 1/5 {
-		sum 					sec_index if country == `c', detail
-	}
-	* histogram for all countries pooled
-	hist 					sec_index, normal xtitle("Income Index") width(.125) ///
-								subtitle("Pooled") color(teal*1.5) graphr(color(grey*.1))
-	graph export 			"$export/figures/LD/density/sec_index_all.png", ///
-								as(png) replace						
-	* histograms for each country							
-	forval 					c = 1/4 {
-		preserve 
-			keep 				if country == `c'
-			keep 				if sec_index != .
-			levelsof 			(wave), local(w)
-			hist 				sec_index, normal xtitle("Income Index") width(.125) ///
-									subtitle("Country `c', Waves `w'") color(teal*1.5)
-			graph export 		"$export/figures/LD/density/sec_index_`c'.png", ///
-									as(png) replace
-		restore 
-	}
+	* income sources per hh member
+		forval 					c = 1/5 {
+			sum 					uni_index_phhm if country == `c', detail
+		}
+		* histogram for all countries pooled
+		hist 					uni_index_phhm, normal xtitle("Income Index Per HH Member") width(.125) ///
+									subtitle("Pooled") color(teal*1.5) graphr(color(grey*.1))
+		graph export 			"$export/figures/LD/density/uni_index_all_phhm.png", ///
+									as(png) replace						
+		* histograms for each country							
+		forval 					c = 1/4 {
+			preserve 
+				keep 				if country == `c'
+				keep 				if uni_index_phhm != .
+				levelsof 			(wave), local(w)
+				hist 				uni_index_phhm, normal xtitle("Income Index Per HH Member") width(.125) ///
+										subtitle("Country `c', Waves `w'") color(teal*1.5)
+				graph export 		"$export/figures/LD/density/uni_index_`c'_phhm.png", ///
+										as(png) replace
+			restore 
+		}
+	
+** SECONDARY INDEX **
+	* fraction of total sources
+		forval 					c = 1/5 {
+			sum 					sec_index if country == `c', detail
+		}
+		* histogram for all countries pooled
+		hist 					sec_index, normal xtitle("Income Index") width(.125) ///
+									subtitle("Pooled") color(teal*1.5) graphr(color(grey*.1))
+		graph export 			"$export/figures/LD/density/sec_index_all.png", ///
+									as(png) replace						
+		* histograms for each country							
+		forval 					c = 1/4 {
+			preserve 
+				keep 				if country == `c'
+				keep 				if sec_index != .
+				levelsof 			(wave), local(w)
+				hist 				sec_index, normal xtitle("Income Index") width(.125) ///
+										subtitle("Country `c', Waves `w'") color(teal*1.5)
+				graph export 		"$export/figures/LD/density/sec_index_`c'.png", ///
+										as(png) replace
+			restore 
+		}
 			
-		
-		
-		
+	* income sources per hh member	
+		forval 					c = 1/5 {
+			sum 					sec_index_phhm if country == `c', detail
+		}
+		* histogram for all countries pooled
+		hist 					sec_index_phhm, normal xtitle("Income Index Per HH Member") width(.125) ///
+									subtitle("Pooled") color(teal*1.5) graphr(color(grey*.1))
+		graph export 			"$export/figures/LD/density/sec_index_all_phhm.png", ///
+									as(png) replace						
+		* histograms for each country							
+		forval 					c = 1/4 {
+			preserve 
+				keep 				if country == `c'
+				keep 				if sec_index_phhm != .
+				levelsof 			(wave), local(w)
+				hist 				sec_index_phhm, normal xtitle("Income Index Per HH Member") width(.125) ///
+										subtitle("Country `c', Waves `w'") color(teal*1.5)
+				graph export 		"$export/figures/LD/density/sec_index_`c'_phhm.png", ///
+										as(png) replace
+			restore 
+		}	
+	
 		
 		
 		

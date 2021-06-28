@@ -693,7 +693,7 @@
 	replace 			rem_for = 2 if rem_for == 0
 	replace 			rem_dom = . if rem_dom <0
 	replace 			rem_for = . if rem_for <0
-	gen 				remit_inc = 0 if rem_dom == 2 | rem_for == 2
+	replace				remit_inc = 0 if rem_dom == 2 | rem_for == 2
 	replace 			remit_inc = 1 if rem_dom == 1 | rem_for == 1
 	lab val 			remit_inc yesno
 	* others fine as is: bus_inc farm_inc wage_inc 	

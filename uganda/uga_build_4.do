@@ -159,15 +159,16 @@
 * rename other variables 
 	rename 			hh_roster__id ind_id 
 	rename 			s1q03 curr_mem
+	replace 		curr_mem = 1 if s1q02 == 1
 	rename 			s1q05 sex_mem
 	rename 			s1q06 age_mem
 	rename 			s1q07 relat_mem
 	
 * generate counting variables
-	gen				hhsize = 1
-	gen 			hhsize_adult = 1 if age_mem > 18 & age_mem < .
-	gen				hhsize_child = 1 if age_mem < 19 & age_mem != . 
-	gen 			hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
+	gen				hhsize = 1 if curr_mem == 1
+	gen 			hhsize_adult = 1 if curr_mem == 1 & age_mem > 18 & age_mem < .
+	gen				hhsize_child = 1 if curr_mem == 1 & age_mem < 19 & age_mem != . 
+	gen 			hhsize_schchild = 1 if curr_mem == 1 & age_mem > 4 & age_mem < 19 
 	
 * create hh head gender
 	gen 			sexhh = . 

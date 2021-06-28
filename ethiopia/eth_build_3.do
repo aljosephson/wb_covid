@@ -57,10 +57,10 @@
 	rename 			bi6_hhm_relhhh relat_mem
 
 * generate counting variables
-	gen				hhsize = 1
-	gen 			hhsize_adult = 1 if age_mem > 18 & age_mem < .
-	gen				hhsize_child = 1 if age_mem < 19 & age_mem != . 
-	gen 			hhsize_schchild = 1 if age_mem > 4 & age_mem < 19 
+	gen				hhsize = 1 if curr_mem == 1
+	gen 			hhsize_adult = 1 if curr_mem == 1 & age_mem > 18 & age_mem < .
+	gen				hhsize_child = 1 if curr_mem == 1 & age_mem < 19 & age_mem != . 
+	gen 			hhsize_schchild = 1 if curr_mem == 1 & age_mem > 4 & age_mem < 19 
 	
 * create hh head gender
 	gen 			sexhh = . 

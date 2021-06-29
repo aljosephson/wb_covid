@@ -77,17 +77,18 @@
 * adjust household id
 	recast 			long hhid
 	format 			%12.0g hhid
-/*	
+
 * merge in quintiles
-	merge m:1		hhid using "", 
+	merge m:1		hhid using "$root/wave_00/Burkina Faso WAEMU 2018-19 Quintiles", 
 	
 * rename quintile variable
 	rename 			quintile quints
 	lab var			quints "Quintiles based on the national population"
 	lab def			lbqui 1 "Quintile 1" 2 "Quintile 2" 3 "Quintile 3" ///
 						4 "Quintile 4" 5 "Quintile 5"
-	lab val			quints lbqui	
-*/
+	lab val			quints lbqui
+	drop 			if wave == .
+
 * create country variable
 	gen				country = 5	
 	

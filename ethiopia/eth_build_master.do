@@ -65,6 +65,7 @@
 	foreach 		r in "$waves" {
 		do 			"$code/ethiopia/eth_build_`r'"
 	}
+	do 				"$code/ethiopia/eth_build_0"
 	
 	
 * ***********************************************************************

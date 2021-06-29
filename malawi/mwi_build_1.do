@@ -37,6 +37,7 @@
 * make wave folder within refined folder if it does not already exist 
 	capture mkdir "$export/wave_0`w'" 	
 	
+	
 * ***********************************************************************
 * 1a - reshape section on income loss wide data
 * ***********************************************************************

@@ -64,8 +64,9 @@
 	foreach 		r in "$waves" {
 		do 			"$code/malawi/mwi_build_`r'"
 	}
+	do 				"$code/malawi/mwi_build_0"
 
-
+	
 * ***********************************************************************
 * 2 - create malawi panel
 * ***********************************************************************
@@ -1033,6 +1034,9 @@
 	rename 			y4_hhid hhid_mwi
 	lab var			hhid_mwi "household ID malawi"
 
+* append baseline 
+	append 			using "$export/wave_00/r0"	
+	
 * save file
 		customsave , idvar(hhid_mwi) filename("mwi_panel.dta") ///
 			path("$export") dofile(mwi_build) user($user)

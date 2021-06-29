@@ -62,6 +62,7 @@
 	foreach 		r in "$waves" {
 		do 			"$code/nigeria/nga_build_`r'"
 	}
+	do 				"$code/nigeria/nga_build_0"
 	
 
 * ***********************************************************************
@@ -717,6 +718,9 @@
 * final clean 
 	compress
 	rename hhid hhid_nga 
+	
+* append baseline 
+	append 			using "$export/wave_00/r0"
 
 * save file
 		customsave , idvar(hhid_nga) filename("nga_panel.dta") ///

@@ -63,7 +63,8 @@
 	foreach 		r in "$waves" {
 		do 			"$code/uganda/uga_build_`r'"
 	}
-
+	do 				"$code/uganda/uga_build_0"
+	
 	
 * **********************************************************************
 * 2 - create uganda panel
@@ -79,7 +80,7 @@
 		}
 	}
 	compress 
-	
+
 * merge in consumption aggregate
 	preserve
 	* load data
@@ -635,7 +636,7 @@
 						s4q11_Other case_filter CountyCode2 CountyName2 ///
 						DistrictCode2 DistrictName2 ParishCode2 ParishName2 ///
 						SubcountyCode2 SubcountyName2 VillageCode2 VillageName2 ///
-						ac_mask_srce_n96 harv_cov_why_n96 Sq02 PID baseline_hhid ///
+						ac_mask_srce_n96 harv_cov_why_n96 Sq02 PID  ///
 						s5bq25 s5bq26 ag_sell_where_n96 Sq01 s5aq11b__0 ///
 						weight harv_saf_5 *_interview_ID *_hh_weight s5qaq17_1 ///
 						s2q02__5 s5bq08	s5bq09 s5cq02__*
@@ -766,9 +767,12 @@
 	rename HHID hhid_uga
 	drop if hhid_uga == .
 
+* append baseline 
+	append 			using "$export/wave_00/r0"	
+	
 * save file
-		customsave , idvar(hhid_uga) filename("uga_panel.dta") ///
-			path("$export") dofile(uga_build) user($user)
+	customsave , idvar(baseline_hhid) filename("uga_panel.dta") ///
+		path("$export") dofile(uga_build) user($user)
 
 * close the log
 	log	close

@@ -128,7 +128,7 @@
 	isid			HHID
 
 * merge in household roster
-	merge 1:1		HHID hh_roster__id using "$root/wave_02/SEC1.dta"
+	merge 1:1		HHID hh_roster__id using "$root/wave_0`w'/SEC1.dta"
 
 	keep if			_merge == 3
 
@@ -230,7 +230,7 @@
 
 * load data		
 	use 			"$root/wave_0`w'/SEC5D.dta", clear
- 
+
 * rename vars to match r2
 	forval 			x = 1/6 {
 		rename 		s5cq14__`x' s5cq14_1__`x'
@@ -457,7 +457,7 @@
 		rename			s5q01a rtrn_emp
 		rename			s5q01b rtrn_emp_when
 		rename			s5q01c emp_why
-		replace			emp_why = s5q03 if emp_why == .
+		rename 			s5q03 emp_pre_why
 		rename			s5q03a emp_search
 		rename			s5q03b emp_search_how
 		rename			s5q04a_1 emp_same
@@ -470,10 +470,11 @@
 		rename			s5q08b emp_hrs
 		rename			s5q08c emp_hrs_chg
 		rename			s5q08f_* emp_saf*
-		rename 			emp_saf_n96 emp_saf_96
+		rename 			emp_saf_n96 emp_saf_96	
 		rename 			s5q08g emp_saf_fol
-		rename 			s5q08g emp_saf_fol_per
+		rename 			s5q08g_1 emp_saf_fol_per
 		rename			s5q09 emp_hh
+	* non-farm income
 		rename			s5aq11 bus_emp
 		* reshape reason bus closed to match other rounds 
 			gen 			temp = s5aq11b
@@ -487,7 +488,9 @@
 		rename 			s5aq11b_* s5aq11b__* // to match other round, guessing the coding is the same but cannot confirm
 		rename			s5aq12 bus_sect
 		rename			s5aq13 bus_emp_inc
-		rename			s5aq14_1 bus_why		
+		rename			s5aq14_1 bus_why	
+		rename 			s5q15a bus_other
+		rename 			s5q15b bus_num
 	* rename concerns
 		rename			s9q01 concern_1
 		rename			s9q02 concern_2
@@ -512,6 +515,22 @@
 		rename 			s5bq18_1 ag_crop_1
 		rename 			s5bq18_2 ag_crop_2
 		rename 			s5bq18_3 ag_crop_3
+		rename 			s5bq19 ag_expect
+		rename 			s5bq20 ag_quant
+		rename 			s5bq20b ag_quant_unit
+		rename 			s5bq20c ag_quant_kgcon
+		rename 			s5bq21_1 ag_pr_ban_s
+		rename 			s5bq21_2 ag_pr_ban_m
+		rename 			s5bq21_3 ag_pr_ban_l
+		rename 			s5bq21_4 ag_pr_cass_bag
+		rename 			s5bq21_5 ag_pr_cass_chip
+		rename 			s5bq21_6 ag_pr_cass_flr
+		rename 			s5bq21_7 ag_pr_bean_dry
+		rename 			s5bq21_9 ag_pr_bean_fr
+		rename 			s5bq21_8 ag_pr_maize
+		rename 			s5bq23 ag_sell_norm
+		rename 			s5bq24 ag_sell_rev_exp
+		
 * save panel
 	* gen wave data
 		rename			wfinal phw_cs

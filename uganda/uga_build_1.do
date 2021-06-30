@@ -205,7 +205,7 @@
 	isid			HHID
 
 * merge in household roster
-	merge 1:1		HHID hh_roster__id using "$root/wave_01/SEC1.dta"
+	merge 1:1		HHID hh_roster__id using "$root/wave_0`w'/SEC1.dta"
 
 	keep if			_merge == 3
 
@@ -422,9 +422,62 @@
 	* rename agriculture
 		rename 			s5aq26 ag_live
 		rename			s5aq16 ag_crop
+		rename			s5aq17 ag_plan
+		gen 			ag_nocrop_1 = 1 if s5qaq17_1 == 1
+		gen 			ag_nocrop_2 = 1 if s5qaq17_1 == 2
+		gen 			ag_nocrop_3 = 1 if s5qaq17_1 == 3
+		gen 			ag_nocrop_4 = 1 if s5qaq17_1 == 4
+		gen 			ag_nocrop_10 = 1 if s5qaq17_1 == 5
+		gen 			ag_nocrop_5 = 1 if s5qaq17_1 == 6
+		gen 			ag_nocrop_6 = 1 if s5qaq17_1 == 7
+		gen 			ag_nocrop_7 = 1 if s5qaq17_1 == 8
+		gen 			ag_nocrop_9 = 1 if s5qaq17_1 == -96
 		rename 			s5aq18__0 ag_crop_1
 		rename 			s5aq18__1 ag_crop_2
 		rename 			s5aq18__2 ag_crop_3
+		rename			s5aq19 ag_chg
+		rename			s5aq20__1 ag_chg_1
+		rename			s5aq20__2 ag_chg_2
+		rename			s5aq20__3 ag_chg_3
+		rename			s5aq20__4 ag_chg_4
+		rename			s5aq20__5 ag_chg_5
+		rename			s5aq20__6 ag_chg_6
+		rename			s5aq20__7 ag_chg_7
+		rename			s5aq21__1 ag_covid_1
+		rename			s5aq21__2 ag_covid_2
+		rename			s5aq21__3 ag_covid_3
+		rename			s5aq21__4 ag_covid_4
+		rename			s5aq21__5 ag_covid_5
+		rename			s5aq21__6 ag_covid_6
+		rename			s5aq21__7 ag_covid_7
+		rename			s5aq21__8 ag_covid_8
+		rename			s5aq21__9 ag_covid_9
+		rename			s5aq22__1 ag_ac_seed_why_1
+		rename			s5aq22__2 ag_ac_seed_why_2
+		rename			s5aq22__3 ag_ac_seed_why_3
+		rename			s5aq22__4 ag_ac_seed_why_4
+		rename			s5aq22__5 ag_ac_seed_why_5
+		rename			s5aq22__6 ag_ac_seed_why_6
+		forval 			x = 1/6 {
+			gen 		ag_ac_fert_why_`x' = .
+			replace 	ag_ac_fert_why_`x' = 0 if s5aq23 != .
+			replace 	ag_ac_fert_why_`x' = 1 if s5aq23 == `x'
+			gen 		ag_ac_oth_why_`x' = .
+			replace 	ag_ac_oth_why_`x' = 0 if s5aq24 != .
+			replace 	ag_ac_oth_why_`x' = 1 if s5aq24 == `x'
+		}
+		drop			s5aq23 s5aq24 
+		rename			s5aq25 ag_crop_lost
+		rename			s5aq27 ag_live_chg
+		rename			s5aq28__1 ag_live_chg_1
+		rename			s5aq28__2 ag_live_chg_2
+		rename			s5aq28__3 ag_live_chg_3
+		rename			s5aq28__4 ag_live_chg_4
+		rename			s5aq28__5 ag_live_chg_5
+		rename			s5aq28__6 ag_live_chg_6
+		rename			s5aq28__7 ag_live_chg_7
+		rename			s5aq29 ag_live_loc
+		rename			s5aq30 harv_sell_need
 * save panel
 	* gen wave data
 		rename			wfinal phw_cs

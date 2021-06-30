@@ -131,7 +131,7 @@
 	isid			HHID
 
 * merge in household roster
-	merge 1:1		HHID hh_roster__id using "$root/wave_02/SEC1.dta"
+	merge 1:1		HHID hh_roster__id using "$root/wave_0`w'/SEC1.dta"
 
 	keep if			_merge == 3
 
@@ -232,7 +232,7 @@
 
 * load data		
 	use 			"$root/wave_0`w'/SEC5C_1.dta", clear
-	
+
 * drop missing data
 	drop 			if livestock == 4
 	
@@ -405,7 +405,7 @@
 		rename			s5q01a rtrn_emp
 		rename			s5q01b rtrn_emp_when
 		rename			s5q01c emp_why
-		replace			emp_why = s5q03 if emp_why == .
+		rename 			s5q03 emp_pre_why
 		rename			s5q03a emp_search
 		rename			s5q03b emp_search_how
 		rename			s5q04a_1 emp_same
@@ -413,6 +413,7 @@
 		rename			s5q04b emp_chg_why
 		rename			s5q05 emp_act
 		rename			s5q06 emp_stat
+		replace 		emp_stat = 6 if emp_stat == 5
 		rename			s5q07 emp_able
 		rename			s5q08 emp_unable
 		rename			s5q08a emp_unable_why

@@ -330,7 +330,7 @@
 
 * access to soap
 	replace 			ac_soap = 0 if ac_soap == 2
-	replace 			ac_soap_why = . if ac_soap_why == 96 | ac_soap_why == 9	
+	replace 			ac_soap_why = . if ac_soap_why == 96 
 	lab def 			ac_soap_why 1 "shops out" 2 "markets closed" 3 "lack of transportation" ///
 							4 "restriction to go out" 5 "increase in price" 6 "lack of money" ///
 							7 "cannot afford" 8 "afraid to get virus" 9 "cannot talk about it", replace

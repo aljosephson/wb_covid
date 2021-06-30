@@ -130,7 +130,7 @@
 	isid			HHID
 
 * merge in household roster
-	merge 1:1		HHID hh_roster__id using "$root/wave_02/SEC1.dta"
+	merge 1:1		HHID hh_roster__id using "$root/wave_0`w'/SEC1.dta"
 
 	keep if			_merge == 3
 
@@ -350,9 +350,96 @@
 	format 			%12.0f HHID
 
 * rename variables inconsistent with other waves
-
-
-
+	* vaccines
+		rename 			s4q15 cov_test
+		rename 			s4q16 cov_vac
+		rename 			s4q17__1 cov_vac_no_why_1
+		rename 			s4q17__2 cov_vac_no_why_2
+		rename 			s4q17__3 cov_vac_no_why_3
+		rename 			s4q17__4 cov_vac_no_why_6
+		rename 			s4q17__5 cov_vac_no_why_4
+		rename 			s4q17__6 cov_vac_no_why_5			
+		rename 			s4q18__1 cov_vac_dk_why_1
+		rename 			s4q18__2 cov_vac_dk_why_2
+		rename 			s4q18__3 cov_vac_dk_why_3
+		rename 			s4q18__4 cov_vac_dk_why_6
+		rename 			s4q18__5 cov_vac_dk_why_4
+		rename 			s4q18__6 cov_vac_dk_why_5
+		drop 			s4q18__n96 s4q17__n96
+	* rename employment
+		rename			s5q01 emp
+		rename			s5q01a rtrn_emp
+		rename			s5q01b rtrn_emp_when
+		rename			s5q01c emp_why
+		rename 			s5q03 emp_pre_why
+		rename			s5q03a emp_search
+		rename			s5q03b emp_search_how
+		rename			s5q04a emp_same
+		rename			s5q04b emp_chg_why
+		rename			s5q05 emp_act
+		rename			s5q06 emp_stat
+		replace 		emp_stat = 100 if emp_stat == 5
+		replace 		emp_stat = 5 if emp_stat == 6
+		replace 		emp_stat = 6 if emp_stat == 100
+		rename 			s5q06a emp_purp
+		rename			s5q07 emp_able
+		rename			s5q08 emp_unable
+		rename			s5q08a emp_unable_why
+		rename			s5q08b emp_hrs
+		rename			s5q08c emp_hrs_chg
+		rename			s5q08f_* emp_saf*
+		rename 			emp_saf_n96 emp_saf_96
+		rename 			s5q08g emp_saf_fol
+		rename 			s5q08g_1 emp_saf_fol_per
+		rename			s5q09 emp_hh
+	* non-farm income
+		rename			s5aq11 bus_emp	
+		rename			s5aq11a bus_stat
+		rename 			s5aq11b_1 bus_other
+		rename			s5aq12 bus_sect
+		rename			s5aq12_1 bus_sect_oth
+	* rename agriculture
+		rename			s5bq16 ag_crop
+		rename			s5bq17 ag_plan	
+		rename			s5bq17_1__1 ag_nocrop_1
+		rename			s5bq17_1__2 ag_nocrop_2
+		rename			s5bq17_1__3 ag_nocrop_3
+		rename			s5bq17_1__4 ag_nocrop_4
+		rename			s5bq17_1__5 ag_nocrop_10
+		rename			s5bq17_1__6 ag_nocrop_5
+		rename			s5bq17_1__7 ag_nocrop_6
+		rename			s5bq17_1__8 ag_nocrop_7
+		rename 			s5bq18_1 ag_crop_1
+		rename 			s5bq18_2 ag_crop_2
+		rename 			s5bq18_3 ag_crop_3
+		rename 			s5bq19 ag_chg
+		rename			s5bq20__1 ag_chg_1
+		rename			s5bq20__2 ag_chg_2
+		rename			s5bq20__3 ag_chg_3
+		rename			s5bq20__4 ag_chg_4
+		rename			s5bq20__5 ag_chg_5
+		rename			s5bq20__6 ag_chg_6
+		rename			s5bq20__7 ag_chg_7
+		rename			s5bq21__1 ag_covid_1
+		rename			s5bq21__2 ag_covid_2
+		rename			s5bq21__3 ag_covid_3
+		rename			s5bq21__4 ag_covid_4
+		rename			s5bq21__5 ag_covid_5
+		rename			s5bq21__6 ag_covid_6
+		rename			s5bq21__7 ag_covid_7
+		rename			s5bq21__8 ag_covid_8
+		rename			s5bq21__9 ag_covid_9	
+		rename 			s5bq21a ag_pr_ban_s
+		rename 			s5bq21b ag_pr_ban_m
+		rename 			s5bq21c ag_pr_ban_l
+		rename 			s5bq21d ag_pr_cass_bag
+		rename 			s5bq21e ag_pr_cass_chip
+		rename 			s5bq21f ag_pr_cass_flr
+		rename 			s5bq21g ag_pr_bean_dry
+		rename 			s5bq21h ag_pr_bean_fr
+		rename 			s5bq21i ag_pr_maize
+HERE START WITH 23 and in 5		
+		
 * save panel
 	* gen wave data
 		rename			wfinal phw_cs

@@ -14,9 +14,9 @@
 	* raw Uganda data
 
 * TO DO:
-	CHECK WHICH DATA WE SHOULD USE (ONLINE ONE SKIPS R5 BUT R6 LOOKS LIKE IT MATCHES R5 SURVEY)
+	* complete	
 
-
+	
 * **********************************************************************
 * 0 - setup
 * **********************************************************************
@@ -43,16 +43,16 @@
 * ***********************************************************************
 
 * load income data
-	use				"$root/wave_0`w'/SEC6", clear
+	use				"$root/wave_0`w'/sec6", clear
 	
 * reformat HHID
-	format 			%12.0f HHID
+	format 			%12.0f hhid
 
 * replace value for "other"
 	replace			income_loss__id = 96 if income_loss__id == -96
 
 * reshape data
-	reshape 		wide s6q01 s6q02 s6q03, i(HHID) j(income_loss__id)
+	reshape 		wide s6q01 s6q02 s6q03, i(hhid) j(income_loss__id)
 
 * save temp file
 	tempfile		temp1
@@ -64,17 +64,17 @@
 * ***********************************************************************
 
 * load safety net data - updated via convo with Talip 9/1
-	use				"$root/wave_0`w'/SEC10", clear
+	use				"$root/wave_0`w'/sec10", clear
 
 * reformat HHID
-	format 			%12.0f HHID
+	format 			%12.0f hhid
 
 * drop other safety nets and missing values
 	drop			s10q02 s10q03__1 s10q03__2 s10q03__3 s10q03__4 ///
 						s10q03__5 s10q03__6 s10q03__n96 
 
 * reshape data
-	reshape 		wide s10q01, i(HHID) j(safety_net__id)
+	reshape 		wide s10q01, i(hhid) j(safety_net__id)
 	*** note that cash = 102, food = 101, in-kind = 103 (unlike wave 1)
 
 * rename variables
@@ -119,14 +119,14 @@
 	use				"$root/wave_0`w'/interview_result", clear
 
 * drop all but household respondant
-	keep			HHID Rq09
+	keep			hhid Rq09
 
 	rename			Rq09 hh_roster__id
 
-	isid			HHID
+	isid			hhid
 
 * merge in household roster
-	merge 1:1		HHID hh_roster__id using "$root/wave_02/SEC1.dta"
+	merge 1:1		hhid hh_roster__id using "$root/wave_0`w'/sec1.dta"
 
 	keep if			_merge == 3
 
@@ -138,7 +138,7 @@
 	drop if			PID == .
 
 * drop all but gender and relation to HoH
-	keep			HHID PID sex age relate_hoh
+	keep			hhid PID sex age relate_hoh
 
 * save temp file
 	tempfile		temp3
@@ -150,7 +150,7 @@
 * ***********************************************************************
 
 * load data
-	use				"$root/wave_0`w'/SEC1.dta", clear
+	use				"$root/wave_0`w'/sec1.dta", clear
 
 * rename other variables 
 	rename 			hh_roster__id ind_id 
@@ -186,11 +186,11 @@
 	
 	* why new member 
 		preserve
-			keep 		HHID s1q08 ind_id
+			keep 		hhid s1q08 ind_id
 			keep 		if s1q08 < .
-			duplicates 	drop HHID s1q08, force
+			duplicates 	drop hhid s1q08, force
 			replace 	s1q08 = 96 if s1q08 == -96
-			reshape 	wide ind_id, i(HHID) j(s1q08)
+			reshape 	wide ind_id, i(hhid) j(s1q08)
 			ds 			ind_id*
 			foreach 	var in `r(varlist)' {
 				replace 	`var' = 1 if `var' != .
@@ -202,10 +202,10 @@
 	
 * collapse data to hh level and merge in why vars
 	collapse	(sum) hhsize hhsize_adult hhsize_child hhsize_schchild new_mem mem_left ///
-				(max) sexhh, by(HHID)
+				(max) sexhh, by(hhid)
 	replace 	new_mem = 1 if new_mem > 0 & new_mem < .
 	replace 	mem_left = 1 if mem_left > 0 & new_mem < .	
-	merge 		1:1 HHID using `new_mem', nogen
+	merge 		1:1 hhid using `new_mem', nogen
 	ds 			new_mem_why_* 
 	foreach		var in `r(varlist)' {
 		replace 	`var' = 0 if `var' >= . & new_mem == 1
@@ -242,24 +242,24 @@
 * ***********************************************************************
 	
 * generate edu_act = 1 if any child engaged in learning activities
-	use				"$root/wave_0`w'/SEC1C.dta", clear
+	use				"$root/wave_0`w'/sec1c.dta", clear
 	keep 			if s1cq09 != .
 	replace 		s1cq09  = 0 if s1cq09  == 2
-	collapse		(sum) s1cq09, by(HHID)
+	collapse		(sum) s1cq09, by(hhid)
 	gen 			edu_act = 1 if s1cq09 > 0 
 	replace 		edu_act = 0 if edu_act == .
-	keep 			HHID edu_act
+	keep 			hhid edu_act
 	tempfile 		tempany
 	save 			`tempany'
 
 * rename other variables 	
 	* edu_act_why
-	use				"$root/wave_0`w'/SEC1C.dta", clear
+	use				"$root/wave_0`w'/sec1c.dta", clear
 	keep 			if s1cq09 == 2
 	forval 			x = 1/11 {
 		rename 		s1cq10__`x' edu_act_why_`x'
 	}
-	collapse 		(sum) edu* , by(HHID)
+	collapse 		(sum) edu* , by(hhid)
 	forval 			x = 1/11 {
 		replace 		edu_act_why_`x' = 1 if edu_act_why_`x' >= 1
 	}
@@ -267,7 +267,7 @@
 	save 			`tempactwhy'
 		
 	* edu & edu_chal
-	use				"$root/wave_0`w'/SEC1C.dta", clear
+	use				"$root/wave_0`w'/sec1c.dta", clear
 	keep 			if s1cq09 == 1
 	rename 			s1cq11__1 edu_1
 	rename 			s1cq11__2 edu_2
@@ -287,7 +287,7 @@
 	    replace 	s1cq12__`x' = 0 if s1cq12__`x' == 2
 	    rename 		s1cq12__`x' edu_chal_`x'
 	}
-	collapse 		(sum) edu* , by(HHID)
+	collapse 		(sum) edu* , by(hhid)
 	ds edu* 
 	foreach 		var in `r(varlist)' {
 	    replace 		`var' = 1 if `var' >= 1
@@ -296,20 +296,66 @@
 	save 			`tempedu'
 	
 * merge data together 
-	use				"$root/wave_0`w'/SEC1.dta", clear
-	keep 			HHID 
+	use				"$root/wave_0`w'/sec1c.dta", clear
+	keep 			hhid 
 	duplicates 		drop
-	merge 			1:1 HHID using `tempany', nogen
-	merge 			1:1 HHID using `tempactwhy', nogen
-	merge 			1:1 HHID using `tempedu', nogen
+	merge 			1:1 hhid using `tempany', nogen
+	merge 			1:1 hhid using `tempactwhy', nogen
+	merge 			1:1 hhid using `tempedu', nogen
 
 * save temp file
 	tempfile		temp5
 	save			`temp5'
 
-		
+	
 * ***********************************************************************
 * 7 - build uganda cross section
+* ***********************************************************************
+
+* load cover data
+	use				"$root/wave_0`w'/sec5d.dta", clear
+	drop 			if s5dq12 == 2
+	drop 			s5dq12 	
+
+* rename vars 
+	forval 			x = 1/5 {
+		rename 		s5dq14_1__`x' s5cq14_2__`x'
+		rename 		s5dq14__`x' s5cq14_1__`x'
+	}
+	rename 			s5dq14_1__6 s5cq14_2__6
+	rename 			s5d* s5c* 
+	
+* reshape wide
+	gen 			product = cond(livestock == -96, "other", cond(livestock == 1, ///
+					"milk",cond(livestock == 2, "eggs","meat")))
+	drop 			livestock
+	reshape 		wide s5cq*, i(hhid) j(product) string
+
+* save temp file part 1
+	tempfile		templs1
+	save			`templs1'
+	
+* load data		
+	use 			"$root/wave_0`w'/sec5d.dta", clear
+
+* reshape wide
+	keep 			livestock hhid
+	gen 			product = cond(livestock == -96, "other", cond(livestock == 1, ///
+					"milk",cond(livestock == 2, "eggs","meat")))
+	reshape 		wide livestock, i(hhid) j(product) string
+	collapse 		(sum) livestock*, by (hhid)
+	replace 		livestock_products__ideggs = 1 if livestock_products__ideggs != 0
+	replace 		livestock_products__idmeat = 1 if livestock_products__idmeat != 0
+	replace 		livestock_products__idmilk = 1 if livestock_products__idmilk != 0	
+
+* save temp file
+	merge			1:1 hhid using `templs1', nogen
+	tempfile		temp6
+	save			`temp6'
+	
+	
+* ***********************************************************************
+* 8 - build uganda cross section
 * ***********************************************************************
 
 * load cover data
@@ -317,31 +363,92 @@
 	
 * merge in other sections	
 	forval 			x = 1/5 {
-	    merge 		1:1 HHID using `temp`x'', nogen
+	    merge 		1:1 hhid using `temp`x'', nogen
 	}
-	merge 1:1 		HHID using "$root/wave_0`w'/SEC3.dta", nogen
-	merge 1:1 		HHID using "$root/wave_0`w'/SEC4.dta", nogen
-	merge 1:1 		HHID using "$root/wave_0`w'/SEC4A.dta", nogen
-	merge 1:1 		HHID using "$root/wave_0`w'/SEC5.dta", nogen
-	merge 1:1 		HHID using "$root/wave_0`w'/SEC5A.dta", nogen
-	merge 1:1 		HHID using "$root/wave_0`w'/SEC5B.dta", nogen 
-	merge 1:1 		HHID using "$root/wave_0`w'/SEC8.dta", nogen
-	merge 1:1 		HHID using "$root/wave_0`w'/SEC9.dta", nogen	
+	merge 1:1 		hhid using"$root/wave_0`w'/sec1d.dta", nogen
+	merge 1:1 		hhid using"$root/wave_0`w'/sec1e.dta", nogen
+	merge 1:1 		hhid using"$root/wave_0`w'/sec1f.dta", nogen
+	merge 1:1 		hhid using "$root/wave_0`w'/SEC3.dta", nogen
+	merge 1:1 		hhid using "$root/wave_0`w'/SEC4.dta", nogen
+	merge 1:1 		hhid using "$root/wave_0`w'/SEC4A.dta", nogen
+	merge 1:1 		hhid using "$root/wave_0`w'/SEC5.dta", nogen
+	merge 1:1 		hhid using "$root/wave_0`w'/SEC5A.dta", nogen
+	merge 1:1 		hhid using "$root/wave_0`w'/SEC5B.dta", nogen 
+	merge 1:1 		hhid using "$root/wave_0`w'/SEC8.dta", nogen
+	merge 1:1 		hhid using "$root/wave_0`w'/SEC9.dta", nogen	
 	
 * reformat HHID
-	format 			%12.0f HHID
+	format 			%12.0f hhid
 
 * rename variables inconsistent with other waves
-
-
-
-* save panel
+	* vaccines	
+		rename 			s4q15 cov_test_pay
+		rename 			s4q15_1 cov_test_pay_amnt
+		rename 			s4q16 cov_vac
+		rename 			s4q17__1 cov_vac_no_why_1
+		rename 			s4q17__2 cov_vac_no_why_2
+		rename 			s4q17__3 cov_vac_no_why_3
+		rename 			s4q17__4 cov_vac_no_why_6
+		rename 			s4q17__5 cov_vac_no_why_4
+		rename 			s4q17__6 cov_vac_no_why_5			
+		rename 			s4q18__1 cov_vac_dk_why_1
+		rename 			s4q18__2 cov_vac_dk_why_2
+		rename 			s4q18__3 cov_vac_dk_why_3
+		rename 			s4q18__4 cov_vac_dk_why_6
+		rename 			s4q18__5 cov_vac_dk_why_4
+		rename 			s4q18__6 cov_vac_dk_why_5
+	* rename employment
+		rename			s5q01 emp
+		rename			s5q01a rtrn_emp
+		rename			s5q01b rtrn_emp_when
+		rename			s5q01c emp_why
+		rename 			s5q03 emp_pre_why
+		rename			s5q03a emp_search
+		rename			s5q03b emp_search_how
+		rename			s5q04a emp_same
+		rename			s5q04b emp_chg_why
+		rename			s5q05 emp_act
+		rename			s5q06 emp_stat
+		replace 		emp_stat = 6 if emp_stat == 5
+		rename 			s5q06a emp_purp
+	* non-farm income
+		rename			s5aq11 bus_emp
+		rename			s5aq11a bus_stat
+		rename 			s5aq11b_1 bus_other
+		rename			s5aq12 bus_sect
+		rename			s5aq12_1 bus_sect_oth
+	* rename agriculture
+		rename			s5bq16 ag_crop
+		rename 			s5bq18_1 ag_crop_1
+		rename 			s5bq18_2 ag_crop_2
+		rename 			s5bq18_3 ag_crop_3
+		rename 			s5bq19 ag_chg
+		rename			s5bq20__1 ag_chg_1
+		rename			s5bq20__2 ag_chg_2
+		rename			s5bq20__3 ag_chg_3
+		rename			s5bq20__4 ag_chg_4
+		rename			s5bq20__5 ag_chg_5
+		rename			s5bq20__6 ag_chg_6
+		rename			s5bq20__7 ag_chg_7
+		rename			s5bq21__1 ag_covid_1
+		rename			s5bq21__3 ag_covid_3
+		rename			s5bq21__4 ag_covid_4
+		rename			s5bq21__5 ag_covid_5
+		rename			s5bq21__6 ag_covid_6
+		rename			s5bq21__7 ag_covid_7
+		rename			s5bq21__8 ag_covid_8
+		rename			s5bq21__9 ag_covid_9
+		rename 			s5bq21a ag_main
+		rename 			s5bq21b ag_main_plant_comp
+		rename 			s5bq21c ag_main_area
+		rename 			s5bq21d ag_expect
+	HERE START WITH 23	
 	* gen wave data
 		rename			wfinal phw_cs
 		lab var			phw "sampling weights - cross section"	
 		gen				wave = `w'
 		lab var			wave "Wave number"
-		order			baseline_hhid wave phw, after(HHID)
+		order			baseline_hhid wave phw, after(hhid)
 
 	* save file
 		save			"$export/wave_0`w'/r`w'", replace

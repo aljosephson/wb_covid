@@ -26,7 +26,7 @@
 * **********************************************************************
 
 * define list of waves
-	global 			waves "1" "2" "3" 
+	global 			waves "1" "2" "3" "4" "5"
 	
 * define
 	global	root	=	"$data/uganda/raw"
@@ -197,33 +197,40 @@
 	rename			s2gq02__6 spread_6
 	rename 			s2gq05 mask 
 
-// ANN YOU ARE HERE ADDING 4-5	
-	
 * rename access
  * drinking water 
 	rename			s4q01e ac_drink
+	replace 		ac_drink = s4q1e if ac_drink == .
 	rename			s4q01f ac_drink_why
-	replace 		ac_drink_why = 7 if ac_drink_why == 6
-	replace 		ac_drink_why = 9 if ac_drink_why == 8
+	replace 		ac_drink_why = s4q1f if ac_drink_why == .
+	forval 			x = 4/8 {
+	    local 			q = `x' + 1
+	    replace 		ac_drink_why = `q' if ac_drink_why == `x'
+	}	
+	replace 		ac_drink_why = 12 if ac_drink_why == 11
 	lab def 		ac_drink_why 1 "water supply not available" 2 "water supply reduced" ///
-					3 "unable to access communal supply" 4 "unable to access water tanks" ///
-					5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
-					8 "restriction to go out" 9 "increase in price" 10 "cannot afford"
+						3 "unable to access communal supply" 4 "unable to access water tanks" ///
+						5 "shops ran out" 6 "markets not operating" 7 "no transportation" ///
+						8 "restriction to go out" 9 "increase in price" 10 "cannot afford" ///
+						11 "unable to buy water" 12 "fear of catching the virus", replace
 	lab val 		ac_drink_why ac_drink_why
+	rename 			s4q1g ac_drink_src
  * soap
 	rename 			s4q01 ac_soap
 	rename			s4q02 ac_soap_why
-	replace			ac_soap_why = 9 if ac_soap_why == -96
-	replace			ac_soap_why = . if ac_soap_why == 99
 	lab def			ac_soap_why 1 "shops out" 2 "markets closed" 3 "no transportation" ///
 								4 "restrictions to go out" 5 "increase in price" 6 "no money" ///
 								7 "cannot afford it" 8 "afraid to go out" 
-	replace 		ac_soap_why = . if ac_soap_why == 9
+	replace 		ac_soap_why = . if ac_soap_why == -96 | ac_soap_why == 9 | ac_soap_why == 99
 	lab var 		ac_soap_why "reason for unable to purchase soap"
  * water wash
 	rename 			s4q03 ac_water
-	rename 			s4q04 ac_water_why
+	rename 			s4q04 ac_water_why	
 	replace 		ac_water_why = 15 if ac_water_why == 9
+	forval 			x = 4/8 {
+	    local 			q = `x' + 1
+		replace 		ac_water_why = `q' if ac_water_why == `x'
+	}		
 	replace 		ac_water_why = ac_water_why + 1 if (ac_water_why > 5 & ac_water_why < 10)
 	lab def 			ac_water_why 1 "water supply not available" 2 "water supply reduced" ///
 						3 "unable to access communal supply" 4 "unable to access water tanks" ///
@@ -267,6 +274,8 @@
 								8 "afraid to get virus"
 	lab val 		ac_medserv_why ac_medserv_why 
 	lab var 		ac_medserv_why "reason for unable to access medical services"
+	rename 			s4q11a ac_medserv_pre_need
+	rename 			s4q11b ac_medserv_pre	
  * masks
 	rename 			s4q12 ac_mask
 	rename 			s4q13 ac_mask_why
@@ -277,7 +286,6 @@
 	rename			s4q12__3 ac_elec
 	rename			s4q12__4 ac_solar
 	rename			s4q12__5 ac_solar_kit
-
 * rename education & bank
 	rename 			s4q16 edu_cont
 	rename			s4q17__1 edu_cont_1
@@ -293,6 +301,16 @@
 	rename 			s4q20 ac_bank_why
 	replace 		ac_bank_why = 3 if ac_bank_why == 2
 
+* assets
+	rename 			s4aq01_computer ac_comp
+	replace 		ac_comp = 1 if ac_comp == 2 | ac_comp == 3
+	replace 		ac_comp = 2 if ac_comp == 4
+	replace 		s4aq01_tablet = 1 if s4aq01_tablet == 2 | s4aq01_tablet == 3
+	replace 		ac_comp = 1 if s4aq01_tablet == 1
+	rename 			s4aq01_smartphone ac_mobile
+	replace 		ac_mobile = 1 if ac_mobile == 2 | ac_mobile == 3	
+	replace 		ac_mobile  = 2 if ac_mobile  == 4
+	
 * clean employment
 	replace 		emp_act = 1 if emp_act == 11111
 	replace 		emp_act = 2 if emp_act == 31111
@@ -307,8 +325,7 @@
 	replace 		emp_act = 12 if emp_act == 41111 | emp_act == 51111
 	replace 		emp_act = 14 if emp_act == 111111 | emp_act == 121111
 	replace 		emp_act = -96 if emp_act == 101111 | emp_act == 191111 ///
-						| emp_act == 181111 | emp_act == 201111
-						
+						| emp_act == 181111 | emp_act == 201111						
 	lab def 		emp_act -96 "Other" 1 "Agriculture" 2 "Industry/manufacturing" ///
 						3 "Wholesale/retail" 4 "Transportation services" ///
 						5 "Restaurants/hotels" 6 "Public Administration" ///
@@ -333,9 +350,7 @@
 						7 "ILLNESS IN THE HOUSEHOLD" 8 "NEED TO TAKE CARE OF A FAMILY MEMBER" ///
 						9 "SEASONAL CLOSURE" 10 "VACATION" 
 	lab val 		bus_closed clsd
-	rename 			s5a11c bus_act
 	replace			bus_why = s5aq14_2 if bus_why == .
-	
 	forval 			x = 1/6 {
 		rename 			s5aq15__`x' bus_chal_`x'
 	}
@@ -346,85 +361,17 @@
 		rename 			s5aq15b__`x' bus_beh_`x'
 	}
 	rename			s5aq15b__n96 bus_beh_7
-	rename 			s5q15a bus_other
-	rename 			s5q15b bus_num
-	
-* rename agriculture (R1&3)
-	rename			s5aq17 ag_plan
-	gen 			ag_nocrop_1 = 1 if s5qaq17_1 == 1
-	gen 			ag_nocrop_2 = 1 if s5qaq17_1 == 2
-	gen 			ag_nocrop_3 = 1 if s5qaq17_1 == 3
-	gen 			ag_nocrop_4 = 1 if s5qaq17_1 == 4
-	gen 			ag_nocrop_10 = 1 if s5qaq17_1 == 5
-	gen 			ag_nocrop_5 = 1 if s5qaq17_1 == 6
-	gen 			ag_nocrop_6 = 1 if s5qaq17_1 == 7
-	gen 			ag_nocrop_7 = 1 if s5qaq17_1 == 8
-	gen 			ag_nocrop_9 = 1 if s5qaq17_1 == -96
-	rename			s5aq19 ag_chg
-	rename			s5aq20__1 ag_chg_1
-	rename			s5aq20__2 ag_chg_2
-	rename			s5aq20__3 ag_chg_3
-	rename			s5aq20__4 ag_chg_4
-	rename			s5aq20__5 ag_chg_5
-	rename			s5aq20__6 ag_chg_6
-	rename			s5aq20__7 ag_chg_7
-	rename			s5aq21__1 ag_covid_1
-	rename			s5aq21__2 ag_covid_2
-	rename			s5aq21__3 ag_covid_3
-	rename			s5aq21__4 ag_covid_4
-	rename			s5aq21__5 ag_covid_5
-	rename			s5aq21__6 ag_covid_6
-	rename			s5aq21__7 ag_covid_7
-	rename			s5aq21__8 ag_covid_8
-	rename			s5aq21__9 ag_covid_9
-	rename			s5aq22__1 ag_ac_seed_why_1
-	rename			s5aq22__2 ag_ac_seed_why_2
-	rename			s5aq22__3 ag_ac_seed_why_3
-	rename			s5aq22__4 ag_ac_seed_why_4
-	rename			s5aq22__5 ag_ac_seed_why_5
-	rename			s5aq22__6 ag_ac_seed_why_6
-	forval 			x = 1/6 {
-	    gen 		ag_ac_fert_why_`x' = .
-		replace 	ag_ac_fert_why_`x' = 0 if s5aq23 != .
-		replace 	ag_ac_fert_why_`x' = 1 if s5aq23 == `x'
-		gen 		ag_ac_oth_why_`x' = .
-		replace 	ag_ac_oth_why_`x' = 0 if s5aq24 != .
-		replace 	ag_ac_oth_why_`x' = 1 if s5aq24 == `x'
-	}
-	drop			s5aq23 s5aq24 
-	rename			s5aq25 ag_crop_lost
-	rename			s5aq27 ag_live_chg
-	rename			s5aq28__1 ag_live_chg_1
-	rename			s5aq28__2 ag_live_chg_2
-	rename			s5aq28__3 ag_live_chg_3
-	rename			s5aq28__4 ag_live_chg_4
-	rename			s5aq28__5 ag_live_chg_5
-	rename			s5aq28__6 ag_live_chg_6
-	rename			s5aq28__7 ag_live_chg_7
-	rename			s5aq29 ag_live_loc
-	rename			s5aq30 harv_sell_need
+	rename 			s5aq15 bus_inc_avg
+
+* rename agriculture
+ANN YOU ARE HERE
 	replace 		harv_sell_need = s5bq25 if harv_sell_need == .
 	replace 		harv_sell_need = s5bq08 if harv_sell_need == .
 	rename			s5aq31 harv_sell	
 	replace			harv_sell = s5bq26 if harv_sell == .
 	replace			harv_sell = s5bq09 if harv_sell == .
 	rename 			s5bq27_* ag_sell_where*
-	rename 			s5bq19 ag_expect
-	rename 			s5bq20 ag_quant
-	rename 			s5bq20b ag_quant_unit
-	rename 			s5bq20c ag_quant_kgcon
-	rename 			s5bq21_1 ag_pr_ban_s
-	rename 			s5bq21_2 ag_pr_ban_m
-	rename 			s5bq21_3 ag_pr_ban_l
-	rename 			s5bq21_4 ag_pr_cass_bag
-	rename 			s5bq21_5 ag_pr_cass_chip
-	rename 			s5bq21_6 ag_pr_cass_flr
-	rename 			s5bq21_7 ag_pr_bean_dry
-	rename 			s5bq21_9 ag_pr_bean_fr
-	rename 			s5bq21_8 ag_pr_maize
-	rename 			s5bq23 ag_sell_norm
-	rename 			s5bq24 ag_sell_rev_exp
-	
+
 * rename crop harvest (R2)
 	rename 			s5bq03 harv_stat
 	rename 			s5bq04 harv_cov
@@ -477,7 +424,6 @@
 		lab var 	ag_live_pr_`p' "Has the price of [LIVESTOCK PRODUCT]…"
 	}
 
-	
 * rename income variables
 	rename 			s6q011 farm_inc
 	lab	var			farm_inc "Income from farming, fishing, livestock in last 12 months"
@@ -628,7 +574,7 @@
 						s7q04__10 s7q04__11 s7q04__12 s7q04__13 s7q04__14 ///
 						s7q04__15 s7q04__16 s7q04__n96 s7q04_Other s7q05_Other	///
 						s9q03__1 s9q03__2 s9q03__3 s9q03__4 s9q03__5 s9q03__6 ///
-						s9q03__7 s9q03__8 s5q03 s5q04a_2 s5q10__0 s5q10__1 ///
+						s9q03__7 s9q03__8 s5q04a_2 s5q10__0 s5q10__1 ///
 						s5q10__2 s5q10__3 s5q10__4 s5q10__5 business_case_filter ///
 						s5aq11b__1 s5aq11b__2 s5aq11b__3 s5aq11b__4 s5aq11b__5 ///
 						s5aq11b__6 s5aq11b__7 s5aq11b__8 s5aq11b__9 s5aq11b__10 ///
@@ -639,7 +585,10 @@
 						ac_mask_srce_n96 harv_cov_why_n96 Sq02 PID  ///
 						s5bq25 s5bq26 ag_sell_where_n96 Sq01 s5aq11b__0 ///
 						weight harv_saf_5 *_interview_ID *_hh_weight s5qaq17_1 ///
-						s2q02__5 s5bq08	s5bq09 s5cq02__*
+						s2q02__5 s5bq08	s5bq09 s5cq02__* s4q1e s4q1f s4aq01_tablet ///
+						s4aq02_computer_1 s4aq02_computer_2 s4aq02_tablet_1 ///
+						s4aq02_tablet_2 s4aq02_smartphone_1 s4aq02_smartphone_2 ///
+						s5q05a s5a11c_1 s5a11c s5bq17_1__n96
 						
 * rename basic information
 	gen				sector = 2 if urban == 1

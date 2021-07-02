@@ -249,6 +249,9 @@
 * load data		
 	use 			"$root/wave_0`w'/SEC5C_1.dta", clear
 
+* drop missing data
+	drop 			if livestock == 4
+	
 * reshape wide
 	keep 			livestock HHID
 	gen 			product = cond(livestock == -96, "other", cond(livestock == 1, ///
@@ -462,8 +465,24 @@
 		lab val			credit_cvd_src  credit
 		lab var			credit_cvd_src  "From whom did you borrow money?"
 		rename 			s7q05 credit_cvd_purp
-		rename			s7q06 credit_cvd_wry
-		
+		rename			s7q06 credit_cvd_wry	
+	* rename food security
+		rename			s8q01 fies_4
+		lab var			fies_4 "Worried about not having enough food to eat"
+		rename			s8q02 fies_5
+		lab var			fies_5 "Unable to eat healthy and nutritious/preferred foods"
+		rename			s8q03 fies_6
+		lab var			fies_6 "Ate only a few kinds of food"
+		rename			s8q04 fies_7
+		lab var			fies_7 "Skipped a meal"
+		rename			s8q05 fies_8
+		lab var			fies_8 "Ate less than you thought you should"
+		rename			s8q06 fies_1
+		lab var			fies_1 "Ran out of food"
+		rename			s8q07 fies_2
+		lab var			fies_2 "Hungry but did not eat"
+		rename			s8q08 fies_3
+		lab var			fies_3 "Went without eating for a whole day"	
 	* rename concerns
 		rename			s9q01 concern_1
 		rename			s9q02 concern_2

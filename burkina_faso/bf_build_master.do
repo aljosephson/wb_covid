@@ -79,7 +79,7 @@
 	format 			%12.0g hhid
 
 * merge in quintiles
-	merge m:1		hhid using "$root/wave_00/Burkina Faso WAEMU 2018-19 Quintiles", 
+	merge m:1		hhid using "$root/wave_00/Burkina Faso WAEMU 2018-19 Quintiles", nogen 
 	
 * rename quintile variable
 	rename 			quintile quints
@@ -109,7 +109,7 @@
 	rename 			commune zone_id 
 	
 	drop 			village b40 echantillon resultat weight ind_id_EHCVM ///
-						membres__id
+						membres__id zae vague menage
 
 * replace all missing values as . (not .a, .b, etc.)
 	quietly: ds, has(type numeric)

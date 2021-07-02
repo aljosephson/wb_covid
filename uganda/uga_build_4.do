@@ -350,6 +350,17 @@
 	format 			%12.0f HHID
 
 * rename variables inconsistent with other waves
+	* rename govt action
+		rename 			s2gq05 mask 
+	* rename behavioral changes
+		rename			s3q01 bh_1
+		rename			s3q02 bh_2
+		rename			s3q03 bh_3
+		rename			s3q04 bh_4
+		rename			s3q05 bh_5
+		rename			s3q06 bh_freq_wash
+		rename			s3q07_1 bh_freq_mask_oth
+		rename 			s3q08 bh_freq_gath
 	* vaccines
 		rename 			s4q15 cov_test
 		rename 			s4q16 cov_vac
@@ -398,6 +409,8 @@
 		rename 			s5aq11b_1 bus_other
 		rename			s5aq12 bus_sect
 		rename			s5aq12_1 bus_sect_oth
+		rename			s5aq13 bus_emp_inc
+		rename			s5aq14_1 bus_why
 	* rename agriculture
 		rename			s5bq16 ag_crop
 		rename			s5bq17 ag_plan	
@@ -421,7 +434,6 @@
 		rename			s5bq20__6 ag_chg_6
 		rename			s5bq20__7 ag_chg_7
 		rename			s5bq21__1 ag_covid_1
-		rename			s5bq21__2 ag_covid_2
 		rename			s5bq21__3 ag_covid_3
 		rename			s5bq21__4 ag_covid_4
 		rename			s5bq21__5 ag_covid_5
@@ -437,8 +449,40 @@
 		rename 			s5bq21f ag_pr_cass_flr
 		rename 			s5bq21g ag_pr_bean_dry
 		rename 			s5bq21h ag_pr_bean_fr
-		rename 			s5bq21i ag_pr_maize
-HERE START WITH 23 and in 5		
+		rename 			s5bq21i ag_pr_maize		
+		rename 			s5bq23 ag_sell_norm
+		rename 			s5bq24 ag_sell_rev_exp 
+	* rename food security
+		rename			s8q01 fies_4
+		lab var			fies_4 "Worried about not having enough food to eat"
+		rename			s8q02 fies_5
+		lab var			fies_5 "Unable to eat healthy and nutritious/preferred foods"
+		rename			s8q03 fies_6
+		lab var			fies_6 "Ate only a few kinds of food"
+		rename			s8q04 fies_7
+		lab var			fies_7 "Skipped a meal"
+		rename			s8q05 fies_8
+		lab var			fies_8 "Ate less than you thought you should"
+		rename			s8q06 fies_1
+		lab var			fies_1 "Ran out of food"
+		rename			s8q07 fies_2
+		lab var			fies_2 "Hungry but did not eat"
+		rename			s8q08 fies_3
+		lab var			fies_3 "Went without eating for a whole day"	
+* rename concerns
+		rename			s9q01 concern_1
+		rename			s9q02 concern_2
+		gen				have_symp = 1 if s9q03__1 == 1 | s9q03__2 == 1 | s9q03__3 == 1 | ///
+							s9q03__4 == 1 | s9q03__5 == 1 | s9q03__6 == 1 | ///
+							s9q03__7 == 1 | s9q03__8 == 1
+		replace			have_symp = 2 if have_symp == .
+		order			have_symp, after(concern_2)	
+		rename 			s9q04 have_test
+		rename 			s9q05 concern_3
+		rename			s9q06 concern_4
+		rename			s9q07 concern_5
+		rename			s9q08 concern_6
+		rename			s9q09 concern_7
 		
 * save panel
 	* gen wave data

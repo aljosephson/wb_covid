@@ -441,7 +441,7 @@
 		rename 			s2gq01 cvd_lockdwn
 		rename 			s2gq02 cvd_sch
 		rename 			s2gq03 cvd_church
-
+		rename 			s2gq05 mask 
 	* rename behavioral changes
 		rename			s3q01 bh_1
 		rename			s3q02 bh_2
@@ -491,6 +491,23 @@
 		rename			s5aq14_1 bus_why	
 		rename 			s5q15a bus_other
 		rename 			s5q15b bus_num
+	* rename food security
+		rename			s8q01 fies_4
+		lab var			fies_4 "Worried about not having enough food to eat"
+		rename			s8q02 fies_5
+		lab var			fies_5 "Unable to eat healthy and nutritious/preferred foods"
+		rename			s8q03 fies_6
+		lab var			fies_6 "Ate only a few kinds of food"
+		rename			s8q04 fies_7
+		lab var			fies_7 "Skipped a meal"
+		rename			s8q05 fies_8
+		lab var			fies_8 "Ate less than you thought you should"
+		rename			s8q06 fies_1
+		lab var			fies_1 "Ran out of food"
+		rename			s8q07 fies_2
+		lab var			fies_2 "Hungry but did not eat"
+		rename			s8q08 fies_3
+		lab var			fies_3 "Went without eating for a whole day"	
 	* rename concerns
 		rename			s9q01 concern_1
 		rename			s9q02 concern_2
@@ -524,6 +541,10 @@
 		rename 			s5bq21_3 ag_pr_ban_l
 		rename 			s5bq21_4 ag_pr_cass_bag
 		rename 			s5bq21_5 ag_pr_cass_chip
+		replace 		ag_pr_cass_chip = "" if ag_pr_cass_chip == "##N/A##" | ///
+							ag_pr_cass_chip == "-98"
+		replace 		ag_pr_cass_chip = subinstr(ag_pr_cass_chip,",", "",.)
+		destring 		ag_pr_cass_chip, replace
 		rename 			s5bq21_6 ag_pr_cass_flr
 		rename 			s5bq21_7 ag_pr_bean_dry
 		rename 			s5bq21_9 ag_pr_bean_fr

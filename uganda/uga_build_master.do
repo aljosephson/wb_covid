@@ -112,6 +112,28 @@
 * 3 - clean uganda panel
 * ***********************************************************************	
 
+* education perceptions & early childhood development 
+	rename 			s1dq01__* sch_catchup_*
+	rename 			s1dq02__* sch_prec_prac_*
+	rename 			s1eq02 ecd_pcg
+	rename 			s1eq2_1 ecd_pcg_relate
+	replace 		ecd_pcg_relate = 6 if ecd_pcg_relate == 5
+	replace 		ecd_pcg_relate = 5 if ecd_pcg_relate == 4
+	replace 		ecd_pcg_relate = 4 if ecd_pcg_relate == 3
+	rename 			s1eq03 ecd_pcg_gen
+	rename 			s1eq04 ecd_resp_relate
+	replace 		ecd_resp_relate = 6 if ecd_resp_relate == 5
+	replace 		ecd_resp_relate = 5 if ecd_resp_relate == 4
+	replace 		ecd_resp_relate = 4 if ecd_resp_relate == 3
+	rename 			s1fq07 ecd_play 
+	rename 			s1fq08 ecd_read
+	rename 			s1fq09 ecd_story
+	rename 			s1fq10 ecd_song 
+	rename 			s1fq11 ecd_out 
+	rename 			s1fq12 ecd_ncd 
+	rename 			s1fq13 ecd_num_bks 
+	
+	
 * rename symptoms
 	rename			s2q01 know
 	rename			s2q01b__1 symp_1
@@ -195,7 +217,6 @@
 	rename			s2gq02__4 spread_4
 	rename			s2gq02__5 spread_5
 	rename			s2gq02__6 spread_6
-	rename 			s2gq05 mask 
 
 * rename access
  * drinking water 
@@ -275,7 +296,7 @@
 	lab val 		ac_medserv_why ac_medserv_why 
 	lab var 		ac_medserv_why "reason for unable to access medical services"
 	rename 			s4q11a ac_medserv_pre_need
-	rename 			s4q11b ac_medserv_pre	
+	rename 			s4q11b ac_medserv_pre
  * masks
 	rename 			s4q12 ac_mask
 	rename 			s4q13 ac_mask_why
@@ -339,9 +360,10 @@
 	lab def			bus_emp_inc 1 "Higher" 2 "The same" 3 "Less" 4 "No Revenue"
 	lab val			bus_emp_inc bus_emp_inc 
 	gen				bus_closed  = 1 if s5aq11b__1 == 1
-	forval 			x = 2/10{
+	forval 			x = 2/10 {
 	    replace 	bus_closed = `x' if s5aq11b__`x' == 1
 	}
+	replace 		bus_closed = s5aq11b if bus_closed == .
 	replace 		bus_closed = 7 if bus_closed == 6	
 	lab def 		clsd 1 "USUAL PLACE OF BUSINESS CLOSED DUE TO CORONAVIRUS LEGAL RESTRICTIONS" ///
 						2 "USUAL PLACE OF BUSINESS CLOSED FOR ANOTHER REASON" ///
@@ -364,7 +386,6 @@
 	rename 			s5aq15 bus_inc_avg
 
 * rename agriculture
-ANN YOU ARE HERE
 	replace 		harv_sell_need = s5bq25 if harv_sell_need == .
 	replace 		harv_sell_need = s5bq08 if harv_sell_need == .
 	rename			s5aq31 harv_sell	
@@ -378,7 +399,7 @@ ANN YOU ARE HERE
 	rename 			s5bq05_* harv_cov_why*
 	rename 			s5bq06_* harv_saf*
 	rename 			s5bq07 harv_nohire_why
-	
+
 * rename livestock
 	gen 			ag_live_1 = 0 if s5cq02__1 == 0 | s5cq02__2 == 0
 	replace 		ag_live_1 = 1 if s5cq02__1 == 1 | s5cq02__2 == 1
@@ -429,51 +450,65 @@ ANN YOU ARE HERE
 	lab	var			farm_inc "Income from farming, fishing, livestock in last 12 months"
 	rename			s6q021 farm_chg
 	lab var			farm_chg "Change in income from farming since covid"
+	rename			s6q031 farm_chg_avg
 	rename 			s6q012 bus_inc
 	lab var			bus_inc "Income from non-farm family business in last 12 months"
 	rename			s6q022 bus_chg
 	lab var			bus_chg "Change in income from non-farm family business since covid"
+	rename			s6q032 bus_chg_avg
 	rename 			s6q013 wage_inc
 	lab var			wage_inc "Income from wage employment in last 12 months"
 	rename			s6q023 wage_chg
 	lab var			wage_chg "Change in income from wage employment since covid"
+	rename			s6q033 wage_chg_avg
 	rename			s6q014 unemp_inc
 	lab var			unemp_inc "Income from unemployment benefits in the last 12 months"
 	rename			s6q024 unemp_chg
 	lab var			unemp_chg "Change in income from unemployment benefits since covid"
+	rename			s6q034 unemp_chg_avg
 	rename 			s6q015 rem_for
 	label 			var rem_for "Income from remittances abroad in last 12 months"
 	rename			s6q025 rem_for_chg
 	label 			var rem_for_chg "Change in income from remittances abroad since covid"
+	rename			s6q035 rem_for_chg_avg
 	rename 			s6q016 rem_dom
 	label 			var rem_dom "Income from remittances domestic in last 12 months"
 	rename			s6q026 rem_dom_chg
 	label 			var rem_dom_chg "Change in income from remittances domestic since covid"
+	rename			s6q036 rem_dom_chg_avg
 	rename 			s6q017 asst_inc
 	label 			var asst_inc "Income from assistance from non-family in last 12 months"
 	rename			s6q027 asst_chg
 	label 			var asst_chg "Change in income from assistance from non-family since covid"
+	rename			s6q037 asst_chg_avg
 	rename 			s6q018 isp_inc
 	label 			var isp_inc "Income from properties, investment in last 12 months"
 	rename			s6q028 isp_chg
 	label 			var isp_chg "Change in income from properties, investment since covid"
+	rename			s6q038 isp_chg_avg
 	rename 			s6q019 pen_inc
 	label 			var pen_inc "Income from pension in last 12 months"
 	rename			s6q029 pen_chg
 	label 			var pen_chg "Change in income from pension since covid"
+	rename			s6q039 pen_chg_avg
 	rename 			s6q0110 gov_inc
 	label 			var gov_inc "Income from government assistance in last 12 months"
 	rename			s6q0210 gov_chg
 	label 			var gov_chg "Change in income from government assistance since covid"
+	rename			s6q0310 gov_chg_avg
 	rename 			s6q0111 ngo_inc
 	label 			var ngo_inc "Income from NGO assistance in last 12 months"
 	rename			s6q0211 ngo_chg
 	label 			var ngo_chg "Change in income from NGO assistance since covid"
+	rename			s6q0311 ngo_chg_avg
 	rename 			s6q0196 oth_inc
 	label 			var oth_inc "Income from other source in last 12 months"
 	rename			s6q0296 oth_chg
-	label 			var oth_chg "Change in income from other source since covid"	
-
+	label 			var oth_chg "Change in income from other source since covid"
+	rename			s6q0396 oth_chg_avg
+	rename 			s6q0212 tot_inc_chg
+	rename 			s6q0312 tot_inc_chg_avg
+	
 * credit
  * since last call (slc)
 	rename 			s7aq01 ac_cr_slc
@@ -569,7 +604,7 @@ ANN YOU ARE HERE
 						s5aq22__n96 s5aq22_Other s5aq23_Other s5aq24_Other ///
 						s5q10__0 s5q10__1 s5q10__2 s5q10__3 s5q10__4 s5q10__5 ///
 						s5q10__6 s5q10__7 s5q10__8 s5q10__9 *_Other	 ///
-						s4* s6q0112 s6q0212 s7q04__1 s7q04__2 s7q04__3 s7q04__4 ///
+						s4* s6q0112 s7q04__1 s7q04__2 s7q04__3 s7q04__4 ///
 						s7q04__5 s7q04__6 s7q04__7 s7q04__8 s7q04__9 ///
 						s7q04__10 s7q04__11 s7q04__12 s7q04__13 s7q04__14 ///
 						s7q04__15 s7q04__16 s7q04__n96 s7q04_Other s7q05_Other	///
@@ -588,7 +623,10 @@ ANN YOU ARE HERE
 						s2q02__5 s5bq08	s5bq09 s5cq02__* s4q1e s4q1f s4aq01_tablet ///
 						s4aq02_computer_1 s4aq02_computer_2 s4aq02_tablet_1 ///
 						s4aq02_tablet_2 s4aq02_smartphone_1 s4aq02_smartphone_2 ///
-						s5q05a s5a11c_1 s5a11c s5bq17_1__n96
+						s5q05a s5a11c_1 s5a11c s5bq17_1__n96 ag_sell_where_3 ///
+						s5aq11b s5bq20__n96 s5bq21__n96 operatingR3 bus_status_R3 ///
+						work_status_R3 t0_Rq03 t0_Rq04 bseqno pid_ubos ///
+						agic_case_filter hh_roster__id
 						
 * rename basic information
 	gen				sector = 2 if urban == 1

@@ -87,6 +87,7 @@
 	
 	gen				asst_cash = 1 if s10q01102 == 1
 	replace			asst_cash = 0 if s10q01102 == 2
+	replace 		asst_cash = 1 if s10q01104 == 1
 	replace			asst_cash = 0 if asst_cash == .
 	lab var			asst_cash "Recieved cash assistance"
 	lab val			asst_cash assist
@@ -104,8 +105,8 @@
 	lab val			asst_any assist
 
 * drop variables
-	drop			s10q01101 s10q01102 s10q01103
-	
+	drop			s10q01101 s10q01102 s10q01103 s10q01104
+
 * save temp file
 	tempfile		temp2
 	save			`temp2'
@@ -309,10 +310,10 @@
 
 	
 * ***********************************************************************
-* 7 - build uganda cross section
+* 7 - livestock
 * ***********************************************************************
 
-* load cover data
+* load  data
 	use				"$root/wave_0`w'/sec5d.dta", clear
 	drop 			if s5dq12 == 2
 	drop 			s5dq12 	
@@ -337,6 +338,8 @@
 	
 * load data		
 	use 			"$root/wave_0`w'/sec5d.dta", clear
+	drop 			if s5dq12 == 2
+	drop 			s5dq12 	
 
 * reshape wide
 	keep 			livestock hhid
@@ -362,7 +365,7 @@
 	use				"$root/wave_0`w'/Cover", clear
 	
 * merge in other sections	
-	forval 			x = 1/5 {
+	forval 			x = 1/6 {
 	    merge 		1:1 hhid using `temp`x'', nogen
 	}
 	merge 1:1 		hhid using"$root/wave_0`w'/sec1d.dta", nogen
@@ -381,6 +384,16 @@
 	format 			%12.0f hhid
 
 * rename variables inconsistent with other waves
+	* rename behavioral changes
+		rename			s3q01 bh_1
+		rename			s3q02 bh_2
+		rename			s3q03 bh_3
+		rename			s3q04 bh_4
+		rename			s3q05 bh_5
+		rename			s3q06 bh_freq_wash
+		rename			s3q07_1 bh_freq_mask_oth
+		rename			s3q07_2 mask
+		rename 			s3q08 bh_freq_gath	
 	* vaccines	
 		rename 			s4q15 cov_test_pay
 		rename 			s4q15_1 cov_test_pay_amnt
@@ -417,6 +430,8 @@
 		rename 			s5aq11b_1 bus_other
 		rename			s5aq12 bus_sect
 		rename			s5aq12_1 bus_sect_oth
+		rename			s5aq13 bus_emp_inc
+		rename			s5aq14_1 bus_why
 	* rename agriculture
 		rename			s5bq16 ag_crop
 		rename 			s5bq18_1 ag_crop_1
@@ -442,14 +457,55 @@
 		rename 			s5bq21b ag_main_plant_comp
 		rename 			s5bq21c ag_main_area
 		rename 			s5bq21d ag_expect
-	HERE START WITH 23	
+		rename 			s5bq23 ag_sell_norm
+		rename 			s5bq24 ag_sell_rev_exp 
+	* rename food security
+		rename			s8q01 fies_4
+		lab var			fies_4 "Worried about not having enough food to eat"
+		rename			s8q02 fies_5
+		lab var			fies_5 "Unable to eat healthy and nutritious/preferred foods"
+		rename			s8q03 fies_6
+		lab var			fies_6 "Ate only a few kinds of food"
+		rename			s8q04 fies_7
+		lab var			fies_7 "Skipped a meal"
+		rename			s8q05 fies_8
+		lab var			fies_8 "Ate less than you thought you should"
+		rename			s8q06 fies_1
+		lab var			fies_1 "Ran out of food"
+		rename			s8q07 fies_2
+		lab var			fies_2 "Hungry but did not eat"
+		rename			s8q08 fies_3
+		lab var			fies_3 "Went without eating for a whole day"	
+	* rename concerns
+		rename			s9q01 concern_1
+		rename			s9q02 concern_2
+		rename 			s9q03a have_cov_oth
+		rename 			s9q03b have_cov_self
+		gen				have_symp = 1 if s9q03__1 == 1 | s9q03__2 == 1 | s9q03__3 == 1 | ///
+							s9q03__4 == 1 | s9q03__5 == 1 | s9q03__6 == 1 | ///
+							s9q03__7 == 1 | s9q03__8 == 1
+		replace			have_symp = 2 if have_symp == .
+		order			have_symp, after(concern_2)	
+		rename 			s9q04 have_test
+		rename 			s9q05 concern_3
+		rename			s9q06 concern_4
+		rename			s9q07 concern_5
+		rename			s9q08 concern_6
+		rename			s9q09 concern_7
+	* rename mental health
+		forval 			x = 1/8 {
+			rename 			s9q10_`x' mh_`x'
+		}	
+		
+* save panel		
 	* gen wave data
 		rename			wfinal phw_cs
 		lab var			phw "sampling weights - cross section"	
 		gen				wave = `w'
 		lab var			wave "Wave number"
 		order			baseline_hhid wave phw, after(hhid)
-
+		rename 			hhid HHID
+		
 	* save file
 		save			"$export/wave_0`w'/r`w'", replace
 

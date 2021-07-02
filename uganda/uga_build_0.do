@@ -153,7 +153,7 @@
 	foreach 		var in `r(varlist)' {
 		lab val 	`var' yesno
 	}
-	
+
 * add country & wave 
 	gen 			wave = 0
 	gen 			country = 4

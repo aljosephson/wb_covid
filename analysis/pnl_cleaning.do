@@ -113,14 +113,9 @@
 * **********************************************************************
 
 * drop variables with open responses
-	drop 				dis_gov* sup_cmpln_done sup_cmpln_who emp_safos bus_act
+	drop 				dis_gov* sup_cmpln_done sup_cmpln_who emp_safos
 
 * destring string variables 
-	replace 			ag_pr_cass_chip = subinstr(ag_pr_cass_chip, ",","",.)
-	replace 			ag_pr_cass_chip = "" if ag_pr_cass_chip == "-98" | ///
-						ag_pr_cass_chip == "##N/A##"
-	destring 			ag_pr_cass_chip, replace
-
 	replace 			ag_quant_kgcon = "" if ag_quant_kgcon == "##N/A##" | ///
 						ag_quant_kgcon  == "don't know  yet"
 	replace 			ag_quant_kgcon = subinstr(ag_quant_kgcon, "kg","",.)
@@ -772,13 +767,15 @@
 	lab def 			ecd_rel 1 "mother" 2 "father" 3 "sibling" 4 "grandparent" ///
 							5 "other relative" 6 "non-relative/household worker", replace 
 	lab val 			ecd_pcg_relate ecd_resp_relate ecd_rel
-	
+
 	replace 			ecd_pcg = 96 if ecd_pcg == 2 | ecd_pcg == 77  	
 	lab def 			ecd_pcg 1 "Person completing interview" 96 "Other"
 	lab val 			ecd_pcg ecd_pcg 
 	
 	foreach 			x in play read story song out ncd {
-		replace 			ecd_`x' = . if ecd_`x' == 98 | ecd_`x' == 97 | ecd_`x' == 888 
+		replace 			ecd_`x' = . if ecd_`x' == 98 | ecd_`x' == 97 | ecd_`x' == 888 ///
+								| ecd_`x' == -98
+		replace 			ecd_`x' = 0 if ecd_`x' == 2
 	}
 	forval 				x = 1/8 {
 		replace 			ecd_ed_`x' = . if ecd_ed_`x' == 888 | ecd_ed_`x' == 98
@@ -976,13 +973,13 @@
 
 * close the log
 	log	close	
-/*	
+
 
 * **********************************************************************
 * 13 - generate variable-country-wave crosswalk
 * **********************************************************************	
 	preserve
-	drop 				country wave 
+	drop 				country wave baseline
 	ds
 	restore
 	foreach 			var in `r(varlist)' {
@@ -1015,7 +1012,7 @@
 		restore
 	}
 	preserve
-	drop 				country wave urban
+	drop 				country wave urban baseline
 	ds
 	clear
 	foreach 			var in `r(varlist)' {

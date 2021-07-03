@@ -115,6 +115,12 @@
 * make variable types match for master append	
 	tostring 		as4_food_source_other, replace
 	
+* rename vars inconsistent with other rounds
+	* behavior 	
+		rename			bh1_handwash bh_1
+		rename			bh2_handshake bh_2
+		rename			bh3_gatherings bh_3
+	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace
 

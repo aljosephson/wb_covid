@@ -28,7 +28,7 @@
 * **********************************************************************
 
 * define list of waves
-	global 			waves "1" "2" "3" "4" "5"
+	global 			waves "1" "2" "3" "4" "5" "6" "7" "8" "9"
 	
 * define 
 	global			root	=	"$data/ethiopia/raw"
@@ -101,19 +101,19 @@
 		replace 		`var' = . if `var' > .
 	} 
 	
-	
+
 * ***********************************************************************
 * 3 - clean ethiopia panel
 * ***********************************************************************
 
 * rationalize variables across waves
 	gen 			phw_cs = .
-	foreach 		r in "$waves" {
+	foreach 		r in 1 2 3 4 5 6 7 8 { //"$waves" FIGURE THIS OUT, WHY NOT IN 9??
 		replace 	phw_cs = phw`r' if phw`r' != . & wave == `r'
 		drop 		phw`r'
 	}
 	lab var			phw_cs "sampling weights - cross section"
-	
+
 * administrative variables 	
 	rename			ii4_resp_id resp_id
 	rename			cs4_sector sector
@@ -161,14 +161,7 @@
 	rename			kn3_gov_10 gov_10
 	rename			kn3_gov_11 gov_11
 	rename			kn3_gov_12 gov_12
-	rename			bh1_handwash bh_1
-	rename			bh2_handshake bh_2
-	rename			bh3_gatherings bh_3
-	rename 			bh1_handwash_freq bh_freq_wash
-	rename 			bh2_mask_freq bh_freq_mask 
-	rename 			bh3_cov_fear concern_1 
-	rename 			bh4_cov_fin concern_2 
-	
+
 * access variables 
 	* staples & medical care & bank
 		rename			ac1_atb_med ac_med
@@ -182,10 +175,42 @@
 		rename			ac1_atb_oil ac_oil
 		rename			ac2_atb_oil_why ac_oil_why
 		rename			ac6_med ac_medserv_need
+		replace 		ac_medserv_need = ac1_medtreat if ac_medserv_need == .		
+		forval 			x = 1/7 {
+			gen 			ac_medserv_need_type_`x' = .
+			replace 		ac_medserv_need_type_`x' = 0 if ac2_medtreat_type != ""
+		}	
+		forval 			x = 1/7 {	
+			replace 		ac_medserv_need_type_`x'= 1 if strpos(ac2_medtreat_type,"`x'")!=0
+		}
+		rename 			ac3_fp_access ac_medserv_type_1 
+		rename 			ac3_vacc_access ac_medserv_type_2 
+		rename 			ac3_mat_access ac_medserv_type_3 
+		rename 			ac3_ch_access ac_medserv_type_4 
+		rename 			ac3_ah_access ac_medserv_type_5 
+		rename 			ac3_ec_access ac_medserv_type_6 
+		rename 			ac3_pharm_access ac_medserv_type_7 
+		
+		rename 			ac4_fp_access_reason ac_medserv_type_1_why  
+		rename 			ac4_vacc_access_reason ac_medserv_type_2_why
+		rename 			ac4_mat_access_reason ac_medserv_type_3_why
+		rename 			ac4_ch_access_reason ac_medserv_type_4_why
+		rename 			ac4_ah_access_reason ac_medserv_type_5_why
+		rename 			ac4_ec_access_reason ac_medserv_type_6_why
+		rename 			ac4_pharm_access_reason ac_medserv_type_7_why	
 		rename			ac7_med_access ac_medserv
 		rename			ac8_med_access_reas ac_medserv_why
 		rename			ac9_bank ac_bank_need
-		
+	
+	* covid test & vaccine
+		rename 			bh8_cov_test cov_test
+		rename 			bh9_cov_vaccine cov_vac 
+		rename 			bh10_cov_vaccine_why_1 cov_vac_no_why_2_3
+		rename 			bh10_cov_vaccine_why_2 cov_vac_no_why_7
+		rename 			bh10_cov_vaccine_why_3 cov_vac_no_why_8
+		rename 			bh10_cov_vaccine_why_4 cov_vac_no_why_1
+		rename 			bh10_cov_vaccine_why_5 cov_vac_no_why_9
+
 	* education 
 		rename			ac3_sch_child sch_child
 		rename 		 	ac3a_pri_sch_child sch_child_prim
@@ -202,7 +227,7 @@
 		rename 			ac5_edu_type__96 edu_other
 
 		drop 			ac5a_pri_edu_type ac5a_pri_edu_type__98 ac5a_pri_edu_type__99 ///
-						ac5a_pri_edu_type_other 
+							ac5a_pri_edu_type_other 
 		rename 			ac5a_pri_edu_type_1 edu_1_prim 
 		rename 			ac5a_pri_edu_type_2 edu_2_prim  
 		rename 			ac5a_pri_edu_type_3 edu_3_prim 
@@ -211,16 +236,34 @@
 
 		rename 			ac4b_sec_child edu_act_sec 
 		drop 			ac5b_sec_edu_type ac5b_sec_edu_type__98 ac5b_sec_edu_type__99 ///
-						ac5b_sec_edu_type_other
+							ac5b_sec_edu_type_other
 		rename 			ac5b_sec_edu_type_1 edu_1_sec 
 		rename 			ac5b_sec_edu_type_2 edu_2_sec  
 		rename 			ac5b_sec_edu_type_3 edu_3_sec 
 		rename 			ac5b_sec_edu_type_4 edu_4_sec 
 		rename 			ac5b_sec_edu_type_5 edu_5_sec 
 
-		drop 			ac5_edu_type__98 ac5_edu_type__99  ///
-							ac5_edu_type_other ac5a_pri_edu_type__96 ac5b_sec_edu_type__96
-							
+		drop 			ac5_edu_type__98 ac5_edu_type__99 ac5_edu_type_other ///
+							 ac5a_pri_edu_type__96 ac5b_sec_edu_type__96
+	
+		rename 			ac3_sch_open sch_reopen
+		rename 			ac3_* *	
+		rename 			ac4_sch_reg_boys sch_reopen_boy
+		rename 			ac4_sch_reg_girls sch_reopen_girl
+
+		* individual education
+			drop 			inded_index_hhm_name*
+			forval 			x = 1/13 {
+				replace 	sch_child = 0 if inded1_attend_school`x' == 0
+				replace 	edu_act = 0 if inded4_attend_edclose`x' == 0
+			}
+			forval 			x = 1/13 {
+				replace 	sch_child = 1 if inded1_attend_school`x' == 1
+				replace 	edu_act = 1 if inded4_attend_edclose`x' == 1
+			}			
+
+ANN YOU ARE HERE FINISH ADDING IND ED DATA FROM ROUND 8
+			
 	* water and soap
 	 * only in round 4
 		rename 			wa1_water_drink ac_drink
@@ -249,7 +292,7 @@
 		lab val 		ac_soap_why ac_soap_why
 		lab var 		ac_soap "Had Enough Handwashing Soap in Last 7 Day"
 		lab var 		ac_soap_why "Main Reason Not Enough Handwashing Soap in Last 7 Days"
-	*credit 
+	* credit 
 	 * first addition in R5
 		rename 			cr1_since_loan ac_cr_loan 
 		forval 			x = 1/11 {
@@ -577,7 +620,9 @@
 						fi1_outoffood fi2_hungrynoteat fi3_noteatfullday lo3_impact ///
 						weight *why_other ea_id ac5_edu_type emp_act_other emp_stat_other ///
 						farm_why ag_live_other submission_date round attempt em19_* ///
-						ag_live__96
+						ag_live__96 bh2_handwash_freq ac2_medtreat_type ac1_medtreat ///
+						ac3_other_access ac4_*_access_reason_other bh10_cov_vaccine_why ///
+						bh10_cov_vaccine_why__96 bh10_cov_vaccine_why_other
 						
 * rename regions
 	replace 		region = 1001 if region == 1

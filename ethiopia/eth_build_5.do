@@ -69,7 +69,7 @@
 	
 * collapse data
 	collapse		(sum) hhsize hhsize_adult hhsize_child hhsize_schchild new_mem ///
-					(max) sexhh, by(household_id)	
+						(max) sexhh, by(household_id)	
 	replace 		new_mem = 1 if new_mem > 0 & new_mem < .
 	lab var			hhsize "Household size"
 	lab var 		hhsize_adult "Household size - only adults"

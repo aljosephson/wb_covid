@@ -256,17 +256,91 @@
 			forval 			x = 1/13 {
 				replace 	sch_child = 0 if inded1_attend_school`x' == 0
 				replace 	edu_act = 0 if inded4_attend_edclose`x' == 0
+				replace 	sch_child_reg = 0 if inded5_register`x' == 0
+				replace 	sch_reopen = 0 if inded7_reopen`x' == 0
+				if 			`x' == 1 {
+					gen			sch_att = 0 if inded8_attend_fourwks`x' == 0
+				}
+				else {
+					replace		sch_att = 0 if inded8_attend_fourwks`x' == 0
+				}
+				if 			`x' == 1 {
+					forval 			q = 1/8 {
+						gen 		sch_child_reg_why_`q' = 0 if ///
+										inded10_register_reason`x' != `q' & ///
+										inded10_register_reason`x' != .
+					}
+				}
+				else {
+				    forval 			q = 1/8 {
+						replace		sch_child_reg_why_`q' = 0 if ///
+										inded10_register_reason`x' != `q' & ///
+										inded10_register_reason`x' != .
+					}
+				}
+				if 		`x' == 1 {
+				    gen		sch_att_why_1 = 0 if inded11_attend_reason`x' != . ///
+								& inded11_attend_reason`x' != 1
+					gen 		sch_att_why_6 = 0 if inded11_attend_reason`x' != . ///
+									& inded11_attend_reason`x' != 2
+					gen 		sch_att_why_16 = 0 if inded11_attend_reason`x' != . ///
+									& inded11_attend_reason`x' != 3
+					gen 		sch_att_why_17 = 0 if inded11_attend_reason`x' != . ///
+									& inded11_attend_reason`x' != 4
+					gen 		sch_att_why_8 = 0 if inded11_attend_reason`x' != . ///
+									& inded11_attend_reason`x' != 5
+					gen 		sch_att_why_18 = 0 if inded11_attend_reason`x' != . ///
+									& inded11_attend_reason`x' != 6
+					gen 		sch_att_why_7 = 0 if inded11_attend_reason`x' != . ///
+									& inded11_attend_reason`x' != 7
+					gen 		sch_att_why_19 = 0 if inded11_attend_reason`x' != . ///
+									& inded11_attend_reason`x' != 8
+				}
+				else {
+				    replace		sch_att_why_1 = 0 if inded11_attend_reason`x' != . ///
+									& inded11_attend_reason`x' != 1
+					replace		sch_att_why_6 = 0 if inded11_attend_reason`x' != . ///
+									& inded11_attend_reason`x' != 2
+					replace 	sch_att_why_16 = 0 if inded11_attend_reason`x' != . ///
+									& inded11_attend_reason`x' != 3
+					replace		sch_att_why_17 = 0 if inded11_attend_reason`x' != . ///
+									& inded11_attend_reason`x' != 4
+					replace		sch_att_why_8 = 0 if inded11_attend_reason`x' != . ///
+									& inded11_attend_reason`x' != 5
+					replace		sch_att_why_18 = 0 if inded11_attend_reason`x' != . ///
+									& inded11_attend_reason`x' != 6
+					replace		sch_att_why_7 = 0 if inded11_attend_reason`x' != . ///
+									& inded11_attend_reason`x' != 7
+					replace		sch_att_why_19 = 0 if inded11_attend_reason`x' != . ///
+									& inded11_attend_reason`x' != 8
+				}
 			}
+			
 			forval 			x = 1/13 {
 				replace 	sch_child = 1 if inded1_attend_school`x' == 1
 				replace 	edu_act = 1 if inded4_attend_edclose`x' == 1
-			}			
-
-ANN YOU ARE HERE FINISH ADDING IND ED DATA FROM ROUND 8
+				replace 	sch_child_reg = 1 if inded5_register`x' == 1
+				replace 	sch_reopen = 1 if inded7_reopen`x' == 1
+				replace 	sch_att = 1 if inded8_attend_fourwks`x' == 1
+				forval 			q = 1/8 {
+					replace 	sch_child_reg_why_`q' = 1 if ///
+									inded10_register_reason`x' == `q'
+				}
+				replace		sch_att_why_1 = 1 if inded11_attend_reason`x' == 1	
+				replace		sch_att_why_6 = 1 if inded11_attend_reason`x' == 2	
+				replace		sch_att_why_16 = 1 if inded11_attend_reason`x' == 3	
+				replace		sch_att_why_17 = 1 if inded11_attend_reason`x' == 4	
+				replace		sch_att_why_8 = 1 if inded11_attend_reason`x' == 5
+				replace		sch_att_why_18 = 1 if inded11_attend_reason`x' == 6	
+				replace		sch_att_why_7 = 1 if inded11_attend_reason`x' == 7	
+				replace		sch_att_why_19 = 1 if inded11_attend_reason`x' == 8	
+			}	
 			
 	* water and soap
 	 * only in round 4
 		rename 			wa1_water_drink ac_drink
+		replace 		ac_drink = ac_drink - 1 if wave == 9
+		replace 		ac_drink = 1 if ac_drink == -1
 		rename 			wa2_water_drink_why ac_drink_why
 		lab def 		ac_drink_why 1 "water supply not available" 2 "water supply reduced" ///
 						3 "unable to access communal supply" 4 "unable to access water tanks" ///
@@ -292,6 +366,7 @@ ANN YOU ARE HERE FINISH ADDING IND ED DATA FROM ROUND 8
 		lab val 		ac_soap_why ac_soap_why
 		lab var 		ac_soap "Had Enough Handwashing Soap in Last 7 Day"
 		lab var 		ac_soap_why "Main Reason Not Enough Handwashing Soap in Last 7 Days"
+	
 	* credit 
 	 * first addition in R5
 		rename 			cr1_since_loan ac_cr_loan 
@@ -340,7 +415,7 @@ ANN YOU ARE HERE FINISH ADDING IND ED DATA FROM ROUND 8
 		rename 			cr9_worry ac_cr_worry
 		rename 			cr10_missed_pay ac_cr_miss
 		rename 			cr11_delay_chg ac_cr_delay	
-		
+	
 * employment variables 	
 	rename			em1_work_cur emp
 	rename			em6_work_cur_act emp_act
@@ -365,6 +440,7 @@ ANN YOU ARE HERE FINISH ADDING IND ED DATA FROM ROUND 8
 	rename			em13_work_cur_notable_paid emp_unable
 	rename			em14_work_cur_notable_why emp_unable_why
 	rename			em15_bus bus_emp
+	replace 		bus_emp = 1 if em15a_bus == 1
 	rename			em15a_bus_prev bus_prev
 	rename 			em15b_bus_prev_closed bus_closed
 	replace 		bus_closed = 9 if bus_closed == 3
@@ -383,7 +459,18 @@ ANN YOU ARE HERE FINISH ADDING IND ED DATA FROM ROUND 8
 	rename			em16_bus_sector bus_sect
 	rename			em17_bus_inc bus_emp_inc
 	rename			em18_bus_inc_low_amt bus_amt
+	
+	
+	rename 			em20a_bus_emp employ_hire
+	rename 			em20b_bus_family_emp employ_fam
+	rename 			em20c_bus_family_unpaid employ_fam_unpaid
+	rename 			em20d_bus_emp_before employ_hire_prev
+	
+	ANN YOU ARE HERE START ON em20e IN 8 AND 9
+	
+	
 	rename			em20_farm farm_emp
+	replace 		farm_emp = 1 if em20a_farm == 1
 	rename			em21_farm_norm farm_norm 
 	rename			em22_farm_norm_why farm_why
 	forval 			x = 1/7 {
@@ -622,7 +709,8 @@ ANN YOU ARE HERE FINISH ADDING IND ED DATA FROM ROUND 8
 						farm_why ag_live_other submission_date round attempt em19_* ///
 						ag_live__96 bh2_handwash_freq ac2_medtreat_type ac1_medtreat ///
 						ac3_other_access ac4_*_access_reason_other bh10_cov_vaccine_why ///
-						bh10_cov_vaccine_why__96 bh10_cov_vaccine_why_other
+						bh10_cov_vaccine_why__96 bh10_cov_vaccine_why_other inded* ///
+						em15a_bus
 						
 * rename regions
 	replace 		region = 1001 if region == 1

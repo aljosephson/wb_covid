@@ -466,20 +466,25 @@
 	rename 			em20c_bus_family_unpaid employ_fam_unpaid
 	rename 			em20d_bus_emp_before employ_hire_prev
 	
-	ANN YOU ARE HERE START ON em20e IN 8 AND 9
-	
-	
+	rename 			em20e_bus_resp_1 bus_beh_4 
+	rename 			em20e_bus_resp_2 bus_beh_8 
+	rename 			em20e_bus_resp_3 bus_beh_6
+	gen 			bus_beh = 0 if em20e_bus_resp_0 == 1
+	replace 		bus_beh = 1 if bus_beh_4 == 1 | bus_beh_8 == 1 | bus_beh_6 == 1
 	rename			em20_farm farm_emp
 	replace 		farm_emp = 1 if em20a_farm == 1
+	replace 		farm_emp = em21_farm if farm_emp == .	
 	rename			em21_farm_norm farm_norm 
-	rename			em22_farm_norm_why farm_why
+	replace 		farm_norm = em22_farm_norm if farm_norm == .
 	forval 			x = 1/7 {
 	    rename 		em22_farm_norm_why_`x' farm_why_`x'
 	}
 	rename			em23_we wage_emp
+	replace 		wage_emp = em24_we if wage_emp == .
 	rename			em24_we_layoff wage_off
+	replace 		wage_off = em25_we_layoff if wage_off == .
 	rename			em25_we_layoff_covid wage_off_covid
-	
+	replace 		wage_off_covid = em26_we_layoff_covid if wage_off_covid == .
  /* Change pre-COVID employment to "yes" if the respondent is currently employed - interviewers in rounds 4 and 5 
  asked every respondent question 2 from the employment section (em2_work_pre), regardless of their answer to question 1 
  (em1_work_cur), whereas in rounds 1-3, respondents were only asked question 2 if they responded "no" to question 1 */
@@ -514,6 +519,113 @@
 	}
 	rename			lc4_total_chg_cope_0 cope_16
 	rename			lc4_total_chg_cope__96 cope_17
+
+* migration 
+	rename 			mig1_hh mig
+	rename 			mig2_num mig_num
+	forval 			x = 1/4 {
+		rename 			mig3_region`x' mig_where_mem`x'
+		rename 			mig4_woreda_same`x' mig_where_same_mem`x'
+		rename 			mig5_reason`x' mig_why_mem`x'
+		rename 			mig6_work`x' mig_work_mem`x'
+	}
+	
+	forval 			x = 2/12 {
+		gen 			temp`x' = 0
+		replace 		temp`x' = 1 if retmig_index_hhm_name`x' != ""
+	}
+	gen 			num_new_mems = temp2 + temp3 + temp4 + temp5 + temp6 + temp7 ///
+						+ temp8 + temp9 + temp10 + temp11 + temp12 
+	drop			temp*
+	replace 		num_new_mems = . if wave != 8
+
+	
+	forval 			q = 1/5 {
+		forval 			x = 2/12 {
+			gen 			temp`q'_mem`x' = 1 if retmig5_join_reason`x' == `q'
+		}
+	}
+	forval 			q = 1/5 {
+		egen 			num_join_why_`q' = rowtotal(temp`q'_*)
+	}
+	drop 			temp*
+	gen 			join_urb = 1 if retmig8_rural_urban2 == 1 | retmig8_rural_urban3 == 1 | ///
+						retmig8_rural_urban4 == 1 | retmig8_rural_urban5 == 1 | ///
+						retmig8_rural_urban6 == 1 | retmig8_rural_urban7 == 1 | ///
+						retmig8_rural_urban8 == 1 | retmig8_rural_urban9 == 1 | ///
+						retmig8_rural_urban10 == 1 | retmig8_rural_urban11 == 1 | ///
+						retmig8_rural_urban12 == 1
+	gen 			join_rur = 1 if retmig8_rural_urban2 == 2 | retmig8_rural_urban3 == 2 | ///
+						retmig8_rural_urban4 == 2 | retmig8_rural_urban5 == 2 | ///
+						retmig8_rural_urban6 == 2 | retmig8_rural_urban7 == 2 | ///
+						retmig8_rural_urban8 == 2 | retmig8_rural_urban9 == 2 | ///
+						retmig8_rural_urban10 == 2 | retmig8_rural_urban11 == 2 | ///
+						retmig8_rural_urban12 == 2
+	gen 			join_work_bef = 0 if retmig9_job2 == 0 | retmig9_job3 == 0 | ///
+						retmig9_job4 == 0 | retmig9_job5 == 0 | retmig9_job6 == 0 | ///
+						retmig9_job7 == 0 | retmig9_job8 == 0 | retmig9_job9 == 0 | ///
+						retmig9_job10 == 0 | retmig9_job11 == 0 | retmig9_job12 == 0
+	replace			join_work_bef = 1 if retmig9_job2 == 1 | retmig9_job3 == 1 | ///
+						retmig9_job4 == 1 | retmig9_job5 == 1 | retmig9_job6 == 1 | ///
+						retmig9_job7 == 1 | retmig9_job8 == 1 | retmig9_job9 == 1 | ///
+						retmig9_job10 == 1 | retmig9_job11 == 1 | retmig9_job12	== 1
+	gen 			join_mem_still = 0 if retmig10_member2 == 0 | retmig10_member3 == 0 | ///
+						retmig10_member4 == 0 | retmig10_member5 == 0 | retmig10_member6 == 0 | ///
+						retmig10_member7 == 0 | retmig10_member8 == 0 | retmig10_member9 == 0 | ///
+						retmig10_member10 == 0 | retmig10_member11 == 0 | retmig10_member12 == 0	
+	replace			join_mem_still = 1 if retmig10_member2 == 1 | retmig10_member3 == 1 | ///
+						retmig10_member4 == 1 | retmig10_member5 == 1 | retmig10_member6 == 1 | ///
+						retmig10_member7 == 1 | retmig10_member8 == 1 | retmig10_member9 == 1 | ///
+						retmig10_member10 == 1 | retmig10_member11 == 1 | retmig10_member12 == 1
+	gen 			join_ret = 0 if retmig11_return2 == 2 | retmig11_return2 == 3 | ///
+						retmig11_return3 == 2 | retmig11_return3 == 3 | retmig11_return4 == 2 | ///
+						retmig11_return4 == 3 | retmig11_return5 == 2 | retmig11_return5 == 3 | ///
+						retmig11_return6 == 2 | retmig11_return6 == 3 | retmig11_return7 == 2 | ///
+						retmig11_return7 == 3 | retmig11_return8 == 2 | retmig11_return8 == 3 | ///
+						retmig11_return9 == 2 | retmig11_return9 == 3 | retmig11_return10 == 2 | ///
+						retmig11_return10 == 3 | retmig11_return11 == 2 | retmig11_return11 == 3 | ///
+						retmig11_return12 == 2 | retmig11_return12 == 3 
+	replace 		join_ret = 1 if retmig11_return2 == 1 | retmig11_return3 == 1 | ///
+						retmig11_return4 == 1 | retmig11_return5 == 1 | retmig11_return6 == 1 | ///
+						retmig11_return7 == 1 | retmig11_return8 == 1 | retmig11_return9 == 1 | ///
+						retmig11_return10 == 1 | retmig11_return11 == 1 | retmig11_return12
+	forval 			x = 1/7 {
+	    gen 			join_ret_why_`x' = 1 if retmig12_return_reason2 == `x' | ///
+							retmig12_return_reason3 == `x' | retmig12_return_reason4 == `x' | ///
+							retmig12_return_reason5 == `x' | retmig12_return_reason6 == `x' | ///
+							retmig12_return_reason7 == `x' | retmig12_return_reason8 == `x' | ///
+							retmig12_return_reason9 == `x' | retmig12_return_reason10 == `x' | ///
+							retmig12_return_reason11 == `x' | retmig12_return_reason12 == `x' 
+	}
+	gen 			join_same_job = 0 if retmig13_job_same2 == 0 | retmig13_job_same3 == 0 | ///
+						retmig13_job_same4 == 0 | retmig13_job_same5 == 0 | retmig13_job_same6 == 0 | ///
+						retmig13_job_same7 == 0 | retmig13_job_same8 == 0 | retmig13_job_same9 == 0 | ///
+						retmig13_job_same10 == 0 | retmig13_job_same11 == 0 | retmig13_job_same12 == 0 	
+	replace			join_same_job = 1 if retmig13_job_same2 == 1 | retmig13_job_same3 == 1 | ///
+						retmig13_job_same4 == 1 | retmig13_job_same5 == 1 | retmig13_job_same6 == 1 | ///
+						retmig13_job_same7 == 1 | retmig13_job_same8 == 1 | retmig13_job_same9 == 1 | ///
+						retmig13_job_same10 == 1 | retmig13_job_same11 == 1 | retmig13_job_same12 == 1 
+	forval 			x = 1/5 {
+	    gen 			join_left_why_`x' = 1 if retmig15_leave_reason2 == `x' | ///
+							retmig15_leave_reason3 == `x' | retmig15_leave_reason4 == `x' | ///
+							retmig15_leave_reason5 == `x' | retmig15_leave_reason6 == `x' | ///
+							retmig15_leave_reason7 == `x' | retmig15_leave_reason7 == `x' | ///
+							retmig15_leave_reason9 == `x' | retmig15_leave_reason10 == `x' | ///
+							retmig15_leave_reason11 == `x' | retmig15_leave_reason12 == `x' 
+	}
+	gen 			join_left_same_job = 0 if retmig16_job_same2 == 0 | retmig16_job_same3 == 0 | ///
+						retmig16_job_same4 == 0 | retmig16_job_same5 == 0 | retmig16_job_same6 == 0 | ///
+						retmig16_job_same7 == 0 | retmig16_job_same8 == 0 | retmig16_job_same9 == 0 | ///
+						retmig16_job_same10 == 0 | retmig16_job_same11 == 0 | retmig16_job_same12 == 0  
+	replace 		join_left_same_job = 1 if retmig16_job_same2 == 1 | retmig16_job_same3 == 1 | ///
+						retmig16_job_same4 == 1 | retmig16_job_same5 == 1 | retmig16_job_same6 == 1 | ///
+						retmig16_job_same7 == 1 | retmig16_job_same8 == 1 | retmig16_job_same9 == 1 | ///
+						retmig16_job_same10 == 1 | retmig16_job_same11 == 1 | retmig16_job_same12 == 1 
+						
+	ANN YOU ARE HERE: 
+	SW6a VARS
+	add above to var xwlk
+	
 	
 * fies variables 	
 	rename			fi7_outoffood fies_1
@@ -706,11 +818,13 @@
 						cr8_before_who cr8_before_who__96 cr8_before_who_other ///
 						fi1_outoffood fi2_hungrynoteat fi3_noteatfullday lo3_impact ///
 						weight *why_other ea_id ac5_edu_type emp_act_other emp_stat_other ///
-						farm_why ag_live_other submission_date round attempt em19_* ///
+						em22_farm_norm_why ag_live_other submission_date round attempt em19_* ///
 						ag_live__96 bh2_handwash_freq ac2_medtreat_type ac1_medtreat ///
 						ac3_other_access ac4_*_access_reason_other bh10_cov_vaccine_why ///
 						bh10_cov_vaccine_why__96 bh10_cov_vaccine_why_other inded* ///
-						em15a_bus
+						em15a_bus em20e_bus_resp_0 em21_farm em23_farm_norm_why ///
+						em23_farm_norm_why_other em26_we_layoff_covid em25_we_layoff ///
+						em24_we em22_farm_norm mig3_region_other* retmig*
 						
 * rename regions
 	replace 		region = 1001 if region == 1

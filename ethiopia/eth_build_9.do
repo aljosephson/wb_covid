@@ -120,7 +120,22 @@
 	use 			`temp_hhsize', clear
 	merge 			1:1 household_id using `temp_micro', assert(3) nogen
 	//merge 			1:1 household_id using `temp_fies', nogen
-	
+
+* rename variables inconsistent with other rounds	
+	* livestock 
+		rename 		ph9_livestock ag_live
+		rename 		ph10_livestock_type_1 ag_live_1
+		rename 		ph10_livestock_type_2 ag_live_2
+		rename 		ph10_livestock_type_3 ag_live_3
+		rename 		ph10_livestock_type_4 ag_live_5
+		rename 		ph10_livestock_type_5 ag_live_4
+		drop 		ph10_livestock_type_*
+		rename 		ph11_livestock_covid ag_live_affect
+		rename 		ph12_livestock_covid_how_* ag_live_affect_*
+		drop 		ag_live_affect__96
+		rename 		ph13_farm_sell ag_sell_norm
+		rename 		ph14_farm_sell_expect ag_sell_rev_exp
+		
 * drop vars
 	drop 			em14_work_cur_notable_why_other as4_food_source_other ///
 						as4_forwork_source_other as4_cash_source_other ///

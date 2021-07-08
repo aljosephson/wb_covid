@@ -97,7 +97,6 @@
 	replace 		bus_emp = 1 if s8q08 == 1
 	rename 			s8q12 farm_emp
 	
-	
 	foreach 		var in farm bus wage {
 	    replace 	`var'_emp = 0 if `var'_emp == 2
 	}	
@@ -157,6 +156,7 @@
 * add country & wave 
 	gen 			wave = 0
 	gen 			country = 4
+	gen 			hhid_uga = _n //temp hhid, not sure how to match
 	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace

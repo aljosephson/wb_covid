@@ -96,7 +96,7 @@
 			merge 				m:1 country wave using `temp`c'' 
 			keep 				if havedata == 1
 
-	* generate index for each country (fraction out of 8 income sources)
+	* generate index for each country (fraction out of 7 income sources)
 			egen 				inc_count = rowtotal(bus_inc farm_inc ///
 									isp_inc pen_inc remit_inc wage_inc oth_inc3)
 			replace 			inc_count = . if bus_inc >= . | farm_inc >= . ///
@@ -136,15 +136,17 @@ pause
 * 		increase number of waves in each country (same 7 as denominator)	
 * **********************************************************************
 	
-** ETHIOPIA **
-	* baseline
+** baseline ** 	
+		* baseline
 		* secondary wage var
-			gen 				wage_inc_sec = wage_emp if country == 1 & wave == 0
+			gen 				wage_inc_sec = wage_emp if wave == 0
 		* secondary bus var
-			gen 				bus_inc_sec = bus_emp if country == 1 & wave == 0
+			gen 				bus_inc_sec = bus_emp if wave == 0
 		* secondary farm var	
-			gen 				farm_inc_sec = farm_emp if country == 1 & wave == 0
-			
+			gen 				farm_inc_sec = farm_emp if wave == 0
+	
+** ETHIOPIA **
+	* same as uni_index		
 			
 ** MALAWI ** 
 	* add wave 5 - only other wave with wage inc available
@@ -290,7 +292,7 @@ pause
 			merge 				m:1 country wave using `temp`c'' 
 			keep 				if havedata == 1
 
-	* generate index for each country (fraction out of 8 income sources)
+	* generate index for each country (fraction out of 7 income sources)
 			egen 				inc_count_sec = rowtotal(bus_inc_sec farm_inc_sec ///
 									isp_inc_sec pen_inc_sec remit_inc_sec wage_inc_sec ///
 									oth_inc3_sec)
@@ -317,7 +319,7 @@ pause
 	
 	merge 					1:1 country wave hhid using `temp_sec_index', nogen
 		
-/*		
+		
 * **********************************************************************
 * 4 - generate summary statistics and graphs
 * **********************************************************************
@@ -448,7 +450,7 @@ pause
 
 ** MALAWI **
 	* wave 6
-		* would have to exclude wave and bus 
+		* would have to exclude wage and bus 
 
 ** NIGERIA **
 	

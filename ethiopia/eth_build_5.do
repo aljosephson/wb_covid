@@ -122,6 +122,26 @@
 	merge 			1:1 household_id using `temp_micro', assert(3) nogen
 	merge 			1:1 household_id using `temp_fies', nogen
 
+* rename variables inconsistent with other rounds	
+	* livestock 
+		drop 			ls2_type ls4_covid_impact ls4_covid_impact__96 ls4_covid_impact_other ///
+						ls12_sell_notable ls12_sell_notable__96 ls12_sell_notable_other 
+		rename 			ls1_livestock ag_live
+		rename 			ls2_type* ag_live*
+		rename 			ls3_covid ag_live_affect
+		rename 			ls4_covid_impact_1 ag_live_affect_1
+		rename 			ls4_covid_impact_2 ag_live_affect_3
+		rename 			ls4_covid_impact_3 ag_live_affect_4
+		rename 			ls4_covid_impact_4 ag_live_affect_7
+		rename 			ls5_usual ag_live_sell
+		rename 			ls6_revenue_chg ag_live_sell_chg
+		rename 			ls7_since_covid ag_live_sell_want
+		rename 			ls8_because_covid ag_live_sell_why
+		rename 			ls9_sell_able ag_live_sell_able
+		rename 			ls10* ag_live* 
+		rename 			ls11_ ag_live_sell_pr
+		rename 			ls12_sell_notable* ag_live_sell_nowhy*	
+	
 * save round file
 	save			"$export/wave_0`w'/r`w'", replace		
 	

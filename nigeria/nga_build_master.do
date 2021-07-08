@@ -141,7 +141,7 @@
 	rename 			s3aq1 swift_rice
 	rename 			s3aq2 swift_chick
 	rename 			s3aq3 swift_beef
-	rename 			s3aq4 swift_milk
+	rename 			s3aq4 swift_milkp
 	rename 			s3aq5 swift_card
 	rename 			s3aq6__1 swift_cook_wood
 	rename 			s3aq6__2 swift_cook_oth

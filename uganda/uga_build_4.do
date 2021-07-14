@@ -163,7 +163,7 @@
 	rename 			s1q05 sex_mem
 	rename 			s1q06 age_mem
 	rename 			s1q07 relat_mem
-	
+
 * generate counting variables
 	gen				hhsize = 1 if curr_mem == 1
 	gen 			hhsize_adult = 1 if curr_mem == 1 & age_mem > 18 & age_mem < .

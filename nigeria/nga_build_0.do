@@ -53,6 +53,7 @@
 	rename 			s1q4 age_mem
 	rename 			s1q4a curr_mem
 	replace 		curr_mem = 0 if curr_mem == 2 
+	gen 			new_mem = 1 if curr_mem == . & sex_mem != .
 			
 * generate counting variables
 	gen				hhsize = 1 if curr_mem == 1
@@ -66,7 +67,7 @@
 	label var 		sexhh "Sex of household head"
 	
 * collapse data
-	collapse		(sum) hhsize hhsize_adult hhsize_child hhsize_schchild ///
+	collapse		(sum) new_mem hhsize hhsize_adult hhsize_child hhsize_schchild ///
 					(max) sexhh, by(hhid_nga)
 	lab var			hhsize "Household size"
 	lab var 		hhsize_adult "Household size - only adults"

@@ -111,7 +111,7 @@
 * save tempfile 
 	tempfile 		temp1
 	save 			`temp1'
-	
+
 	
 * ***********************************************************************
 *  other income  

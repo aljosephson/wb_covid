@@ -44,7 +44,7 @@
 	
 * load data
 	use 			"$root/wave_0`w'/Household/GSEC2", clear
-	
+
 * rename other variables 
 	rename 			hhid baseline_hhid
 	rename 			PID ind_id 

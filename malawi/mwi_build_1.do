@@ -197,6 +197,7 @@
 
 * load data
 	use				"$fies/MW_FIES_round`w'.dta", clear
+	rename 			HHID y4_hhid
 	drop 			country round
 
 * save temp file
@@ -212,9 +213,10 @@
 	use				"$root/wave_0`w'/secta_Cover_Page_r`w'", clear
 	
 * merge formatted sections
-	foreach 		x in a b c d e {
+	foreach 		x in a b c d {
 	    merge 		1:1 HHID using `temp`x'', nogen
 	}
+	merge 			1:1 y4_hhid using `tempe', nogen
 	
 * merge in other sections
 	merge 1:1 		HHID using "$root/wave_0`w'/sect3_Knowledge_r`w'.dta",nogen

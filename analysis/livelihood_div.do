@@ -66,7 +66,7 @@
 							| casual_emp == 0
 	replace  			oth_inc3 = 1 if oth_inc == 1 | ngo_inc == 1 ///
 							| unemp_inc == 1 | asst_inc == 1 | gov_inc == 1 ///
-							| casual_emp == 0
+							| casual_emp == 1
 							
 * generate government, ngo, unemployment
 	gen					gov_ngo_inc = 0 if ngo_inc == 0 | unemp_inc == 0 ///

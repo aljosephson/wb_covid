@@ -52,29 +52,34 @@
 * 1 - generate, format, and clean variables
 * **********************************************************************	
 	
-* generate other income 2 (NGO, unemp, non-family assistance, casual emp) 
+* generate other income 2 (oth, NGO, unemp) 
 *	(in baseline this includes sale of assets)
 	gen  				oth_inc2 = 0 if oth_inc == 0 | ngo_inc == 0 ///
-							| unemp_inc == 0 | asst_inc == 0 | casual_emp == 0
+							| unemp_inc == 0 
 	replace  			oth_inc2 = 1 if oth_inc == 1 | ngo_inc == 1 ///
-							| unemp_inc == 1 | asst_inc == 1 | casual_emp == 1
+							| unemp_inc == 1  
 							
-* generate other income 3 (NGO, unemp, non-family assistance, gov_inc, casual emp)
+* generate other income 3 (oth, NGO, unemp, gov_inc)
 *	(in baseline this includes sale of assets)
 	gen  				oth_inc3 = 0 if oth_inc == 0 | ngo_inc == 0 ///
-							| unemp_inc == 0 | asst_inc == 0 | gov_inc == 0 ///
-							| casual_emp == 0
+							| unemp_inc == 0 | gov_inc == 0
 	replace  			oth_inc3 = 1 if oth_inc == 1 | ngo_inc == 1 ///
-							| unemp_inc == 1 | asst_inc == 1 | gov_inc == 1 ///
-							| casual_emp == 1
+							| unemp_inc == 1 |  gov_inc == 1 
 							
 * generate government, ngo, unemployment
 	gen					gov_ngo_inc = 0 if ngo_inc == 0 | unemp_inc == 0 ///
 							| gov_inc == 0
 	replace				gov_ngo_inc = 1 if ngo_inc == 1 | unemp_inc == 1 ///
 							| gov_inc == 1
-		
-		
+* combine wage and casual
+	replace 			wage_inc = 0 if casual_emp == 0  & wage_inc >= .
+	replace 			wage_inc = 1 if casual_emp == 1
+	
+* combine asst_inc and remit_inc
+	replace 			remit_inc = 0 if asst_inc == 0 & remit_inc >= .
+	replace 			remit_inc = 1 if asst_inc == 1 
+	
+	
 * **********************************************************************
 * 2 - uniform indices without secondary variables (excluding BF)
 * **********************************************************************

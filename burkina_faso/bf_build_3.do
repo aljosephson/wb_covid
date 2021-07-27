@@ -211,6 +211,15 @@
 	rename 		s10q01101 asst_food
 	rename 		s10q01102 asst_cash
 	rename 		s10q01103 asst_kind
+	
+	replace 	asst_food = 0 if asst_food == 2
+	replace 	asst_cash = 0 if asst_cash == 2
+	replace 	asst_kind = 0 if asst_kind == 2
+	
+	gen				asst_any = 0 if asst_food == 0 | asst_cash == 0 | ///
+						asst_kind == 0
+	replace 		asst_any = 1 if asst_food == 1 | asst_cash == 1 | ///
+						asst_kind == 1
 
 * save temp file
 	tempfile		tempd

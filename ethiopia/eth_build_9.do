@@ -85,7 +85,7 @@
 * ***********************************************************************
 
 * load microdata
-	use				"$root/wave_0`w'/200125_WB_LSMS_HFPM_HH_Survey-Round`w'_Clean-Public", clear
+	use				"$root/wave_0`w'/r`w'_wb_lsms_hfpm_hh_survey_public_microdata", clear
 
 * generate round variable
 	gen				wave = `w'
@@ -94,7 +94,7 @@
 * save temp file
 	tempfile 		temp_micro
 	save 			`temp_micro'	
-	
+
 	
 * ***********************************************************************
 * 3 - FIES score
@@ -139,7 +139,7 @@
 * drop vars
 	drop 			em14_work_cur_notable_why_other as4_food_source_other ///
 						as4_forwork_source_other as4_cash_source_other ///
-						as4_other_source_other ir1_whyendearly_other
+						as4_other_source_other 
 	
 	destring 		cs5_eaid cs3b_kebeleid, replace
 	

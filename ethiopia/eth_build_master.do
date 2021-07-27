@@ -108,7 +108,7 @@
 
 * rationalize variables across waves
 	gen 			phw_cs = .
-	foreach 		r in 1 2 3 4 5 6 7 8 { //"$waves" FIGURE THIS OUT, WHY NOT IN 9??
+	foreach 		r in "$waves" {
 		replace 	phw_cs = phw`r' if phw`r' != . & wave == `r'
 		drop 		phw`r'
 	}
@@ -652,7 +652,7 @@
 						retmig16_job_same4 == 1 | retmig16_job_same5 == 1 | retmig16_job_same6 == 1 | ///
 						retmig16_job_same7 == 1 | retmig16_job_same8 == 1 | retmig16_job_same9 == 1 | ///
 						retmig16_job_same10 == 1 | retmig16_job_same11 == 1 | retmig16_job_same12 == 1 
- 	
+
 * assistance variables - updated via convo with Talip 9/1
 	gen				asst_food = as1_assist_type_1
 	replace			as3_forwork_value_food = . if as3_forwork_value_food < 0
@@ -667,7 +667,7 @@
 	lab var			asst_cash "Recieved cash assistance"
 	lab val			asst_cash assist
 	
-	gen				asst_kind = 1 if as1_assist_type_other != ""
+	rename			as1_assist_type__96 asst_kind 
 	lab var			asst_kind "Recieved in-kind assistance"
 	lab val			asst_kind assist
 	
@@ -680,7 +680,7 @@
 	
 	drop			as1_assist_type as1_assist_type_1 as1_assist_type_2 ///
 						as1_assist_type_3 as1_assist_type_0 as1_assist_type__98 ///
-						as1_assist_type__99 as1_assist_type__96 ///
+						as1_assist_type__99 ///
 						as1_assist_type_other as3_food_value as2_food_psnp ///
 						as4_food_source as4_food_source_other ///
 						as3_forwork_value_food as3_forwork_value_cash ///

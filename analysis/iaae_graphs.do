@@ -130,7 +130,6 @@
 							over(wave, lab(labs(medlarge)))  title("Malawi", size(vlarge)) ///
 							bar(1, color(maroon*2)) bar(2, color(navy*1.5)) bar(3, color(stone*1.3)) ///
 							bar(4, color(eltgreen*1.5)) outergap(50) ///
-							ytitle("Percent of individuals", margin(0 -1 -1 10) size(large)) ///
 							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(med)) ///
 							legend(	label (1 "Avoided crowds") label (2 "Increased hand washing") ///
 							label (3 "Avoided physical contact") label (4 "Wore mask in public") pos(6) col(4) ///
@@ -140,6 +139,7 @@
 							over(wave, lab(labs(medlarge))) title("Uganda", size(vlarge)) ///
 							bar(1, color(maroon*2)) bar(2, color(navy*1.5)) bar(3, color(stone*1.3)) ///
 							bar(4, color(eltgreen*1.5)) outergap(450) ///
+							ytitle("Percent of individuals", margin(0 -1 -1 10) size(large)) ///
 							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(med)) ///
 							legend(	label (1 "Avoided crowds") label (2 "Increased hand washing") ///
 							label (3 "Avoided physical contact") label (4 "Wore mask in public") pos(6) col(4) ///
@@ -201,15 +201,26 @@
 * 3 - income 
 * **********************************************************************
 
+* generate means by country and wave for each income source
+	egen 				cw = group(country wave)
+	egen 				temp = max(farm_dwn), by(cw)
+	levelsof 			cw if temp != ., local(cw) 
 	foreach 			var in  farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {
-	    egen 				`var'_mean = mean(`var'), by(country wave)
-	}
-
+		gen 				`var'_mean = .
+	}	
+	foreach 			x in `cw' {
+		foreach 			var in farm_dwn bus_dwn wage_dwn remit_dwn other_dwn {  
+			quietly: mean 		`var' [pweight = hhw_cs] if cw == `x'
+			replace 			`var'_mean = el(e(b),1,1) if cw == `x' 
+		}
+		}
+	
+	
 	preserve
 	keep 				if country == 1
-	keep 				if farm_dwn != .
+	keep 				if temp != .
 	line 				farm_dwn_mean bus_dwn_mean wage_dwn_mean remit_dwn_mean other_dwn_mean wave ///
-							[pweight = hhw_cs] if country == 1, sort(wave) title("Ethiopia", size(vlarge)) ///
+							if country == 1, sort(wave) title("Ethiopia", size(vlarge)) ///
 							lp(solid solid solid solid solid) ///
 							lcolor(navy*.6 teal*.6 khaki*.6 cranberry*.6 purple*.6) ///
 							lwidth(vthick vthick vthick vthick vthick) ///
@@ -224,9 +235,9 @@
 	
 	preserve
 	keep 				if country == 2
-	keep 				if farm_dwn != .
+	keep 				if temp != .
 	line 				farm_dwn_mean bus_dwn_mean wage_dwn_mean remit_dwn_mean other_dwn_mean wave ///
-							[pweight = hhw_cs] if country == 2, sort(wave) title("Malawi", size(vlarge)) ///
+							if country == 2, sort(wave) title("Malawi", size(vlarge)) ///
 							lp(solid solid solid solid solid) ///
 							lcolor(navy*.6 teal*.6 khaki*.6 cranberry*.6 purple*.6) ///
 							lwidth(vthick vthick vthick vthick vthick) ///
@@ -237,9 +248,9 @@
 	
 	preserve
 	keep 				if country == 3
-	keep 				if farm_dwn != .
+	keep 				if temp != .
 	line 				farm_dwn_mean bus_dwn_mean wage_dwn_mean remit_dwn_mean other_dwn_mean wave ///
-							[pweight = hhw_cs] if country == 3, sort(wave) title("Nigeria", size(vlarge)) ///
+							if country == 3, sort(wave) title("Nigeria", size(vlarge)) ///
 							lp(solid solid solid solid solid) ///
 							lcolor(navy*.6 teal*.6 khaki*.6 cranberry*.6 purple*.6) ///
 							lwidth(vthick vthick vthick vthick vthick) ///
@@ -251,9 +262,9 @@
 	
 	preserve
 	keep 				if country == 4	
-	keep 				if farm_dwn != .
+	keep 				if temp != .
 	line 				farm_dwn_mean bus_dwn_mean wage_dwn_mean remit_dwn_mean other_dwn_mean wave ///
-							[pweight = hhw_cs] if country == 4, sort(wave) title("Uganda", size(vlarge)) ///
+							if country == 4, sort(wave) title("Uganda", size(vlarge)) ///
 							lp(solid solid solid solid solid) ///
 							lcolor(navy*.6 teal*.6 khaki*.6 cranberry*.6 purple*.6) ///
 							lwidth(vthick vthick vthick vthick vthick) ///
@@ -261,8 +272,11 @@
 							xlabel(6 "June" 7 "July" 8 "Aug" 9 "Sept"  10 "Oct" 11 "Nov" 12 "Dec" 13 "Jan" 14 "Feb", ///
 							nogrid labs(large)) name(inc4, replace)
 	restore 
-		
+	
+	drop 				temp
+	
 	grc1leg2 			inc1 inc2 inc3 inc4, col(2) iscale(.5) commonscheme 
+	
 	graph export 		"$output/income_all_line.png", as(png) replace
 	graph export 		"$output/income_all_line.emf", as(emf) replace
 

@@ -89,7 +89,7 @@
 * ***********************************************************************
 *  labor & time use  
 * ***********************************************************************
-	
+
 * load data
 	use 			"$root/wave_0`w'/HH/sect4_hh_w4", clear
 	drop 			if s4q00 == 2
@@ -97,21 +97,39 @@
 * rename variables 	
 	rename 			household_id hhid_eth 
 	rename 			s4q05 farm_emp 
-	rename 			s4q08 bus_emp 
 	rename 			s4q10 casual_emp
 	rename 			s4q12 wage_emp
 	
-	foreach 		var in farm bus casual wage {
+	foreach 		var in farm casual wage {
 	    replace 	`var'_emp = 0 if `var'_emp == 2
 	}
 	
 * collapse to hh level
-	collapse 		(max) farm_emp bus_emp casual_emp wage_emp, by(hhid)
+	collapse 		(max) farm_emp casual_emp wage_emp, by(hhid)
 	
 * save tempfile 
 	tempfile 		temp1
 	save 			`temp1'
 
+	
+* ***********************************************************************
+*  NFE income
+* ***********************************************************************
+
+* load data
+	use 			"$root/wave_0`w'/HH/sect12b1_hh_w4", clear
+THIS DATA DOES NOT MAKE SENSE - include sales and review
+make sure to consider months in operation when calculating income based on avg monthly sales 
+asdfd
+* generate number of NFEs and indicator if any
+	gen 			num_bus = 1 
+	collapse 		(sum) num_bus, by(household_id)
+	gen 			bus_inc = 1 if num_bus > 0 
+	
+* save tempfile 
+	tempfile 		temp2
+	save 			`temp2'	
+	
 	
 * ***********************************************************************
 *  other income  
@@ -147,8 +165,8 @@
 	keep 			hhid *_inc
 	
 * save tempfile 
-	tempfile 		temp2
-	save 			`temp2'
+	tempfile 		temp3
+	save 			`temp3'
 		
 	
 * ***********************************************************************
@@ -159,6 +177,7 @@
 	use 			`temp0', clear
 	merge 			1:1 hhid using `temp1', assert(3) nogen
 	merge 			1:1 hhid using `temp2', assert(3) nogen
+	merge 			1:1 hhid using `temp3', assert(3) nogen
 	lab def 		yesno 1 "Yes" 0 "No"
 	ds *_inc *_emp
 	foreach 		var in `r(varlist)' {

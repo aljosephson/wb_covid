@@ -408,19 +408,20 @@
 * 4 - food insecurity 
 * **********************************************************************
 		
-	forval 				w = 5/10 {
+	forval 				w = 5/11 {
 		gen 			p_mod_`w' = p_mod if wave == `w'
 	}
 
 	
-	graph bar 			(mean) p_mod_5 p_mod_6 p_mod_7 p_mod_8 p_mod_9 p_mod_10 [pweight = wt_18], ///
-							over(country, lab(labs(vlarge))) ///
+	graph bar 			(mean) p_mod_5 p_mod_6 p_mod_7 p_mod_8 p_mod_9 p_mod_10 p_mod_11  ///
+							[pweight = wt_18], over(country, gap(*7) lab(labs(vlarge)))  ///
 							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(large)) ///
-							ytitle("Prevalence", size(vlarge))  ///
-							bar(1, color(navy*1.5)) bar(2, color(teal*1.5)) bar(3, color(khaki*1.5)) ///
-							bar(4, color(brown*2.3)) bar(5, color(eltgreen*5)) bar(6, color(maroon*3)) ///
+							ytitle("Prevalence", size(vlarge)) bar(1, color(navy*1.5))  ///
+							bar(2, color(teal*1.5)) bar(3, color(khaki*1.5)) bar(4, color(brown*2.3)) ///
+							 bar(5, color(eltgreen*5)) bar(6, color(maroon*3)) bar(7, color(erose*2)) ///
 							legend(label (1 "May") label (2 "June") label (3 "July") label (4 "Aug") ///
-							label (5 "Sept") label (6 "Oct") col(6) margin(-1.5 0 0 0)) name(fies, replace)
+							label (5 "Sept") label (6 "Oct") label (7 "Nov") col(7) margin(-1.5 0 0 0)) ///
+							name(fies, replace)
 
 	grc1leg2 			fies, iscale(.5) pos(6) commonscheme 
 

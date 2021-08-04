@@ -1,22 +1,22 @@
 * Project: WB COVID
-* Created on: April 2021
+* Created on: Aug 2021
 * Created by: amf
 * Edited by: amf
-* Last edit: April 2021 
+* Last edit: Aug 2021 
 * Stata v.16.1
 
 * does
-	* reads in nineth round of BF data
-	* builds round 9
-	* outputs round 9
+	* reads in tenth round of BF data
+	* builds round 10
+	* outputs round 10
 
 * assumes
 	* raw BF data
 
 * TO DO:
 	* GET FIES DATA
-
-
+	
+	
 * **********************************************************************
 * 0 - setup
 * **********************************************************************
@@ -32,10 +32,10 @@
 	log using		"$logout/bf_build", append
 
 * set local wave number & file number
-	local			w = 9
+	local			w = 10
 	
 * make wave folder within refined folder if it does not already exist 
-	capture mkdir 	"$export/wave_0`w'" 
+	capture mkdir 	"$export/wave_`w'" 
 
 
 * ***********************************************************************
@@ -43,7 +43,7 @@
 * ***********************************************************************	
 
 * load respondant id data	
-	use 			"$root/wave_0`w'/r`w'_sec1a_info_entretien_tentative", clear
+	use 			"$root/wave_`w'/r`w'_sec1a_info_entretien_tentative", clear
 	keep 			if s01aq08 == 1
 	rename 			s01aq09 membres__id
 	duplicates 		drop hhid membres__id, force
@@ -55,7 +55,7 @@
 	keep 			hhid membres__id
 
 * load roster data with gender
-	merge 1:1		hhid membres__id using "$root/wave_0`w'/r`w'_sec2_liste_membre_menage"
+	merge 1:1		hhid membres__id using "$root/wave_`w'/r`w'_sec2_liste_membre_menage"
 	keep 			if _m == 1 | _m == 3
 	keep 			hhid s02q05 membres__id s02q07 s02q06
 	rename 			membres__id resp_id
@@ -66,14 +66,14 @@
 * save temp file
 	tempfile		tempa
 	save			`tempa'
-	
 
+	
 * ***********************************************************************
 * 1b - get household size and gender of HOH
 * ***********************************************************************	
 
 * load roster data	
-	use 			"$root/wave_0`w'/r`w'_sec2_liste_membre_menage", clear
+	use 			"$root/wave_`w'/r`w'_sec2_liste_membre_menage", clear
 	
 * rename other variables 
 	rename 			membres__id ind_id 
@@ -168,7 +168,7 @@
 * ***********************************************************************		
 	
 * load data	
-	use 		"$root/wave_0`w'/r`w'_sec8_autres_revenu",clear
+	use 		"$root/wave_`w'/r`w'_sec8_autres_revenu",clear
 	
 * drop other vars
 	keep 		hhid revenu__id s08q0*
@@ -192,6 +192,30 @@
 * save temp file
 	tempfile		tempc
 	save			`tempc'
+		
+	
+	
+* ***********************************************************************
+*  3 - shocks
+* ***********************************************************************		
+
+* load data
+	use 			"$root/wave_`w'/r`w'_sec9_chocs", clear
+
+* drop other shock
+	drop			s09q03_autre
+	
+* generate shock variables
+	forval 			x = 1/13 {
+		gen 		shock_`x' = s09q01 if chocs__id == `x'
+	}
+
+* collapse to household level	
+	collapse 		(max) s09q03__1-shock_13, by(hhid)
+	
+* save temp file
+	tempfile		tempd
+	save			`tempd'	
 	
 
 * ***********************************************************************
@@ -210,28 +234,41 @@
 	save			`tempe'	
 
 */	
-	
+
 
 * ***********************************************************************
-*  5 - merge
+*  6 - merge
 * ***********************************************************************
 
 * load cover data
-	use 		"$root/wave_0`w'/r`w'_sec0_cover", clear
+	use 		"$root/wave_`w'/r`w'_sec0_cover", clear
 	
 * merge formatted sections
-	foreach 		x in a b c {
+	foreach 		x in a b c d {
 	    merge 		1:1 hhid using `temp`x'', nogen
 	}
 
 * merge in other sections
-	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec5_acces_service_base", nogen
-	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec6a_emplrev_general", nogen
-	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec6b_emplrev_travailsalarie", nogen
-	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec6c_emplrev_nonagr", nogen
-	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec7_securite_alimentaire", nogen
-
+	merge 1:1 	hhid using "$root/wave_`w'/r`w'_sec2b_sante_mentale", nogen			
+	merge 1:1 	hhid using "$root/wave_`w'/r`w'_sec3_connaisance_covid19", nogen	
+	merge 1:1 	hhid using "$root/wave_`w'/r`w'_sec4_comportaments", nogen	
+	merge 1:1 	hhid using "$root/wave_`w'/r`w'_sec4b_vaccination_covid19", nogen	
+	merge 1:1 	hhid using "$root/wave_`w'/r`w'_sec5_acces_service_base", nogen
+	merge 1:1 	hhid using "$root/wave_`w'/r`w'_sec5b_credit", nogen	
+	merge 1:1 	hhid using "$root/wave_`w'/r`w'_sec6a_emplrev_general", nogen
+	merge 1:1 	hhid using "$root/wave_`w'/r`w'_sec6db_emplrev_elevage", nogen
+	merge 1:1 	hhid using "$root/wave_`w'/r`w'_sec7_securite_alimentaire", nogen
+	merge 1:1 	hhid using "$root/wave_`w'/r`w'_sec9b_inquietudes", nogen
+	merge 1:1 	hhid using "$root/wave_`w'/r`w'_sec11_frag_confl_violence", nogen
+	
 * clean variables inconsistent with other rounds
+
+	* vaccine 
+	rename 			s04bq02 cov_vac_know
+	rename 			s04bq04 have_vac
+	rename 			s04bq06 cov_vac 
+	rename 			s04bq07 s04bq03 // make this match round 5
+	rename 			s04bq08 s04bq04 // make this match round 5
 	
 	* ac_med
 	rename 			s05q01a ac_med
@@ -239,10 +276,44 @@
 	replace 		ac_med = 2 if ac_med == 5
 	replace 		ac_med = 3 if ac_med == 6
 	
+	* medserv
+	rename 			s05q03d_1 ac_medserv_why 
+	replace 		ac_medserv_why = 8 if ac_medserv_why == 7 
+	
+	* education 
+	rename 			s05q05 sch_child
+	rename 			s05q06a sch_boy
+	rename 			s05q06b sch_girl
+	rename 			s05q07 sch_reopen 
+	replace 		sch_reopen  = sch_reopen  - 1 if sch_reopen  > 1
+	rename 			s05q08a sch_reopen_boy
+	rename 			s05q08b sch_reopen_girl
+	rename 			s05q09__* sch_att_why_*
+	drop 			s05q09_autre sch_att_why_96
+	
 	* employment 
 	rename 			s06q04_0 emp_chg_why
 	drop 			s06q04_0_autre
 	replace 		emp_chg_why = 96 if emp_chg_why == 13
+	
+	* livestock 
+	rename 			s06dbq01 ag_live
+	forval 			x = 1/4 {
+		rename 			s06dbq02__`x' ag_live_`x'
+	}
+	rename 			s06dbq02__5 ag_live_7
+	rename 			s06dbq03__1 ag_live_affect_1
+	rename 			s06dbq03__2 ag_live_affect_3
+	rename 			s06dbq03__3 ag_live_affect_4
+	rename 			s06dbq03__4 ag_live_affect_7
+	rename 			s06dbq04 ag_live_sell_able	
+	rename 			s06dbq05 ag_live_sell_why
+	rename 			s06dbq06 ag_live_sell_21
+	rename 			s06dbq07 ag_live_sell_pr
+	rename 			s06dbq08__* ag_live_sell_nowhy_*
+	drop 			ag_live_sell_nowhy_7
+	
+	drop 			s06dbq03__96 s06dbq03_autre
 	
 * generate round variables
 	gen				wave = `w'
@@ -253,6 +324,6 @@
 	label var		phw_pnl "sampling weights- panel"
 	
 * save round file
-	save			"$export/wave_0`w'/r`w'", replace
+	save			"$export/wave_`w'/r`w'", replace
 
 /* END */		

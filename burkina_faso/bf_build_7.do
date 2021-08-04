@@ -258,6 +258,7 @@
 	merge 1:1 	hhid using "$root/wave_0`w'/r`w'_sec7_securite_alimentaire", nogen
 
 * clean variables inconsistent with other rounds
+	
 	* medserv
 	rename 			s05q03d_1 ac_medserv_why 
 	replace 		ac_medserv_why = 8 if ac_medserv_why == 7 

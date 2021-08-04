@@ -21,7 +21,7 @@
 * **********************************************************************
 
 * define list of waves
-	global 			waves "1" "2" "3" "4" "5" "6" "7" "8" 
+	global 			waves "1" "2" "3" "4" "5" "6" "7" "8" "9" "10"
 	
 * define 
 	global	root	=	"$data/burkina_faso/raw"
@@ -66,10 +66,13 @@
 * append round datasets to build master panel
 	foreach 		r in "$waves" {
 	    if 			`r' == 1 {
-			use		"$export/wave_01/r1", clear
+					use	"$export/wave_01/r1", clear
+		}
+		if 			`r' == 10  {
+					append using "$export/wave_`r'/r`r'"
 		}
 		else {
-			append 	using "$export/wave_0`r'/r`r'"
+					append using "$export/wave_0`r'/r`r'"
 		}
 	}
 	compress
@@ -188,7 +191,7 @@
 	
 * COVID 
 	rename 			s04bq01 cov_test
-	rename 			s04bq02 cov_vac
+
 	gen 			cov_vac_no_why_1 = 1 if s04bq03 == 1
 	replace 		cov_vac_no_why_1 = 0 if s04bq03 != 1 & s04bq03 != .
 	gen 			cov_vac_no_why_2 = 1 if s04bq03 == 2
@@ -217,6 +220,11 @@
 	
 	drop 			s04bq03 s04bq04 s04bq03_autre s04bq04_autre
 	
+	rename 			s04bq03__* know_vac_*
+	rename 			s04bq05 vac_type 
+	
+	drop 			s04bq05_autre s04bq07_autre s04bq08_autre
+
 * access
 	gen 			ac_med_need = 0 if ac_med == 3
 	replace 		ac_med_need = 1 if ac_med < 3
@@ -322,6 +330,7 @@
 	replace 		ac_drink_why = 11 if ac_drink_why == 4 
 	replace 		ac_drink_why = 12 if ac_drink_why == 5
 	replace 		ac_drink_why = . if ac_drink_why == 6
+	replace 		ac_drink_why = 15 if ac_drink_why == 10 & wave == 10
 	drop 			s05q04_2_autre
 	
 	rename			s05q04_3 ac_water
@@ -338,6 +347,7 @@
 	
 	rename 			s05q04_5 ac_soap 
 	rename 			s05q04_6 ac_soap_why
+	replace 		ac_soap_why = 6 if ac_soap_why == 7 & wave == 10
 	replace 		ac_soap_why = 6 if ac_soap_why == 9
 	replace 		ac_soap_why = 9 if ac_soap_why == 7
 	replace 		ac_soap_why = . if ac_soap_why == 10
@@ -560,31 +570,8 @@
 	rename 			s06dq21__6 ag_ac_anim_why_6
 	rename 			s06dq21__7 ag_ac_anim_why_7
 	drop 			s06dq20_* s06dq21_*
-	
-* livestock 
-	replace 		ag_live = s06dbq01 if ag_live == . & s06dbq01 != . 
-	drop	 		s06dbq01 
-	forval 			x = 1/4 {
-		rename 			s06dbq02__`x' ag_live_`x'
-	}
-	rename 			s06dbq02__5 ag_live_7
-	rename 			s06dbq03 ag_live_affect
-	rename 			s06dbq04__1 ag_live_affect_1
-	rename 			s06dbq04__2 ag_live_affect_3
-	rename 			s06dbq04__3 ag_live_affect_4
-	rename 			s06dbq04__4 ag_live_affect_7
-	drop 			s06dbq04__96 s06dbq04_autre
-	rename 			s06dbq06 ag_live_sell
-	rename 			s06dbq07 ag_live_sell_chg
-	rename 			s06dbq08 ag_live_sell_want
-	rename 			s06dbq09 ag_live_sell_why
-	rename 			s06dbq10 ag_live_sell_able
-	rename 			s06dbq11 ag_live_sell_cond
-	rename 			s06dbq12 ag_live_sell_pr
-	forval 			x = 1/6{
-	    rename 		s06dbq13__`x' ag_live_sell_nowhy_`x'
-	}
-	
+
+ANN YOU ARE HERE 
 * FIES
 	rename 			s07q01 fies_4
 	rename 			s07q02 fies_5

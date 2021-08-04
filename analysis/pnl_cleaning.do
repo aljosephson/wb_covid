@@ -418,7 +418,7 @@
 							8 "restriction to go out" 9 "increase in price" 10 "cannot afford" ///
 							11 "afraid to get viurs" 12 "water source too far" ///
 							13 "too many people at water source" 14 "large household size" ///
-							15 "lack of money" 16 "cannot talk about it", replace
+							15 "lack of money/resources" 16 "cannot talk about it", replace
 	lab val 			ac_water_why ac_water_why
 	
 * access to cleaning supllies
@@ -974,7 +974,7 @@
 * close the log
 	log	close	
 
-/*
+
 * **********************************************************************
 * 13 - generate variable-country-wave crosswalk
 * **********************************************************************	

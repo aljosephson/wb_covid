@@ -280,6 +280,29 @@
 	rename 			s06q15 harv_sell_norm
 	rename 			s06q16 harv_sell_rev_exp
 	
+	* livestock 
+	rename 			s06dbq01 ag_live
+	forval 			x = 1/4 {
+		rename 			s06dbq02__`x' ag_live_`x'
+	}
+	rename 			s06dbq02__5 ag_live_7
+	rename 			s06dbq03 ag_live_affect
+	rename 			s06dbq04__1 ag_live_affect_1
+	rename 			s06dbq04__2 ag_live_affect_3
+	rename 			s06dbq04__3 ag_live_affect_4
+	rename 			s06dbq04__4 ag_live_affect_7
+	drop 			s06dbq04__96 s06dbq04_autre
+	rename 			s06dbq06 ag_live_sell
+	rename 			s06dbq07 ag_live_sell_chg
+	rename 			s06dbq08 ag_live_sell_want
+	rename 			s06dbq09 ag_live_sell_why
+	rename 			s06dbq10 ag_live_sell_able
+	rename 			s06dbq11 ag_live_sell_cond
+	rename 			s06dbq12 ag_live_sell_pr
+	forval 			x = 1/6{
+	    rename 		s06dbq13__`x' ag_live_sell_nowhy_`x'
+	}
+	
 * generate round variables
 	gen				wave = `w'
 	lab var			wave "Wave number"

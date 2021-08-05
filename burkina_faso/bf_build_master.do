@@ -264,7 +264,7 @@
 	lab val 		staple_2 staple
 	lab val 		staple_3 staple
 	
-	drop 			AlimBase*
+	drop 			AlimBase* 
 	
 	rename 			s05q03a ac_medserv_need
 	forval 			x = 1/7 {
@@ -287,7 +287,7 @@
 		rename 			s05q03d_`x'b	ac_medserv_type_`x'_why
 		drop 			s05q03d_`x'b_autre
 	}
-	drop 			s05q03d_96*
+	drop 			s05q03d_96* s05q03d_1
 	
 	rename 			s05q04 med_ins
 	drop 			s05q03b_autre s05q03c_1_autre  s05q03e_autre s05q03d_1_autre ///
@@ -571,7 +571,6 @@
 	rename 			s06dq21__7 ag_ac_anim_why_7
 	drop 			s06dq20_* s06dq21_*
 
-ANN YOU ARE HERE 
 * FIES
 	rename 			s07q01 fies_4
 	rename 			s07q02 fies_5
@@ -597,6 +596,10 @@ ANN YOU ARE HERE
 		rename 		s09q03__`x' cope_`z'
 	}
 	drop 			s09q03__21 s09q03__22 
+
+* concerns 
+	rename 			s09bq01 concern_1
+	rename 			s09bq02 concern_2
 	
 * fragility conflict violence
 	rename 			s11q01 security 

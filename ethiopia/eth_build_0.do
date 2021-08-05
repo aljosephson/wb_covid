@@ -120,10 +120,18 @@
 	use 			"$root/wave_0`w'/HH/sect12b1_hh_w4", clear
 	rename 			household_id hhid_eth
 	
+* rename variables 
+	rename 			s12bq12 bus_months_op
+	rename 			s12bq13 bus_days_op
+	rename 			s12bq16 bus_avg_sales
+	rename 			s12bq24 bus_perc_hh_inc
+	
+	//keep bus_*
+/*	
 THIS DATA DOES NOT MAKE SENSE - include sales and review
 make sure to consider months in operation when calculating income based on avg monthly sales 
 asdfd
-
+*/
 
 * generate number of NFEs and indicator if any
 	gen 			num_bus = 1 

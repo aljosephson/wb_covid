@@ -177,23 +177,37 @@
 	reshape 	wide s08q0*, i(hhid) j(revenu__id)
 	
 * format vars
-	rename 		s08q011 oth_inc_1
-	rename 		s08q012 oth_inc_2
-	rename 		s08q013 oth_inc_3
-	rename 		s08q014 oth_inc_4
-	rename 		s08q015 oth_inc_5
+	rename 		s08q011 rem_for
+	rename 		s08q012 rem_dom
+	rename 		s08q013 asst_inc
+	rename 		s08q014 isp_inc
+	rename 		s08q015 pen_inc
+	rename 		s08q016 farm_inc
+	rename 		s08q017 bus_inc
+	rename 		s08q018 wage_inc
 	
-	rename 		s08q021 oth_inc_chg_1
-	rename 		s08q022 oth_inc_chg_2
-	rename 		s08q023 oth_inc_chg_3
-	rename 		s08q024 oth_inc_chg_4
-	rename 		s08q025 oth_inc_chg_5
+	rename 		s08q021 rem_for_chg
+	rename 		s08q022 rem_dom_chg
+	rename 		s08q023 asst_chg
+	rename 		s08q024 isp_chg
+	rename 		s08q025 pen_chg
+	rename 		s08q026 farm_chg
+	rename 		s08q027 bus_chg
+	rename 		s08q028 wage_chg
+	
+	rename 		s08q031 rem_for_chg_cov
+	rename 		s08q032 rem_dom_chg_cov
+	rename 		s08q033 asst_chg_cov
+	rename 		s08q034 isp_chg_cov
+	rename 		s08q035 pen_chg_cov
+	rename 		s08q036 farm_chg_cov
+	rename 		s08q037 bus_chg_cov
+	rename 		s08q038 wage_chg_cov
 	
 * save temp file
 	tempfile		tempc
 	save			`tempc'
 		
-	
 	
 * ***********************************************************************
 *  3 - shocks

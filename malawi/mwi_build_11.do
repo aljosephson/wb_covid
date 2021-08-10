@@ -7,8 +7,8 @@
 
 * does
 	* merges together each section of malawi data
-	* builds round 9
-	* outputs round 9
+	* builds round 11
+	* outputs round 11
 
 * assumes
 	* raw malawi data 
@@ -32,18 +32,18 @@
 	log using		"$logout/mal_build", append
 	
 * set local wave number & file number
-	local			w = 9
+	local			w = 11
 	
 * make wave folder within refined folder if it does not already exist 
-	capture mkdir "$export/wave_0`w'" 	
-
+	capture mkdir "$export/wave_`w'" 	
+	
 	
 * ***********************************************************************
 * 1c - get respondant gender
 * ***********************************************************************
 
 * load data
-	use				"$root/wave_0`w'/sect12_Interview_Result_r`w'", clear
+	use				"$root/wave_`w'/sect12_Interview_Result_r`w'", clear
 
 * drop all but household respondant
 	keep			HHID s12q9
@@ -51,7 +51,7 @@
 	isid			HHID
 
 * merge in household roster
-	merge 1:1		HHID PID using "$root/wave_0`w'/sect2_Household_Roster_r`w'.dta"
+	merge 1:1		HHID PID using "$root/wave_`w'/sect2_Household_Roster_r`w'.dta"
 	keep if			_merge == 3
 	drop			_merge
 
@@ -68,7 +68,7 @@
 * ***********************************************************************
 
 * load data
-	use			"$root/wave_0`w'/sect2_Household_Roster_r`w'.dta", clear
+	use			"$root/wave_`w'/sect2_Household_Roster_r`w'.dta", clear
 
 * rename other variables 
 	rename 			PID ind_id 
@@ -160,8 +160,8 @@
 * ***********************************************************************
 
 * load income_loss data
-	use				"$root/wave_0`w'/sect7_Income_Loss_r`w'", clear
-	
+	use				"$root/wave_`w'/sect7_Income_Loss_r`w'", clear
+
 *reshape data
 	reshape 		wide s7q1 s7q2, i(y4_hhid HHID) j(income_source)
 
@@ -175,7 +175,7 @@
 * ***********************************************************************
 
 * load cover data
-	use				"$root/wave_0`w'/secta_Cover_Page_r`w'", clear
+	use				"$root/wave_`w'/secta_Cover_Page_r`w'", clear
 	
 * merge formatted sections
 	foreach 		x in a b c {
@@ -183,28 +183,20 @@
 	}
 
 * merge in other sections
-	merge 1:1 		HHID using "$root/wave_0`w'/sect4_Behavior_r`w'.dta", nogen	
-	merge 1:1 		HHID using "$root/wave_0`w'/sect4b_patienthealth_r`w'.dta", nogen
-	merge 1:1 		HHID using "$root/wave_0`w'/sect5_Access_r`w'.dta", nogen
-	merge 1:1 		HHID using "$root/wave_0`w'/sect6a_Employment2_r`w'.dta", nogen
-	merge 1:1 		HHID using "$root/wave_0`w'/sect6b_NFE_r`w'.dta", nogen
-	merge 1:1 		HHID using "$root/wave_0`w'/sect8_food_security_r`w'.dta", nogen
-	merge 1:1 		HHID using "$root/wave_0`w'/sect9_Concerns_r`w'.dta", nogen
-
+	merge 1:1 		HHID using "$root/wave_`w'/sect4_behavior_r`w'.dta", nogen	
+	merge 1:1 		HHID using "$root/wave_`w'/sect5_access_r`w'.dta", nogen
+	merge 1:1 		HHID using "$root/wave_`w'/sect6a_employment2_r`w'.dta", nogen
+	merge 1:1 		HHID using "$root/wave_`w'/sect6b_nfe_r`w'.dta", nogen
+	merge 1:1 		HHID using "$root/wave_`w'/sect6e_agriculture_r`w'.dta", nogen
+	merge 1:1 		HHID using "$root/wave_`w'/sect8_food_security_r`w'.dta", nogen
+	merge 1:1 		HHID using "$root/wave_`w'/sect9_Concerns_r`w'.dta", nogen
+	
 * rename variables inconsistent with other waves	
 	
 	* behavior
 		rename 			s4q7 bh_freq_wash
-		rename 			s4q8 bh_freq_mask	
-		rename 			s4q8b cov_vac_know
+		rename 			s4q8 bh_freq_mask
 	
-	* shops
-		rename 			s5q6 ac_shops_need
-		rename 			s5q6a ac_shops_mask
-		rename 			s5q5b ac_shops_wash
-		rename 			s5q5c ac_shops_san
-		rename 			s5q5d ac_shops_line
-		
 	* employment 
 		rename 			s6q3a emp_search
 		rename 			s6q3b emp_search_how		
@@ -222,7 +214,46 @@
 		replace 		emp_act = 16 if emp_act == 15
 		replace 		emp_act = -96 if emp_act == 96
 		rename			s6bq11 bus_emp
+	
+	* agriculture 
+		rename 			s6eq1 ag_crop
+		replace 		ag_crop = s6eq2 if ag_crop >= .
+		rename 			s6eq3__1 ag_crop_who		
+		rename 			s6eq5 ag_main
+		rename 			s6eq6 ag_main_plots
+		rename 			s6eq7 ag_main_area
+		rename 			s6eq7_units ag_main_area_unit
+		rename 			s6eq8 ag_main_harv
+		rename 			s6eq10 ag_main_sell
+		gen				ag_main_sell_per = s6eq11/s6eq9a
+		rename 			s6eq12 ag_main_rev
+		rename 			s6eq13 harv_sell_rev
+		rename 			s6eq14 ag_sell_main_plan
+		rename 			s6eq15 harv_sell_rev_exp
+		rename 			s6eq16 ag_main_harv_comp
+		rename 			s6eq17a ag_main_more
+		rename 			s6eq17b ag_main_more_unit
+		rename 			s6eq18a ag_use_infert
+		rename 			s6eq18b ag_use_orfert
+		rename 			s6eq18c ag_use_pest
+		rename 			s6eq18d ag_use_lab
+		rename 			s6eq18e ag_use_amin
+		rename 			s6eq19a__* ag_ac_infert_why_*
+		rename 			s6eq19b__* ag_ac_orfert_why_*
+		rename 			s6eq19c__* ag_ac_pest_why_*
+		rename 			s6eq19d__* ag_ac_lab_why_*
+		rename 			s6eq19e__1 ag_ac_amin_why_1
+		rename 			s6eq19e__2 ag_ac_amin_why_2
+		rename 			s6eq19e__3 ag_ac_amin_why_4
+		rename 			s6eq19e__4 ag_ac_amin_why_5
+		rename 			s6eq19e__5 ag_ac_amin_why_3
+		rename 			s6eq19e__6 ag_ac_amin_why_6
+		rename 			s6eq19e__7 ag_ac_amin_why_7
 		
+		drop 			s6eq3a s6eq4 s6eq7_units_ot s6eq5_ot s6eq5_ot2 ///
+							s6eq9a s6eq9b s6eq9b_ot s6eq9c s6eq17c *_96 *_ot ///
+							s6eq2 s6eq3__2 s6eq11
+
 * generate round variables
 	gen				wave = `w'
 	lab var			wave "Wave number"
@@ -230,6 +261,6 @@
 	label var		phw "sampling weights - cross section"
 	
 * save round file
-	save			"$export/wave_0`w'/r`w'", replace
+	save			"$export/wave_`w'/r`w'", replace
 
 /* END */		

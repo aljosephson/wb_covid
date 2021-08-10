@@ -125,9 +125,9 @@
 	rename 			s12bq13 bus_days_op
 	rename 			s12bq16 bus_avg_sales
 	rename 			s12bq24 bus_perc_hh_inc
-	
-	//keep bus_*
 /*	
+	keep bus_*
+
 THIS DATA DOES NOT MAKE SENSE - include sales and review
 make sure to consider months in operation when calculating income based on avg monthly sales 
 asdfd

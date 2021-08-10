@@ -27,7 +27,7 @@
 * **********************************************************************
 
 * define list of waves
-	global 			waves "1" "2" "3" "4" "5" "6" "7" "8"
+	global 			waves "1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11"
 	
 * define
 	global	root	=	"$data/malawi/raw"
@@ -76,9 +76,13 @@
 	    if 			`r' == 1 {
 			use		"$export/wave_01/r1", clear
 		}
-		else {
+		if 			`r' < 10 {
 			append 	using "$export/wave_0`r'/r`r'"
+		}	
+		else {
+			append	using "$export/wave_`r'/r`r'"
 		}
+
 	}
 	compress 
 
@@ -231,6 +235,8 @@
 	replace 		bh_5 = 0 if bh_5 == 2
 	rename 			s4q8a cov_test
 	rename 			s4q8b cov_vac
+	rename 			s4q8b_1 have_vac 
+	rename 			s4q8b_2 have_vac_plan 
 	
 	forval 			x = 1/6 {
 	    gen 		cov_vac_no_why_`x' = 1 if s4q8c == `x'
@@ -348,6 +354,11 @@
 								7 "other"
 	lab val 		ac_staple_why ac_staple_why
 	lab var 		ac_staple_why "reason for unable to purchase staple food"
+	rename 			s5q2d ac_staple_pr
+	replace 		ac_staple_pr = s5q7 if wave == 9
+	lab def 		st_pr 1 "YES" 2 "REMAINED SAME" 3 "NO" 
+	lab val 		ac_staple_pr st_pr
+	replace 		ac_staple_pr = . if ac_staple_pr == 555
 	
  * maize	
 	generate		ac_maize_need = ac_staple_need if ac_staple_def == 1
@@ -392,10 +403,11 @@
 	rename 			s5q4 ac_medserv
 	rename 			s5q5 ac_medserv_why
 	replace 		ac_medserv_why = . if wave < 7 & (ac_medserv_why == 4 | ac_medserv_why == 8)
-	replace 		ac_medserv_why = . if ac_medserv_why == 96 | ac_medserv_why == 555
+	replace 		ac_medserv_why = . if ac_medserv_why == 96 | ac_medserv_why == 555 ///
+						| ac_medserv_why == 99
 	replace 		ac_medserv_why = 8 if ac_medserv_why == 7
 	replace 		ac_medserv_why = 7 if ac_medserv_why == 6
-	replace 		ac_medserv_why = 6 if ac_medserv_why == 5 | ac_medserv_why == 8
+	replace 		ac_medserv_why = 6 if ac_medserv_why == 5 
 	replace 		ac_medserv_why = 5 if ac_medserv_why == 9
 	replace			ac_medserv_why = 1 if s5q5__1 == 1
 	replace 		ac_medserv_why = 2 if s5q5__2 == 1
@@ -636,7 +648,7 @@
 	rename 			s6qe4__3 ag_sell_where_3
 	rename 			s6qe4__4 ag_sell_where_4
 	rename 			s6qe5 ag_dimba
-	rename 			s6qe7 harv_sell_rev
+	replace 		harv_sell_rev = s6qe7 if harv_sell_rev >= .
 
 * livestock
 	rename			s13q10 ag_live
@@ -932,7 +944,8 @@
 						s6bq11a_3 s6q14b_os s6qe1 s6qe9 s6qe10 s6qe11__* s6qe4_oth ///
 						s6qe4_oth2 s5q3b__555 s5q3b_ot s5dq5_oth s5dq7_ot s5cq4__96 ///
 						s5q1b1_ot s6qe2_oth s6qe4__96 s6qe11_oth s6qe2__96 ///
-						livestock_filter previous_loanfilter rainy_filter
+						livestock_filter previous_loanfilter rainy_filter ///
+						s4q8c_oth s4q8d_ot s5q2ot s5q2c_ot s6qe7
 
 * regional and sector information
 	gen				sector = 2 if urb_rural == 1

@@ -39,6 +39,7 @@
 	drop 				if wave == 0
 	gen 				wave_orig = wave
 
+	replace 			wave = 14 if wave_orig == 10 & country == 1
 	replace 			wave = 13 if wave_orig == 9 & country == 1
 	replace 			wave = 12 if wave_orig == 8 & country == 1
 	replace 			wave = 11 if wave_orig == 7 & country == 1
@@ -49,6 +50,9 @@
 	replace 			wave = 5 if wave_orig == 2 & country == 1
 	replace 			wave = 4 if wave_orig == 1 & country == 1
 	
+	replace 			wave = 18 if wave_orig == 11 & country == 2
+	replace 			wave = 17 if wave_orig == 10 & country == 2
+	replace 			wave = 16 if wave_orig == 9 & country == 2
 	replace 			wave = 15 if wave_orig == 8 & country == 2
 	replace 			wave = 13 if wave_orig == 7 & country == 2
 	replace 			wave = 12 if wave_orig == 6 & country == 2
@@ -75,6 +79,8 @@
 	replace 			wave = 8 if wave_orig == 2 & country == 4
 	replace 			wave = 6 if wave_orig == 1 & country == 4
 	
+	replace 			wave = 19 if wave_orig == 10 & country == 5
+	replace 			wave = 16 if wave_orig == 9 & country == 5
 	replace 			wave = 15 if wave_orig == 8 & country == 5 
 	replace 			wave = 14 if wave_orig == 7 & country == 5 
 	replace 			wave = 13 if wave_orig == 6 & country == 5 
@@ -84,8 +90,9 @@
 	replace 			wave = 8 if wave_orig == 2 & country == 5
 	replace 			wave = 6 if wave_orig == 1 & country == 5
 	
-	lab def 			months 4 "Apr" 5 "May" 6 "Jun" 7 "Jul" 8 "Aug" 9 "Sep" 10 "Oct" ///
-							11 "Nov" 12 "Dec" 13 "Jan" 14 "Feb" 15 "Mar"
+	lab def 			months 4 "Apr20" 5 "May20" 6 "Jun20" 7 "Jul20" 8 "Aug20" 9 "Sep20" 10 "Oct20" ///
+							11 "Nov20" 12 "Dec20" 13 "Jan21" 14 "Feb21" 15 "Mar21" 16 "Apr21" ///
+							17 "May21" 18 "May21" 19 "Jun21"
 	lab val				wave months
 	lab var 			wave_orig "Original wave number"
 	lab var 			wave "Month"
@@ -114,11 +121,13 @@
 	
 * over waves in mwi, uga, & bf
 	preserve
-	keep 				if wave_orig == 1 | wave_orig == 6
+	gen 				temp = 1 if bh_1 < . | bh_2 < . | bh_3 < . | bh_8 < . 
+	egen 				temp1 = max(temp), by(country wave) 
+	keep 				if temp1 == 1
 	graph bar 			(mean) bh_3 bh_1 bh_2 bh_8 if country == 1 [pweight = phw_cs], ///
-							over(wave, lab(labs(medlarge)))  title("Ethiopia", size(vlarge)) ///
+							over(wave, lab(labs(medlarge)) gap(250))  title("Ethiopia", size(vlarge)) ///
 							bar(1, color(maroon*2)) bar(2, color(navy*1.5)) bar(3, color(stone*1.3)) ///
-							bar(4, color(eltgreen*1.5)) outergap(750) ///
+							bar(4, color(eltgreen*1.5)) outergap(650) ///
 							ytitle("Percent of individuals", margin(0 -1 -1 10) size(large)) ///
 							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(med)) ///
 							legend(	label (1 "Avoided crowds") label (2 "Increased hand washing") ///
@@ -126,15 +135,24 @@
 							size(vsmall) margin(-1.5 0 0 0)) name(bh1, replace)
 	restore
 
+	preserve
+	gen 				temp = 1 if bh_1 < . | bh_2 < . | bh_3 < . | bh_8 < . 
+	egen 				temp1 = max(temp), by(country wave) 
+	keep 				if temp1 == 1
 	graph bar 			(mean) bh_3 bh_1 bh_2 bh_8 if country == 2 [pweight = phw_cs], ///
-							over(wave, lab(labs(medlarge)))  title("Malawi", size(vlarge)) ///
+							over(wave, lab(labs(med)))  title("Malawi", size(vlarge)) ///
 							bar(1, color(maroon*2)) bar(2, color(navy*1.5)) bar(3, color(stone*1.3)) ///
 							bar(4, color(eltgreen*1.5)) outergap(50) ///
 							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(med)) ///
 							legend(	label (1 "Avoided crowds") label (2 "Increased hand washing") ///
 							label (3 "Avoided physical contact") label (4 "Wore mask in public") pos(6) col(4) ///
 							size(vsmall) margin(-1.5 0 0 0)) name(bh2, replace)
-		
+	restore 
+	
+	preserve
+	gen 				temp = 1 if bh_1 < . | bh_2 < . | bh_3 < . | bh_8 < . 
+	egen 				temp1 = max(temp), by(country wave) 
+	keep 				if temp1 == 1
 	graph bar 			(mean) bh_3 bh_1 bh_2 bh_8 if country == 4 [pweight = phw_cs], ///
 							over(wave, lab(labs(medlarge))) title("Uganda", size(vlarge)) ///
 							bar(1, color(maroon*2)) bar(2, color(navy*1.5)) bar(3, color(stone*1.3)) ///
@@ -144,8 +162,12 @@
 							legend(	label (1 "Avoided crowds") label (2 "Increased hand washing") ///
 							label (3 "Avoided physical contact") label (4 "Wore mask in public") pos(6) col(4) ///
 							size(vsmall) margin(-1.5 0 0 0)) name(bh4, replace)
+	restore 
+	
 	preserve 
-	keep 				if wave == 6 | wave == 10 | wave == 12 
+	gen 				temp = 1 if bh_1 < . | bh_2 < . | bh_3 < . | bh_8 < . 
+	egen 				temp1 = max(temp), by(country wave) 
+	keep 				if temp1 == 1
 	graph bar 			(mean) bh_3 bh_1 bh_2 bh_8 if country == 5 [pweight = phw_cs], ///
 							over(wave, lab(labs(medlarge))) title("Burkina Faso", size(vlarge)) ///
 							bar(1, color(maroon*2)) bar(2, color(navy*1.5)) bar(3, color(stone*1.3)) ///
@@ -229,8 +251,8 @@
 							xtitle("")  legend( label (1 "Farm income") ///
 							label (2 "Business income") label (3 "Wage income") label (4 "Remittances") ///
 							label (5 "All else") pos(6) col(3) size(medsmall) margin(-1.5 0 0 0)) ///
-							xlabel(4 "Apr" 5 "May" 6 "June" 7 "July" 8 "Aug" 9 "Sept" 10 "Oct" , ///
-							nogrid labs(large)) name(inc1, replace)
+							xlabel(4 "Apr20" 5 "May20" 6 "Jun20" 7 "Jul20" 8 "Aug20" 9 "Sep20" 10 "Oct20" , ///
+							nogrid labs(med)) name(inc1, replace)
 	restore			
 	
 	preserve
@@ -242,8 +264,8 @@
 							lcolor(navy*.6 teal*.6 khaki*.6 cranberry*.6 purple*.6) ///
 							lwidth(vthick vthick vthick vthick vthick) ///
 							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) xtitle("") ///
-							xlabel(6 "June" 7 "July" 8 "Aug" 9 "Sept" 10 "Oct" 11 "Nov" 12 "Dec" 13 "Jan", ///
-							nogrid labs(large)) name(inc2, replace)
+							xlabel(6 "Jun20" 7 "Jul20" 8 "Aug20" 9 "Sep20" 10 "Oct20" 11 "Nov20" 12 "Dec20" 13 "Jan21" ///
+							14 "Feb21" 15 "Mar21" 16 "Apr21" 17 "May21" 18 "May21", nogrid labs(small)) name(inc2, replace)
 	restore			
 	
 	preserve
@@ -256,8 +278,8 @@
 							lwidth(vthick vthick vthick vthick vthick) ///
 							ytitle("Percent of households", size(vlarge)) ///
 							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) ///
-							xtitle("") xlabel(5 "May" 6 "June" 7 "July" 8 "Aug"9 "Sept" 10 "Oct" 11 "Nov" 12 ///
-							"Dec" 13 "Jan", nogrid labs(large)) name(inc3, replace)
+							xtitle("") xlabel(5 "May20" 6 "Jun20" 7 "Jul20" 8 "Aug20"9 "Sep20" 10 "Oct20" 11 "Nov20" 12 ///
+							"Dec20" 13 "Jan21", nogrid labs(med)) name(inc3, replace)
 	restore			
 	
 	preserve
@@ -269,8 +291,8 @@
 							lcolor(navy*.6 teal*.6 khaki*.6 cranberry*.6 purple*.6) ///
 							lwidth(vthick vthick vthick vthick vthick) ///
 							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(vlarge)) xtitle("") ///
-							xlabel(6 "June" 7 "July" 8 "Aug" 9 "Sept"  10 "Oct" 11 "Nov" 12 "Dec" 13 "Jan" 14 "Feb", ///
-							nogrid labs(large)) name(inc4, replace)
+							xlabel(6 "Jun20" 7 "Jul20" 8 "Aug20" 9 "Sep20"  10 "Oct20" 11 "Nov20" 12 "Dec20" ///
+							13 "Jan21" 14 "Feb21", nogrid labs(med)) name(inc4, replace)
 	restore 
 	
 	drop 				temp
@@ -357,16 +379,16 @@
 							title("Ethiopia", size(vlarge)) outergap(70) ///
 							ytitle("Percent generated income last week", size(medlarge) margin(-12 0 0 0)) ///
 							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", ///
-							labs(medlarge)) legend(col(10) margin(-1.5 0 0 0) pos(6) size(medsmall)) ///
+							labs(medlarge)) legend(col(10) margin(-1.5 0 0 0) pos(6) size(small)) ///
 							name(cur_emp1, replace)			
 		
 	graph bar 			(mean) emp [pweight = ahw_cs] if country == 2, over(wave, gap(50)) asyvars ///
 							bar(1, color(eltgreen*2)) bar(2, color(navy*3)) bar(3, color(teal*5)) ///
 							bar(4, color(khaki*3)) bar(5, color(purple*4)) bar(6, color(brown*3)) ///
-							bar(7, color(emerald*4)) bar(8, color(erose*4)) ///
-							title("Malawi", size(vlarge)) outergap(70) ///
+							bar(7, color(emerald*4)) bar(8, color(erose*4)) bar(9, color(maroon*2.5)) ///
+							bar(10, color(dknavy*3)) title("Malawi", size(vlarge)) outergap(70) ///
 							ytitle("", size(med)) ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", ///
-							labs(medlarge)) legend(col(10) margin(-1.5 0 0 0) pos(6) size(medsmall)) ///
+							labs(medlarge)) legend(col(10) margin(-1.5 0 0 0) pos(6) size(small)) ///
 							name(cur_emp2, replace)	
 	
 	graph bar 			(mean) emp [pweight = ahw_cs] if country == 3, over(wave, gap(50)) asyvars ///
@@ -375,7 +397,7 @@
 							bar(7, color(purple*4)) bar(8, color(brown*3)) bar(9, color(emerald*4)) ///
 							bar(10, color(emidblue*4)) title("Nigeria", size(vlarge)) outergap(70) ///
 							ytitle("", size(med)) ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", ///
-							labs(medlarge)) legend(col(10) margin(-1.5 0 0 0) pos(6) size(medsmall)) ///
+							labs(medlarge)) legend(col(10) margin(-1.5 0 0 0) pos(6) size(small)) ///
 							name(cur_emp3, replace)	
 					
 	graph bar 			(mean) emp [pweight = ahw_cs] if country == 4, over(wave, gap(70)) asyvars ///
@@ -384,16 +406,16 @@
 							title("Uganda", size(vlarge)) outergap(150) ///
 							ytitle("Percent generated income last week", size(medlarge) margin(-5 0 0 0)) ///
 							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", ///
-							labs(medlarge)) legend(col(10) margin(-1.5 0 0 0) pos(6) size(medsmall)) ///
+							labs(medlarge)) legend(col(10) margin(-1.5 0 0 0) pos(6) size(small)) ///
 							name(cur_emp4, replace)	graphregion(margin(l 70))
 
 	graph bar 			(mean) emp [pweight = ahw_cs] if country == 5, over(wave, gap(40)) asyvars ///
 							bar(1, color(eltgreen*2)) bar(2, color(teal*5)) bar(3, color(cranberry*4)) ///
 							bar(4, color(purple*4)) bar(5, color(brown*3)) bar(6, color(emerald*4)) ///
-							bar(7, color(emidblue*4)) bar(8, color(erose*4)) ///
-							title("Burkina Faso", size(vlarge)) outergap(70) ///
+							bar(7, color(emidblue*4)) bar(8, color(erose*4)) bar(9, color(maroon*2.5)) ///
+							bar(10, color(edkblue*2)) title("Burkina Faso", size(vlarge)) outergap(70) ///
 							ytitle("", size(med)) ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", ///
-							labs(medlarge)) legend(col(10) margin(-1.5 0 0 0) pos(6) size(medsmall)) ///
+							labs(medlarge)) legend(col(10) margin(-1.5 0 0 0) pos(6) size(small)) ///
 							name(cur_emp5, replace)	graphregion(margin(r 70))
 	
 	graph combine 			cur_emp1 cur_emp2 cur_emp3, name(row1x, replace) row(1) 
@@ -419,8 +441,8 @@
 							ytitle("Prevalence", size(vlarge)) bar(1, color(navy*1.5))  ///
 							bar(2, color(teal*1.5)) bar(3, color(khaki*1.5)) bar(4, color(brown*2.3)) ///
 							 bar(5, color(eltgreen*5)) bar(6, color(maroon*3)) bar(7, color(erose*2)) ///
-							legend(label (1 "May") label (2 "June") label (3 "July") label (4 "Aug") ///
-							label (5 "Sept") label (6 "Oct") label (7 "Nov") col(7) margin(-1.5 0 0 0)) ///
+							legend(label (1 "May20") label (2 "Jun20") label (3 "Jul20") label (4 "Aug20") ///
+							label (5 "Sep20") label (6 "Oct20") label (7 "Nov20") col(7) margin(-1.5 0 0 0)) ///
 							name(fies, replace)
 
 	grc1leg2 			fies, iscale(.5) pos(6) commonscheme 
@@ -688,7 +710,7 @@
 							title("Ethiopia", size(vlarge)) ///
 							ytitle("Percent unable to access", size(large) margin(-7 0 0 0)) ///
 							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(medlarge)) ///
-							legend(col(6) margin(-1.5 0 0 0) pos(6) size(large)) name(ac_medserv1, replace)
+							legend(col(6) margin(-1.5 0 0 0) pos(6) size(medlarge)) name(ac_medserv1, replace)
 	restore
 	
 	preserve
@@ -701,7 +723,7 @@
 							bar(5, color(emerald*4)) bar(6, color(erose*4)) ///
 							title("Malawi", size(vlarge))  ///
 							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(medlarge)) ///
-							ytitle("", size(med)) legend(col(6) margin(-1.5 0 0 0) pos(6) size(large)) ///
+							ytitle("", size(med)) legend(col(8) margin(-1.5 0 0 0) pos(6) size(med)) ///
 							name(ac_medserv2, replace)
 	restore
 	
@@ -713,7 +735,7 @@
 							bar(1, color(stone*2)) bar(2, color(eltgreen*2)) bar(3, color(navy*3)) ///
 							bar(4, color(teal*5)) title("Nigeria", size(vlarge)) ///
 							ytitle("", size(med)) ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(medlarge)) ///
-							legend(col(4) margin(-1.5 0 0 0) pos(6) size(large)) name(ac_medserv3, replace)
+							legend(col(4) margin(-1.5 0 0 0) pos(6) size(medlarge)) name(ac_medserv3, replace)
 	restore
 	
 	preserve
@@ -726,7 +748,7 @@
 							title("Uganda", size(vlarge)) outergap(50) ///
 							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(medlarge)) ///
 							ytitle("Percent unable to access", size(large)) ///
-							legend(col(5) margin(-1.5 0 0 0) pos(6) size(large)) ///
+							legend(col(5) margin(-1.5 0 0 0) pos(6) size(medlarge)) ///
 							name(ac_medserv4, replace) graphregion(margin(70 1))
 	restore
 	
@@ -738,7 +760,7 @@
 							bar(1, color(brown*3)) bar(2, color(emerald*4)) ///
 							bar(3, color(emidblue*4)) title("Burkina Faso", size(vlarge)) outergap(70) ///
 							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(medlarge)) ///
-							ytitle("", size(med)) legend(col(3) margin(-1.5 0 0 0) pos(6) size(large)) ///
+							ytitle("", size(med)) legend(col(5) margin(-1.5 0 0 0) pos(6) size(medlarge)) ///
 							name(ac_medserv5, replace) graphregion(margin(r 70))
 	restore
 	
@@ -760,7 +782,7 @@
 							bar(7, color(purple*4)) title("Ethiopia", size(vlarge)) ///
 							ytitle("Percent unable to purchase", size(large) margin(-10 0 0 0)) ///
 							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(medlarge)) ///
-							legend(col(7) margin(-1.5 0 0 0) pos(6) size(large)) name(ac_staple1, replace)
+							legend(col(7) margin(-1.5 0 0 0) pos(6) size(med)) name(ac_staple1, replace)
 	restore
 	
 	preserve
@@ -771,7 +793,7 @@
 							bar(1, color(eltgreen*2)) bar(2, color(navy*3)) bar(3, color(purple*4)) ///
 							title("Malawi", size(vlarge)) outergap(200) ytitle("", size(med)) ///
 							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(medlarge)) ///
-							legend(col(3) margin(-1.5 0 0 0) pos(6) size(large)) name(ac_staple2, replace)
+							legend(col(4) margin(-1.5 0 0 0) pos(6) size(medlarge)) name(ac_staple2, replace)
 	restore 
 	
 	preserve
@@ -782,7 +804,7 @@
 							bar(1, color(stone*2))  bar(2, color(navy*3)) bar(3, color(emerald*4)) ///
 							title("Nigeria", size(vlarge)) outergap(200) ytitle("", size(med)) ///
 							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(medlarge)) ///
-							legend(col(3) margin(-1.5 0 0 0) pos(6) size(large)) name(ac_staple3, replace)
+							legend(col(3) margin(-1.5 0 0 0) pos(6) size(medlarge)) name(ac_staple3, replace)
 	restore
 	
 	preserve
@@ -808,7 +830,7 @@
 							bar(7, color(emidblue*4)) bar(8, color(erose*4)) ///
 							title("Burkina Faso", size(vlarge)) ytitle("", size(med)) ///
 							ylabel(0 "0" .2 "20" .4 "40" .6 "60" .8 "80" 1 "100", labs(medlarge)) ///
-							legend(col(8) margin(-1.5 0 0 0) pos(6) size(large)) name(ac_staple5, replace) ///
+							legend(col(10) margin(-1.5 0 0 0) pos(6) size(med)) name(ac_staple5, replace) ///
 							graphregion(margin(r 70))
 	restore
 	
@@ -826,7 +848,7 @@
 
 	preserve 
 	keep 				if country == 1
-	keep 				if wave_orig < 6 | wave_orig == 8
+	keep 				if edu_act < .
 	graph bar 			(mean) edu_act [pweight = hhw_cs], over(wave, gap(10) label(labsize(large))) ///
 							ytitle("Percent of households", size(large) margin(-10 0 0 0)) ///
 							title("Ethiopia", size(vlarge)) asyvars bar(1, color(maroon*4)) ///
@@ -839,7 +861,7 @@
 	
 	preserve 
 	keep 				if country == 2
-	keep 				if wave_orig == 1 | wave_orig == 2 | wave_orig == 5
+	keep 				if edu_act < .
 	graph bar 			(mean) edu_act [pweight = hhw_cs], over(wave, gap(50) label(labsize(large))) ///
 							asyvars bar(1, color(eltgreen*2)) bar(2, color(navy*3)) bar(3, color(purple*4)) ///
 							title("Malawi", size(vlarge)) outergap(120) ytitle("", size(med)) ///
@@ -850,7 +872,7 @@
 	
 	preserve 
 	keep 				if country == 3
-	keep 				if wave_orig < 7
+	keep 				if edu_act < .
 	graph bar 			(mean) edu_act [pweight = hhw_cs], over(wave, gap(10) label(labsize(large))) ///
 							ytitle("", size(vlarge)) title("Nigeria", size(vlarge)) ///
 							asyvars bar(1, color(stone*2)) bar(2, color(eltgreen*2)) bar(3, color(navy*3)) ///
@@ -862,6 +884,7 @@
 	
 	preserve 
 	keep 				if country == 4
+	keep 				if edu_act < .
 	graph bar 			(mean) edu_act [pweight = hhw_cs], over(wave, gap(20) label(labsize(large))) asyvars ///
 							bar(1, color(eltgreen*2)) bar(2, color(teal*5)) bar(3, color(khaki*3))  ///
 							bar(4, color(purple*4)) bar(5, color(emidblue*4)) ///
@@ -874,7 +897,7 @@
 	
 	preserve 
 	keep 				if country == 5
-	keep 				if wave_orig == 1 | wave_orig == 2 | wave_orig == 5
+	keep 				if edu_act < .
 	graph bar 			(mean) edu_act [pweight = hhw_cs], over(wave, gap(50) label(labsize(large))) asyvars ///
 							bar(1, color(eltgreen*2)) bar(2, color(teal*5)) bar(3, color(brown*3)) ///
 							title("Burkina Faso", size(vlarge)) outergap(120) ytitle("", size(med)) ///

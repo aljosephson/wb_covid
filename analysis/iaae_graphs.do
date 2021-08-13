@@ -320,14 +320,12 @@
 	replace 			size = 4 if size == 1
 	replace 			size = 1 if size == 3
 	replace 			size = 3 if size == 4
-	
-	colorpalette 		stone maroon, ipolate(15, power(1)) locals
 
 	catplot 			size wave country [aweight = hhw] if country == 1, percent(country wave) stack ///
 							var1opts(label(labsize(medsmall))) var3opts(label(labsize(medsmall))) ///
 							var2opts(label(labsize(vsmall)))  ///
-							ytitle("", size(vlarge)) bar(3, fcolor(`1') lcolor(none)) ///
-							bar(2, fcolor(`7') lcolor(none)) bar(1, fcolor(`15') lcolor(none)) ///
+							ytitle("", size(vlarge)) bar(3, color(sandb*1.3)) ///
+							bar(2, color(dkorange*1.2)) bar(1, color(red*1.7)) ///
 							ylabel(, labs(medsmall)) legend(label (3 "Higher than before") label (2 "Same as before") ///
 							label (1 "Less than before") pos(6) col(3) ///
 							size(vsmall) margin(-1.5 0 0 0)) name(bus1, replace)
@@ -335,29 +333,29 @@
 	catplot 			size wave country [aweight = hhw] if country == 2, percent(country wave) stack ///
 							var1opts(label(labsize(medsmall))) var3opts(label(labsize(medsmall))) ///
 							var2opts(label(labsize(vsmall))) ///
-							ytitle("", size(vlarge)) bar(3, fcolor(`1') lcolor(none)) ///
-							bar(2, fcolor(`7') lcolor(none)) bar(1, fcolor(`15') lcolor(none)) ///
+							ytitle("", size(vlarge)) bar(3, color(sandb*1.3)) ///
+							bar(2, color(dkorange*1.2)) bar(1, color(red*1.7)) ///
 							ylabel(, labs(medsmall)) legend(off) name(bus2, replace)
 
 	catplot 			size wave country [aweight = hhw] if country == 3, percent(country wave) stack ///
 							var1opts(label(labsize(medsmall))) var3opts(label(labsize(medsmall))) ///
 							var2opts(label(labsize(vsmall))) ///
-							ytitle("", size(vlarge)) bar(3, fcolor(`1') lcolor(none)) ///
-							bar(2, fcolor(`7') lcolor(none)) bar(1, fcolor(`15') lcolor(none)) ///
+							ytitle("", size(vlarge)) bar(3, color(sandb*1.3)) ///
+							bar(2, color(dkorange*1.2)) bar(1, color(red*1.7)) ///
 							ylabel(, labs(medsmall)) legend(off) name(bus3, replace)
 
 	catplot 			size wave country [aweight = hhw] if country == 4, percent(country wave) stack ///
 							var1opts(label(labsize(medsmall))) var3opts(label(labsize(medsmall))) ///
 							var2opts(label(labsize(vsmall))) ///
-							ytitle("", size(huge)) bar(3, fcolor(`1') lcolor(none)) ///
-							bar(2, fcolor(`7') lcolor(none))  bar(1, fcolor(`15') lcolor(none)) ///
+							ytitle("", size(huge)) bar(3, color(sandb*1.3)) ///
+							bar(2, color(dkorange*1.2)) bar(1, color(red*1.7)) ///
 							ylabel(, labs(medsmall)) legend(off) name(bus4, replace)
 
 	catplot 			size wave country [aweight = hhw] if country == 5, percent(country wave) stack ///
 							var1opts(label(labsize(medsmall))) var3opts(label(labsize(small))) ///
 							var2opts(label(labsize(vsmall))) ///
-							ytitle("", size(huge)) bar(3, fcolor(`1') lcolor(none)) ///
-							bar(2, fcolor(`7') lcolor(none))  bar(1, fcolor(`15') lcolor(none)) ///
+							ytitle("", size(huge)) bar(3, color(sandb*1.3)) ///
+							bar(2, color(dkorange*1.2)) bar(1, color(red*1.7)) ///
 							ylabel(, labs(medsmall)) legend(off) name(bus5, replace)
 							
 	restore
@@ -477,16 +475,16 @@
 								
 	catplot 			concern_1 wave [aweight = hhw_cs], over(country) percent(country wave) stack ///
 							title("Concerned that family or self will fall ill with COVID-19 (%)", size(large)) ///
-							var1opts(label(labsize(large))) legend(col(2) margin(-1.5 0 0 0)) ///
-							var2opts(label(nolab)) ///
-							ytitle("", size(vlarge)) bar(1, color(maroon*1.5)) bar(2, color(stone*1.3)) ///
+							var1opts(label(labsize(large)) sort(1) descending) ///
+							legend(col(2) margin(-1.5 0 0 0) order(2 "Yes" 1 "No")) var2opts(label(nolab)) ///
+							ytitle("", size(vlarge)) bar(2, color(maroon*1.5)) bar(1, color(stone*1.3)) ///
 							ylabel(, labs(large)) name(conc1, replace)
 							
 	catplot 			concern_2 wave [aweight = hhw_cs], over(country) percent(country wave) stack ///
 							title("Concerned about the financial threat of COVID-19 (%)", size(large)) ///
-							var1opts(label(labsize(large))) var3opts(label(labsize(large))) ///
+							var1opts(label(labsize(large)) sort(1) descending) ///
 							legend(col(2) margin(-1.5 0 0 0)) var2opts(label(nolab)) ///
-							ytitle("", size(vlarge)) bar(1, color(maroon*1.5)) bar(2, color(stone*1.3)) ///
+							ytitle("", size(vlarge)) bar(2, color(maroon*1.5)) bar(1, color(stone*1.3)) ///
 							ylabel(, labs(large)) name(conc2, replace)					
 
 	restore 
@@ -498,22 +496,22 @@
 
 * over waves in mwi, nga, uga 
 	catplot 			concern_1 wave country [aweight = hhw_cs] if country == 2, percent(country wave) stack ///
-							var1opts(label(labsize(large))) var3opts(label(labsize(large))) legend(col(2) margin(-1.5 0 0 0)) ///
-							var2opts(label(labsize(med))) ///
+							var1opts(label(labsize(large)) sort(1) descending) var3opts(label(labsize(large))) ///
+							legend(col(2) margin(-1.5 0 0 0) order(2 "Yes" 1 "No")) var2opts(label(labsize(med))) ///
 							title("Concerned that family or self will fall ill with COVID-19 (%)", size(large)) ///
-							ytitle("", size(vlarge)) bar(1, color(maroon*1.5)) bar(2, color(stone*1.3)) ///
+							ytitle("", size(vlarge)) bar(2, color(maroon*1.5)) bar(1, color(stone*1.3)) ///
 							ylabel(, labs(large)) name(conc1_mwi, replace)	
 							
 	catplot 			concern_1 wave country [aweight = hhw_cs] if country == 3, percent(country wave) stack ///
-							var1opts(label(labsize(large))) var3opts(label(labsize(large))) legend(col(2) margin(-1.5 0 0 0)) ///
-							var2opts(label(labsize(med))) outergap(250) ///
-							ytitle("", size(vlarge)) bar(1, color(maroon*1.5)) bar(2, color(stone*1.3)) ///
+							var1opts(label(labsize(large)) sort(1) descending) var3opts(label(labsize(large))) ///
+							legend(col(2) margin(-1.5 0 0 0)) var2opts(label(labsize(med))) outergap(250) ///
+							ytitle("", size(vlarge)) bar(2, color(maroon*1.5)) bar(1, color(stone*1.3)) ///
 							ylabel(, labs(large)) name(conc1_nga, replace)	
 	
 	catplot 			concern_1 wave country [aweight = hhw_cs] if country == 4, percent(country wave) stack ///
-							var1opts(label(labsize(large))) var3opts(label(labsize(large))) legend(col(2) margin(-1.5 0 0 0)) ///
-							var2opts(label(labsize(med))) outergap(150) ///
-							ytitle("", size(vlarge)) bar(1, color(maroon*1.5)) bar(2, color(stone*1.3)) ///
+							var1opts(label(labsize(large)) sort(1) descending) var3opts(label(labsize(large))) ///
+							legend(col(2) margin(-1.5 0 0 0)) var2opts(label(labsize(med))) outergap(150) ///
+							ytitle("", size(vlarge)) bar(2, color(maroon*1.5)) bar(1, color(stone*1.3)) ///
 							ylabel(, labs(large)) name(conc1_uga, replace)	
 
 	grc1leg2 			conc1_mwi conc1_nga conc1_uga, col(1) iscale(.5) commonscheme imargin(0 0 0 0)
@@ -522,22 +520,22 @@
 	graph export 		"$output/concern1_waves.emf", as(emf) replace
 
 	catplot 			concern_2 wave country [aweight = hhw_cs] if country == 2, percent(country wave) stack ///
-							var1opts(label(labsize(large))) var3opts(label(labsize(large))) legend(col(2) margin(-1.5 0 0 0)) ///
-							var2opts(label(labsize(med))) ///
+							var1opts(label(labsize(large)) sort(1) descending) var3opts(label(labsize(large))) ///
+							legend(col(2) margin(-1.5 0 0 0) order(2 "Yes" 1 "No")) var2opts(label(labsize(med))) ///
 							title("Concerned about the financial threat of COVID-19 (%)", size(large)) ///
-							ytitle("", size(vlarge)) bar(1, color(maroon*1.5)) bar(2, color(stone*1.3)) ///
+							ytitle("", size(vlarge)) bar(2, color(maroon*1.5)) bar(1, color(stone*1.3)) ///
 							ylabel(, labs(large)) name(conc2_mwi, replace)	
 							
 	catplot 			concern_2 wave country [aweight = hhw_cs] if country == 3, percent(country wave) stack ///
-							var1opts(label(labsize(large))) var3opts(label(labsize(large))) legend(col(2) margin(-1.5 0 0 0)) ///
-							var2opts(label(labsize(med))) outergap(250) ///
-							ytitle("", size(vlarge)) bar(1, color(maroon*1.5)) bar(2, color(stone*1.3)) ///
+							var1opts(label(labsize(large)) sort(1) descending) var3opts(label(labsize(large))) ///
+							legend(col(2) margin(-1.5 0 0 0)) var2opts(label(labsize(med))) outergap(250) ///
+							ytitle("", size(vlarge)) bar(2, color(maroon*1.5)) bar(1, color(stone*1.3)) ///
 							ylabel(, labs(large)) name(conc2_nga, replace)	
 	
 	catplot 			concern_2 wave country [aweight = hhw_cs] if country == 4, percent(country wave) stack ///
-							var1opts(label(labsize(large))) var3opts(label(labsize(large))) legend(col(2) margin(-1.5 0 0 0)) ///
-							var2opts(label(labsize(med))) outergap(150) ///
-							ytitle("", size(vlarge)) bar(1, color(maroon*1.5)) bar(2, color(stone*1.3)) ///
+							var1opts(label(labsize(large)) sort(1) descending) var3opts(label(labsize(large))) ///
+							legend(col(2) margin(-1.5 0 0 0)) var2opts(label(labsize(med))) outergap(150) ///
+							ytitle("", size(vlarge)) bar(2, color(maroon*1.5)) bar(1, color(stone*1.3)) ///
 							ylabel(, labs(large)) name(conc2_uga, replace)
 
 	grc1leg2 			conc2_mwi conc2_nga conc2_uga, col(1) iscale(.5) commonscheme imargin(0 0 0 0)

@@ -459,6 +459,7 @@
 	drop 			s06q10b_autre
 	rename 			s06q11 bus_sect
 	rename 			s06q12 bus_emp_inc
+	replace 		bus_emp_inc = . if bus_emp_inc == 5
 	rename 			s06q13 bus_why
 	replace 		bus_why = s06q13_1 if bus_why == . & s06q13_1 != .
 	replace 		bus_why = s06q13_2 if bus_why == . & s06q13_2 != .

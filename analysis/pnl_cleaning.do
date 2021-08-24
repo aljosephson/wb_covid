@@ -212,6 +212,7 @@
 	
 	lab def 			bh_freq_gath 0 "none" 1 "1" 2 "2" 3 "3" 4 "4" 5 "5 or more", replace
 	lab val 			bh_freq_gath bh_freq_gath 
+	replace 			emp_saf_fol = . if emp_saf_fol == -97
 	
 * mental health
 	lab def 			mh 0 "not at all" 1 "several days" 2 "more than half of the time" ///
@@ -308,6 +309,8 @@
 							8 "lockdown/travel restrictions" 
 	forval 				x = 2/7 {
 		lab val 		ac_medserv_type_`x'_why ac_medserv_type_why
+		replace 		ac_medserv_type_`x' = 0 if ac_medserv_type_`x' == 2
+		replace 		ac_medserv_type_`x' = . if ac_medserv_type_`x' == 99
 	}
 	
 * access to pre-natal care
@@ -318,10 +321,14 @@
  
 * access to preventative care 
 	replace 			ac_prev_app = 0 if ac_prev_app == 2
-
+	replace 			ac_prev_canc = 1 if ac_prev_canc == 2
+	
 * access to vaccines	
 	replace 			ac_vac = 0 if ac_vac == 2
 	replace 			ac_vac_need = 0 if ac_vac_need == 2
+	replace 			cov_vac = 2 if cov_vac == 0
+	lab def 			cov_vac 1 "Yes" 2 "No" 3 "Not sure"
+	lab val 			cov_vac cov_vac 
 
 * access to soap
 	replace 			ac_soap = 0 if ac_soap == 2
@@ -695,6 +702,7 @@
 	
 	* business income 
 	replace 			bus_emp_inc = . if bus_emp_inc < 0
+	replace 			bus_beh = 0 if bus_beh == 2
 	
 	
 * **********************************************************************
@@ -721,7 +729,17 @@
 	replace 			sch_att = 0 if sch_att == 2
 	replace				edu_cont = 0 if edu_cont == 2
 	lab val				edu_cont yesno
+	replace 			sch_open = 0 if sch_open == 2
+	replace 			sch_open = . if sch_open == 3
  	
+	ds sch_prec_prac* 
+	foreach 			var in `r(varlist)' {
+	    replace 			`var' = 0 if `var' == 2
+	}
+	
+	replace 			sch_reopen = 0 if sch_reopen == 2
+	replace 			sch_reopen = . if sch_reopen == -99
+	
 	lab var				edu_cont_9 "Going to school to pick holiday package"
 	
 	replace 			edu_act = 0 if edu_act == 2
@@ -804,11 +822,18 @@
 	replace 			ag_ext = . if ag_ext < 0
 	replace 			ag_ext_need = . if ag_ext_need < 0
 	replace 			ag_plan = . if ag_plan < 0
+	replace 			ag_sell_rev_exp = . if ag_sell_rev_exp == -97
 	
 	foreach var in 		ag_live ag_live_sell ag_live_sell_able ag_live_affect ag_live_sell_want ///
-							harv_cov harv_sell ag_ext ag_ext_need ag_plan {
+							harv_cov harv_sell ag_ext ag_ext_need ag_plan ag_main_harv_comp ///
+							ag_sell_norm {
 		replace 			`var' = 0 if `var' == 2
 		lab val 			`var' yesno
+	}
+	
+	ds 					ag_use_*
+	foreach 			var  in `r(varlist)' {
+	    replace 			`var' = . if `var' > 97
 	}
 	
 	* ag_chg invert ethiopia, change other for consistency
@@ -825,7 +850,7 @@
 * **********************************************************************
 	
 	foreach 			var in emp_pre emp emp_same contrct emp_cont_1 ///
-							emp_cont_2 emp_cont_3 emp_cont_4 rtrn_emp {
+							emp_cont_2 emp_cont_3 emp_cont_4 rtrn_emp wage_emp {
 		replace 			`var' = . if `var' < 0
 		replace 			`var' = 0 if `var' == 2
 		lab val 			`var' yesno
@@ -856,7 +881,7 @@
 	
 	replace 			emp_chg_why = 96 if emp_chg_why == -96
 	lab def 			emp_chg_why 1 "Bus closed due to COVID restrictions" ///
-							2 "Bus closed not due to COVID restrictions" ///
+							2 "Bus closed not due to COVID restrictions/another reason" ///
 							3 "Laid off" 4 "Furlough" 5 "Vacation" 6 "Ill/quarentined" ///
 							7 "Cared for ill relative" 8 "Seasonal worker" ///
 							9 "Retired" 10 "Not able to farm due to movt restrictions" ///
@@ -865,7 +890,7 @@
 							14 "Do not want to be exposed to the virus" ///
 							15 "focus on secondary activity" 16 "Better opportunity" ///
 							17 "PREVIOUS BUSINESS/JOB CLOSED DUE TO ENDSARS PROTESTS" ///
-							96 "Other", replace
+							18 "Student" 96 "Other", replace
 	lab val				emp_chg_why emp_chg_why 
 	
 	replace 			emp_unable = . if emp_unable == 4 | emp_unable == -98 
@@ -974,7 +999,7 @@
 * close the log
 	log	close	
 
-/*
+
 * **********************************************************************
 * 13 - generate variable-country-wave crosswalk
 * **********************************************************************	

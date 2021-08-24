@@ -355,6 +355,7 @@
 	label var 		ac_sorg_why "reason unable to purchase sorghum"
 	* vaccine
 	rename 			s5q3a ac_vac_need
+	replace 		ac_vac_need = . if ac_vac_need == 98
 	rename 			s5q3b ac_vac
 	rename 			s5q3c__* ac_vac_why_*
 	drop 			ac_vac_why_96

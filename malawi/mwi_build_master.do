@@ -340,6 +340,7 @@
 	replace 		ac_staple_def = 6 if ac_staple_def == 4
 	replace 		ac_staple_def = 4 if ac_staple_def == 3
 	rename			s5q2a ac_staple_need
+	replace 		ac_staple_need = 2 if ac_staple_need == 3
 	rename 			s5q2b ac_staple
 	rename 			s5q2c ac_staple_why
 	replace			ac_staple_why = 1 if s5q2c__1 == 1 
@@ -945,7 +946,7 @@
 						s6qe4_oth2 s5q3b__555 s5q3b_ot s5dq5_oth s5dq7_ot s5cq4__96 ///
 						s5q1b1_ot s6qe2_oth s6qe4__96 s6qe11_oth s6qe2__96 ///
 						livestock_filter previous_loanfilter rainy_filter ///
-						s4q8c_oth s4q8d_ot s5q2ot s5q2c_ot s6qe7
+						s4q8c_oth s4q8d_ot s5q2ot s5q2c_ot s6qe7 s5q7
 
 * regional and sector information
 	gen				sector = 2 if urb_rural == 1

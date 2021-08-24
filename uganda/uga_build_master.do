@@ -114,6 +114,10 @@
 
 * education perceptions & early childhood development 
 	rename 			s1dq01__* sch_catchup_*
+	ds 				sch_catchup_*
+	foreach 		var in `r(varlist)' {
+		replace 		`var' = 1 if `var' >= 1 & `var' != .
+	}
 	rename 			s1dq02__* sch_prec_prac_*
 	rename 			s1eq02 ecd_pcg
 	rename 			s1eq2_1 ecd_pcg_relate

@@ -26,7 +26,7 @@
 * **********************************************************************
 
 * define list of waves
-	global 			waves "1" "2" "3" "4" "5" "6" "7" "8" "9" "10"
+	global 			waves "1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11"
 	
 * define 
 	global	root	=	"$data/nigeria/raw"
@@ -358,6 +358,7 @@
 	rename 			s6q3b emp_search_how
 	rename			s6q4a emp_same
 	rename			s6q4b emp_chg_why 
+	replace 		emp_chg_why = 18 if emp_chg_why == 16
 	replace 		emp_chg_why = 17 if emp_chg_why == 15
 	replace 		emp_chg_why = 15 if emp_chg_why == 13 
 	replace 		emp_chg_why = 16 if emp_chg_why == 14 
@@ -626,7 +627,8 @@
 						s5q1a* s5q1b* s5q1c* s9q6__96 s9q6_os ///
 						s11q11 s11q12 s11q13 s6q21a__96 s6q22__96 s3q2__5 ///
 						s5aq3__96 s5cq2__96 s5cq4__98 s5q1h__96 s5q1i_96 ///
-						s6q16_round5 s9aq3__* s9aq4__* sch_catchupos s5cq0 
+						s6q16_round5 s9aq3__* s9aq4__* sch_catchupos s5cq0 ///
+						s12bq*
 	drop if			wave ==  .		
 	
 * reorder variables

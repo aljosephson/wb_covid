@@ -157,7 +157,7 @@
 		rename 			s5eq37__* yae_mig_where_*
 		
 		drop 			*_os s5eq5 s5eq8_oth s5eq14 s5eq16 s5eq24a yae_dream_fac_96 ///
-							yae_mig_where_96
+							yae_mig_where_96 preload_sex preload_relation
 							
 * generate round variables
 	gen				wave = `w'

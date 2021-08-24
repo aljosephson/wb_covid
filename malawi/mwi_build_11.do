@@ -218,6 +218,7 @@
 	* agriculture 
 		rename 			s6eq1 ag_crop
 		replace 		ag_crop = s6eq2 if ag_crop >= .
+		replace 		ag_crop = . if ag_crop == 4
 		rename 			s6eq3__1 ag_crop_who		
 		rename 			s6eq5 ag_main
 		rename 			s6eq6 ag_main_plots
@@ -228,7 +229,7 @@
 		gen				ag_main_sell_per = s6eq11/s6eq9a
 		rename 			s6eq12 ag_main_rev
 		rename 			s6eq13 harv_sell_rev
-		rename 			s6eq14 ag_sell_main_plan
+		rename 			s6eq14 ag_main_sell_plan
 		rename 			s6eq15 harv_sell_rev_exp
 		rename 			s6eq16 ag_main_harv_comp
 		rename 			s6eq17a ag_main_more
@@ -237,18 +238,18 @@
 		rename 			s6eq18b ag_use_orfert
 		rename 			s6eq18c ag_use_pest
 		rename 			s6eq18d ag_use_lab
-		rename 			s6eq18e ag_use_amin
+		rename 			s6eq18e ag_use_anim
 		rename 			s6eq19a__* ag_ac_infert_why_*
 		rename 			s6eq19b__* ag_ac_orfert_why_*
 		rename 			s6eq19c__* ag_ac_pest_why_*
 		rename 			s6eq19d__* ag_ac_lab_why_*
-		rename 			s6eq19e__1 ag_ac_amin_why_1
-		rename 			s6eq19e__2 ag_ac_amin_why_2
-		rename 			s6eq19e__3 ag_ac_amin_why_4
-		rename 			s6eq19e__4 ag_ac_amin_why_5
-		rename 			s6eq19e__5 ag_ac_amin_why_3
-		rename 			s6eq19e__6 ag_ac_amin_why_6
-		rename 			s6eq19e__7 ag_ac_amin_why_7
+		rename 			s6eq19e__1 ag_ac_anim_why_1
+		rename 			s6eq19e__2 ag_ac_anim_why_2
+		rename 			s6eq19e__3 ag_ac_anim_why_4
+		rename 			s6eq19e__4 ag_ac_anim_why_5
+		rename 			s6eq19e__5 ag_ac_anim_why_3
+		rename 			s6eq19e__6 ag_ac_anim_why_6
+		rename 			s6eq19e__7 ag_ac_anim_why_7
 		
 		drop 			s6eq3a s6eq4 s6eq7_units_ot s6eq5_ot s6eq5_ot2 ///
 							s6eq9a s6eq9b s6eq9b_ot s6eq9c s6eq17c *_96 *_ot ///

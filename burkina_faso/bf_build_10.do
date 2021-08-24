@@ -298,6 +298,7 @@
 	rename 			s05q05 sch_child
 	rename 			s05q06a sch_boy
 	rename 			s05q06b sch_girl
+	replace 		sch_girl = . if sch_girl == 5000
 	rename 			s05q07 sch_reopen 
 	replace 		sch_reopen  = sch_reopen  - 1 if sch_reopen  > 1
 	rename 			s05q08a sch_reopen_boy

@@ -134,6 +134,7 @@
 		rename 		ph12_livestock_covid_how_* ag_live_affect_*
 		drop 		ag_live_affect__96
 		rename 		ph13_farm_sell ag_sell_norm
+		replace 	ag_sell_norm = 0 if ag_sell_norm == -97
 		rename 		ph14_farm_sell_expect ag_sell_rev_exp
 		
 * drop vars

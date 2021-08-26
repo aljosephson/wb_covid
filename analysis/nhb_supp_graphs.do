@@ -35,6 +35,10 @@
 * read in data
 	use				"$ans/raw/FIES/FIES_PreCOVID.dta", clear
 	
+* drop new waves not used in nhb 
+	keep 					if ((country == 1 | country == 3) & (wave == 1 | wave == 2 | wave == 3)) | ///
+							((country == 2 | country == 4) & (wave == 1 | wave == 2))
+	
 	
 * **********************************************************************
 * 1 - precovid 

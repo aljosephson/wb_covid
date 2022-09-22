@@ -22,6 +22,7 @@ Contributors:
 * Jeffrey D. Michler (jdmichler@arizona.edu)
 * Ann Furbush 
 * Talip Kilic 
+* Lorin Rudin-Rush
 
 As described in more detail below, scripts various go through each step, from cleaning raw data to analysis.
 
@@ -40,7 +41,9 @@ The approach to the phone survey questionnaire design and sampling is comparable
 
 ## Data cleaning
 
-The code in this repository cleans the raw phone surveys and replicates material (both in text and supplementary material) related to "Socioeconomic impact of COVID-19 in four African countries". 
+The code in this repository cleans all raw phone surveys for the High-Frequency Phone Survey collection: http://bit.ly/microdata-hfps, as of September 2022.   
+
+Additionally, the code in this repository cleans the raw phone surveys and replicates material (both in text and supplementary material) related to "Socioeconomic impact of COVID-19 in four African countries". 
 
 ### Pre-requisites
 

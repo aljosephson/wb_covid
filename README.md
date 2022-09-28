@@ -41,7 +41,7 @@ The approach to the phone survey questionnaire design and sampling is comparable
 
 ## Data cleaning
 
-The code in this repository cleans all raw phone surveys for the High-Frequency Phone Survey collection: http://bit.ly/microdata-hfps, as of September 2022.   
+The code in this repository cleans all raw phone surveys for the High-Frequency Phone Survey collection: http://bit.ly/microdata-hfps, as of September 2022. The file `project.do' establishes an idential workspace between users, sets globals that define absolute paths, and loads user written packages needed for analysis (see Stata reqs, below). This file should serve as the starting point to find any do-file, dataset, or other output. 
 
 Additionally, the code in this repository cleans the raw phone surveys and replicates material (both in text and supplementary material) related to "Socioeconomic impact of COVID-19 in four African countries". 
 

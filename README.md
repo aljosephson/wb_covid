@@ -1,5 +1,5 @@
 # Socioeconomic impacts of COVID-19 in low income countries: Replication Code
-This README describes the directory structure & should enable users to replicate all tables and figures for work related to the World Bank LSMS and World Bank COVID phone surveys. For more information and to access these phone surveys, visit the World Bank Microdata Library. The relevant surveys are available under under the High-Frequency Phone Survey collection: http://bit.ly/microdata-hfps.   
+This README describes the directory structure & should enable users to replicate all tables and figures for work related to the World Bank LSMS and World Bank COVID phone surveys. For more information and to access these phone surveys, visit the World Bank Microdata Library (https://microdata.worldbank.org/index.php/home). The relevant surveys are available under under the High-Frequency Phone Survey collection (http://bit.ly/microdata-hfps).   
 
 For more information contact: Anna Josephson and/or Jeffrey D. Michler.
 

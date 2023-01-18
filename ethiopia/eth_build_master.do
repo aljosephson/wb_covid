@@ -941,8 +941,7 @@
 	append 			using "$export/wave_00/r0"
 	
 * save file
-	customsave, 	idvar(hhid_eth) filename("eth_panel.dta") ///
-					path("$export") dofile(eth_build_master) user($user)
+	save			"$export/eth_panel", replace
 
 * close the log
 	log	close

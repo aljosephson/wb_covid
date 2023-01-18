@@ -20,7 +20,7 @@
 * 0 - setup
 * **********************************************************************
 
-* set $pack to 0 to skip package installation
+* set $pack to 1 to skip package installation
 	global 			pack 	1
 		
 * Specify Stata version in use
@@ -46,10 +46,10 @@
 		global 		output_f "G:/My Drive/wb_covid/output"
     }
 
-	if `"`c(username)'"' == "annfu" {
-		global 		code  	"C:/Users/annfu/git/wb_covid"
-		global 		data	"G:/My Drive/wb_covid/data"
-		global 		output_f "G:/My Drive/wb_covid/output"
+	if `"`c(username)'"' == "lirro" {
+		global 		code  	"C:/Users/lirro/Documents/GitHub/wb_covid_alj"
+		global 		data	"G:/.shortcut-targets-by-id/1XcQAvrJb1mJEPSQMqrMmRpHBSrhhgt5-/wb_covid/data"
+		global 		output_f "G:/.shortcut-targets-by-id/1XcQAvrJb1mJEPSQMqrMmRpHBSrhhgt5-/wb_covid/data"
 	}
 	
 	

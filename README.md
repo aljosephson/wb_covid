@@ -3,7 +3,7 @@ This README describes the directory structure & should enable users to replicate
 
 For more information contact: Anna Josephson and/or Jeffrey D. Michler.
 
-Last update: January 2021. 
+Last update: January 2023. 
 
 [![DOI](https://zenodo.org/badge/282963786.svg)](https://zenodo.org/badge/latestdoi/282963786)
 

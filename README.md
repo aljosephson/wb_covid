@@ -4,7 +4,7 @@ This README describes the directory structure & should enable users to replicate
 For more information contact Anna Josephson and/or Jeffrey D. Michler. Contact information listed below.
 
 Last update: January 2023. 
-Repo not regularly updated: November 2023. For more information, contact aljosephson@arizona.edu.
+Repo not updated (no new data collection): November 2023. For more information, contact aljosephson@arizona.edu.
 
 [![DOI](https://zenodo.org/badge/282963786.svg)](https://zenodo.org/badge/latestdoi/282963786)
 
